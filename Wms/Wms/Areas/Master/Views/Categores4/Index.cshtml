@@ -1,0 +1,375 @@
+﻿@model Wms.Areas.Master.ViewModels.Categores4.Index
+@{
+    /**/
+
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Categores401;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "Categores4", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        <table>
+            <tr>
+                <td class="tdtitle">@Categores4Resource.Category</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId1,
+                                (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                CommonResource.None, new { id = "ddlCategoryId1", tabindex = "24", onchange = "CategoryChange(1)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId2,
+                                (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                CommonResource.None, new { id = "ddlCategoryId2", tabindex = "25", disabled = "disabled", onchange = "CategoryChange(2)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId3,
+                                (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                CommonResource.None, new { id = "ddlCategoryId3", tabindex = "26", disabled = "disabled", onchange = "CategoryChange(3)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId4,
+                                (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                CommonResource.None, new { id = "ddlCategoryId4", tabindex = "27", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="tdtitle">@Categores4Resource.DeleteFlagSearch</td>
+                <td class="w_checkbox" colspan="3">
+                    <label class="checkboxgroup">
+                        @Html.CheckBoxFor(model => model.SearchConditions.DeleteFlag, new { @id = "chkIsNewDate", @class = "check-box" })
+                        <span class="chk_parts"></span>
+                    </label>
+                    <span>@Categores4Resource.DeleteFlagSearch2</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5.3rem;"></td>
+                <td style="width: 12rem;"></td>
+                <td class="alignright">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Categores4", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="4" onclick="$('#frmSearch').submit()">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+    }
+</div>
+@if (Model.Categores4Result.Categores4s != null)
+{
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Categores4Result.Categores4s.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Categores4Result.Categores4s.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Categores4Result.Categores4s, Page => Url.Action("Search", "Categores4", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Categores4Result.Categores4s.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:71vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryId1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryName1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryClass1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryId2
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryName2
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryClass2
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryId3
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryName3
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryClass3
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryId4
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryName4
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.CategoryClass4
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @Categores4Resource.DeleteFlag
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "Categores4", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Categores4Result.Categores4s.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Categores4s[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Categores4Result.Categores4s.PageNumber - 1) * Model.Categores4Result.Categores4s.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryId1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryClass1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryId2)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName2)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryClass2)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryId3)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName3)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryClass3)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryId4)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName4)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryClass4)
+                                        </td>
+                                        <td class="align-middle">
+                                            <label class="chklist">
+                                                @Html.CheckBoxFor(model => cModel.v.DeleteFlag, new { tabindex = "11", @class = "check-box _pm", onclick = "return false;" })
+                                                <span class="chk_parts">
+                                                </span>
+                                            </label>
+                                        </td>
+
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.CategoryId1, new { Name = key + "CategoryId1" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+     * Country class
+     */
+    var Categores4sView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            ddlSort:'#ddlSort',
+            ddlSortKey: '#ddlSortKey',
+            form: 'form',
+            searchForm: '#frmSearch',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                * Dropdownlist change item
+                */
+                $(Categores4sView.SELECTORS.ddlSort).change(function (val) {
+                    $(Categores4sView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(Categores4sView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(Categores4sView.SELECTORS.btnSearch).click();
+                });
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        Categores4sView.init();
+    });
+        function ClearConditons() {
+            $("#txtCategoryId1").val("");
+        $("#txtCategoryName1").val("");
+    }
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "Categores4", new { area= "Master" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        }
+        function SetIsCheck(id) {
+                    $('#listData input[type=checkbox][id$=".IsCheck"]').prop("checked", false);
+                    $('#listData input[type=checkbox][id="'+id+'"]').prop("checked", true);
+        }
+
+                function GetCategoryList(id) {
+                    var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            id: id + 1,
+                            category1: $("#ddlCategoryId1").val(),
+                            category2: $("#ddlCategoryId2").val(),
+                            category3: $("#ddlCategoryId3").val()
+                        },
+                        success: function (data) {
+                            $("#ddlCategoryId" + (id + 1)).html("");
+                            $("#ddlCategoryId" + (id + 1)).html(data.html);
+                        }
+                    });
+        }
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+    </script>
+}

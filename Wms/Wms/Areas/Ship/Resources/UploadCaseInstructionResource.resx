@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllUploadSuc" xml:space="preserve">
+    <value>ファイルを取り込みました</value>
+  </data>
+  <data name="AssortcaseImportDate_No" xml:space="preserve">
+    <value>ケース出荷指示取込日時→ケース出荷指示ID</value>
+  </data>
+  <data name="AssortCaseName_No" xml:space="preserve">
+    <value>ケース出荷指示名称→ケース出荷指示ID</value>
+  </data>
+  <data name="AssortCaseNo" xml:space="preserve">
+    <value>ケース出荷指示ID</value>
+  </data>
+  <data name="BatchNo" xml:space="preserve">
+    <value>バッチNo</value>
+  </data>
+  <data name="BoxNo" xml:space="preserve">
+    <value>ケースNo</value>
+  </data>
+  <data name="BTN_DELETE" xml:space="preserve">
+    <value>引当解除・削除</value>
+  </data>
+  <data name="BTN_DETAILS" xml:space="preserve">
+    <value>指示一覧へ</value>
+  </data>
+  <data name="CaseNo" xml:space="preserve">
+    <value>ケースNo</value>
+  </data>
+  <data name="CaseNoShipToStore" xml:space="preserve">
+    <value>ケースNo→出荷先</value>
+  </data>
+  <data name="CaseQty" xml:space="preserve">
+    <value>ケース数</value>
+  </data>
+  <data name="CaseShipFile" xml:space="preserve">
+    <value>ケース出荷指示ファイル</value>
+  </data>
+  <data name="CaseShipName" xml:space="preserve">
+    <value>出荷指示名称</value>
+  </data>
+  <data name="CategoryId1" xml:space="preserve">
+    <value>分類1</value>
+  </data>
+  <data name="CategoryNm" xml:space="preserve">
+    <value>カテゴリー</value>
+  </data>
+  <data name="CategorySortQty" xml:space="preserve">
+    <value>カテゴリー仕分振分No数</value>
+  </data>
+  <data name="CenterId" xml:space="preserve">
+    <value>倉庫ID</value>
+  </data>
+  <data name="CenterIdS" xml:space="preserve">
+    <value>センター</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>カラー</value>
+  </data>
+  <data name="ConfirmMsgDelete" xml:space="preserve">
+    <value>選択されているバッチNoを引当解除し、取込データ指示を削除します。よろしいですか？</value>
+  </data>
+  <data name="DeleteSuc" xml:space="preserve">
+    <value>引当解除処理が正常に終了しました。（バッチNo：</value>
+  </data>
+  <data name="DetailRowQty" xml:space="preserve">
+    <value>明細行数</value>
+  </data>
+  <data name="DiscountPercent" xml:space="preserve">
+    <value>オフ率：</value>
+  </data>
+  <data name="ErrClass" xml:space="preserve">
+    <value>エラー区分</value>
+  </data>
+  <data name="ErrMessage" xml:space="preserve">
+    <value>エラーメッセージ</value>
+  </data>
+  <data name="ErrNoData" xml:space="preserve">
+    <value>対象データが存在しません</value>
+  </data>
+  <data name="ERR_DUPLICATE_JAN" xml:space="preserve">
+    <value>JANが重複しています</value>
+  </data>
+  <data name="ERR_DUPLICATE_TRANSFER_NO" xml:space="preserve">
+    <value>振替Noが重複しています</value>
+  </data>
+  <data name="ERR_IMP_DATA" xml:space="preserve">
+    <value>取込対象のデータが存在しません。</value>
+  </data>
+  <data name="ERR_IMP_DATA_TYPE" xml:space="preserve">
+    <value>取込対象のデータが不正です。</value>
+  </data>
+  <data name="ERR_IMP_FILE_TYPE" xml:space="preserve">
+    <value>取込対象のファイル形式が不正です。</value>
+  </data>
+  <data name="ERR_MULTI_TRANSFER_NO" xml:space="preserve">
+    <value>同カテゴリ内に複数の振替Noが入力されています</value>
+  </data>
+  <data name="ERR_NOTHING_M_ITEM_SKU" xml:space="preserve">
+    <value>入力されたJANは、品番SKUマスタに登録されていません</value>
+  </data>
+  <data name="ERR_NOT_DATE_SHIP_PLAN_DATE" xml:space="preserve">
+    <value>出荷予定日が日付の型ではありません</value>
+  </data>
+  <data name="ERR_NOT_DELETE" xml:space="preserve">
+    <value>在庫仕分が実施されている仕分指示を削除することはできません。</value>
+  </data>
+  <data name="ERR_NOT_MATCH" xml:space="preserve">
+    <value>アップロードファイルの項目数に一致しない</value>
+  </data>
+  <data name="ERR_NOT_PRIORIT_ORDER" xml:space="preserve">
+    <value>優先順が数値ではありません</value>
+  </data>
+  <data name="ERR_NOT_STOCK_QTY" xml:space="preserve">
+    <value>数量が数値ではありません</value>
+  </data>
+  <data name="ERR_NULL_BOX_NO" xml:space="preserve">
+    <value>ケースNoがありません</value>
+  </data>
+  <data name="ERR_NULL_CASE_SHIP_NAME" xml:space="preserve">
+    <value>ケース出荷指示名称が入力されていません</value>
+  </data>
+  <data name="ERR_NULL_JAN" xml:space="preserve">
+    <value>抜き取りJANがありません</value>
+  </data>
+  <data name="ERR_NULL_PRIORIT_ORDER" xml:space="preserve">
+    <value>優先順が入力されていません</value>
+  </data>
+  <data name="ERR_NULL_SHIP_PLAN_DATE" xml:space="preserve">
+    <value>出荷予定日がありません</value>
+  </data>
+  <data name="ERR_NULL_SHIP_TO_STORE_ID" xml:space="preserve">
+    <value>店舗IDがありません</value>
+  </data>
+  <data name="ERR_NULL_STOCK_QTY" xml:space="preserve">
+    <value>数量が入力されていません</value>
+  </data>
+  <data name="ERR_OVER_BOX_NO" xml:space="preserve">
+    <value>ケースNoは36桁です、オーバーしています</value>
+  </data>
+  <data name="ERR_OVER_CASE_SHIP_NAME" xml:space="preserve">
+    <value>ケース出荷指示名称は20桁で入力してください</value>
+  </data>
+  <data name="ERR_OVER_INSTRUCT_QTY" xml:space="preserve">
+    <value>数量は9桁です、オーバーしています</value>
+  </data>
+  <data name="ERR_OVER_JAN" xml:space="preserve">
+    <value>抜き取りJANは13桁です、オーバーしています</value>
+  </data>
+  <data name="ERR_OVER_PRIORIT_ORDER" xml:space="preserve">
+    <value>優先順は9桁です、オーバーしています</value>
+  </data>
+  <data name="ERR_OVER_RANGE_DISCOUNT" xml:space="preserve">
+    <value>セールの場合はオフ率1~100の値を設定してください</value>
+  </data>
+  <data name="ERR_OVER_SHIP_PLAN_DATE" xml:space="preserve">
+    <value>出荷予定日は10桁です、オーバーしています</value>
+  </data>
+  <data name="ERR_OVER_SHIP_TO_STORE_ID" xml:space="preserve">
+    <value>店舗IDは20桁です、オーバーしています</value>
+  </data>
+  <data name="ERR_SALE_CLASS_NULL" xml:space="preserve">
+    <value>売上区分を選択してください</value>
+  </data>
+  <data name="HikiErrQty" xml:space="preserve">
+    <value>引当エラー</value>
+  </data>
+  <data name="HikiQty" xml:space="preserve">
+    <value>引当数</value>
+  </data>
+  <data name="ImportErrData" xml:space="preserve">
+    <value>直近取込エラーデータ</value>
+  </data>
+  <data name="InstructQty" xml:space="preserve">
+    <value>数量</value>
+  </data>
+  <data name="InstructQtyDetail" xml:space="preserve">
+    <value>指示数</value>
+  </data>
+  <data name="IsCheck" xml:space="preserve">
+    <value>行選択フラグ</value>
+  </data>
+  <data name="ItemCd" xml:space="preserve">
+    <value>品番</value>
+  </data>
+  <data name="ItemColor" xml:space="preserve">
+    <value>カラー</value>
+  </data>
+  <data name="ItemColorId" xml:space="preserve">
+    <value>カラーID</value>
+  </data>
+  <data name="ItemId" xml:space="preserve">
+    <value>商品ID(品番)</value>
+  </data>
+  <data name="ItemIdName" xml:space="preserve">
+    <value>品番・品名</value>
+  </data>
+  <data name="ItemSize" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="ItemSizeId" xml:space="preserve">
+    <value>サイズID</value>
+  </data>
+  <data name="ItemSkuId" xml:space="preserve">
+    <value>SKU</value>
+  </data>
+  <data name="Jan" xml:space="preserve">
+    <value>抜き取りJAN</value>
+  </data>
+  <data name="JanDetail" xml:space="preserve">
+    <value>JAN</value>
+  </data>
+  <data name="JanShipToStore" xml:space="preserve">
+    <value>JAN→出荷先</value>
+  </data>
+  <data name="KindCase" xml:space="preserve">
+    <value>ケース出荷</value>
+  </data>
+  <data name="KindJan" xml:space="preserve">
+    <value>JAN抜き取り</value>
+  </data>
+  <data name="LineNo" xml:space="preserve">
+    <value>行番号</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>メッセージ</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NukiInstructQty" xml:space="preserve">
+    <value>抜き取り指示数</value>
+  </data>
+  <data name="NukiJanQty" xml:space="preserve">
+    <value>抜き取りJAN数</value>
+  </data>
+  <data name="PicInsQty" xml:space="preserve">
+    <value>予定数/抜き取り指示数</value>
+  </data>
+  <data name="PicJanQty" xml:space="preserve">
+    <value>SKU数/抜き取りJAN</value>
+  </data>
+  <data name="PlanQty" xml:space="preserve">
+    <value>予定数</value>
+  </data>
+  <data name="PrioritOrder" xml:space="preserve">
+    <value>優先順</value>
+  </data>
+  <data name="proper" xml:space="preserve">
+    <value>プロパー</value>
+  </data>
+  <data name="SaleKbn" xml:space="preserve">
+    <value>売上区分：</value>
+  </data>
+  <data name="Seq" xml:space="preserve">
+    <value>ワークID</value>
+  </data>
+  <data name="ShipInstructDate" xml:space="preserve">
+    <value>ケース出荷指示取込日時</value>
+  </data>
+  <data name="ShipInstructName" xml:space="preserve">
+    <value>ケース出荷指示名称</value>
+  </data>
+  <data name="ShipKind" xml:space="preserve">
+    <value>出荷種別</value>
+  </data>
+  <data name="ShipKindBatchNo" xml:space="preserve">
+    <value>出荷種別→バッチNo</value>
+  </data>
+  <data name="ShipPlanDate" xml:space="preserve">
+    <value>出荷予定日</value>
+  </data>
+  <data name="ShipToStoreCaseNo" xml:space="preserve">
+    <value>出荷先→ケースNo</value>
+  </data>
+  <data name="ShipToStoreId" xml:space="preserve">
+    <value>店舗ID</value>
+  </data>
+  <data name="ShipToStoreJan" xml:space="preserve">
+    <value>出荷先→JAN</value>
+  </data>
+  <data name="ShipToStoreName" xml:space="preserve">
+    <value>出荷先名</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="SkuQty" xml:space="preserve">
+    <value>SKU数</value>
+  </data>
+  <data name="StoreQty" xml:space="preserve">
+    <value>店舗数</value>
+  </data>
+  <data name="Template" xml:space="preserve">
+    <value>テンプレート</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>ケース出荷指示取込</value>
+  </data>
+  <data name="TransferNo" xml:space="preserve">
+    <value>振替No</value>
+  </data>
+</root>

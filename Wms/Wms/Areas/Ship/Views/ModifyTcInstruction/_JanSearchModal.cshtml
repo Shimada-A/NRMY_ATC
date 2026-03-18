@@ -1,0 +1,137 @@
+﻿@using Resources = Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.ModifyTcInstruction.ModifyTcInstructionSearchConditions
+<div id="vendorReturnSearchModalDialog">
+    <div id="vendorReturnSearchResult">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        <h5>@Resources.ModifyTcInstructionResource.JanModalTitle</h5>
+        <br />
+        <div class="d_continer main">
+            @if (Model.janViewModel.Count == 0)
+            {
+                <h5>@Resources.ModifyTcInstructionResource.JAN_NOT_ERR</h5>
+            }
+            else
+            {
+                <div class="sublbarea">
+                    <div class="sortarea">
+                        <ul>
+                            <li class="totalcount">
+                                @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.totalCnt)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="Container">
+                    <div>
+                        <div class="tb_scroll">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-grey w_checkbox"></th>
+                                        <th class="bg-grey">
+                                            No
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ModifyTcInstructionResource.InvoiceNo
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ModifyTcInstructionResource.Vendor
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ModifyTcInstructionResource.Item
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ModifyTcInstructionResource.ItemColor
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ModifyTcInstructionResource.ItemSize
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ModifyTcInstructionResource.Jan
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ModifyTcInstructionResource.StockQty
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ModifyTcInstructionResource.InvoiceEndDate
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ModifyTcInstructionResource.InvoiceUserId
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.janViewModel.Count(); i++)
+                                    {
+
+                                        var idx = i + 1;
+                                        var id = "hidJan" + i;
+                                        var idInvoice = "hidInvoice" + i;
+                                        <tr>
+                                            <td class="align-middle chk_cell">
+                                                <label>
+                                                    @Html.RadioButton("SelectIndex", i.ToString(), new { @id = "JanReturnSelectIndex" + i.ToString(), @class = "radio_input", @onclick = "chkRadioJan(" + i + ")" })
+                                                    <span class="radio_parts"></span>
+                                                </label>
+                                            </td>
+                                            <td class="text-right w_no">
+                                                @idx
+                                            </td>
+                                            <td>
+                                                <span id=@idInvoice>
+                                                    @Html.DisplayFor(model => Model.janViewModel[i].InvoiceNo)
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.janViewModel[i].VendorId)
+                                                <br />
+                                                @Html.DisplayFor(model => Model.janViewModel[i].VendorName1)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemId)
+                                                <br />
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemColorId)
+                                                <br />
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemColorName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemSizeId)
+                                                <br />
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemSizeName)
+                                            </td>
+                                            <td>
+                                                <span id=@id>
+                                                    @Html.DisplayFor(model => Model.janViewModel[i].Jan)
+                                                </span>
+                                            </td>
+                                            <td class="text-right">
+                                                @Html.DisplayFor(model => Model.janViewModel[i].StockQty)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.janViewModel[i].InvoiceEndDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.janViewModel[i].InvoiceUserId)<br />
+                                                @Html.DisplayFor(model => Model.janViewModel[i].InvoiceUserName)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="bottomnav">
+                <div class="btnarea">
+                    <button id="JanReturnClose" type="button" class="btn btn-outline-dark" onclick="closeDialogJan()">@FormsResource.Close</button>
+                    <button id="JanReturnSelect" type="button" class="btn btn-dark" onclick="chkDialogJan()">@FormsResource.BTN_SELECT</button>
+                </div>
+            </div>
+            <input type="hidden" id="chkIndexJan" value="" />
+        </div>
+    </div>
+</div>

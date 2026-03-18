@@ -1,0 +1,268 @@
+﻿@using Wms.Helpers;
+@model Wms.ViewModels.Home.Index
+@{
+    ViewBag.Title = "ダッシュボード";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Search", "Home", FormMethod.Post, new { id = "frmSearch" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="Container">
+        <div>
+            <div class="row fold mx-0">
+                <h3>
+                    お知らせ
+                </h3>
+                <a class="btnfold" data-toggle="collapse" href="#noticedata" role="button" aria-expanded="false" aria-controls="noticedata">
+                </a>
+                <label style="margin-left: 50px">
+                    <button type="button" id="btnDownload" class="download" formmethod="get" style="width:200px;">
+                        <img src="~/Content/img/download.png" />
+                        @HomeResource.BTN_DOWNLOAD_WFRTOOL
+                    </button>
+                </label>
+            </div>
+            <div class="collapse show" id="noticedata">
+                @if (Model.Message.Count() == 0)
+                {
+                    <div>
+                        <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+                    </div>
+                }
+
+                else
+                {
+                    <div>
+                        <div class="tb_scroll" style="height: 30vh;">
+                            <table class="table table-bordered ">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-grey text-center" colspan="2">内容</th>
+                                    </tr>
+                                </thead>
+                                @for (int i = 0; i < Model.Message.Count(); i++)
+                                {
+                                    <tbody>
+                                        <tr>
+                                            @if (Model.Message[i].MessageClass == "1")
+                                            {
+                                                <td class="align-middle mx-0"><i class="fa fa-exclamation-circle fa-lg" aria-hidden="true" style="color: #dc3545;"></i></td>
+                                            }
+                                            @if (Model.Message[i].MessageClass == "2")
+                                            {
+                                                <td class="align-middle"><i class="fa fa-exclamation-triangle fa-lg" aria-hidden="true" style="color: #ffc107;"></i></td>
+
+                                            }
+                                            @if (Model.Message[i].MessageClass == "3")
+                                            {
+                                                <td class="align-middle" style="width:12px;"><i class="fa fa-info-circle fa-lg" aria-hidden="true" style="color: #007bff;"></i></td>
+                                            }
+                                            <td>@Model.Message[i].DispMessage</td>
+                                        </tr>
+                                    </tbody>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div>
+            <div class="row fold mx-0">
+                <h3>
+                    @HomeResource.Arrive
+                </h3>
+                <a class="btnfold" data-toggle="collapse" href="#arrivedata" role="button" aria-expanded="false" aria-controls="arrivedata">
+                </a>
+            </div>
+            <div class="collapse show" id="arrivedata">
+                @if (string.IsNullOrEmpty(Model.Arrive.CenterId))
+                {
+                    <table class="table-borderless arrive">
+                        <tr>
+                            <td colspan="3" class="arrive-td">
+                                <div class="sort">
+                                    <div class="sort_inner">
+                                        @Html.CenterDropDownFor(
+                                            model => model.Arrive.CenterId
+                                            , Wms.Common.Profile.User.UserId
+                                            , "", new { @id = "ddlArriveCenterId", tabindex = "1", onchange = "CenterIdChange()" })
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Share.Common.Resources.MessagesResource.MSG_NOT_FOUND
+                            </td>
+                        </tr>
+                    </table>
+                }
+                else
+                {
+                    <table class="table-borderless arrive">
+                        <tr>
+                            <td colspan="3" class="arrive-td">
+                                @Html.DisplayFor(model => model.Arrive.Date)
+                                <div class="sort">
+                                    <div class="sort_inner">
+                                        @Html.CenterDropDownFor(
+                                            model => model.Arrive.CenterId
+                                            , Wms.Common.Profile.User.UserId
+                                            , "", new { @id = "ddlArriveCenterId", tabindex = "1", onchange = "CenterIdChange()" })
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="arrive-td">
+                                @Html.TcdcChart(Model.Arrive.ArriveProgress.Title, Model.Arrive.ArriveProgress.TcQty, Model.Arrive.ArriveProgress.DcQty, "MoveArrive()")
+                            </td>
+                            <td class="arrive-td">
+                                @Html.TcdcChart(Model.Arrive.DcShelvesProgress.Title, Model.Arrive.DcShelvesProgress.TcQty, Model.Arrive.DcShelvesProgress.DcQty, "MoveUnshelved()")
+                            </td>
+                            <td class="arrive-td"></td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div>
+            <div class="row fold mx-0">
+                <h3>
+                    @HomeResource.Ship
+                </h3>
+                <a class="btnfold" data-toggle="collapse" href="#shipdata" role="button" aria-expanded="false" aria-controls="shipdata">
+                </a>
+            </div>
+            <div class="collapse show" id="shipdata">
+                @if (string.IsNullOrEmpty(Model.Ship.CenterId))
+                {
+                    <table class="table-borderless arrive">
+                        <tr>
+                            <td colspan="3" class="arrive-td">
+                                <div class="sort">
+                                    <div class="sort_inner">
+                                        @Html.CenterDropDownFor(
+                                            model => model.Ship.CenterId
+                                            , Wms.Common.Profile.User.UserId
+                                            , "", new { @id = "ddlShipCenterId", tabindex = "1", onchange = "CenterIdChange()" })
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Share.Common.Resources.MessagesResource.MSG_NOT_FOUND
+                            </td>
+                        </tr>
+                    </table>
+                }
+                else
+                {
+                    <table class="table-borderless arrive">
+                        <tr>
+                            <td colspan="3" class="arrive-td">
+                                @Html.DisplayFor(model => model.Ship.Date)
+                                <div class="sort">
+                                    <div class="sort_inner">
+                                        @Html.CenterDropDownFor(
+                                            model => model.Ship.CenterId
+                                            , Wms.Common.Profile.User.UserId
+                                            , "", new { @id = "ddlShipCenterId", tabindex = "1", onchange = "CenterIdChange()" })
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="arrive-td">
+                                <span class="shiptitle">@HomeResource.ShipPlanDate</span><br />
+                                @Html.TcdcChart(Model.Ship.ShipDcQty.Title, Model.Ship.ShipDcQty.TcQty, Model.Ship.ShipDcQty.DcQty, "MoveShip('DC')")
+                            </td>
+                            <td class="arrive-td"></td>
+                            <td class="arrive-td"></td>
+                        </tr>
+                        <tr>
+                            <td class="arrive-td">
+                                <span class="shiptitle">@HomeResource.PickWork</span><br />
+                                @Html.TcdcChart(Model.Ship.PickDcQty.Title, Model.Ship.PickDcQty.TcQty, Model.Ship.PickDcQty.DcQty, "MoveShip('DC')")
+                            </td>
+                            <td class="arrive-td"></td>
+                            <td class="arrive-td"></td>
+                        </tr>
+                        <tr>
+                            <td class="arrive-td">
+                                <span class="shiptitle">@HomeResource.StoreSampling</span><br />
+                                @Html.TcdcChart(Model.Ship.StoreDcQty.Title, Model.Ship.StoreDcQty.TcQty, Model.Ship.StoreDcQty.DcQty, "MoveShip('DC')")
+                            </td>
+                            <td class="arrive-td"></td>
+                            <td class="arrive-td"></td>
+                        </tr>
+                        <tr>
+                            <td class="arrive-td">
+                                <span class="shiptitle">@HomeResource.InvoicePrint</span><br />
+                                @Html.TcdcChart(Model.Ship.InvoiceDcQty.Title, Model.Ship.InvoiceDcQty.TcQty, Model.Ship.InvoiceDcQty.DcQty, "MoveShip('DC')")
+                            </td>
+                            <td class="arrive-td"></td>
+                            <td class="arrive-td"></td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("tcDcKbn", Model.TcDcKbn)
+}
+
+<script>
+        // 画面遷移
+    function MoveArrive() {
+        var urlIndexAction = '@Url.Action("Index", "PurchaseReference", new { area = "Arrival" })';
+        window.location.href = urlIndexAction;
+    };
+    function MoveUnshelved() {
+        var urlIndexAction = '@Url.Action("Index", "UnshelvedReference", new { area = "Arrival" })';
+        window.location.href = urlIndexAction;
+    };
+    function MoveShip(key) {
+        $("#tcDcKbn").val(key);
+        var urlAction = '@Url.Action("Move", "Home", new { area = "" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    };
+     function MoveShip(key) {
+        $("#tcDcKbn").val(key);
+        var urlAction = '@Url.Action("Move", "Home", new { area = "" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+     };
+
+     // Sort
+     function CenterIdChange() {
+        var urlAction = '@Url.Action("Search", "Home", new { id = "frmSearch" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+     };
+
+     //画面自動更新処理
+     var intervalVal = @Model.UpdTime;
+    setInterval("CenterIdChange()", intervalVal);
+
+
+    //Download
+    $("#btnDownload").on("click", function () {
+        var urlAction = '@Url.Action("Download", "Home", new { area = "" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Get");
+        $form.submit();
+    });
+
+</script>

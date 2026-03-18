@@ -1,0 +1,728 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.TransferReference;
+@model Wms.Areas.Ship.ViewModels.TransferReference.TransferReferenceViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_TransferReference01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "TransferReference", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@TransferReferenceResource.Center</td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransferReferenceResource.ShipKind</td>
+                <td colspan="2">
+                    <label>
+                        @Html.RadioButtonFor(model => model.SearchConditions.ShipKind, "Dc", new { tabindex = "2", @class = "radio_input" })
+                        <span class="radio_parts"></span>
+                        <span>@TransferReferenceResource.DcShip</span>
+                    </label>
+                    <label>
+                        @Html.RadioButtonFor(model => model.SearchConditions.ShipKind, "Case", new { tabindex = "3", @class = "radio_input", })
+                        <span class="radio_parts"></span>
+                        <span>@TransferReferenceResource.CaseShip</span>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransferReferenceResource.AllocDate</td>
+                <td>
+                    <div class="sortarea" style="width:600px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocDateFrom, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocDateTo, new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle">@TransferReferenceResource.BatchName</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BatchName, new { htmlAttributes = new { @class = "w_30_normal", @id = "txtBatchName", tabindex = "6", @style = "outline:none;" } })
+                    @Html.LikeMark(CommonsResource.Like)
+                </td>
+            </tr>
+        </table>
+        <p class="py-3"></p>
+        <table>
+            <tr>
+                <td class="tdtitle"></td>
+                <td class="w_80_normal" style="width:704px"></td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "TransferReference", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "7" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="8" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        @Html.HiddenFor(model => model.SearchConditions.ShipPlanDate, new { id = "hidShipPlanDate" })
+        @Html.HiddenFor(model => model.SearchConditions.BatchNo, new { id = "hidBatchNo" })
+        @Html.HiddenFor(model => model.SearchConditions.ShipKind, new { id = "hidShipKind" })
+        @Html.HiddenFor(model => model.SearchConditions.AllocDateFrom, new { id = "hidAllocDateFrom" })
+        @Html.HiddenFor(model => model.SearchConditions.AllocDateTo, new { id = "hidAllocDateTo" })
+        @Html.HiddenFor(model => model.SearchConditions.BatchName, new { id = "hidBatchName" })
+    }
+
+</div>
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+@*【DC出荷作業進捗】*@
+@if (Model.DcResults.TransferReferenceDcs != null && Model.SearchConditions.ShipKind == Wms.Common.ShipKinds.Dc)
+{
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.DcResults.TransferReferenceDcs.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+
+            @if (Model.DcResults.TransferReferenceDcs.Count() > 0)
+            {
+                @Html.PagedListPager(Model.DcResults.TransferReferenceDcs, Page => Url.Action("Search", "TransferReference", new { Page, @class = "btn-outline-dark", SearchType = SearchTypes.SortPage }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+        @TransferReferenceResource.TitleDc
+        @* Content *@
+        @if (Model.DcResults.TransferReferenceDcs.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll show_scroll" style="height:75vh">
+                    <table class="table table-bordered" id="listData" style="width:1600px">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle" rowspan="2">&nbsp;</th>
+                                <th class="bg-grey align-bottom" rowspan="2">
+                                    @TransferReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-bottom" rowspan="2">
+                                    @TransferReferenceResource.BatchNo
+                                </th>
+                                <th class="bg-grey align-bottom" rowspan="2">
+                                    @TransferReferenceResource.ShipToStoreQty
+                                </th>
+                                <th class="bg-grey align-bottom" rowspan="2">
+                                    @TransferReferenceResource.ItemSkuQty
+                                </th>
+                                <th class="bg-grey align-bottom" rowspan="2">
+                                    @TransferReferenceResource.AllocQty
+                                </th>
+                                <th class="bg-grey align-middle text-center" colspan="4">
+                                    @TransferReferenceResource.ShipPic
+                                </th>
+                                <th class="bg-grey align-middle text-center" colspan="3">
+                                    @TransferReferenceResource.LaneSort
+                                </th>
+                                <th class="bg-grey align-middle text-center" colspan="3">
+                                    @TransferReferenceResource.StoreSort
+                                </th>
+                                <th class="bg-grey align-middle text-center" colspan="3">
+                                    @TransferReferenceResource.OrderPic
+                                </th>
+                                <th class="bg-grey align-middle text-center" colspan="2">
+                                    @TransferReferenceResource.StockOut
+                                </th>
+                                <th class="bg-grey align-middle text-center" colspan="2">
+                                    @TransferReferenceResource.NouhinPrn
+                                </th>
+                                <th hidden rowspan="2">
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndQty
+                                </th>
+                                <th class="bg-grey align-middle twoth redcolor">
+                                    @TransferReferenceResource.StockOutRegQty
+                                </th>
+                                <th class="bg-grey align-middle twoth redcolor">
+                                    @TransferReferenceResource.StockOutFixQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.Percent
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndSkuQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.Percent
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndSkuQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.Percent
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndStoreQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.Percent
+                                </th>
+                                <th class="bg-grey align-middle twoth redcolor">
+                                    @TransferReferenceResource.StockOutRegQty
+                                </th>
+                                <th class="bg-grey align-middle twoth redcolor">
+                                    @TransferReferenceResource.StockOutFixQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.Percent
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "TransferReference", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.DcResults.TransferReferenceDcs.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("TransferReferenceDcs[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            <label>
+                                                <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetCheckValue('DC','','@(cModel.v.BatchNo)')" />
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.DcResults.TransferReferenceDcs.PageNumber - 1) * Model.DcResults.TransferReferenceDcs.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BatchNo)
+                                            @if (cModel.v.PickKind == "1")
+                                            {
+                                                <span style="color:blue; margin-left:30px;">@TransferReferenceResource.TotalPicking</span>
+                                            }<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.BatchName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipToStoreQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSkuQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.PicPicQty)
+                                        </td>
+                                        <td class="align-middle text-right redcolor">
+                                            @Html.DisplayFor(modelItem => cModel.v.PicStockOutRegQty)
+                                        </td>
+                                        <td class="align-middle text-right redcolor">
+                                            @Html.DisplayFor(modelItem => cModel.v.PicStockOutFixQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.PicPicPercent)@(cModel.v.PicPicPercent == null ? "0%" : "%")
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.LaneSortItemSkuQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.LaneSortSortQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.LaneSortPercent)@(cModel.v.LaneSortPercent == null ? "0%" : "%")
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.StoreSortItemSkuQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.StoreSortSortQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.StoreSortPercent)@(cModel.v.StoreSortPercent == null ? "0%" : "%")
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderPicShipToStoreQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderPicQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderPicPercent)@(cModel.v.OrderPicPercent == null ? "0%" : "%")
+                                        </td>
+                                        <td class="align-middle text-right redcolor">
+                                            @Html.DisplayFor(modelItem => cModel.v.StockOutRegQty)
+                                        </td>
+                                        <td class="align-middle text-right redcolor">
+                                            @Html.DisplayFor(modelItem => cModel.v.StockOutFixQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NouhinPrnQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NouhinPrnPercent)@(cModel.v.NouhinPrnPercent == null ? "0%" : "%")
+                                        </td>
+                                        <td class="template" hidden></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*【ケース出荷作業進捗】*@
+@if (Model.CaseResults.TransferReferenceCases != null && Model.SearchConditions.ShipKind == Wms.Common.ShipKinds.Case)
+{
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.CaseResults.TransferReferenceCases.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.CaseResults.TransferReferenceCases.Count() > 0)
+            {
+                @Html.PagedListPager(Model.CaseResults.TransferReferenceCases, Page => Url.Action("Search", "TransferReference", new { Page, @class = "btn-outline-dark", SearchType = SearchTypes.SortPage }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    @* Container *@
+    <div class="Container">
+        @TransferReferenceResource.TitleCase
+        @* Content *@
+        @if (Model.CaseResults.TransferReferenceCases.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll show_scroll" style="height:75vh;">
+                    <table class="table table-bordered" id="listData" style="width:1250px">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle" rowspan="2">&nbsp;</th>
+                                <th class="bg-grey align-bottom" rowspan="2">
+                                    @TransferReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-bottom" rowspan="2">
+                                    @TransferReferenceResource.BatchNo
+                                </th>
+                                <th class="bg-grey align-bottom" rowspan="2">
+                                    @TransferReferenceResource.ShipToStoreQty
+                                </th>
+                                <th class="bg-grey align-middle" style="border-bottom: none;">
+                                    @TransferReferenceResource.Instruct
+                                </th>
+                                <th class="bg-grey align-middle" style="border-bottom: none;">
+                                    @TransferReferenceResource.Pic
+                                </th>
+                                <th class="bg-grey align-middle" style="border-bottom: none;">
+                                    @TransferReferenceResource.Pic
+                                </th>
+                                <th class="bg-grey align-middle text-center" colspan="4">
+                                    @TransferReferenceResource.CaseJanPic
+                                </th>
+                                <th class="bg-grey align-middle text-center" colspan="2">
+                                    @TransferReferenceResource.NouhinPrn
+                                </th>
+                                <th hidden rowspan="2">
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="bg-grey align-middle twoth" style="border-top: none;">
+                                    @TransferReferenceResource.CaseQty
+                                </th>
+                                <th class="bg-grey align-middle twoth" style="border-top: none;">
+                                    @TransferReferenceResource.JanQty
+                                </th>
+                                <th class="bg-grey align-middle twoth" style="border-top: none;">
+                                    @TransferReferenceResource.AllocQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndQty
+                                </th>
+                                <th class="bg-grey align-middle twoth redcolor">
+                                    @TransferReferenceResource.StockOutRegQty
+                                </th>
+                                <th class="bg-grey align-middle twoth redcolor">
+                                    @TransferReferenceResource.StockOutFixQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.Percent
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.EndQty
+                                </th>
+                                <th class="bg-grey align-middle twoth">
+                                    @TransferReferenceResource.Percent
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "TransferReference", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.CaseResults.TransferReferenceCases.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("TransferReferenceCases[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            <label>
+                                                <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetCheckValue('CASE','','@(cModel.v.BatchNo)')" />
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.CaseResults.TransferReferenceCases.PageNumber - 1) * Model.CaseResults.TransferReferenceCases.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BatchNo)
+                                            @Html.DisplayFor(modelItem => cModel.v.BatchName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipToStoreQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.InstructCaseQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.JanQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.PicQty)
+                                        </td>
+                                        <td class="align-middle text-right redcolor">
+                                            @Html.DisplayFor(modelItem => cModel.v.StockOutRegQty)
+                                        </td>
+                                        <td class="align-middle text-right redcolor">
+                                            @Html.DisplayFor(modelItem => cModel.v.StockOutFixQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.PicPercent)@(cModel.v.PicPercent == null ? "0%" : "%")
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NouhinPrnQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NouhinPrnPercent)@(cModel.v.NouhinPrnPercent == null ? "0%" : "%")
+                                        </td>
+                                        <td class="template" hidden></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>  }
+<div id="dialog" class="i02_01">
+</div>
+<div id="dialogStore" class="i02_01">
+</div>
+@Html.Hidden("hidItemSkuId", "")
+@Html.Hidden("hidBatchNoStore", "")
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @if (Model.SearchConditions.ShipKind == Wms.Common.ShipKinds.Dc || Model.SearchConditions.ShipKind == Wms.Common.ShipKinds.Case)
+        {
+            <button id="btnPickResult" type="button" class="btn btn-outline-dark btnsize" onclick="ShowDetails('PickResult')" disabled>@TransferReferenceResource.BtnPickResult</button>
+        }
+        @if (Model.SearchConditions.ShipKind == Wms.Common.ShipKinds.Dc)
+        {
+            <button id="btnPickSortDetail" type="button" class="btn btn-outline-dark btnsize" onclick="ShowDetails('PickSortDetail')" disabled>@TransferReferenceResource.BtnPickDetail</button>
+        }
+        @if (Model.SearchConditions.ShipKind == Wms.Common.ShipKinds.Dc)
+        {
+            <button id="btnLaneSortDetail" type="button" class="btn btn-outline-dark btnsize" onclick="ShowDetails('LaneSortDetail')" disabled>@TransferReferenceResource.BtnLaneDetail</button>
+            <button id="btnStoreSortOrderPicDetail" type="button" class="btn btn-outline-dark btnsize" onclick="ShowDetails('StoreSortOrderPicDetail')" disabled>@TransferReferenceResource.BtnStoreSortOrderPicDetail</button>
+        }
+        @if (Model.SearchConditions.ShipKind == Wms.Common.ShipKinds.Dc)
+        {
+            <button type="submit" id="btnBtoBInstruction" class="btn btn-dark btnsize _pm" onclick="BtoBInstructionReference()" disabled>
+                @TransferReferenceResource.BtnShipReference
+            </button>
+        }
+    </div>
+}
+@Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_ALLOCATION_CANCEL)
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        function Search() {
+                var urlAction = '@Url.Action("Search", "TransferReference", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        function BtoBInstructionReference() {
+            var urlAction = '@Url.Action("BtoBInstructionSearch", "BtoBInstructionReference", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            if ($('#hidShipKind').val() == 'TC') {
+                $("#hidBatchNo").val('');
+            }
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function EcConfirmProgress() {
+                var urlAction = '@Url.Action("EcConfirmProgressSearch", "EcConfirmProgress", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        // ピック情報出力、CSVダウンロードリクエスト
+        $("#btnDownLoadPickInfo").on("click", function () {
+            var urlAction = '@Url.Action("DownloadPickInfo", "TransferReference", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+            enableSubmit();
+        });
+
+        $('#btnBatchReference').on("click", function () {
+            var urlAction ='@Url.Action("Cancel", "TransferReference", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        function SetCheckValue(shipKind,shipPlanDate,batchNo) {
+            if (shipKind == 'TC') {
+                $("#btnItemDetail").removeAttr('disabled');
+                $("#btnLaneSortDetail").removeAttr('disabled');
+                $("#btnStoreSortOrderPicDetail").removeAttr('disabled');
+                $("#btnBtoBInstruction").removeAttr('disabled');
+            } else if (shipKind == 'DC') {
+                $("#btnDownLoadPickInfo").removeAttr('disabled');
+                $("#btnPickSortDetail").removeAttr('disabled');
+                $("#btnLaneSortDetail").removeAttr('disabled');
+                $("#btnStoreSortOrderPicDetail").removeAttr('disabled');
+                $("#btnBtoBInstruction").removeAttr('disabled');
+            } else if (shipKind == 'EC') {
+                $("#btnPickSortDetail").removeAttr('disabled');
+                $("#btnEcunitReference").removeAttr('disabled');
+                $("#btnEcConfirmProgress").removeAttr('disabled');
+            }
+
+            if (shipKind != 'TC') {
+                $("#btnPickResult").removeAttr('disabled');
+            }
+
+            $("#hidShipKind").val(shipKind);
+            $("#hidShipPlanDate").val(shipPlanDate);
+            $("#hidBatchNo").val(batchNo);
+        }
+
+        function SetCheckValueStore(itemSkuId, batchNo) {
+            $("#btnPickSortDetailStore").removeAttr('disabled');
+            $("#hidItemSkuId").val(itemSkuId);
+            $("#hidBatchNoStore").val(batchNo);
+        }
+        //ﾎﾟﾝﾁ (ECユニット仕分)
+        var current_scrollY;
+        $(function () {
+            $("#dialog").dialog({
+                autoOpen: false,
+                width: 1100,
+                Height: 100,
+                modal: true,
+                position: { my: 'center top+30', at: 'center top', of: "body" },
+                dialogClass: 'modalct',
+                resizable: false
+            });
+
+            $("#dialogStore").dialog({
+                autoOpen: false,
+                width: 1100,
+                Height: 100,
+                modal: true,
+                position: { my: 'center top+30', at: 'center top', of: "body" },
+                dialogClass: 'modalct',
+                resizable: false
+            });
+
+            $(".ui-icon-closethick").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+
+                    if ($("#btnDetailsStoreClose").is(":hidden")) {
+                        $("#dialog").dialog("close");
+                    } else {
+                        $("#dialogStore").dialog("close");
+                    }
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+            $("#btnDetailsClose").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    /*$("#dialog").dialog("close");*/
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+        });
+        $(document.body).on("click",
+            ".ui-widget-overlay",
+            function () {
+                $.each($(".ui-dialog"),
+                    function () {
+                        var $dialog = $(this).children(".ui-dialog-content");
+                        if ($dialog.dialog("option", "modal")) {
+                            $('.wrap').attr({ style: '' });
+                            $('html, body').prop({ scrollTop: current_scrollY });
+                            $dialog.dialog("close");
+                        }
+                    });
+            });
+        function ShowDetails(action) {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialog").dialog("open");
+            searchDialogData(action);
+            }
+
+        function searchDialogData(action) {
+            var urlAction = '../TransferReference/'+action;
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    shipKind: $("#hidShipKind").val(),
+                    centerId: $("#ddlCenterId").val(),
+                    shipPlanDate: $("#hidShipPlanDate").val(),
+                    batchNo: $("#hidBatchNo").val(),
+                    batchName: $("#hidBatchName").val(),
+                    allocDateFrom: $("#hidAllocDateFrom").val(),
+                    allocDateTo: $("#hidAllocDateTo").val()
+                },
+                success: function (data) {
+                    $("#dialog").html("");
+                    $("#dialog").html(data);
+                    $("#dialog").dialog(
+                        {
+                            width: 1200,
+                            height:800
+                        });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                }
+            });
+        }
+        function closeDialog() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialog').dialog('close');
+        }
+
+        //店別仕分状況モーダル用
+        function ShowDetailsStore() {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialogStore").dialog("open");
+            searchDialogDataStore();
+        }
+
+        function searchDialogDataStore() {
+            var urlAction = '../TransferReference/PickSortDetailStore';
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    centerId: $("#ddlCenterId").val(),
+                    batchNo: $("#hidBatchNoStore").val(),
+                    itemSkuId: $("#hidItemSkuId").val()
+                },
+                success: function (data) {
+                    $("#dialogStore").html("");
+                    $("#dialogStore").html(data);
+                    $("#dialogStore").dialog(
+                        {
+                            width: 1200,
+                            height: 800
+                        });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                }
+            });
+        }
+        function closeDialogStore() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogStore').dialog('close');
+        }
+
+    </script>
+}

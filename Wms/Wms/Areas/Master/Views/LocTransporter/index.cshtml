@@ -1,0 +1,853 @@
+﻿@using Wms.Helpers;
+@model  Wms.Areas.Master.ViewModels.LocTransporter.Index
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_LocTransporter01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "LocTransporter", FormMethod.Post, new { id = "frmSearch", @leave_confirm = "yes" }))
+    {
+        @*@using (Ajax.BeginForm("Search", "LocTransporter", new { area = "Master" }, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "div_search", OnComplete = "" }, new { id = "frmSearch" }))
+            {*@
+        <table class="ml-3 mt-4 mb-3">
+            <tr>
+                <td class="tdtitle">
+                    <span>@LocTransporterResource.ShipFromCenter：</span>
+                </td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                 model => model.SearchConditions.CenterId
+                                 , Wms.Common.Profile.User.UserId
+                                 , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td><span>@LocTransporterResource.Area：</span></td>
+                <td rowspan="5" class="align-top">
+                    @Html.AreaButtonList("SearchConditions.AreaItem", ((IEnumerable<SelectListItem>)ViewBag.AreaList), new { @id = "arae" })
+                </td>
+            </tr>
+            <tr>
+                @* row 2 *@
+                <td class="tdtitle">
+                    <span>@LocTransporterResource.ShipToClass：</span>
+                </td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                    model => model.SearchConditions.ShipToStoreClass,
+                                    (IEnumerable<SelectListItem>)ViewBag.StoreClassList, CommonResource.None, new { id = "ddlShipToStoreClass" })
+                            @Html.ValidationMessageFor(model => model.SearchConditions.ShipToStoreClass, "", new { tabindex = "2" })
+
+                            @*@Html.EnumDropDownListFor(model => model.SearchConditions.ShipToStoreClass, new { id = "ddlShipToStoreClass", tabindex = "2" })*@
+                        </div>
+                    </div>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                @* row 3 *@
+                <td class="tdtitle">
+                    <span>@LocTransporterResource.ShipToStore：</span>
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.SearchConditions.ShipToStoreId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtShipToStoreId", tabindex = "3" } })
+                    @Html.EditorFor(model => model.SearchConditions.ShipToStoreName, new {htmlAttributes = new { @class = "w_30_normal", @id = "txtShipToStoreName", tabindex= "4" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                    <div class="search">
+                        <button type="button" id="btnBrandId" class="search_btn" data-toggle="modal" data-target="#SyukkasakiModal" data-id="#txtShipToStoreId" data-name="#txtShipToStoreName" tabindex="5" />
+                    </div>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                @* row 4 *@
+                <td class="tdtitle">
+                    <span>@LocTransporterResource.TekiyouStartDate：</span>
+                </td>
+                <td class="w_checkbox">
+                    <label class="checkboxgroup">
+                        @Html.CheckBoxFor(model => model.SearchConditions.IsNewDate, new { @id = "chkIsNewDate", @class = "check-box", tabindex = "6" })
+                        <span class="chk_parts"></span>
+                    </label>
+                </td>
+                <td>@LocTransporterResource.StartDateNewTime</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    <span>@LocTransporterResource.Transporter：</span>
+                </td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(model => model.SearchConditions.TransporterId, (IEnumerable<SelectListItem>)ViewBag.TransportersList, CommonResource.None, new { id = "ddlTransporterId", tabindex = "7" })
+                        </div>
+                    </div>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="2"></td>
+                <td></td>
+                <td class="text-xl-right">
+                    <button type="button" id="btnUpload" class="Upload _pm" tabindex="8">
+                        <img src="~/Content/img/upload.png" />
+                        @FormsResource.BTN_UPLOAD
+                    </button>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "LocTransporter", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "9" })
+                    <button type="button" class="btn btn-outline-dark" id="btnSearch" tabindex="10">
+                        @FormsResource.BTN_SEARCH
+                    </button>
+                </td>
+            </tr>
+        </table>
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+    }
+</div>
+
+@{
+    var storeConditions = new ViewDataDictionary { { "ParameterStoreId", Model.SearchConditions.ShipToStoreId }, { "TempStoreId", Model.SearchConditions.ShipToStoreId } };
+}
+@* 出荷先を追加する 画面 *@
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml", storeConditions)
+@Html.Partial("_FileUploadModal")
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.LocTransporterResult.LocTransporters != null)
+{
+    if (Model.LocTransporterResult.LocTransporters.Count() > 0)
+    {
+        <div class="sublbarea no_border" style="height:54px;margin-right:40px;margin-bottom: -10px;">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnDownload" class="download">
+                            <img src="~/Content/img/download.png" />
+                            @FormsResource.BTN_DOWNLOAD
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li class="totalcount">
+                    @FormsResource.DISPLAY_SHORT
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.LocTransporterResult.LocTransporters.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.LocTransporterResult.LocTransporters.Count() > 0)
+            {
+                @Html.PagedListPager(Model.LocTransporterResult.LocTransporters, Page => Url.Action("Search", "LocTransporter", new { Page }), PagerHelper.Default)
+                @*@Html.PagedListPager(Model.LocTransporterResult.LocTransporters, Page => Url.Action("Search", new {
+                        Model.SearchConditions.CenterId,
+                        Model.SearchConditions.ShipToStoreId,
+                        Model.SearchConditions.IsNewDate,
+                        Model.SearchConditions.TransporterId,
+                        Model.SearchConditions.SortKey,
+                        Model.SearchConditions.Sort,
+                        Model.SearchConditions.AreaItem,
+                        Page
+                    }), PagerHelper.GetOptions("div_search", ""))*@
+
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+        @* Content *@
+        @if (Model.LocTransporterResult.LocTransporters.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll w-100" style="overflow-x:auto;height:65vh;">
+                    @* 検索一覧 *@
+                    <table id="listData" class="table table-bordered tb_select">
+                        <thead class="thead-right">
+                            <tr class="bg-grey">
+                                <th class="bg-grey align-middle" rowspan="2"><div style="width:20px">&nbsp;</div></th>
+                                <th class="bg-grey align-middle" rowspan="2">No</th>
+                                <th class="bg-grey align-middle" rowspan="2"><div class="w_5_normal">@LocTransporterResource.ShipFromCenter</div></th>
+                                <th class="bg-grey align-middle" rowspan="2"><div class="w_5_normal">@LocTransporterResource.ShipToStore</div></th>
+                                <th class="bg-grey align-middle" rowspan="2"><div class="w_5_normal">@LocTransporterResource.ShipStore</div></th>
+                                <th class="bg-grey align-middle" rowspan="2"><div class="w_5_normal">@LocTransporterResource.TekiyouStartDate</div></th>
+                                <th class="bg-grey align-middle" rowspan="2"><div>@LocTransporterResource.MainTransporter</div></th>
+                                <th class="bg-grey align-middle" rowspan="2"><div>@LocTransporterResource.MainLeadTime</div></th>
+                                @*<th class="bg-grey text-center" colspan="2">@LocTransporterResource.Mon</th>
+                                  <th class="bg-grey text-center" colspan="2">@LocTransporterResource.Tue</th>
+                                  <th class="bg-grey text-center" colspan="2">@LocTransporterResource.Wed</th>
+                                  <th class="bg-grey text-center" colspan="2">@LocTransporterResource.Thu</th>
+                                  <th class="bg-grey text-center" colspan="2">@LocTransporterResource.Fri</th>
+                                  <th class="bg-grey text-center" colspan="2">@LocTransporterResource.Sat</th>
+                                  <th class="bg-grey text-center" colspan="2">@LocTransporterResource.Sun</th>
+                                  <th class="bg-grey text-center" colspan="2">@LocTransporterResource.Hol</th>*@
+                                <th class="bg-grey align-middle" rowspan="2"><div>@LocTransporterResource.ClientCdSagawa</div></th>
+                                <th class="bg-grey align-middle" rowspan="2"><div>@LocTransporterResource.ClientCdNaniwa</div></th>
+                                <th class="bg-grey align-middle" rowspan="2"><div>@LocTransporterResource.ClientCdWs</div></th>
+                            </tr>
+                            @*<tr class="bg-grey">
+                                    @for (int i = 0; i < 8; i++)
+                                    {
+                                        <th class="bg-grey twoth"><div class="w_5_normal">@LocTransporterResource.Transporter</div></th>
+                                        <th class="bg-grey twoth"><div class="w_1_bit multiLine">@LocTransporterResource.LeadTime</div></th>
+                                    }
+                                </tr>*@
+                        </thead>
+                        @using (Html.BeginForm("Edit", "LocTransporter", FormMethod.Post, new { id = "frmUpdate" }))
+                        {
+                            <tbody>
+                                @Html.AntiForgeryToken()
+                                @Html.Partial("_DeleteConfirmMessageDialog", @MessagesResource.QUE_DELETE)
+                                @foreach (var rows in Model.LocTransporterResult.LocTransporters.Select((v, i) => new { v, i }))
+                                {
+                                    //var idx = (Model.LocTransporterResult.LocTransporters.PageNumber - 1) * Model.LocTransporterResult.LocTransporters.PageSize + rows.i;
+                                    var key = String.Format("LocTransporters[{0}].", rows.i);
+                                    <tr>
+                                        <td class="w_checkbox align-middle">
+                                            <label class="checkboxgroup">
+                                                @Html.CheckBox(key + "IsCheck", new { @id = (key + "CheckedValue"), @class = "check-box" })
+                                                <span class="chk_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div>
+                                                @((rows.i + 1) + (Model.LocTransporterResult.LocTransporters.PageNumber - 1) * Model.LocTransporterResult.LocTransporters.PageSize)
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div>@Html.DisplayFor(m => rows.v.CenterId)</div>
+                                            <div>@Html.DisplayFor(m => rows.v.CenterName)</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div>@Html.DisplayFor(m => rows.v.ShipToStoreId)</div>
+                                            <div>@Html.DisplayFor(m => rows.v.ShipToStoreName)</div>
+                                            @Html.HiddenFor(m => rows.v.ShipToStoreId, new { Name = key + "ShipToStoreId", @id = key + "ShipToStoreId" })
+                                            @Html.HiddenFor(m => rows.v.ShipToStoreName, new { Name = key + "ShipToStoreName", @id = key + "ShipToStoreName" })
+                                            @Html.HiddenFor(m => rows.v.CenterId, new { Name = key + "CenterId", @id = key + "CenterId" })
+                                            @Html.HiddenFor(m => rows.v.CenterName, new { Name = key + "CenterName", @id = key + "CenterName" })
+                                            @Html.HiddenFor(m => rows.v.RowId, new { Name = key + "RowId", @id = key + "RowId", @class = "rowid" })
+                                            @Html.HiddenFor(m => rows.v.ShipperId, new { Name = key + "ShipperId", @id = key + "ShipperId" })
+                                            @Html.HiddenFor(m => rows.v.UpdateCount, new { Name = key + "UpdateCount", @id = key + "UpdateCount" })
+                                            @Html.HiddenFor(m => rows.v.TransporterIdMon, new { Name = key + "TransporterIdMon", @id = key + "TransporterIdMon" })
+                                            @Html.HiddenFor(m => rows.v.TransporterIdTue, new { Name = key + "TransporterIdTue", @id = key + "TransporterIdTue" })
+                                            @Html.HiddenFor(m => rows.v.TransporterIdWed, new { Name = key + "TransporterIdWed", @id = key + "TransporterIdWed" })
+                                            @Html.HiddenFor(m => rows.v.TransporterIdThu, new { Name = key + "TransporterIdThu", @id = key + "TransporterIdThu" })
+                                            @Html.HiddenFor(m => rows.v.TransporterIdFri, new { Name = key + "TransporterIdFri", @id = key + "TransporterIdFri" })
+                                            @Html.HiddenFor(m => rows.v.TransporterIdSat, new { Name = key + "TransporterIdSat", @id = key + "TransporterIdSat" })
+                                            @Html.HiddenFor(m => rows.v.TransporterIdSun, new { Name = key + "TransporterIdSun", @id = key + "TransporterIdSun" })
+                                            @Html.HiddenFor(m => rows.v.TransporterIdHol, new { Name = key + "TransporterIdHol", @id = key + "TransporterIdHol" })
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="">
+                                                @Html.DisplayFor(m => rows.v.PrefName)
+                                                @Html.HiddenFor(m => rows.v.PrefName, new { Name = key + "PrefName", @id = key + "PrefName" })
+                                                @Html.HiddenFor(m => rows.v.PrefId, new { Name = key + "PrefId", @id = key + "PrefId" })
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(m => rows.v.StartDate)
+                                            @Html.HiddenFor(m => rows.v.StartDate, new { Name = key + "StartDate", @id = key + "StartDate" })
+                                        </td>
+                                        <td class="align-middle">
+                                            <div>
+                                                @Html.DisplayFor(m => rows.v.TransporterId)
+                                            </div>
+                                            <div>
+                                                @Html.DisplayFor(m => rows.v.TransporterName)
+                                            </div>
+                                            @Html.HiddenFor(m => rows.v.TransporterId, new { Name = key + "TransporterId", @id = key + "TransporterId" })
+                                            @Html.HiddenFor(m => rows.v.TransporterName, new { Name = key + "TransporterName", @id = key + "TransporterName" })
+                                        </td>
+                                        <td class="text-right align-middle">
+                                            @Html.DisplayFor(m => rows.v.LeadTimes)
+                                            @Html.HiddenFor(m => rows.v.LeadTimes, new { Name = key + "LeadTimes", @id = key + "LeadTimes" })
+                                        </td>
+                                        @*<td class="align-middle">
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterIdMon)
+                                                </div>
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterNameMon)
+                                                </div>
+                                                @Html.HiddenFor(m => rows.v.TransporterIdMon, new { Name = key + "TransporterIdMon", @id = key + "TransporterIdMon" })
+                                                @Html.HiddenFor(m => rows.v.TransporterNameMon, new { Name = key + "TransporterNameMon", @id = key + "TransporterNameMon" })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(m => rows.v.LeadTimesMon)
+                                                @Html.HiddenFor(m => rows.v.LeadTimesMon, new { Name = key + "LeadTimesMon", @id = key + "LeadTimesMon" })
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterIdTue)
+                                                </div>
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterNameTue)
+                                                </div>
+                                                @Html.HiddenFor(m => rows.v.TransporterIdTue, new { Name = key + "TransporterIdTue", @id = key + "TransporterIdTue" })
+                                                @Html.HiddenFor(m => rows.v.TransporterNameTue, new { Name = key + "TransporterNameTue", @id = key + "TransporterNameTue" })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(m => rows.v.LeadTimesTue)
+                                                @Html.HiddenFor(m => rows.v.LeadTimesTue, new { Name = key + "LeadTimesTue", @id = key + "LeadTimesTue" })
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterIdWed)
+                                                </div>
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterNameWed)
+                                                </div>
+                                                @Html.HiddenFor(m => rows.v.TransporterIdWed, new { Name = key + "TransporterIdWed", @id = key + "TransporterIdWed" })
+                                                @Html.HiddenFor(m => rows.v.TransporterNameWed, new { Name = key + "TransporterNameWed", @id = key + "TransporterNameWed" })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(m => rows.v.LeadTimesWed)
+                                                @Html.HiddenFor(m => rows.v.LeadTimesWed, new { Name = key + "LeadTimesWed", @id = key + "LeadTimesWed" })
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterIdThu)
+                                                </div>
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterNameThu)
+                                                </div>
+                                                @Html.HiddenFor(m => rows.v.TransporterIdThu, new { Name = key + "TransporterIdThu", @id = key + "TransporterIdThu" })
+                                                @Html.HiddenFor(m => rows.v.TransporterNameThu, new { Name = key + "TransporterNameThu", @id = key + "TransporterNameThu" })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(m => rows.v.LeadTimesThu)
+                                                @Html.HiddenFor(m => rows.v.LeadTimesThu, new { Name = key + "LeadTimesThu", @id = key + "LeadTimesThu" })
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterIdFri)
+                                                </div>
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterNameFri)
+                                                </div>
+                                                @Html.HiddenFor(m => rows.v.TransporterIdFri, new { Name = key + "TransporterIdFri", @id = key + "TransporterIdFri" })
+                                                @Html.HiddenFor(m => rows.v.TransporterNameFri, new { Name = key + "TransporterNameFri", @id = key + "TransporterNameFri" })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(m => rows.v.LeadTimesFri)
+                                                @Html.HiddenFor(m => rows.v.LeadTimesFri, new { Name = key + "LeadTimesFri", @id = key + "LeadTimesFri" })
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterIdSat)
+                                                </div>
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterNameSat)
+                                                </div>
+                                                @Html.HiddenFor(m => rows.v.TransporterIdSat, new { Name = key + "TransporterIdSat", @id = key + "TransporterIdSat" })
+                                                @Html.HiddenFor(m => rows.v.TransporterNameSat, new { Name = key + "TransporterNameSat", @id = key + "TransporterNameSat" })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(m => rows.v.LeadTimesSat)
+                                                @Html.HiddenFor(m => rows.v.LeadTimesSat, new { Name = key + "LeadTimesSat", @id = key + "LeadTimesSat" })
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterIdSun)
+                                                </div>
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterNameSun)
+                                                </div>
+                                                @Html.HiddenFor(m => rows.v.TransporterIdSun, new { Name = key + "TransporterIdSun", @id = key + "TransporterIdSun" })
+                                                @Html.HiddenFor(m => rows.v.TransporterNameSun, new { Name = key + "TransporterNameSun", @id = key + "TransporterNameSun" })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(m => rows.v.LeadTimesSun)
+                                                @Html.HiddenFor(m => rows.v.LeadTimesSun, new { Name = key + "LeadTimesSun", @id = key + "LeadTimesSun" })
+                                            </td>
+                                            <td class=" align-middle">
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterIdHol)
+                                                </div>
+                                                <div>
+                                                    @Html.DisplayFor(m => rows.v.TransporterNameHol)
+                                                </div>
+                                                @Html.HiddenFor(m => rows.v.TransporterIdHol, new { Name = key + "TransporterIdHol", @id = key + "TransporterIdHol" })
+                                                @Html.HiddenFor(m => rows.v.TransporterNameHol, new { Name = key + "TransporterNameHol", @id = key + "TransporterNameHol" })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(m => rows.v.LeadTimesHol)
+                                                @Html.HiddenFor(m => rows.v.LeadTimesHol, new { Name = key + "LeadTimesHol", @id = key + "LeadTimesHol" })
+                                            </td>*@
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(m => rows.v.DispClientCd)
+                                            @Html.HiddenFor(m => rows.v.ClientCd, new { Name = key + "ClientCd", @id = key + "ClientCd" })<br />
+                                            @Html.DisplayFor(m => rows.v.ConsignorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(m => rows.v.DispControlId)
+                                            @Html.HiddenFor(m => rows.v.ControlId, new { Name = key + "ControlId", @id = key + "ControlId" })<br />
+                                            @Html.DisplayFor(m => rows.v.NaniwaConsignorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(m => rows.v.DispConsignorId)
+                                            @Html.HiddenFor(m => rows.v.ConsignorId, new { Name = key + "ConsignorId", @id = key + "ConsignorId" })<br />
+                                            @Html.DisplayFor(m => rows.v.WsConsignorName)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <input id="hiddata" type="hidden" name="rowids" />
+                        }
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Basefooter{
+    <div class="row vw-100">
+        <div class="col-auto">
+            @Html.Partial("_CheckBoxCounter")
+        </div>
+
+        <div class="btnarea">
+            @if (Wms.Common.Profile.User.GetUsable_Class(Request.Url) != "1")
+            {
+                @Html.ActionLink(FormsResource.BTN_NEW, "New", "LocTransporter", null, new { @class = "btn btn-outline-dark btnsize _pm", @id = "lnkCreate", tabindex = "1001" })
+            }
+            else
+            {
+                <button type="submit" id="lnkCreate" class="btn btn-outline-dark btnsize _pm" disabled>@FormsResource.BTN_NEW</button>
+            }
+            <button id="btnDeleteHidden" type="button" class="btn btn-outline-danger btnsize _pm" data-toggle="modal" data-target="#delconfirm" hidden>
+                @FormsResource.BTN_DELETE
+            </button>
+            <button type="button" id="btnDelete" class="btn btn-outline-danger btnsize _pm">
+                @FormsResource.BTN_DELETE
+            </button>
+            <button type="button" id="btnUpdate" class="btn btn-dark btnsize">
+                @LocTransporterResource.BTN_UPD
+            </button>
+            <button type="button" id="btnAdd" class="btn btn-dark btnsize _pm">
+                @LocTransporterResource.BTN_ADD
+            </button>
+        </div>
+    </div>
+}
+
+@section LayoutScripts{
+    <script type="text/javascript" src="~/Scripts/cwebclient.min.js?version=11.2.0" charset="utf-8"></script>
+
+    <script type="text/javascript">
+        //LocTransporterMaster
+        var PageView = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+                chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+                btnCheckAll: '#rbCheckAll',
+                btnUnCheckAll: '#rbUnCheckAll',
+                rowSelected: '#spnCheckedCounter',
+                chkChecked: ':checkbox:checked',
+                chkLabel: '#listData span.chk_parts',
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnSearch: '#btnSearch',
+                btnUpdate: '#btnUpdate',
+                btnAdd: '#btnAdd',
+                btnDelete: '#btnDelete',
+                ddlSort: '#ddlSort',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+
+                this.setCheckboxs();
+
+                // check error when update
+                this.setButtonStatus();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                * Stop event fired when click to checkbox
+                */
+                $(PageView.SELECTORS.chkLabel).click(function (evt) {
+                    evt.stopPropagation();
+                });
+
+                /**
+                * Check box click
+                */
+                $(PageView.SELECTORS.chkInTable).click(function (evt) {
+                    evt.stopPropagation();
+                    PageView.setButtonStatus();
+                });
+
+                /**
+                * Button check all clicked
+                */
+                $(PageView.SELECTORS.btnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $(PageView.SELECTORS.chkInTable).prop('checked', true);
+                        PageView.setRowidsFlag(true);
+                    }
+                });
+
+                /**
+                * Button UnCheck all clicked
+                */
+                $(PageView.SELECTORS.btnUnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $(PageView.SELECTORS.chkInTable).prop('checked', false);
+                        PageView.setRowidsFlag(false);
+                    }
+                });
+
+
+                $(PageView.SELECTORS.btnSearch).click(function () {
+                    PageView.setStorageInit();
+                var urlAction = '@Url.Action("Search", "LocTransporter", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "GET");
+                $form.submit();
+                });
+
+                $(PageView.SELECTORS.btnUpdate).click(function () {
+                    var list = PageView.getCheckList();
+                    $("#hiddata").val(JSON.stringify(list));
+                    var urlAction = '@Url.Action("Edit", "LocTransporter", new { area= "Master" })';
+                    $("#frmUpdate").attr("action", urlAction);
+                    $("#frmUpdate").attr("method", "POST");
+                    $("#frmUpdate").submit();
+                //    PageView.setStorageInit();
+                });
+
+
+                $(PageView.SELECTORS.btnDelete).click(function () {
+                    var list = PageView.getCheckList();
+                    $("#hiddata").val(JSON.stringify(list));
+
+                    var urlAction = '@Url.Action("Delete", "LocTransporter", new { area= "Master" })';
+                    $("#frmUpdate").attr("action", urlAction);
+                    //PageView.setStorageInit();
+                    $('#btnDeleteHidden').click();
+                });
+
+            },
+            /**
+            *
+            */
+            setRowidsFlag: function(flag) {
+                var storage = window.localStorage;
+                var rowids = storage.getItem('PKeys');
+                if (rowids != null) {
+                    var jrid = JSON.parse(rowids);
+                    $.each(jrid, function (key) {
+                        jrid[key] = flag;
+                    });
+                    storage.setItem('PKeys', JSON.stringify(jrid));
+                }
+                PageView.setButtonStatus();
+            },
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function () {
+                // Enable/Disable button Edit/Delete
+                if ($(PageView.SELECTORS.chkCheckedInTable).length > 0) {
+                    $(PageView.SELECTORS.btnUpdate).removeAttr('disabled');
+                    if (getUsable_Class() != 1) {
+                        $(PageView.SELECTORS.btnDelete).removeAttr('disabled');
+                        $(PageView.SELECTORS.btnAdd).removeAttr('disabled');
+                    }
+
+
+                } else {
+                    $(PageView.SELECTORS.btnUpdate).attr('disabled', 'disabled');
+                    $(PageView.SELECTORS.btnDelete).attr('disabled', 'disabled');
+                    $(PageView.SELECTORS.btnAdd).attr('disabled', 'disabled');
+                }
+                // save page
+                PageView.setCheckboxs('set')
+            },
+            // save page
+            setCheckboxs: function (flag) {
+                var storage = window.localStorage;
+                var rowids = storage.getItem('PKeys');
+                if (rowids != null) {
+                    var cnt = 0;
+                    var jrid = JSON.parse(rowids);
+                    var checkboxs = $("#listData input[type=checkbox]")
+                    checkboxs.each(function () {
+                        var row = $(this).parent().parent().parent();
+                        var rowid = row.find(".rowid").val();
+
+                        if (flag == 'set') {
+                            jrid[rowid] = $(this).is(':checked');
+                        }
+                        else {
+                            if (jrid[rowid]) {
+                                $(this).prop("checked", true);
+                            }
+                        }
+                    });
+
+                    if (flag == 'set') {
+                        storage.setItem('PKeys', JSON.stringify(jrid));
+                    }
+
+                    $.each(jrid, function (key, value) {
+                        if (value) {
+                            cnt++;
+                        }
+                    });
+                    if ($('#frmUpdate').length > 0) {
+                        $(PageView.SELECTORS.rowSelected).text(cnt);
+                    }
+                }
+
+            },
+
+            setStorageInit: function () {
+                if (window.localStorage) {
+                    var storage = window.localStorage;
+                    storage.removeItem('PKeys');
+                    var data = {
+                        'SearchConditions.CenterId': $("#ddlCenterId").val(),
+                        'SearchConditions.ShipToStoreClass': $("#ddlShipToStoreClass").val(),
+                        'SearchConditions.ShipToStoreId': $("#txtShipToStoreId").val(),
+                        'SearchConditions.ShipToStoreName': $("#txtShipToStoreName").val(),
+                        'SearchConditions.IsNewDate': $("#chkIsNewDate").is(':checked'),
+                        'SearchConditions.AreaItem[0].IsCheck': $("input[name='SearchConditions.AreaItem[0].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[1].IsCheck': $("input[name='SearchConditions.AreaItem[1].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[2].IsCheck': $("input[name='SearchConditions.AreaItem[2].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[3].IsCheck': $("input[name='SearchConditions.AreaItem[3].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[4].IsCheck': $("input[name='SearchConditions.AreaItem[4].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[5].IsCheck': $("input[name='SearchConditions.AreaItem[5].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[6].IsCheck': $("input[name='SearchConditions.AreaItem[6].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[7].IsCheck': $("input[name='SearchConditions.AreaItem[7].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[8].IsCheck': $("input[name='SearchConditions.AreaItem[8].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[9].IsCheck': $("input[name='SearchConditions.AreaItem[9].IsCheck']").is(':checked'),
+                        'SearchConditions.AreaItem[0].AreaId': $("input[name='SearchConditions.AreaItem[0].AreaId']").val(),
+                        'SearchConditions.AreaItem[1].AreaId': $("input[name='SearchConditions.AreaItem[1].AreaId']").val(),
+                        'SearchConditions.AreaItem[2].AreaId': $("input[name='SearchConditions.AreaItem[2].AreaId']").val(),
+                        'SearchConditions.AreaItem[3].AreaId': $("input[name='SearchConditions.AreaItem[3].AreaId']").val(),
+                        'SearchConditions.AreaItem[4].AreaId': $("input[name='SearchConditions.AreaItem[4].AreaId']").val(),
+                        'SearchConditions.AreaItem[5].AreaId': $("input[name='SearchConditions.AreaItem[5].AreaId']").val(),
+                        'SearchConditions.AreaItem[6].AreaId': $("input[name='SearchConditions.AreaItem[6].AreaId']").val(),
+                        'SearchConditions.AreaItem[7].AreaId': $("input[name='SearchConditions.AreaItem[7].AreaId']").val(),
+                        'SearchConditions.AreaItem[8].AreaId': $("input[name='SearchConditions.AreaItem[8].AreaId']").val(),
+                        'SearchConditions.AreaItem[9].AreaId': $("input[name='SearchConditions.AreaItem[9].AreaId']").val(),
+                        'SearchConditions.TransporterId': $("#ddlTransporterId").val(),
+                        'SearchConditions.SortKey': $("#ddlSortKey").val(),
+                        'SearchConditions.Sort': $("#ddlSort").val()
+                    };
+
+
+                    $.ajax({
+                        type: "post",
+                        url: "@Url.Action("GetRowId","LocTransporter")",
+                        data: data,
+                        async: false,
+                        success: function (data) {
+                            var rowids = {};
+                            $.each(data, function (n, value) {
+                                rowids[value] = false;
+                            });
+
+                            var storage = window.localStorage;
+                            storage.setItem('PKeys', JSON.stringify(rowids));
+
+                        }
+                    });
+                }
+            },
+
+            getCheckList: function () {
+                var list = [];
+                var storage = window.localStorage;
+                rowids = storage.getItem('PKeys');
+                if (rowids != null) {
+
+                    var jrid = JSON.parse(rowids);
+                    $.each(jrid, function (key) {
+                        if (jrid[key]) {
+                            list.push(key);
+                        }
+                    });
+                }
+                return list;
+            },
+
+        }
+        $("#txtShipToStoreId").on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                PageView.setStorageInit();
+                var urlAction = '@Url.Action("Search", "LocTransporter", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "GET");
+                $form.submit();
+            }
+        });
+        $("#txtShipToStoreName").on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                PageView.setStorageInit();
+                var urlAction = '@Url.Action("Search", "LocTransporter", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "GET");
+                $form.submit();
+            }
+        });
+
+    </script>
+
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+
+    @Scripts.Render("~/bundles/FileUpload")
+
+    <script type="text/javascript">
+
+        function KickPrintExecuteEx() {
+            cwebclient.CreatePrintingDataScriptUrl = "http://testsv:8080/createform/run";
+            // 帳票名（Job ファイル名）を引数に指定します。
+            cwebclient.PrintExecuteEx("SchoolLife");
+        }
+
+        Dropzone.autoDiscover = false;
+
+        //ファイルアップロード
+        fileUploadModal.init();
+
+    $(document).ready(function () {
+
+        if ('@TempData[AppConst.SUCCESS]' != '') {
+            PageView.setStorageInit();
+        }
+
+            PageView.init();
+
+            $("#btnDownload").on("click", function () {
+                var urlAction = '@Url.Action("Download", "LocTransporter", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            });
+
+            $("#btnAdd").on("click", function () {
+                var urlAction = '@Url.Action("Add", "LocTransporter", new { area = "Master" })';
+                var $form = $("#frmUpdate");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            });
+
+            $('#btnUpload').on('click', function () {
+                var urlAction = '@Url.Action("Upload", "LocTransporter", new { area = "Master" })';
+                var urlIndexAction = '@Url.Action("Index", "LocTransporter", new { area = "Master" })';
+                var urlErrAction = '@Url.Action("UploadErr", "LocTransporter", new { area = "Master" })';
+                fileUploadModal.setting({
+                    url: urlAction,
+                    title: "@LocTransporterResource.BaseName" + "@FormsResource.FileUplaodTitle",
+                    acceptedFiles: ".xlsx",
+                    successCallback: function (data) {
+                        if (data.err == 'true') {
+                            location.href = urlErrAction;
+                        } else {
+                            location.href = urlIndexAction;
+                        }
+                    }
+                });
+                fileUploadModal.open();
+            });
+
+        });
+
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            var $form = $("#frmSearch");
+            var urlAction = '@Url.Action("Search", "LocTransporter", new { area= "Master" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        }
+    </script>
+}

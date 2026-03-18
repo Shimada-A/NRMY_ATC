@@ -1,0 +1,288 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.BtoBReference;
+@model Wms.Areas.Ship.ViewModels.BtoBReference.BtoBReference02ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_BtoBReference02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("DetailSearch", "BtoBReference", FormMethod.Post, new { id = "frmDetailSearch" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="headarea sortheadareaheight">
+        @if (Model.Results.BtoBReference02s != null && Model.Results.BtoBReference02s.Count() > 0)
+        {
+        <table class="headtable">
+            <tr>
+                <td>@BtoBReferenceResource.BoxNoS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().BoxNo)
+                </td>
+                <td>@BtoBReferenceResource.DeliNoS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().DeliNo)
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>@BtoBReferenceResource.ShipToStoreS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().ShipToStoreId)
+                    &nbsp;&nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().ShipToStoreName)
+                </td>
+                <td>@BtoBReferenceResource.TransporterS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().TransporterName)
+                </td>
+                <td>@BtoBReferenceResource.DeliShiwakeCdS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().DeliShiwakeCd)
+                </td>
+            </tr>
+            <tr>
+                <td>@BtoBReferenceResource.KenDateS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().KenDate)
+                </td>
+                <td>@BtoBReferenceResource.KenUserS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().KenUserName)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>@BtoBReferenceResource.CaseKakuDateS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().CaseKakuDate)
+                </td>
+                <td>@BtoBReferenceResource.CaseKakuUserS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().CaseKakuUser)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>@BtoBReferenceResource.NouhinPrnDateS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().NouhinPrnDate)
+                </td>
+                <td>@BtoBReferenceResource.NouhinPrnUserS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().NouhinPrnUserName)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>@BtoBReferenceResource.PackKakuDateS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().KakuDate)
+                </td>
+                <td>@BtoBReferenceResource.KakuUserNameS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Results.BtoBReference02s.FirstOrDefault().KakuUserName)
+                </td>
+                <td></td>
+            </tr>
+        </table>
+        }
+    </div>
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.Results.BtoBReference02s != null)
+    {
+        if (Model.Results.BtoBReference02s.Count() > 0)
+        {
+            @* Sublbarea *@
+            <div class="sublbarea no_border">
+                <div class="sortarea mainpagearea">
+                    <ul>
+                        @if (ViewBag.PermissionLevel == PermissionLevelClasses.PermissionLevelSystemManager)
+                        {
+                            <li>
+                                <button type="button" id="btnPrintJan" class="download" style="width:200px">
+                                    <img src="~/Content/img/print.png" />
+                                    @BtoBReferenceResource.BtnPrintJan
+                                </button>
+                            </li>
+                        }
+                        <li>
+                            @FormsResource.DISPLAY_SHORT
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                                    @Html.HiddenFor(model => model.SearchConditions.CenterId)
+                                    @Html.HiddenFor(model => model.SearchConditions.Seq)
+                                    @Html.HiddenFor(model => model.SearchConditions.LineNo)
+                                    @Html.HiddenFor(model => model.SearchConditions.Parten)
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sublbarea no_border stock_detail_head">
+                @BtoBReferenceResource.DetailTitle
+                <div class="sortarea">
+                    <ul>
+                        <li>
+                            @BtoBReferenceResource.ItemSkuSum @Html.DisplayFor(model => model.SearchConditions.ItemSkuSum)
+                        </li>
+                        <li>
+                            @BtoBReferenceResource.ResultQtySum @Html.DisplayFor(model => model.SearchConditions.ResultQtySum)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        }
+    }
+    if (Model.Results.BtoBReference02s != null)
+    {
+
+        @* Container *@
+        <div class="Container">
+
+            @* Content *@
+            @if (Model.Results.BtoBReference02s.Count() == 0)
+            {
+                <div>
+                    <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <div class="tb_scroll">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.ShipInstructId
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.ShipInstructSeq
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.ShipPlanDate
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.BatchNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.Category1
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.Item
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.ItemColor
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.ItemSize
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.Jan
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.AllocQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBReferenceResource.ResultQty
+                                    </th>
+                                    <th hidden>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cModel in Model.Results.BtoBReference02s.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("BtoBReference02s[{0}].", cModel.i);
+                                <tr>
+                                    <td class="align-middle text-right">
+                                        @(cModel.i + 1)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipInstructSeq)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipPlanDate)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.BatchNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.CategoryName1)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div> }
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "BtoBReference", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        // Sort
+        function getSortData() {
+            var $form = $("#frmDetailSearch");
+            var urlAction ='@Url.Action("DetailSearch", "BtoBReference", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        $("#btnPrintJan").on("click", function () {
+            var urlAction = '@Url.Action("PrintJan", "BtoBReference", new { area = "Ship" })';
+            var $form = $("#frmDetailSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+    </script>
+}

@@ -1,0 +1,143 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.EcAllocation.EcAllocationDetailViewModel
+
+    <div id="dialogFromAllocationListDetails" class="d_continer main">
+
+        @* Sublbarea *@
+        <div class="headarea sortheadareaheight">
+            <table>
+                <tr>
+                    <td>
+                        @EcAllocationResource.ShipPlanDates@Html.DisplayFor(model => model.DetailHead.ShipRequestDate)
+                    </td>
+                    <td class="tdpadingleft">
+                        @EcAllocationResource.AllocUpDateC@Html.DisplayFor(model => model.DetailHead.DataDate)
+                    </td>
+                    <td class="tdpadingleft">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @EcAllocationResource.ShipInstructIdS@Html.DisplayFor(model => model.DetailHead.ShipInstructId)
+                    </td>
+                    <td class="tdpadingleft">
+                        @EcAllocationResource.OrderDateC@Html.DisplayFor(model => model.DetailHead.OrderDate)
+                    </td>
+                    <td class="tdpadingleft">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @EcAllocationResource.TransporterPrefNameC@Html.DisplayFor(model => model.DetailHead.DestPrefName)
+                    </td>
+                    <td class="tdpadingleft">
+                        @EcAllocationResource.TransporterId@Html.DisplayFor(model => model.DetailHead.TransporterName)
+                    </td>
+                    <td class="tdpadingleft">
+                        @EcAllocationResource.DeliShiwakeCd@Html.DisplayFor(model => model.DetailHead.DeliShiwakeCd)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @EcAllocationResource.EcShipClassC@Html.DisplayFor(model => model.DetailHead.EcShipClassName)
+                    </td>
+                    <td class="tdpadingleft">
+                        @EcAllocationResource.TransporterDateC@Html.DisplayFor(model => model.DetailHead.ArriveRequestDate)
+                    </td>
+                    <td class="tdpadingleft">
+                        @EcAllocationResource.TransporterTimeC@Html.DisplayFor(model => model.DetailHead.ArriveRequestTime)
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @if (Model.EcAllocationDetails != null)
+        {
+            if (Model.EcAllocationDetails.Count() > 0)
+            {
+                <div class="sublbarea no_border stock_detail_head">
+                    <div class="sortarea">
+                        <ul>
+                            <li>
+                                @EcAllocationResource.ItemSkuSum @Html.DisplayFor(model => model.DetailHead.ItemSkuQtySum)
+                            </li>
+                            <li>
+                                @EcAllocationResource.InstructQtySum @Html.DisplayFor(model => model.DetailHead.OrderQtySum)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            @* Container *@
+            <div class="dialog_scroll" style="margin-top:10px;">
+
+                @* Content *@
+                @if (Model.EcAllocationDetails.Count() != 0)
+                {
+                    <div class="tb_scroll" style="height:53VH;">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">
+                                        @EcAllocationResource.DetailNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcAllocationResource.Item
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcAllocationResource.ItemColor
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcAllocationResource.ItemSize
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcAllocationResource.DetailJan
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcAllocationResource.PlanQty
+                                    </th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                @foreach (var cModel in Model.EcAllocationDetails.Select((v, i) => new { v, i }))
+                                {
+                                    <tr>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructSeq)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderQty)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+            </div> }
+        @*Bottomnav*@
+        <div class="bottomnav">
+            <div class="btnarea">
+                <button id="btnDetailsClose" type="button" class="btn btn-outline-dark btnsize btn_close" onclick="closeDialog()">@FormsResource.BTN_RETURN</button>
+            </div>
+        </div>
+    </div>

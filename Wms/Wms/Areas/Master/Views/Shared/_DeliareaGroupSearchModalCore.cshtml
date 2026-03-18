@@ -1,0 +1,88 @@
+﻿@* ブランド検索の検索結果(Ajax.BeginFormで検索結果だけ差し替えるため部分ビューにする) *@
+@model IList<Wms.Areas.Master.ViewModels.DeliareaGroupSearchModal.DeliareaGroupViewModel>
+
+<h1>@Wms.Areas.Master.Resources.SharedResource.DeliareaGroupTitle</h1>
+<input type="hidden" name="ParameterDeliareaGroup" id="page" value="@(ViewData["ParameterDeliareaGroup"])" />
+<div class="sublbarea">
+</div>
+<div class="Container">
+    <div>
+        <div class="tb_scroll">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="bg-grey w_checkbox"></th>
+                        <th class="bg-grey">
+                            No
+                        </th>
+                        <th class="bg-grey">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().DeliareaGroupName)
+                        </th>
+                        <th class="bg-grey">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().PrefName)
+                        </th>
+                        <th hidden>
+                        </th>
+                        <th hidden>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count(); i++)
+                    {
+                    <tr>
+                        <td class="chk_cell">
+                            <label class="checkboxgroup">
+                                @if (Model[i].IsCheck)
+                                {
+                                    @Html.CheckBox(i.ToString(), new { @id = i.ToString(), @class = "check-box", @Checked = "checked" })
+                                }
+                                else
+                                {
+                                    @Html.CheckBox(i.ToString(), new { @id = i.ToString(), @class = "check-box" })
+                                }
+                                <span class="chk_parts"></span>
+                            </label>
+                        </td>
+                        <td class="text-right w_no">
+                            @((i + 1).ToString())
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model[i].DeliareaGroupName)
+                        </td>
+                        <td>
+                            @if (Model[i].PrefName != null)
+                            {
+                                if (Model[i].PrefName.Length <= 42)
+                                {
+                                    @Html.DisplayFor(model => model[i].PrefName)
+                                }
+                                else
+                                {
+                                    @DeliareaGroupResource.ExceedLenth
+                                }
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(model => model[i].PrefName)
+                            }
+                        </td>
+                        <td class="template" hidden>
+                            @Html.DisplayFor(model => model[i].PrefId)
+                        </td>
+                        <td class="template" hidden>
+                            @Html.DisplayFor(model => model[i].PrefName)
+                        </td>
+                        <td class="template" hidden>
+                            @Html.DisplayFor(model => model[i].GenCd)
+                        </td>
+                        @Html.HiddenFor(model => model[i].CenterId)
+                        @Html.HiddenFor(model => model[i].DeliareaGroupId)
+                    </tr>
+                    }
+                    <tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

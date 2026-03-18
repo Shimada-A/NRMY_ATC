@@ -1,0 +1,614 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Helpers;
+@using Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.BtoBInstructionInput.BtoBInstructionInput01ViewModel
+@{
+    if (Model.SearchConditions.ResultType == Wms.Areas.Ship.ViewModels.BtoBInstructionInput.ResultTypes.Sku)
+    {
+        ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_BtoBInstructionInput01;
+    }
+    else
+    {
+        ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_BtoBInstructionInput02;
+    }
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "BtoBInstructionInput", FormMethod.Post, new { id = "frmSearch", @class = "show_scroll" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@BtoBInstructionInputResource.CenterS</td>
+                <td colspan="3">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBInstructionInputResource.InstructIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ShipInstructId, new { htmlAttributes = new { @id = "txtShipInstructId", tabindex = "19" } })
+                    @Html.RequiredMark()
+                    @Html.ValidationMessageFor(model => model.SearchConditions.ShipInstructId, "", new { id = "ShipInstructIdMsg" })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <a style="color:blue;">@BtoBInstructionInputResource.Message1</a><br>
+                    <a style="color:blue;">@BtoBInstructionInputResource.Message3</a><br>
+                    <a style="color:blue;">@BtoBInstructionInputResource.Message2</a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "BtoBInstructionInput", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "40" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="41" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.DetailSortKey, new { id = "hidDetailSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.ResultType, new { id = "hidResultType" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+        <input type="hidden" name="SearchConditions.OldSeq" id="hidOldSeq" value='@Model.SearchConditions.OldSeq' />
+        <input type="hidden" name="SearchConditions.ShipKind" id="hidShipKind" value="@Model.SearchConditions.ShipKind" />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        <div style="display:none">
+            @if (Model.Results.BtoBInstructionInput01s != null && Model.Results.BtoBInstructionInput01s.Count() > 0)
+            {
+                <table>
+
+                    @for (int i = 0; i < Model.Results.BtoBInstructionInput01s.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.BtoBInstructionInput01s[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.BtoBInstructionInput01s[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.BtoBInstructionInput01s[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.BtoBInstructionInput01s[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.BtoBInstructionInput01s != null && Model.Results.BtoBInstructionInput01s.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    <button type="button" id="btnDownload" class="download">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="sublbarea no_border">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-outline-dark active" id="lblSku">
+                <input type="radio" name="options" id="Sku" autocomplete="off"> @BtoBInstructionInputResource.BtnSkuList
+            </label>
+            <label class="btn btn-outline-dark" id="lblDetail">
+                <input type="radio" name="options" id="Detail" autocomplete="off"> @BtoBInstructionInputResource.BtnInstructDetail
+            </label>
+        </div>
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @if (Model.SearchConditions.ResultType == Wms.Areas.Ship.ViewModels.BtoBInstructionInput.ResultTypes.Sku)
+                            {
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            }
+                            else
+                            {
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.DetailSortKey, new { Name = "SearchConditions.DetailSortKey", @id = "ddlDetailSortKey", @onchange = "getSortData();" })
+                            }
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.BtoBInstructionInput01s.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.BtoBInstructionInput01s.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.BtoBInstructionInput01s, Page => Url.Action("Search", "BtoBInstructionInput", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    if (Model.Results.BtoBInstructionInput01s.Count() > 0)
+    {
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @BtoBInstructionInputResource.ItemSkuSum @Html.DisplayFor(model => model.SearchConditions.ItemSkuSum)
+                    </li>
+                    <li>
+                        @BtoBInstructionInputResource.InstructQtySum @Html.DisplayFor(model => model.SearchConditions.InstructQtySum)
+                    </li>
+                    <li>
+                        @BtoBInstructionInputResource.TcCanQtySum @Html.DisplayFor(model => model.SearchConditions.AllocQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+}
+@if (Model.Results.BtoBInstructionInput01s != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.BtoBInstructionInput01s.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height: 64vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.ShipPlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.InstructClassName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.EmergencyClassName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.ShipInstructId
+                                </th>
+                                @if (Model.SearchConditions.ResultType == Wms.Areas.Ship.ViewModels.BtoBInstructionInput.ResultTypes.Detail)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @BtoBInstructionInputResource.ShipInstructSeq
+                                    </th>
+                                }
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.Item
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.ItemColor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.ItemSize
+                                </th>
+                                @if (Model.SearchConditions.ResultType == Wms.Areas.Ship.ViewModels.BtoBInstructionInput.ResultTypes.Sku)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @BtoBInstructionInputResource.Jan
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBInstructionInputResource.ShipToQty
+                                    </th>
+                                }
+                                else
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @BtoBInstructionInputResource.ShipToStore
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BtoBInstructionInputResource.TransporterName
+                                    </th>
+                                }
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.InstructQty
+                                </th>
+                                @if (Model.SearchConditions.ResultType == Wms.Areas.Ship.ViewModels.BtoBInstructionInput.ResultTypes.Sku)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @BtoBInstructionInputResource.MakeDate
+                                    </th>
+                                }
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructionInputResource.AllocQty
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "ItemSku", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.BtoBInstructionInput01s.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("BtoBInstructionInput01s[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.BtoBInstructionInput01s.PageNumber - 1) * Model.Results.BtoBInstructionInput01s.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipPlanDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InstructClassName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.EmergencyClassName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                        </td>
+                                        @if (Model.SearchConditions.ResultType == Wms.Areas.Ship.ViewModels.BtoBInstructionInput.ResultTypes.Detail)
+                                        {
+                                            <td class="align-middle text-right">
+                                                @Html.DisplayFor(modelItem => cModel.v.ShipInstructSeq)
+                                            </td>
+
+                                        }
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                        </td>
+                                        @if (Model.SearchConditions.ResultType == Wms.Areas.Ship.ViewModels.BtoBInstructionInput.ResultTypes.Sku)
+                                        {
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                            </td>
+                                            <td class="align-middle text-right">
+                                                @Html.DisplayFor(modelItem => cModel.v.ShipToQty)
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)<br />
+                                                @Html.DisplayFor(modelItem => cModel.v.ShipToStoreName)
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => cModel.v.TransporterName)
+                                            </td>
+                                        }
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.InstructQty)
+                                        </td>
+                                        @if (Model.SearchConditions.ResultType == Wms.Areas.Ship.ViewModels.BtoBInstructionInput.ResultTypes.Sku)
+                                        {
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => cModel.v.MakeDate)
+                                            </td>
+                                        }
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button id="btnInputCheckHidden" type="button" class="btn btn-outline-danger _pm" data-toggle="modal" data-target="#confirm_ShipInputCheck" hidden></button>
+        <button id="btnInputHidden" type="button" class="btn btn-outline-danger _pm" data-toggle="modal" data-target="#confirm_ShipInput" hidden></button>
+        @if (Model.Results.BtoBInstructionInput01s != null && Model.Results.BtoBInstructionInput01s.Count() > 0)
+        {
+            <button type="submit" id="btnInput" class="btn btn-dark btnsize">@BtoBInstructionInputResource.BTN_INPUT</button>
+        }
+    </div>
+}
+@{
+    var storeConditions = new ViewDataDictionary { { "ParameterStoreId", Model.SearchConditions.ShipToStoreId }, { "TempStoreId", Model.SearchConditions.ShipToStoreId } };
+}
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "ShipInputCheck", Message = BtoBInstructionInputResource.ShipInputCheckMsg })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "ShipInput", Message = BtoBInstructionInputResource.ShipInputMsg })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        $("#btnDownload").on("click", function () {
+        if ('@Model.SearchConditions.ResultType' == '@Wms.Areas.Ship.ViewModels.BtoBInstructionInput.ResultTypes.Sku')
+        {
+            var urlAction = '@Url.Action("Download", "BtoBInstructionInput", new { area = "Ship" })';
+        }
+        else
+        {
+            var urlAction = '@Url.Action("DownloadDetail", "BtoBInstructionInput", new { area = "Ship" })';
+        }
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+    /**
+     * Country class
+     */
+    var BtoBInstructionInputView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=checkbox][class=check-box]',
+            tblRow: '#listData tbody tr',
+            rowSelected: '#spnCheckedCounter',
+            btnInput: '#btnInput',
+            ddlSortKey: '#ddlSortKey',
+            ddlDetailSortKey: '#ddlDetailSortKey',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            deliareaGroupSelect: '#deliareaGroupSelect',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Stop event fired when click to checkbox
+                 */
+                $(BtoBInstructionInputView.SELECTORS.chkLabel).click(function (evt) {
+                    evt.stopPropagation();
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(BtoBInstructionInputView.SELECTORS.ddlSort).change(function (val) {
+                    $(BtoBInstructionInputView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(BtoBInstructionInputView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(BtoBInstructionInputView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(BtoBInstructionInputView.SELECTORS.ddlDetailSortKey).change(function (val) {
+                    $(BtoBInstructionInputView.SELECTORS.btnSearch).click();
+                });
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        BtoBInstructionInputView.init();
+        $("#ddlDetailSortKey").removeClass("input-validation-error");
+        $("#ddlSortKey").removeClass("input-validation-error");
+        if ('@Model.SearchConditions.ResultType' == '@Wms.Areas.Ship.ViewModels.BtoBInstructionReference.ResultTypes.Detail')
+        {
+            $("#lblDetail").addClass("active");
+            $("#lblSku").removeClass("active");
+            $("#Detail").prop("checked", true);
+            $("#Sku").prop("checked", false);
+        } else {
+            $("#lblSku").addClass("active");
+            $("#lblDetail").removeClass("active");
+            $("#Detail").prop("checked", false);
+            $("#Sku").prop("checked", true);
+        }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "BtoBInstructionInput", new { area= "Ship" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").attr("action", urlAction);
+                    $("#frmSearch").attr("method", "POST");
+                    $("#frmSearch").submit();
+                });
+            });
+            if ($("#txtShipAllocStatus").val() == "" || $("#txtShipAllocStatus").val() == "2") {
+                $("#txtShipAllocStatusOld").removeAttr('disabled');
+            } else {
+                $("#txtShipAllocStatusOld").attr('disabled', 'disabled');
+                $("#txtShipAllocStatusOld").prop("checked",false);
+            }
+    });
+        function ShipAllocStatusChange() {
+            if ($("#txtShipAllocStatus").val() == "" || $("#txtShipAllocStatus").val() == "2") {
+                $("#txtShipAllocStatusOld").removeAttr('disabled');
+            } else {
+                $("#txtShipAllocStatusOld").attr('disabled', 'disabled');
+                $("#txtShipAllocStatusOld").prop("checked",false);
+            }
+        }
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidDetailSortKey").val($("#ddlDetailSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "BtoBInstructionInput", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Search() {
+            if ($("#txtShipInstructId").val() == "") {
+                $("#ShipInstructIdMsg").html('<span id="TransporterId_error" class="">' + '@string.Format(Share.Common.Resources.MessagesResource.Required,BtoBInstructionInputResource.ShipInstructId)' + '</span>');
+                $("#ShipInstructIdMsg").addClass("field-validation-error");
+                $("#txtShipInstructId").addClass("input-validation-error");
+                return;
+            } else {
+                $("#ShipInstructIdMsg").html("")
+                $("#ShipInstructIdMsg").removeClass("field-validation-error")
+                $("#txtShipInstructId").removeClass("input-validation-error")
+            }
+            $("#hidResultType").val("Sku");
+            $("#hidSearchType").val("Search");
+            var urlAction = '@Url.Action("Search", "BtoBInstructionInput", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        $("#txtShipInstructId").on("change", function () {
+            if ($("#txtShipInstructId").val() == "") {
+                $("#ShipInstructIdMsg").html('<span id="TransporterId_error" class="">' + '@string.Format(Share.Common.Resources.MessagesResource.Required,BtoBInstructionInputResource.ShipInstructId)' + '</span>');
+                $("#ShipInstructIdMsg").addClass("field-validation-error");
+                $("#txtShipInstructId").addClass("input-validation-error");
+                return;
+            } else {
+                $("#ShipInstructIdMsg").html("")
+                $("#ShipInstructIdMsg").removeClass("field-validation-error")
+                $("#txtShipInstructId").removeClass("input-validation-error")
+            }
+        });
+        $("#Sku").on("click", function () {
+            $("#hidResultType").val("Sku");
+            $("#hidSearchType").val("Search");
+            $("#hidDetailFlag").val("List");
+            var urlAction = '@Url.Action("Search", "BtoBInstructionInput", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        $("#Detail").on("click", function () {
+            $("#hidResultType").val("Detail");
+            $("#hidSearchType").val("Search");
+            $("#hidDetailFlag").val("List");
+            var urlAction = '@Url.Action("Search", "BtoBInstructionInput", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        /**
+        * 実績一括入力の実行
+        */
+        function Input() {
+            var urlAction = '@Url.Action("Input", "BtoBInstructionInput", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        };
+        /**
+        * 実績入力の確認処理
+        */
+        $('#btnInput').on("click", function () {
+            $('#btnInputHidden').click();
+        });
+        $('#ShipInput').on("click", function () {
+            var urlAction = '@Url.Action("InputSortCheck", "BtoBInstructionInput", new { area = "Ship" })';
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                data: {
+                    centerId: $("#ddlCenterId").val(),
+                    seq: $("#hidSeq").val()
+                },
+                success: function (data) {
+                    if (data.status == 0) {
+                        $('#ShipInput').prop('disabled', true);
+                        Input();
+                    } else {
+                        //レーン実績あり
+                        $("#confirm_ShipInput").modal('hide');
+                        $('#btnInputCheckHidden').click();
+                    }
+                }
+            });
+        });
+        /**
+        * レーン実績入力の確認処理
+        */
+        $('#ShipInputCheck').on("click", function () {
+            $('#ShipInputCheck').prop('disabled', true);
+            Input();
+        });
+    </script>
+}

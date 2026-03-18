@@ -1,0 +1,36 @@
+﻿@*
+    出荷先と配送業者検索のモーダルダイアログ
+    _SyukkasakiTransporterSearchModal.js が必要
+*@
+<div id="syukkasakiTransporterSearchModalDialog" style="display:none;">
+    <div class="d_continer main">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        @using (Ajax.BeginForm(
+                "Index",
+                "SyukkasakiTransporterSearchModal",
+                new { area = "Master" },
+                new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "syukkasakiTransporterSearchResult", OnComplete = "syukkasakiTransporterSearchModal.adjust();enableSubmit();" },
+                new { id = "frmSyukkasakiTransporterSearch" }))
+        {
+            <div id="syukkasakiTransporterSearchResult">
+                @Html.Action("Index", "SyukkasakiTransporterSearchModal", new { area = "Master" })
+            </div>
+        }
+        <div class="bottomnav">
+            <div class="btnarea">
+                <button id="syukkasakiTransporterClose" type="button" class="btn btn-outline-dark">@FormsResource.Close</button>
+                <button id="syukkasakiTransporterSelect" type="button" class="btn btn-dark">@FormsResource.BTN_SELECT</button>
+            </div>
+        </div>
+        @* 検索条件を変えてもチェックした値を保持するためhiddenで保持する *@
+        <div id="checked"></div>
+        @* 確定した店舗を保持する(確定せずに閉じたときに変わらないように) *@
+        <div id="selectedSyukkasakiTransporter"></div>
+    </div>
+</div>
+@*
+    出荷先検索のモーダルダイアログ
+*@
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml")
+
+

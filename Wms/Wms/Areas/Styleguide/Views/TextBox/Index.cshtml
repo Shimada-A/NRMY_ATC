@@ -1,0 +1,174 @@
+﻿@model Wms.Areas.Styleguide.Models.TextBox
+
+@{
+    ViewBag.Title = "TextBox";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>TextBox</h1>
+        <p class="pg_caption">TextBoxの使い方</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content of">
+        <h3>TextBox(@@Html.EditorFor)</h3>
+        <div class="mtop20">
+            @Html.EditorFor(m => m.SingleLine1, new { htmlAttributes = new { placeholder = "例：テキストを入力してください。", tabindex = 1 } })
+        </div>
+        <div class="codearea">
+            <p>
+                テキストボックス<br />
+                EditorForを使うとModelがstringのときにTextBoxになる。
+            </p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>Multiline TextBox(@@EditorFor)</h3>
+        <div class="mtop20">
+            @Html.EditorFor(m => m.MultiLine1, new { htmlAttributes = new { placeholder = "例：テキストを入力してください。", tabindex = 2, rows = 3 } })
+        </div>
+        <div class="codearea">
+            <p>
+                複数行のテキストボックス<br />
+                EditorForを使うとModelがstringでDataType.MultilineText属性があるときにときに複数行のTextBoxになる。
+            </p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>TextBox(@@Html.TextBoxFor)</h3>
+        <div class="mtop20">
+            @Html.TextBoxFor(m => m.SingleLine2, new { placeholder = "例：テキストを入力してください。", tabindex = 3 })
+        </div>
+        <div class="codearea">
+            <p>@@Html.TextBoxForで生成したTextBox(基本的にはEditorForを使う)</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>Multiline TextBox(@@Html.TextAreaFor)</h3>
+        <div class="mtop20">
+            @Html.TextAreaFor(m => m.MultiLine2, new { placeholder = "例：テキストを入力してください。", rows = 3, tabindex = 4 })
+        </div>
+        <div class="codearea">
+            <p>@@Html.TextAreaForで生成した複数行のTextBox(基本的にはEditorForを使う)</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>TextBox(@@TextBox)</h3>
+        <div class="mtop20">
+            @Html.TextBox("SampleText", null, new { placeholder = "例：テキストを入力してください。", tabindex = 5 })
+        </div>
+        <div class="codearea">
+            <p>モデルと紐付かないTextBox(Model or ViewModelを使わないときに使う)</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>Multiline TextBox(@@Html.TextArea)</h3>
+        <div class="mtop20">
+            @Html.TextArea("textarea1", new { placeholder = "例：テキストを入力してください。", rows = 3, tabindex = 6 })
+        </div>
+        <div class="codearea">
+            <p>モデルと紐付かない複数行のTextBox(Model or ViewModelを使わないときに使う)</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>LabelとTextBoxを水平に並べる</h3>
+        <div class="mtop20">
+            <div class="form_content">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(m => m.LayoutText)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(m => m.LayoutText, new { htmlAttributes = new { placeholder = "例：テキストを入力してください。", tabindex = 7 } })
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>LabelとTextBoxを縦に並べる</h3>
+        <div class="mtop20">
+            <p class="dis-b lb">@Html.DisplayNameFor(m => m.LayoutText)</p>
+            @Html.EditorFor(m => m.LayoutText, new { htmlAttributes = new { placeholder = "例：テキストを入力してください。", tabindex = 9 } })
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>入力検証</h3>
+        <div class="mtop20">
+            <div class="form_content">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(m => m.ValidationText)
+                        @Html.RequiredMark()
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(m => m.ValidationText, new { htmlAttributes = new { placeholder = "例：テキストを入力してください。", tabindex = 9 } })
+                        @Html.ValidationMessageFor(model => model.ValidationText)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div class="codearea">
+            <p>最大10文字</p>
+        </div>
+    </div>
+    <div class="content of">
+        <h3>Textbox using JetColorPicker plugin</h3>
+        <div class="mtop20">
+            <p class="dis-b lb">@Html.DisplayNameFor(m => m.LayoutText)</p>
+            @Html.EditorFor(m => m.LayoutText, new { htmlAttributes = new { placeholder = "例：Select color", tabindex = 10, @class = "select-color" } })
+        </div>
+        <div class="codearea">
+            <p> $(".select-color").JetColorPicker();</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>Textbox only allow input number</h3>
+        <div class="mtop20">
+            <div class="form_content">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(m => m.NumberField)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(m => m.NumberField, new { htmlAttributes = new { placeholder = "例：Please enter number ", tabindex = 11 } })
+                        @Html.ValidationMessageFor(model => model.NumberField)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div class="codearea">
+            <p>最大10文字</p>
+        </div>
+    </div>
+</div>
+@* Bottom Nav *@
+<div class="bottomnav">
+    <div class="btnarea">
+        <button id="btnCreate" type="submit" class="btn1">@Share.Common.Resources.FormsResource.BTN_SAVE</button>
+    </div>
+</div>
+}
+@section LayoutChildScripts{
+    <script>
+        $(document).ready(function () {
+            $(".select-color").each(function (e) {
+                $(this).JetColorPicker()
+            });
+        });
+    </script>
+}

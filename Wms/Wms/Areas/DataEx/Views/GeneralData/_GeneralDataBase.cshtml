@@ -1,0 +1,99 @@
+﻿
+@using Wms.Areas.Master.Extensions;
+@using Wms.Areas.Master.Controllers;
+@using CResources = Wms.Resources.CommonResource;
+@using Wms.Resources;
+@using Wms.Models;
+
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditLayoutBase
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@section   LayoutStyles{
+    <style>
+        .align-middle {
+            text-align: center;
+        }
+
+        table th,
+        table tr td {
+            vertical-align: middle;
+        }
+
+        table th {
+            text-align: center;
+        }
+
+        .detail {
+            display: flex;
+        }
+
+        .tno {
+            width: 50px;
+        }
+
+        td select {
+            background-color: white;
+            cursor: pointer;
+        }
+    </style>
+}
+@Html.HiddenFor(model => model.ShipperId)
+@Html.HiddenFor(model => model.IsNewLayout)
+@RenderBody()
+@Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+@Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+@Html.Partial("_DeleteConfirmMessageDialog", @MessagesResource.QUE_DELETE)
+@Html.Partial("_ConfirmMessageDialog", new MessageDialog { Id = "csv", Message = CResources.ConfirmToExportCsv })
+@Html.Partial("_ConfirmMessageDialog", new MessageDialog { Id = "tsv", Message = CResources.ConfirmToExportTsv })
+
+@section BaseFooter{
+    @RenderSection("GeneralDataBaseFooter", required: false)
+}
+
+@section  LayoutScripts{
+    <script>
+        var shipperId;
+        var shipperIdElement;
+        var newLayoutElement;
+
+        // 初期化
+        $(function () {
+            shipperIdElement = $('#ShipperId');
+            shipperId = $('#ShipperId').val();
+
+            newLayoutElement = $('#IsNewLayout');
+
+            if ($('#IsNewLayout').val() == "False") {
+                $('#btnGetInfo').prop('disabled', true);
+            }
+        });
+
+        function getForm(formName, url) {
+            var fm = $(formName);
+            fm.append(shipperIdElement);
+            fm.append(newLayoutElement);
+            formUtil.getForm(formName, url);
+        }
+
+        function postForm(formName, url) {
+            var fm = $(formName);
+            fm.append(shipperIdElement);
+            fm.append(newLayoutElement);
+            formUtil.postForm(formName, url);
+        }
+
+        function turnOffValidate() {
+            $('input').each(function () {
+                $(this).rules('remove');
+            });
+            $('select').each(function () {
+                $(this).rules('remove');
+            });
+        }
+    </script>
+
+    @RenderSection("GeneralDataScripts", required: false)
+}

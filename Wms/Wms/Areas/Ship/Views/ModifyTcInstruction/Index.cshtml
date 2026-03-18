@@ -1,0 +1,604 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.ModifyTcInstruction.ModifyTcInstructionViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_ModifyTcInstruction;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "ModifyTcInstruction", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@ModifyTcInstructionResource.CenterS</td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1", onchange = "GetBatchNoList()" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ModifyTcInstructionResource.JanS</td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.SearchConditions.Jan)
+                    <div class="search">
+                        <button type="button" id="btnJan" name="btnJan" class="search_btn" tabindex="3" />
+                    </div>
+                    @Html.RequiredMark()
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                    @Html.ValidationMessageFor(model => model.SearchConditions.Jan)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ModifyTcInstructionResource.InvoiceNoS</td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.SearchConditions.InvoiceNo)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td class="w_80_normal"></td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "ModifyTcInstruction", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "4" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="5" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.EditFlag, new { value = Model.SearchConditions.EditFlag, id = "EditFlag" })
+        @Html.HiddenFor(model => model.SearchConditions.ErrFlag)
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        @Html.HiddenFor(model => model.SearchConditions.ArrivePlanQtySum)
+        @Html.HiddenFor(model => model.SearchConditions.ArriveResultQtySum)
+        @Html.HiddenFor(model => model.SearchConditions.Orders, new { id = "hidOrders" })
+        @Html.HiddenFor(model => model.SearchConditions.ItemSkuId)
+        @Html.HiddenFor(model => model.SearchConditions.InvoiceNoHidden)
+        <div style="display:none">
+            @if (Model.Results.ModifyTcInstructions != null && Model.Results.ModifyTcInstructions.Count() > 0)
+            {
+                <table>
+                    @for (int i = 0; i < Model.Results.ModifyTcInstructions.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.ModifyTcInstructions[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.HiddenFor(modelItem => Model.Results.ModifyTcInstructions[i].WmsInstructQty, new { @id = (id + "WmsInstructQty"), @class = "check-box", Name = id + "WmsInstructQty" })
+                                @Html.HiddenFor(modelItem => Model.Results.ModifyTcInstructions[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.ModifyTcInstructions[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.ModifyTcInstructions != null && Model.Results.ModifyTcInstructions.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.ModifyTcInstructions.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.ModifyTcInstructions.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.ModifyTcInstructions, Page => Url.Action("Search", "ModifyTcInstruction", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    if (Model.Results.ModifyTcInstructions.Count() > 0)
+    {
+        <div class="sublbarea no_border">
+            <table class="percent60">
+                <tr>
+                    <td>
+                        @ModifyTcInstructionResource.ItemS
+                        @Html.DisplayFor(model => model.Results.ModifyTcInstructions[0].ItemId)
+                        &nbsp;
+                        @Html.DisplayFor(model => model.Results.ModifyTcInstructions[0].ItemName)
+                    </td>
+                    <td class="tdpadingleft">
+                        @ModifyTcInstructionResource.ItemColorS
+                        @Html.DisplayFor(model => model.Results.ModifyTcInstructions[0].ItemColorId)
+                        &nbsp;
+                        @Html.DisplayFor(model => model.Results.ModifyTcInstructions[0].ItemColorName)
+                    </td>
+                    <td class="tdpadingleft">
+                        @ModifyTcInstructionResource.ItemSizeS
+                        @Html.DisplayFor(model => model.Results.ModifyTcInstructions[0].ItemSizeId)
+                        &nbsp;
+                        @Html.DisplayFor(model => model.Results.ModifyTcInstructions[0].ItemSizeName)
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="sublbarea no_border stock_detail_head">
+            <table>
+                <tr>
+                    <td class="tdtitle">
+                    </td>
+                    <td>
+                        @Html.EnumRadioButtonListFor(model => model.SearchConditions.Orders, new { onchange = "OrdersChange()" })
+                    </td>
+                </tr>
+            </table>
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @ModifyTcInstructionResource.ArrivePlanQtySum @Html.DisplayFor(model => model.SearchConditions.ArrivePlanQtySum)
+                    </li>
+                    <li>
+                        @ModifyTcInstructionResource.ArriveResultQtySum @Html.DisplayFor(model => model.SearchConditions.ArriveResultQtySum)
+                    </li>
+                    <li>
+                        @ModifyTcInstructionResource.WmsInstructQtySum
+                        @if (Model.SearchConditions.ArriveResultQtySum != Model.SearchConditions.WmsInstructQtySum)
+                        {
+                            <span class="fontred" id="spanWmsInstructQtySum">@Html.DisplayFor(model => model.SearchConditions.WmsInstructQtySum)</span>
+                        }
+                        else
+                        {
+                            <span id="spanWmsInstructQtySum">@Html.DisplayFor(model => model.SearchConditions.WmsInstructQtySum)</span>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+}
+@if (TempData[AppConst.ERROR] == null && TempData[AppConst.SUCCESS] == null)
+{
+    @* Container *@
+    <div class="Container">
+        @* Content *@
+        @if (Model.Results.ModifyTcInstructions != null && Model.Results.ModifyTcInstructions.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        @if (Model.Results.ModifyTcInstructions != null && Model.Results.ModifyTcInstructions.Count() > 0)
+        {
+            <div>
+                <div class="tb_scroll" style="height:64vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.ShipPlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.EmergencyClassName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.ShipInstructId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.ShipInstructSeq
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.ShipToStoreId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.PriorityOrder
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.StockOutStore
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.LaneNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.FrontageNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.AllocUpDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.InstructQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.MinInstructQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ModifyTcInstructionResource.WmsInstructQty
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "ModifyTcInstruction", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                for (var i = 0; i < Model.Results.ModifyTcInstructions.Count(); i++)
+                                {
+                                    var key = String.Format("ModifyTcInstructions[{0}].", i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((i + 1) + (Model.Results.ModifyTcInstructions.PageNumber - 1) * Model.Results.ModifyTcInstructions.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].ShipPlanDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].EmergencyClassName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].ShipInstructId)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].ShipInstructSeq)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].ShipToStoreId)<br />
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].ShipToStoreName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].PriorityOrder)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].StockOutStore)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].LaneNo)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].FrontageNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].AllocUpDate)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].InstructQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.ModifyTcInstructions[i].MinInstructQty)
+                                        </td>
+                                        <td class="align-middle text-right w_9_normal">
+                                            @if (Model.SearchConditions.EditFlag)
+                                            {
+                                                @Html.EditorFor(modelItem => modelItem.Results.ModifyTcInstructions[i].WmsInstructQty, new { htmlAttributes = new { onblur = "WmsInstructQtyChange(" + i + ")", id = key + "WmsInstructQty" } })
+                                            }
+                                            else
+                                            {
+                                                @Html.EditorFor(modelItem => modelItem.Results.ModifyTcInstructions[i].WmsInstructQty, new { htmlAttributes = new { disabled = "disabled", id = key + "WmsInstructQty" } })
+                                            }
+                                            @Html.ValidationMessageFor(modelItem => modelItem.Results.ModifyTcInstructions[i].WmsInstructQty, "", new { id = key + "WmsInstructQtyMessage" })
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => modelItem.Results.ModifyTcInstructions[i].InstructQty, new { Name = key + "InstructQty", id = key + "InstructQty" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.ModifyTcInstructions[i].ShipInstructId, new { Name = key + "ShipInstructId" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.ModifyTcInstructions[i].ShipInstructSeq, new { Name = key + "ShipInstructSeq" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div id="dialogJan" name="dialog" class="i02_01">
+</div>
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="button" id="BtnAllSet" class="btn btn-dark btnsize _pm" @(Model.SearchConditions.EditFlag ? "" : "disabled")>@ModifyTcInstructionResource.BtnAllSet</button>
+        <button type="button" id="BtnUpdateHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_Update" hidden>@ModifyTcInstructionResource.BtnUpdate</button>
+        <button type="button" id="BtnUpdate" class="btn btn-dark btnsize _pm" @(Model.SearchConditions.EditFlag ? "" : "disabled")>@ModifyTcInstructionResource.BtnUpdate</button>
+    </div>
+}
+
+<button id="btnInformationMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#infoConfirm" hidden></button>
+<button id="btnMinCheckMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_MinCheck" hidden></button>
+<button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_Error" hidden></button>
+@Html.Partial("_InformationMessageDialog", ViewBag.Message == null ? string.Empty : (string)ViewBag.Message)
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Update", Message = @MessagesResource.QUE_UPDATE })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "MinCheck", Message = ModifyTcInstructionResource.MinInstructQtyMin })
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "Error", Message = (string)ViewBag.Message })
+
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        $(document).ready(function () {
+            if ('@ViewBag.Message' == '@ModifyTcInstructionResource.ERR_CANT_EDIT1') {
+                $("#btnInformationMessage").click();
+            } else if ('@ViewBag.Message' == '@ModifyTcInstructionResource.ERR_CANT_EDIT2') {
+                $("#btnInformationMessage").click();
+            } else if ('@ViewBag.Message' == '@ModifyTcInstructionResource.MinInstructQtyMin') {
+                $("#btnMinCheckMessage").click();
+            } else if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+            }
+            var sum = 0;
+            var sumortherpage = @(Model.SearchConditions.WmsInstructQtySumOtherPage == null ? 0 : @Model.SearchConditions.WmsInstructQtySumOtherPage);
+            for (var i = 0; i < @(Model.Results.ModifyTcInstructions == null ? 0 : @Model.Results.ModifyTcInstructions.Count()); i++)
+            {
+                sum = sum + Number($(" input[ id='ModifyTcInstructions[" + i + "].WmsInstructQty']").val() == "" ? 0 : $(" input[ id='ModifyTcInstructions[" + i + "].WmsInstructQty']").val());
+            }
+            sum = sum + sumortherpage;
+            $("#spanWmsInstructQtySum").text(sum.toLocaleString().toString());
+            var sumresult = @(Model.SearchConditions.ArriveResultQtySum == null ? 0 : @Model.SearchConditions.ArriveResultQtySum);
+            if (sumresult != sum) {
+                $("#spanWmsInstructQtySum").addClass("fontred");
+                $("#BtnUpdate").attr('disabled', 'disabled');
+            } else {
+                $("#spanWmsInstructQtySum").removeClass("fontred");
+                $("#BtnUpdate").removeAttr('disabled');
+            }
+    });
+        // Sort
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "ModifyTcInstruction", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        }
+        function Search() {
+            $("#EditFlag").val(true);
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "ModifyTcInstruction", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        $('#submitInfo').on("click", function () {
+            $("#EditFlag").val(false);
+            $("#hidSearchType").val("Search");
+            var urlAction ='@Url.Action("Search", "ModifyTcInstruction", new { area= "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        function WmsInstructQtyChange(row) {
+            var idwmsqty = " input[ id='ModifyTcInstructions[" + row + "].WmsInstructQty']";
+            var idqty = " input[ id='ModifyTcInstructions[" + row + "].InstructQty']";
+            var msg = " span[ id='ModifyTcInstructions[" + row + "].WmsInstructQtyMessage']";
+                if (parseInt($(idwmsqty).val())>parseInt($(idqty).val())) {
+                    $(msg).html('<span  id="WmsInstructQtyError" class="">'+'@ModifyTcInstructionResource.ERR_LARGER_WMS_INSTRUCT_QTY' +'</span>');
+                    $(msg).addClass("field-validation-error");
+                    $(idwmsqty).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msg).html("")
+                    $(msg).removeClass("field-validation-error")
+                    $(idwmsqty).removeClass("input-validation-error")
+                }
+            var sum = 0;
+            var sumortherpage = @(Model.SearchConditions.WmsInstructQtySumOtherPage == null ? 0 : @Model.SearchConditions.WmsInstructQtySumOtherPage);
+            for (var i = 0; i < @(Model.Results.ModifyTcInstructions == null ? 0 : @Model.Results.ModifyTcInstructions.Count()); i++)
+            {
+                sum = sum + Number($(" input[ id='ModifyTcInstructions[" + i + "].WmsInstructQty']").val() == "" ? 0 : $(" input[ id='ModifyTcInstructions[" + i + "].WmsInstructQty']").val());
+            }
+            sum = sum + sumortherpage;
+            $("#spanWmsInstructQtySum").text(sum.toLocaleString().toString());
+            var sumresult = @(Model.SearchConditions.ArriveResultQtySum == null ? 0 : @Model.SearchConditions.ArriveResultQtySum);
+            if (sumresult != sum) {
+                $("#spanWmsInstructQtySum").addClass("fontred");
+                $("#BtnUpdate").attr('disabled', 'disabled');
+            } else {
+                $("#spanWmsInstructQtySum").removeClass("fontred");
+                $("#BtnUpdate").removeAttr('disabled');
+            }
+            $(" input[ id='SearchConditions.ModifyTcInstructions[" + row + "].WmsInstructQty']").val($(idwmsqty).val())
+        }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "ModifyTcInstruction", new { area= "Ship" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#EditFlag").val(true);
+                    $("#frmSearch").submit();
+                });
+            });
+        $('#BtnAllSet').on("click", function () {
+            $("#EditFlag").val(true);
+            $("#hidSearchType").val("SortPage");
+            var urlAction ='@Url.Action("AllSetSearch", "ModifyTcInstruction", new { area= "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        function OrdersChange() {
+            var val = $('input:radio[name="SearchConditions.Orders"]:checked').val();
+            $("#hidOrders").val(val == 1 ? "Equal" : "PriorityOrder");
+        }
+        function QtyCheck() {
+            for (var row = 0; row < @(Model.Results.ModifyTcInstructions == null ? 0 : @Model.Results.ModifyTcInstructions.Count()); row++)
+            {
+                var idwmsqty = " input[ id='ModifyTcInstructions[" + row + "].WmsInstructQty']";
+                var idqty = " input[ id='ModifyTcInstructions[" + row + "].InstructQty']";
+                var msg = " span[ id='ModifyTcInstructions[" + row + "].WmsInstructQtyMessage']";
+                if (parseInt($(idwmsqty).val())>parseInt($(idqty).val())) {
+                    $(msg).html('<span  id="WmsInstructQtyError" class="">'+'@ModifyTcInstructionResource.ERR_LARGER_WMS_INSTRUCT_QTY' +'</span>');
+                    $(msg).addClass("field-validation-error");
+                    $(idwmsqty).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msg).html("")
+                    $(msg).removeClass("field-validation-error")
+                    $(idwmsqty).removeClass("input-validation-error")
+                }
+            }
+            return true;
+        }
+        $('#BtnUpdate').on("click", function () {
+            if (!validateForm($('#frmSearch')) || !QtyCheck()) {
+                return;
+            }
+            $('#BtnUpdateHidden').click();
+        });
+        $('#Update').on("click", function () {
+            var urlAction = '@Url.Action("UpdateSearch", "ModifyTcInstruction", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        $('#MinCheck').on("click", function () {
+            $('#SearchConditions_ErrFlag').val(true);
+            var urlAction = '@Url.Action("UpdateSearch", "ModifyTcInstruction", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        //モーダル設定箇所
+        var current_scrollY;
+        $(function () {
+            $("[name='dialog']").dialog({
+                autoOpen: false,
+                width: 1100,
+                Height: 100,
+                modal: true,
+                position: { my: 'center top+30', at: 'center top', of: "body" },
+                dialogClass: 'modalct',
+                resizable: false
+            });
+
+            $(".ui-icon-closethick").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    $("[name='dialog']").dialog("close");
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+            $(".btn_close").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+        });
+        $(document.body).on("click",
+            ".ui-widget-overlay",
+            function () {
+                $.each($(".ui-dialog"),
+                    function () {
+                        var $dialog = $(this).children(".ui-dialog-content");
+                        if ($dialog.dialog("option", "modal")) {
+                            $('.wrap').attr({ style: '' });
+                            $('html, body').prop({ scrollTop: current_scrollY });
+                            $dialog.dialog("close");
+                        }
+                    });
+            });
+
+        //モーダル表示
+        $("[name='btnJan']").on("click", function () {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialogJan").dialog("open");
+            searchDialogDataJan();
+        });
+
+        //表示データ取得
+        function searchDialogDataJan() {
+            var urlAction = '../ModifyTcInstruction/JanModal';
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    centerId: $("#ddlCenterId").val()
+                },
+                success: function (data) {
+                    $("#dialogJan").html("");
+                    $("#dialogJan").html(data);
+                    $("#dialogJan").dialog(
+                        {
+                            width: 600,
+                            height: 800
+                        });
+                    $("#JanReturnSelect").attr('disabled', true);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                }
+            });
+        }
+        //モーダル閉じる
+        function closeDialogJan() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogJan').dialog('close');
+        }
+        //モーダルラジオボタンチェック時
+        function chkRadioJan(idx) {
+            $("#chkIndexJan").val(idx);
+            $("#JanReturnSelect").attr('disabled', false);
+        }
+        //モーダル選択時
+        function chkDialogJan() {
+            var idx = $("#chkIndexJan").val();
+            $("#SearchConditions_Jan").val($("#hidJan" + idx).text().trim());
+            $("#SearchConditions_InvoiceNo").val($("#hidInvoice" + idx).text().trim());
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogJan').dialog('close');
+        }
+    </script>
+}

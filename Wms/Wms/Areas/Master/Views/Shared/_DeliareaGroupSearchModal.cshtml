@@ -1,0 +1,30 @@
+﻿@*
+    ブランド検索のモーダルダイアログ
+    DeliareaGroupSearchModal.js が必要
+*@
+<div id="deliareaGroupSearchModalDialog" style="display:none;">
+    <div class="d_continer main">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        @using (Ajax.BeginForm(
+                "Index",
+                "DeliareaGroupSearchModal",
+                new { area = "Master" },
+                new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "deliareaGroupSearchResult", OnComplete = "deliareaGroupSearchModal.setCheckBoxCounter();vendorSearchModal.adjust();enableSubmit();" },
+                new { id = "frmDeliareaGroupSearch" }))
+        {
+        <div id="deliareaGroupSearchResult">
+            @Html.Action("Index", "DeliareaGroupSearchModal", new { area = "Master", ParameterDeliareaGroup = ViewData["ParameterDeliareaGroup"] })
+        </div>
+        }
+        <div class="bottomnav">
+            <div class="btnarea">
+                <button id="deliareaGroupClose" type="button" class="btn btn-outline-dark">@FormsResource.Close</button>
+                <button id="deliareaGroupSelect" type="button" class="btn btn-dark">@FormsResource.BTN_SELECT</button>
+            </div>
+        </div>
+        @* 検索条件を変えてもチェックした値を保持するためhiddenで保持する *@
+        <div id="checked"></div>
+        @* 確定した店舗を保持する(確定せずに閉じたときに変わらないように) *@
+        <div id="selectedDeliareaGroup"></div>
+    </div>
+</div>

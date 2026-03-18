@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Button";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>Button</h1>
+        <p class="pg_caption">Buttonの使い方</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content of">
+        <h3>Dark Button</h3>
+        <div class="mtop20">
+            <button type=submit class="btn1">Button</button>
+        </div>
+    </div>
+    <div class="content of">
+        <h3>Light Button</h3>
+        <div class="mtop20">
+            <button type=submit class="btn2">Button</button>
+        </div>
+    </div>
+    <div class="content of">
+        <h3>Disabled Button</h3>
+        <div class="mtop20">
+            <button type=submit class="btn1" disabled>Button</button>
+        </div>
+    </div>
+    <div class="content of" style="background-color:#273238;">
+        <h3 style="color:white;">Transparent Button</h3>
+        <div class="mtop20">
+            <button type=submit class="btn4">Button</button>
+        </div>
+    </div>
+    <div class="content of">
+        <h3>Delete Button</h3>
+        <div class="mtop20">
+            <button type=submit class="btn5">Button</button>
+        </div>
+    </div>
+</div>
+}

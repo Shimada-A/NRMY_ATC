@@ -1,0 +1,71 @@
+﻿/* ColorSelectorHelper.csに必要 */
+.color_select {
+    cursor: pointer;
+}
+
+ul.colorlist {
+    letter-spacing: -.4em;
+    margin: 4px 0 0;
+    padding: 0;
+    text-align: left;
+}
+
+    ul.colorlist li {
+        display: inline-block;
+        margin: 0 4px 4px 0;
+        letter-spacing: normal;
+        position: relative;
+    }
+
+        ul.colorlist li .select_color {
+            display: block;
+            width: 16px;
+            height: 16px;
+            padding: 5px 0;
+            padding: 0;
+            cursor: pointer;
+            box-shadow: 0px 0px 1px rgba(0,0,0,0.5);
+            text-indent: -9999px;
+        }
+
+.ui-dialog {
+    border-radius: 8px;
+    box-shadow: 1px 0 0 #e6e6e6, -1px 0 0 #e6e6e6, 0 1px 0 #e6e6e6, 0 -1px 0 #e6e6e6, 0 3px 13px rgba(0,0,0,0.08);
+}
+
+    .ui-dialog .ui-dialog-content {
+        padding-left: 20px;
+        padding-right: 20px;
+        overflow: visible;
+    }
+
+    .ui-dialog .ui-dialog-buttonset button {
+        background-color: #666;
+        line-height: 1 !important;
+    }
+
+.dialog_color {
+    min-width: auto !important;
+    border-bottom-left-radius: 0 !important;
+    box-shadow: none !important;
+    -webkit-filter: drop-shadow(3px 3px 7px rgba(0,0,0,0.3)) !important;
+}
+
+@media all and (-ms-high-contrast:none) {
+    .dialog_color {
+        box-shadow: 3px 3px 7px rgba(0,0,0,0.3) !important;
+    }
+}
+
+.dialog_color .ui-dialog-content {
+    padding: 10px !important;
+}
+
+.color_dialog {
+    margin-top: -40px;
+    min-height: 0 !important;
+}
+
+.ui-dialog-titlebar-close {
+    z-index: 1;
+}

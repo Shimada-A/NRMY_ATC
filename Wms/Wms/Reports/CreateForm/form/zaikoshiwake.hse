@@ -1,0 +1,30 @@
+Create!Form HSE V11.1.0
+%var
++06
+BAR_2 101 9.200 0.000
+289.417 237.267 2.000 5.000 0 0.000 0 0 0
+1 18.000 15.000 1
+0
++01
+TEX_3 -1 30.000 0.000 0 0 0.000 0.000 0.000 0 0 0 0
+28.346 512.228 810.992 447.882 1 10.000 0.000 0 0 1
+0.000 G 0.000 g
+ÇlÇr ÉSÉVÉbÉN
+0
++01
+TEX_13 -1 30.000 0.000 0 0 0.000 0.000 0.000 0 0 0 0
+25.511 390.622 810.992 326.275 1 10.000 0.000 0 0 1
+0.000 G 0.000 g
+ÇlÇr ÉSÉVÉbÉN
+0
+%endvar
+%gvfont
+msgothic.ttc 0 0 ÇlÇr ÉSÉVÉbÉN
+%endgvfont
+%NeedActionFormat 0
+%Creator:Create! Form V11
+%Copyright:Copyright (C) 1993-2019 Infotec Inc.
+%Title:zaikoshiwake
+%Size:842 595
+%Margin:28.346 28.346 28.346 28.346
+%FormIdentifer:zaikoshiwake

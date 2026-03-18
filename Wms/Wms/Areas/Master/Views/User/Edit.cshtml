@@ -1,0 +1,357 @@
+﻿@using Wms.Helpers;
+@model Wms.Areas.Master.ViewModels.User.UserInput
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_User02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "User", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.User.ShipperId)
+            @Html.HiddenFor(model => model.InUpDiff)
+            @Html.HiddenFor(model => model.User.UpdateCount) @* 排他制御用に更新回数をセットする *@
+            @Html.HiddenFor(model => model.DateMakeClass)
+            @Html.HiddenFor(model => model.DeleteFlag)
+
+            <div class="form_content">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.CenterId)
+                    </dt>
+                    <dd>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.CenterDropDownFor(model => model.User.CenterId, Wms.Common.Profile.User.UserId, "", new { id = "ddlSerchLoc", @class = "_pm" })
+                                @Html.ValidationMessageFor(model => model.User.CenterId, "", new { })
+                            </div>
+                        </div>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.UserId)
+                    </dt>
+                    <dd>
+                        @if (Model.InUpDiff == "0")
+                        {
+                            @Html.EditorFor(model => model.User.UserId, new { htmlAttributes = new { tabindex = "1", @placeholder = "" } })
+                            @Html.ValidationMessageFor(model => model.User.UserId, "", new { })
+                        }
+                        else
+                        {
+                            //Edit
+                            @Html.DisplayFor(model => model.User.UserId)
+                            @Html.HiddenFor(model => model.User.UserId)
+                        }
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.UserName)　@*利用者名*@
+                    </dt>
+                    <dd>
+
+                        @if (Model.User.DateMakeClass == 0) //データ作成区分が0の時、編集可能
+                        {
+                            @Html.EditorFor(model => model.User.UserName, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "w_50_normal _pm" } })
+                            @Html.ValidationMessageFor(model => model.User.UserName, "", new { })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.User.UserName)
+                            @Html.HiddenFor(model => model.User.UserName)
+                        }
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.PermissionLevel)　@*権限レベル*@
+                    </dt>
+                    <dd>
+                        <label>
+                            @Html.RadioButtonFor(model => model.User.PermissionLevel, PermissionLevelClasses.PermissionLevelSystemManager, new { tabindex = "3", @class = "radio_input _pm", style = "display:inherit;" })
+                            <span class="radio_txt">@UserResource.PermissionLevelSystemManager</span>
+                        </label>
+                        <label>
+                            @Html.RadioButtonFor(model => model.User.PermissionLevel, PermissionLevelClasses.PermissionLevelUserManager, new { tabindex = "4", @class = "radio_input _pm", style = "display:inherit;" })
+                            <span class="radio_txt">@UserResource.PermissionLevelUserManager</span>
+                        </label>
+                        <label>
+                            @Html.RadioButtonFor(model => model.User.PermissionLevel, PermissionLevelClasses.PermissionLevelWarehouseManager, new { tabindex = "5", @class = "radio_input _pm", style = "display:inherit;" })
+                            <span class="radio_txt">@UserResource.PermissionLevelWarehouseManager</span>
+                        </label>
+                        <label>
+                            @Html.RadioButtonFor(model => model.User.PermissionLevel, PermissionLevelClasses.PermissionLevelClericalWorker, new { tabindex = "6", @class = "radio_input _pm", style = "display:inherit;" })
+                            <span class="radio_txt">@UserResource.PermissionLevelClericalWorker</span>
+                        </label>
+                        <label>
+                            @Html.RadioButtonFor(model => model.User.PermissionLevel, PermissionLevelClasses.PermissionLevelWarehouseWorker, new { tabindex = "7", @class = "radio_input _pm", style = "display:inherit;" })
+                            <span class="radio_txt">@UserResource.PermissionLevelWarehouseWorker</span>
+                        </label>
+                        <label>
+                            @Html.RadioButtonFor(model => model.User.PermissionLevel, PermissionLevelClasses.PermissionLevelPartTimeJobber, new { tabindex = "8", @class = "radio_input _pm", style = "display:inherit;" })
+                            <span class="radio_txt">@UserResource.PermissionLevelPartTimeJobber</span>
+                        </label>
+                        <label>
+                            @Html.RadioButtonFor(model => model.User.PermissionLevel, PermissionLevelClasses.PermissionLevelHeadOfficeWorker, new { tabindex = "9", @class = "radio_input _pm", style = "display:inherit;" })
+                            <span class="radio_txt">@UserResource.PermissionLevelHeadOfficeWorker</span>
+                        </label>
+                        @Html.ValidationMessageFor(model => model.User.PermissionLevel)
+                    </dd>
+                </dl>
+                @if (Model.InUpDiff == "0") //新規
+                {
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.InPassword)
+                        </dt>
+                        <dd>
+                            @Html.EditorFor(model => model.InPassword, new { htmlAttributes = new { placeholder = "", tabindex = 10, @class = "_pm" } })
+                            @Html.ValidationMessageFor(model => model.InPassword)
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.InPasswordConfirm)
+                        </dt>
+                        <dd>
+                            @Html.EditorFor(model => model.InPasswordConfirm, new { htmlAttributes = new { placeholder = "", tabindex = 11, @class = "_pm" } })
+                            @Html.ValidationMessageFor(model => model.InPasswordConfirm)
+                        </dd>
+                    </dl>
+                }
+                else //更新
+                {
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.UpPassword)
+                        </dt>
+                        <dd>
+                            @if (Model.User.DateMakeClass == 0) //データ作成区分が0の時、編集可能
+                            {
+                                @Html.EditorFor(model => model.UpPassword, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "w_50_normal _pm" } })
+                                @Html.ValidationMessageFor(model => model.UpPassword, "", new { })
+                            }
+                            else
+                            {
+                                @Html.EditorFor(model => model.UpPassword, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "w_50_normal _pm", @readonly = "readonly" } })
+                                @Html.ValidationMessageFor(model => model.UpPassword, "", new { })
+                            }
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.UpPasswordConfirm)
+                        </dt>
+                        <dd>
+                            @if (Model.User.DateMakeClass == 0) //データ作成区分が0の時、編集可能
+                            {
+                                @Html.EditorFor(model => model.UpPasswordConfirm, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "w_50_normal _pm" } })
+                                @Html.ValidationMessageFor(model => model.UpPasswordConfirm, "", new { })
+                            }
+                            else
+                            {
+                                @Html.EditorFor(model => model.UpPasswordConfirm, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "w_50_normal _pm", @readonly = "readonly" } })
+                                @Html.ValidationMessageFor(model => model.UpPasswordConfirm, "", new { })
+                            }
+                        </dd>
+                    </dl>
+                }
+            </div>
+
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @if (Model.SearchFlag)
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "User", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            else
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "User", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            @if (Model.InUpDiff == "0")
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_CREATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_CREATE</button>
+            }
+            else
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+            }
+        </div>
+    }
+    if (Model.InUpDiff == "0")
+    {
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+    }
+    else
+    {
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+    }
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //UserEdit
+        var UserEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(UserEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(UserEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(UserEdit.SELECTORS.hdUpdateError).val() === UserEdit.CONST.STR_TRUE) {
+                    if ($(UserEdit.SELECTORS.hdUpdateError).attr(UserEdit.CONST.ATTR_ERROR_CODE) === UserEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(UserEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(UserEdit.SELECTORS.exclusiveUpdateDialog, UserEdit.GLOBAL.titleInformation, UserEdit.GLOBAL.msgExclusiveUpdate);
+                        $(UserEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(UserEdit.SELECTORS.hdUpdateError).attr(UserEdit.CONST.ATTR_ERROR_CODE) === UserEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(UserEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(UserEdit.SELECTORS.overWriteRecordDialog, UserEdit.GLOBAL.titleInformation, (UserEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(UserEdit.SELECTORS.AreaId).val())));
+                        $(UserEdit.SELECTORS.btnSubmitOverWriteDialog).attr(UserEdit.SELECTORS.form, UserEdit.SELECTORS.frmUpdate).attr(UserEdit.CONST.FORM_METHOD, UserEdit.CONST.POST).attr(UserEdit.CONST.FORM_ACTION, '@Url.Action("Update", "User", new { area = "Master" })').attr(UserEdit.SELECTORS.form, UserEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            UserEdit.init();
+        });
+
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            @if (Model.InUpDiff != "0") {
+                @*@:if (!CheckPass()) {
+                @:   return;
+                @:}*@
+            }
+
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        function CheckPass() {
+            var passWord = $('#UpPassword').val();
+            if (passWord != "") {
+                if (passWord.length < 8) {
+                    $('#UpPassword-errormessage').html('<span id="UpPassword-error" class="">パスワードは8文字以上で入力してください。</span>');
+                    $('#UpPassword-errormessage').addClass("field-validation-error");
+                    $('#UpPassword').addClass("input-validation-error");
+                    return false;
+                } else {
+                    $('#UpPassword-errormessage').html("");
+                    $('#UpPassword-errormessage').removeClass("field-validation-error");
+                    $('#UpPassword').removeClass("input-validation-error");
+                    return true;
+                }
+
+            } else {
+                $('#UpPassword-errormessage').html("");
+                $('#UpPassword-errormessage').removeClass("field-validation-error");
+                $('#UpPassword').removeClass("input-validation-error");
+                return true;
+            }
+        }
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,61 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.DataEx.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.DataEx.Controllers;
+@using Wms.Common;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditCondition
+@{
+    ViewBag.Title = "汎用データ出力";
+    Layout = "_OutputGeneralDataBase.cshtml";
+}
+
+<div id="detailArea">
+    @if (Model.Details != null)
+    {
+        @Html.Partial("~/Areas/Master/Views/EditLayout/_EditConditionDetail.cshtml", Model);
+    }
+</div>
+
+@section BottomRightButtons{
+    <button type="button" id="btnToSort" class="btn btn-outline-dark btnsize">@EditLayoutResource.EditSort</button>
+}
+@section   OutputGeneralDataScripts{
+    <script>
+        // 初期化
+        $(function () {
+            
+            changeAllConditionClass();
+        });
+
+        // レイアウト詳細取得処理
+        function getLayoutDetails() {
+            $.get('@Url.OutputGeneralDataAction("GetOutputGeneralDataConditionObjectDetail")',
+                { templateId: $('#GeneralDataTemplateId').val() },
+                function (data) {
+
+                    // 取得したデータ(部分ビューで取得)を画面にセット
+                    // Validationのリセット
+                    $('#detailArea').html(data);
+                    formUtil.resetValidation('#dataForm');
+
+                    // レイアウト詳細取得処理終了させ、ボタン等をアクティブにする
+                    isGettingLayoutDetail = false;
+                    checkIsGetting();
+                    changeAllConditionClass();
+                }
+            );
+        }
+
+        // ソート設定画面へ
+        addClickEvent('#btnToSort', function () {
+            getForm('#dataForm', '@Url.OutputGeneralDataAction("Sort")');
+        });
+
+    </script>
+
+    @*// レイアウト設定(条件設定)一覧用のスクリプトをセット*@
+    @Html.Partial("~/Areas/Master/Views/EditLayout/_EditConditionDetailScripts.cshtml")
+}

@@ -1,0 +1,397 @@
+﻿@model Wms.Areas.Master.ViewModels.Location.Detail
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Location02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Location", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+    @* Container *@
+<div class="Container">
+    @if (Model != null)
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.ShipperId)
+        @Html.HiddenFor(model => model.CenterId)
+        @Html.HiddenFor(model => model.LocationCd)
+        @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+        <div class="form_content">
+            <dl>
+                <dt>
+                    @LocationResource.Locsec1
+                </dt>
+                <dd>
+                    @if (string.IsNullOrWhiteSpace(Model.LocationCd))
+                    {
+                        //Create
+                        @Html.EditorFor(model => model.Locsec_1, new { htmlAttributes = new { tabindex = "1", @placeholder = "", @class = "w_6_short" } })
+                        @Html.ValidationMessageFor(model => model.Locsec_1, "", new { })
+                    }
+                    else
+                    {
+                        //Update
+                        @Html.DisplayFor(model => model.Locsec_1)
+                        @Html.HiddenFor(model => model.Locsec_1)
+                    }
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @LocationResource.Locsec2
+                </dt>
+                <dd>
+                    @if (string.IsNullOrWhiteSpace(Model.LocationCd))
+                    {
+                        //Create
+                        @Html.EditorFor(model => model.Locsec_2, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "w_6_short" } })
+                        @Html.ValidationMessageFor(model => model.Locsec_2, "", new { })
+                    }
+                    else
+                    {
+                        //Update
+                        @Html.DisplayFor(model => model.Locsec_2)
+                        @Html.HiddenFor(model => model.Locsec_2)
+                    }
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @LocationResource.Locsec3
+                </dt>
+                <dd>
+                    @if (string.IsNullOrWhiteSpace(Model.LocationCd))
+                    {
+                        //Create
+                        @Html.EditorFor(model => model.Locsec_3, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "w_6_short" } })
+                        @Html.ValidationMessageFor(model => model.Locsec_3, "", new { })
+                    }
+                    else
+                    {
+                        //Update
+                        @Html.DisplayFor(model => model.Locsec_3)
+                        @Html.HiddenFor(model => model.Locsec_3)
+                    }
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @LocationResource.Locsec4
+                </dt>
+                <dd>
+                    @if (string.IsNullOrWhiteSpace(Model.LocationCd))
+                    {
+                        //Create
+                        @Html.EditorFor(model => model.Locsec_4, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "w_6_short" } })
+                        @Html.ValidationMessageFor(model => model.Locsec_4, "", new { })
+                    }
+                    else
+                    {
+                        //Update
+                        @Html.DisplayFor(model => model.Locsec_4)
+                        @Html.HiddenFor(model => model.Locsec_4)
+                    }
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @LocationResource.Locsec5
+                </dt>
+                <dd>
+                    @if (string.IsNullOrWhiteSpace(Model.LocationCd))
+                    {
+                        //Create
+                        @Html.EditorFor(model => model.Locsec_5, new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "w_6_short" } })
+                        @Html.ValidationMessageFor(model => model.Locsec_5, "", new { })
+                    }
+                    else
+                    {
+                        //Update
+                        @Html.DisplayFor(model => model.Locsec_5)
+                        @Html.HiddenFor(model => model.Locsec_5)
+                    }
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LocationClass)
+                </dt>
+                <dd style="width:240px">
+                    @if (Model.StockQty == null)
+                    {
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.DropDownListFor(model => model.LocationClass, (IEnumerable<SelectListItem>)ViewBag.Class, new { id = "ddlSearchClass", tabindex = "6", onchange = "EventCheck()", @class = "_pm" })
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.DropDownListFor(model => model.LocationClass, (IEnumerable<SelectListItem>)ViewBag.Class, new { id = "ddlSearchClass", tabindex = "6", onchange = "EventCheck()", @class = "_pm", @disabled = "disabled" })
+                                @Html.HiddenFor(model => model.LocationClass)
+                            </div>
+                        </div>
+                    }
+                </dd>
+                <dt style="width:150px">
+                    @Html.DisplayNameFor(model => model.CaseClass)
+                </dt>
+                <dd style="width:180px">
+                    @{
+                        var CaseClassNm = EnumHelper<CaseClassEnum>.GetDisplayValue((CaseClassEnum)Model.CaseClass);
+                        @Html.Label(CaseClassNm, new { id = "ddlCaseClass", style = "margin-bottom:0rem" });
+                    }
+                    @Html.HiddenFor(model => model.CaseClass)
+                </dd>
+                <dt></dt>
+                <dd></dd>
+            </dl>
+            <dl>
+                <dt>
+                    @LocationResource.Grade
+                </dt>
+                <dd>
+                    @if (Model.StockQty == null)
+                    {
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.DropDownListFor(model => model.GradeId, (IEnumerable<SelectListItem>)ViewBag.Grade, new { id = "ddlSearchGrade", tabindex = "7", @class = "_pm" })
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.GradeId, "", new { })
+                    }
+                    else
+                    {
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.DropDownListFor(model => model.GradeId, (IEnumerable<SelectListItem>)ViewBag.Grade, new { id = "ddlSearchGrade", tabindex = "7", @class = "_pm", @disabled = "disabled" })
+                                @Html.HiddenFor(model => model.GradeId)
+                            </div>
+                        </div>
+                    }
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.AllocPriority)
+                </dt>
+                <dd>
+                    @Html.EditorFor(model => model.AllocPriority, new { htmlAttributes = new { tabindex = "8", @placeholder = "", @class = "_pm" } })
+                    @Html.ValidationMessageFor(model => model.AllocPriority, "", new { })
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PickingGroupNo)
+                </dt>
+                <dd>
+                    @Html.EditorFor(model => model.PickingGroupNo, new { htmlAttributes = new { tabindex = "10", @placeholder = "", @class = "w_6_short _pm" } })
+                    @Html.ValidationMessageFor(model => model.PickingGroupNo)
+                </dd>
+            </dl>
+        </div>
+
+        @* Hidden Fields *@
+
+        <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+        <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        <input type="hidden" id="HidCaseClass" name="HidCaseClass" value="@Model.CaseClass" />
+        @Html.HiddenFor(model => model.StockQty, new { Name = "StockQty" })
+    }
+</div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @if (Model.SearchFlag)
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Location", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            else
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "Location", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            @*<button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>*@
+            @if (string.IsNullOrWhiteSpace(Model.LocationCd))
+            {
+                <button id="btnCreateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm" hidden>@FormsResource.BTN_CREATE</button>
+                <button id="btnCreate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_CREATE</button>
+            }
+            else
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+            }
+        </div>
+    }
+    @*@Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+    @Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_CREATE)*@
+    if (string.IsNullOrWhiteSpace(Model.LocationCd))
+    {
+        @Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+    }
+    else
+    {
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+    }
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //LocationMasterEdit
+        var LocationMasterEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(LocationMasterEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(LocationMasterEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(LocationMasterEdit.SELECTORS.hdUpdateError).val() === LocationMasterEdit.CONST.STR_TRUE) {
+                    if ($(LocationMasterEdit.SELECTORS.hdUpdateError).attr(LocationMasterEdit.CONST.ATTR_ERROR_CODE) === LocationMasterEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(LocationMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(LocationMasterEdit.SELECTORS.exclusiveUpdateDialog, LocationMasterEdit.GLOBAL.titleInformation, LocationMasterEdit.GLOBAL.msgExclusiveUpdate);
+                        $(LocationMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(LocationMasterEdit.SELECTORS.hdUpdateError).attr(LocationMasterEdit.CONST.ATTR_ERROR_CODE) === LocationMasterEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(LocationMasterEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(LocationMasterEdit.SELECTORS.overWriteRecordDialog, LocationMasterEdit.GLOBAL.titleInformation, (LocationMasterEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(LocationMasterEdit.SELECTORS.AreaId).val())));
+                        $(LocationMasterEdit.SELECTORS.btnSubmitOverWriteDialog).attr(LocationMasterEdit.SELECTORS.form, LocationMasterEdit.SELECTORS.frmUpdate).attr(LocationMasterEdit.CONST.FORM_METHOD, LocationMasterEdit.CONST.POST).attr(LocationMasterEdit.CONST.FORM_ACTION, '@Url.Action("Update", "User", new { area = "Master" })').attr(LocationMasterEdit.SELECTORS.form, LocationMasterEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+
+        function EventCheck() {
+            var urlAction = '@Url.Action("GetCaseClass", "Location", new { area = "" })';
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                data: {
+                    kbn: "CASECLASS",
+                    cd: $("#ddlSearchClass").val()
+                },
+                success: function (data) {
+                    if (data.name != null && data.name != "") {
+                        $("#ddlCaseClass").html(data.name);
+                        $("#HidCaseClass").val(data.val);
+                        $("#CaseClass").val(data.val);
+                    } else {
+                        $("#ddlCaseClass").html("");
+                        $("#HidCaseClass").val(data.val);
+                    }
+                }
+
+            });
+         };
+
+        /* 確認メッセージの設定 */
+        $('#btnCreate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnCreateHidden').click();
+        });
+
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        $('#submitCreate').on("click", function () {
+            var urlAction = '@Url.Action("Create", "Location", new { area = "Master" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

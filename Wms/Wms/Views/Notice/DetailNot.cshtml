@@ -1,0 +1,22 @@
+﻿@using Share.Common;
+@model Wms.ViewModels.Notice.NoticeViewModel
+@{
+    ViewBag.Title = Wms.Resources.HomeResource.ReceptionNoticeBtnText;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@* 共通ヘッダー *@
+@Html.Partial("_DetailHeader", Model)
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Notice", new { rowId = Model.DetailHeader.RowId }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}

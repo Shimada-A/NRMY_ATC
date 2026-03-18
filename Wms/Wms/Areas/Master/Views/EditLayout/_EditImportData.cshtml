@@ -1,0 +1,95 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditImport
+
+
+<table class="table table-bordered" id="objectData">
+    <thead>
+        <tr>
+            <th class="bg-grey">
+                @EditLayoutResource.ItemName
+            </th>
+            <th class="bg-grey">
+                @EditLayoutResource.DataType
+            </th>
+            <th class="bg-grey">
+                @EditLayoutResource.DigitCount
+            </th>
+            <th class="bg-grey">
+                @EditLayoutResource.ImportClass
+            </th>
+            <th class="bg-grey">
+                @EditLayoutResource.FixedValue
+            </th>
+            <th class="bg-grey tno">
+                @EditLayoutResource.No
+            </th>
+            <th class="bg-grey">
+                @EditLayoutResource.PrimaryKey
+            </th>
+            <th class="bg-grey">
+                @EditLayoutResource.Required
+            </th>
+            <th class="bg-grey">
+                @EditLayoutResource.UpdateClass
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cModel in Model.TableInfos.Select((v, i) => new { v, i }))
+        {
+            var key = String.Format("FileInfos[{0}].", cModel.i);
+            <tr>
+                <td rowspan="2">
+                    @Html.HiddenFor(Model => Model.TableInfos[cModel.i].IsNew)
+                    @Html.HiddenFor(model => model.TableInfos[cModel.i].ColumnId)
+                    @Html.HiddenFor(model => model.TableInfos[cModel.i].ShipperId)
+                    @Html.HiddenFor(model => model.TableInfos[cModel.i].TemplateId)
+                    @Html.HiddenFor(model => model.TableInfos[cModel.i].ObjectId)
+                    @Html.HiddenFor(model => model.TableInfos[cModel.i].DataType)
+                    @Html.DisplayAndHiddenFor(modelItem => Model.TableInfos[cModel.i].ColumnName)
+                </td>
+                <td rowspan="2">
+                    @Html.DisplayFor(modelItem => Model.TableInfos[cModel.i].DataTypeName)
+                </td>
+                <td rowspan="2">
+                    @Html.DisplayAndHiddenFor(modelItem => Model.TableInfos[cModel.i].DigitInt)
+                </td>
+                <td rowspan="2" >
+                    @Html.EnumDropDownListFor(modelItem => Model.TableInfos[cModel.i].ImportClass)
+                </td>
+                <td rowspan="2">
+                    @Html.EditorFor(modelItem => Model.TableInfos[cModel.i].FixedValue) 
+                    @Html.ValidationMessageFor(modelItem => Model.TableInfos[cModel.i].FixedValue)
+                </td>
+                <td class="text-right w_no  tno">
+                    @Html.EditorFor(modelItem => Model.TableInfos[cModel.i].ColumnNoFirst, new { htmlAttributes = new { @class = "tno no-spin", @type = "number" } })
+                    @Html.ValidationMessageFor(modelItem => Model.TableInfos[cModel.i].ColumnNoFirst)
+                </td>
+                <td rowspan="2" class="text-center" >
+                    @Html.HiddenFor(model => Model.TableInfos[cModel.i].PrimaryFlag)
+                    @Html.DisplayFor(modelItem => Model.TableInfos[cModel.i].PrimaryFlagText)
+                </td>
+                <td rowspan="2" class="text-center">
+                    @Html.HiddenFor(model => Model.TableInfos[cModel.i].RequiredFlag)
+                    @Html.DisplayFor(modelItem => Model.TableInfos[cModel.i].RequiredFlagText)
+                </td>
+                <td rowspan="2" >
+                    @Html.EnumDropDownListFor(modelItem => Model.TableInfos[cModel.i].UpdateClass)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.EditorFor(modelItem => Model.TableInfos[cModel.i].ColumnNoSecond, new { htmlAttributes = new { @class = "tno no-spin", @type = "number"} })
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

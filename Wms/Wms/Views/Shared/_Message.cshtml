@@ -1,0 +1,8 @@
+﻿@using Share.Common;
+
+@*message*@
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+

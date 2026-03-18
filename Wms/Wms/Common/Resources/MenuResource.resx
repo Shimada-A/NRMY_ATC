@@ -1,0 +1,471 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="W_MAS_BoxSetting01" xml:space="preserve">
+    <value>ケース閾値設定マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Item01" xml:space="preserve">
+    <value>商品マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Item02" xml:space="preserve">
+    <value>商品マスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_ShipFrontage01" xml:space="preserve">
+    <value>ブランド別レーン間口マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_ShipFrontage02" xml:space="preserve">
+    <value>ブランド別レーン間口マスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_Store01" xml:space="preserve">
+    <value>店舗マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Store02" xml:space="preserve">
+    <value>店舗マスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_Transporter01" xml:space="preserve">
+    <value>配送業者マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Transporter02" xml:space="preserve">
+    <value>配送業者マスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_User01" xml:space="preserve">
+    <value>利用者マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_User02" xml:space="preserve">
+    <value>利用者マスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_SetPermission01" xml:space="preserve">
+    <value>機能権限設定(一覧)</value>
+  </data>
+  <data name="W_MAS_SetPermission02" xml:space="preserve">
+    <value>機能権限設定(詳細)</value>
+  </data>
+  <data name="W_MAS_Vendor01" xml:space="preserve">
+    <value>仕入先マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Vendor02" xml:space="preserve">
+    <value>仕入先マスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_BoxSetting02" xml:space="preserve">
+    <value>ケース閾値設定マスタ(登録/更新)</value>
+  </data>
+  <data name="W_MAS_BoxSetting03" xml:space="preserve">
+    <value>ケース閾値設定マスタ(アップロード結果)</value>
+  </data>
+  <data name="W_STK_Reference" xml:space="preserve">
+    <value>在庫照会</value>
+  </data>
+  <data name="W_MAS_General01" xml:space="preserve">
+    <value>汎用コードマスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_General02" xml:space="preserve">
+    <value>汎用コードマスタ(登録)</value>
+  </data>
+  <data name="W_MAS_General03" xml:space="preserve">
+    <value>汎用コードマスタ(更新)</value>
+  </data>
+  <data name="W_MAS_Location01" xml:space="preserve">
+    <value>ロケーションマスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Location02" xml:space="preserve">
+    <value>ロケーションマスタ(登録/更新)</value>
+  </data>
+  <data name="W_MAS_Location03" xml:space="preserve">
+    <value>ロケーションマスタ(アップロード結果)</value>
+  </data>
+  <data name="W_MAS_LocationClass" xml:space="preserve">
+    <value>ロケーション区分マスタ</value>
+  </data>
+  <data name="W_MAS_LocTransporter01" xml:space="preserve">
+    <value>センター別店舗別配送業者マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_LocTransporter02" xml:space="preserve">
+    <value>センター別店舗別配送業者マスタ(登録/更新)</value>
+  </data>
+  <data name="W_MAS_Warehouse01" xml:space="preserve">
+    <value>倉庫マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Warehouse02" xml:space="preserve">
+    <value>倉庫マスタ(詳細)</value>
+  </data>
+  <data name="W_OTH_CreateGeneralLayout" xml:space="preserve">
+    <value>汎用レイアウト作成</value>
+  </data>
+  <data name="W_OTH_InstructionReference01" xml:space="preserve">
+    <value>入出荷指示データ受信履歴照会(一覧)</value>
+  </data>
+  <data name="W_OTH_InstructionReference02" xml:space="preserve">
+    <value>入出荷指示データ受信履歴照会(詳細)</value>
+  </data>
+  <data name="W_OTH_OutputGeneralData" xml:space="preserve">
+    <value>汎用データ出力</value>
+  </data>
+  <data name="W_OTH_WorkReference" xml:space="preserve">
+    <value>作業履歴照会</value>
+  </data>
+  <data name="W_STK_AdjustReference" xml:space="preserve">
+    <value>在庫調整履歴照会</value>
+  </data>
+  <data name="W_STK_ImportInstruction" xml:space="preserve">
+    <value>在庫仕分指示取込</value>
+  </data>
+  <data name="W_STK_InOutReference" xml:space="preserve">
+    <value>在庫受払照会</value>
+  </data>
+  <data name="W_STK_OutputKanban" xml:space="preserve">
+    <value>在庫仕分カンバン出力</value>
+  </data>
+  <data name="W_STK_SlowMoveReference" xml:space="preserve">
+    <value>スロームーブ照会</value>
+  </data>
+  <data name="W_ARR_UnshelvedReference" xml:space="preserve">
+    <value>仕入入荷未棚付照会</value>
+  </data>
+  <data name="W_SHP_EcAllocation01" xml:space="preserve">
+    <value>EC引当</value>
+  </data>
+  <data name="W_SHP_EcAllocation02" xml:space="preserve">
+    <value>出荷引当	EC引当(明細)</value>
+  </data>
+  <data name="W_SHP_DcAllocation01" xml:space="preserve">
+    <value>DC引当</value>
+  </data>
+  <data name="W_ARR_PurchaseReference01" xml:space="preserve">
+    <value>仕入入荷進捗照会(仕入先別)</value>
+  </data>
+  <data name="W_ARR_PurchaseReference02" xml:space="preserve">
+    <value>仕入入荷進捗照会(明細別)</value>
+  </data>
+  <data name="W_INV_Confirm" xml:space="preserve">
+    <value>棚卸実績確定</value>
+  </data>
+  <data name="W_ARR_ConfirmActual" xml:space="preserve">
+    <value>入荷実績確定</value>
+  </data>
+  <data name="W_MAS_LocTransporter03" xml:space="preserve">
+    <value>センター別店舗別配送業者マスタ(アップロード結果)</value>
+  </data>
+  <data name="W_ARR_InputPurchase01" xml:space="preserve">
+    <value>仕入入荷実績入力</value>
+  </data>
+  <data name="W_ARR_InputPurchase02" xml:space="preserve">
+    <value>仕入入荷実績入力</value>
+  </data>
+  <data name="W_SHP_DcAllocationCancel" xml:space="preserve">
+    <value>DC引当解除</value>
+  </data>
+  <data name="W_STK_Adjust" xml:space="preserve">
+    <value>在庫調整</value>
+  </data>
+  <data name="W_MAS_ShipFrontage03" xml:space="preserve">
+    <value>ブランド別レーン間口マスタ(アップロード結果)</value>
+  </data>
+  <data name="W_MOV_TransferReference01" xml:space="preserve">
+    <value>移動入荷進捗照会(移動元別)</value>
+  </data>
+  <data name="W_MOV_TransferReference02" xml:space="preserve">
+    <value>移動入荷進捗照会(明細別)</value>
+  </data>
+  <data name="W_MOV_InputTransfer01" xml:space="preserve">
+    <value>移動入荷実績入力</value>
+  </data>
+  <data name="W_SHP_EcAllocationCancel" xml:space="preserve">
+    <value>EC引当解除</value>
+  </data>
+  <data name="W_SHP_ModifyTcInstruction" xml:space="preserve">
+    <value>TC出荷指示修正</value>
+  </data>
+  <data name="W_MOV_InputTransfer02" xml:space="preserve">
+    <value>移動入荷実績入力</value>
+  </data>
+  <data name="W_SHP_PrintBatch" xml:space="preserve">
+    <value>バッチ帳票発行</value>
+  </data>
+  <data name="W_SHP_TransferReference01" xml:space="preserve">
+    <value>出荷作業進捗一覧</value>
+  </data>
+  <data name="W_SHP_BtoBReference01" xml:space="preserve">
+    <value>BtoB出荷梱包進捗照会</value>
+  </data>
+  <data name="W_SHP_BtoBReference02" xml:space="preserve">
+    <value>梱包明細情報</value>
+  </data>
+  <data name="W_ARR_PrintCaseLabel" xml:space="preserve">
+    <value>入荷ケースラベル発行</value>
+  </data>
+  <data name="W_SHP_BtoBInstructionReference01" xml:space="preserve">
+    <value>BtoB出荷指示照会</value>
+  </data>
+  <data name="W_SHP_BtoBInstructionReference03" xml:space="preserve">
+    <value>BtoB出荷指示照会(梱包明細別)</value>
+  </data>
+  <data name="W_SHP_BtoBInstructionReference02" xml:space="preserve">
+    <value>BtoB出荷指示照会(明細別)</value>
+  </data>
+  <data name="W_SHP_PrintEcInvoice" xml:space="preserve">
+    <value>EC納品書発行・送り状発行</value>
+  </data>
+  <data name="W_SHP_PrintCaseLabel" xml:space="preserve">
+    <value>出荷ケースラベル発行</value>
+  </data>
+  <data name="W_SHP_EcConfirmProgress01" xml:space="preserve">
+    <value>EC出荷進捗照会</value>
+  </data>
+  <data name="W_SHP_EcConfirmProgress02" xml:space="preserve">
+    <value>EC出荷進捗照会(明細別)</value>
+  </data>
+  <data name="W_INV_Start" xml:space="preserve">
+    <value>棚卸開始処理</value>
+  </data>
+  <data name="W_INV_Input" xml:space="preserve">
+    <value>棚卸実績入力</value>
+  </data>
+  <data name="W_INV_Reference01" xml:space="preserve">
+    <value>棚卸進捗照会</value>
+  </data>
+  <data name="W_INV_Reference02" xml:space="preserve">
+    <value>棚卸進捗照会(ロケ別)</value>
+  </data>
+  <data name="W_INV_Reference03" xml:space="preserve">
+    <value>棚卸進捗照会(SKU別)</value>
+  </data>
+  <data name="W_SHP_SortSet" xml:space="preserve">
+    <value>仕分コード設定</value>
+  </data>
+  <data name="W_SHP_TransporterChng" xml:space="preserve">
+    <value>配送業者変更</value>
+  </data>
+  <data name="W_SHP_TransporterChngEc" xml:space="preserve">
+    <value>EC配送業者変更</value>
+  </data>
+  <data name="W_STK_ResearchReference" xml:space="preserve">
+    <value>在庫調査確認状況照会</value>
+  </data>
+  <data name="W_SHP_PrintInvoice" xml:space="preserve">
+    <value>BtoB納品書発行・送り状発行</value>
+  </data>
+  <data name="W_SHP_BtoBInstructDelete" xml:space="preserve">
+    <value>出荷指示削除</value>
+  </data>
+  <data name="W_RET_EcReference01" xml:space="preserve">
+    <value>EC返品照会(注文別)</value>
+  </data>
+  <data name="W_RET_EcReference02" xml:space="preserve">
+    <value>EC返品照会(明細別)</value>
+  </data>
+  <data name="W_RET_AcceptArrival01" xml:space="preserve">
+    <value>EC返品受付</value>
+  </data>
+  <data name="W_MAS_Colors01" xml:space="preserve">
+    <value>カラーマスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Size01" xml:space="preserve">
+    <value>サイズマスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Division01" xml:space="preserve">
+    <value>事業部マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Colors02" xml:space="preserve">
+    <value>カラーマスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_Division02" xml:space="preserve">
+    <value>事業部マスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_Brand01" xml:space="preserve">
+    <value>ブランドマスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Brand02" xml:space="preserve">
+    <value>ブランドマスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_Categores401" xml:space="preserve">
+    <value>分類マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Categores402" xml:space="preserve">
+    <value>分類マスタ(詳細)</value>
+  </data>
+  <data name="W_OTH_Inspection" xml:space="preserve">
+    <value>作業履歴照会</value>
+  </data>
+  <data name="W_SHP_BtoBInstructionInput01" xml:space="preserve">
+    <value>BtoB出荷実績入力</value>
+  </data>
+  <data name="W_SHP_BtoBInstructionInput02" xml:space="preserve">
+    <value>BtoB出荷実績入力(明細別)</value>
+  </data>
+  <data name="W_STK_UploadCaseInstruction" xml:space="preserve">
+    <value>ケース出荷指示取込</value>
+  </data>
+  <data name="W_RET_PurchaseReturns" xml:space="preserve">
+    <value>仕入先返品</value>
+  </data>
+  <data name="W_STK_WorkingReference" xml:space="preserve">
+    <value>作業中照会</value>
+  </data>
+  <data name="W_SHP_EcCancelUpload01" xml:space="preserve">
+    <value>EC出荷キャンセル更新</value>
+  </data>
+  <data name="W_SHP_EcCancelUpload02" xml:space="preserve">
+    <value>EC出荷キャンセル更新明細</value>
+  </data>
+  <data name="W_RET_PurchaseCorrection" xml:space="preserve">
+    <value>仕入訂正</value>
+  </data>
+  <data name="W_RET_PurchaseReference01" xml:space="preserve">
+    <value>仕入先返品・訂正照会</value>
+  </data>
+  <data name="W_RET_PurchaseReference02" xml:space="preserve">
+    <value>仕入先返品・訂正明細</value>
+  </data>
+  <data name="W_MAS_NaniwaSorting01" xml:space="preserve">
+    <value>浪速用仕分コードマスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_NaniwaSorting02" xml:space="preserve">
+    <value>浪速用仕分コードマスタ(登録/更新)</value>
+  </data>
+  <data name="W_MAS_EcPrefTransporter02" xml:space="preserve">
+    <value>EC注文都道府県別配送業者マスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_EcPrefTransporter01" xml:space="preserve">
+    <value>EC注文都道府県別配送業者マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_StockingPattern01" xml:space="preserve">
+    <value>店頭分仕分パターンマスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_StockingPattern02" xml:space="preserve">
+    <value>店頭分仕分パターンマスタ(詳細)</value>
+  </data>
+  <data name="W_STK_WorkReference" xml:space="preserve">
+    <value>作業実績照会</value>
+  </data>
+  <data name="W_MAS_Operation01" xml:space="preserve">
+    <value>作業マスタ(一覧)</value>
+  </data>
+  <data name="W_MAS_Operation02" xml:space="preserve">
+    <value>作業マスタ(詳細)</value>
+  </data>
+  <data name="W_MAS_BrandStore01" xml:space="preserve">
+    <value>得意先別ブランドマスタ(一覧)</value>
+  </data>
+  <data name="W_STK_LocMove" xml:space="preserve">
+    <value>ロケーション移動</value>
+  </data>
+  <data name="W_MAS_ShippingHoldStores" xml:space="preserve">
+    <value>海外アソート出荷保留店舗マスタ     </value>
+  </data>
+</root>

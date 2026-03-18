@@ -1,0 +1,308 @@
+﻿@using Wms.Areas.Master.Controllers;
+@model Wms.Areas.Master.ViewModels.Operation.Detail
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Operation02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Operation", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ShipperId)
+            @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+            <div class="form_content">
+                <dl>
+                    <dt>
+                        @OperationResource.Category：
+                    </dt>
+                    @if (Model.InsertFlag == true)
+                    {
+                        <dd style="margin-top:auto;margin-bottom:auto;position:absolute">
+                            @Html.DropDownListFor(
+                      model => model.CategoryName,
+                      (IEnumerable<SelectListItem>)ViewBag.CategoryNameList, CommonResource.None,
+                      new { id = "ddlCategoryName", tabindex = "1" })
+                            <div style="display:inline-block; vertical-align:top;">
+                                @Html.ValidationMessageFor(model => model.CategoryName)
+                            </div>
+                        </dd>
+                    }
+                    else
+                    {
+                        <dd style="margin-top:auto;margin-bottom:auto;position:absolute">
+                            @Html.DropDownListFor(
+                      model => model.CategoryName,
+                      (IEnumerable<SelectListItem>)ViewBag.CategoryNameList,
+                      new { id = "ddlCategoryName", tabindex = "1" })
+                            <div style="display:inline-block; vertical-align:top;">
+                                @Html.ValidationMessageFor(model => model.CategoryName)
+                            </div>
+                        </dd>
+                    }
+                </dl>
+                <dl>
+                    @if (Model.InsertFlag == true)
+                    {
+                        <dt>
+                            @Html.DisplayNameFor(model => model.OperationId)：
+                        </dt>
+                        <dd>
+                            @Html.EditorFor(model => model.OperationId, new { htmlAttributes = new { @class = "w_6_short _pm", @id = "txtOperationId", tabindex = "2" } })
+                            @Html.ValidationMessageFor(model => model.OperationId, "", new { })
+                        </dd>
+                    }
+                    else
+                    {
+                        <dt>
+                            @Html.DisplayNameFor(model => model.OperationId)：
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.OperationId)
+                            @Html.HiddenFor(model => model.OperationId)
+                        </dd>
+                    }
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.OperationName)：
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.OperationName, new { htmlAttributes = new { @class = "w_18_normal _pm", @id = "txtOperationName", tabindex = "3" } })
+                        @Html.ValidationMessageFor(model => model.OperationName)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.OperationNote)：
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.OperationNote, new { htmlAttributes = new { @class = "w_18_normal _pm", @id = "txtOperationNote", tabindex = "4" } })
+                        &nbsp;<button id="btnAddNote" type="button" class="btn btn-outline-dark" tabindex="5">追加</button>
+                        @Html.ValidationMessageFor(model => model.OperationNote, "", new { id = "msgOperationNote" })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                    </dt>
+                    <dd>
+                        <div class="tb_scroll" style="width: 42rem ;height:15vh;">
+                            <table class="table-bordered" id="tblOperationNotes">
+                                @if (Model.OperationNotes.Count == 0)
+                                {
+                                    <tr><td class="w_80_normal" style="height: 5vh; " rowspan="2"></td></tr>
+                                }
+                                else
+                                {
+
+                                    foreach (var operationNote in Model.OperationNotes.Select((v, i) => new { v, i }))
+                                    {
+                                        var key = String.Format("operationNoteItems[{0}].", operationNote.i);
+                                        <tr>
+                                            <td class="w_50_normal" style="height:5vh">
+                                                @Html.DisplayFor(modelItem => operationNote.v.OperationNote)
+                                            </td>
+                                            <td class="w_18_normal" style="height:5vh; text-align: center;">
+                                                <button id="btnDeleteNote" type="button" class="btn btn-outline-danger">削除</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                            <input id="hiddata" type="hidden" name="Notes" />
+                        </div>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt></dt>
+                    <dd>
+                        <label class="chklist">
+                            @Html.CheckBoxFor(model => model.QtyZeroFlag, new { tabindex = "11", @placeholder = "", @class = "check-box _pm" })
+                            <span class="chk_parts">
+                            </span>
+                        </label>
+                        @OperationResource.QtyZeroCheckBox
+                    </dd>
+                </dl>
+            </div>
+        }
+    </div>
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @if (Model.SearchFlag)
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Operation", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            else
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "Operation", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            @if (Model.InsertFlag == true)
+            {
+                <button id="btnCreateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm" hidden>@FormsResource.BTN_CREATE</button>
+                <button id="btnCreate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_CREATE</button>
+            }
+            else
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+            }
+            @*確認メッセージ用*@
+            <button id="btnConfirm" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_ConfirmMessage" hidden></button>
+        </div>
+    }
+    if (Model.InsertFlag == true)
+    {
+        @Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+    }
+    else
+    {
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+    }
+}
+@* スクリプト *@
+@section LayoutScripts{
+
+    <script>
+        //Select2でカテゴリのリスト表示
+        $(document).ready(function () {
+            $('#ddlCategoryName').select2({
+                width: '200px',
+                language: 'ja',
+                tags: true
+            });
+
+            // 追加ボタン押下時処理
+            $(document).on("click", '#btnAddNote', function () {
+                var text = $.trim($('#txtOperationNote').val());
+                var item = $('#tblOperationNotes').find("tr:eq(0)").find("td:eq(0)").text().trim();
+                var msg = '';
+
+                if (!validateForm($('#txtOperationNote'))) {
+                    return;
+                }
+
+                if (text == '') {
+                    return;
+                }
+
+                if (item == '') {
+                    $('#tblOperationNotes tr').remove();
+                }
+
+                for (let i = 0; i < $('#tblOperationNotes tr').length; i++) {
+
+                    var notes = $('#tblOperationNotes').find(`tr:eq(${i})`).find("td:eq(0)").text().trim();
+                    if (text == notes) {
+
+                        msg = '入力された内容は既に存在しています'
+                        $('#msgOperationNote').html(msg);
+                        $("#msgOperationNote").addClass("field-validation-error");
+
+                        return;
+                    }
+                }
+
+                var html = '<tr><td class="w_50_normal" style="height:5vh">' + text + '</td><td class="w_18_normal" style="height:5vh; text-align: center;"><button id="btnDeleteNote" type="button" class="btn btn-outline-danger">削除</button></td></tr>';
+                $('#tblOperationNotes').append(html);
+                $('#txtOperationNote').val('');
+            });
+
+            //削除ボタン押下時処理
+            $(document).on("click", "#btnDeleteNote", function () {
+                var rowCount = $('#tblOperationNotes tr').length;
+                $(this).parent().parent().remove();
+                if (rowCount == 1) {
+                    var html = '<tr><td  class="w_80_normal" style="height:5vh; rowspan="2"></td></tr>';
+                    $('#tblOperationNotes').append(html);
+                }
+            });
+        });
+
+        /* 新規登録 確認メッセージの設定 */
+        $('#btnCreate').on("click", function () {
+
+            $('#txtOperationNote').val('');
+
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+
+            addNote();
+
+            $('#btnCreateHidden').click();
+        });
+
+        /* 更新 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+
+            $('#txtOperationNote').val('');
+
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+
+            addNote();
+
+            $('#btnUpdateHidden').click();
+        });
+
+        $('#submitCreate').on("click", function () {
+            var urlAction = '@Url.Action("Create", "Operation", new { area = "Master" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        // 確認メッセージで「はい」を押下
+        $('#ConfirmMessage').on("click", function () {
+
+            if ($("[name='InsertFlag']").val() == 'True') {
+                var urlAction = '@Url.Action("Create", "Operation", new { area = "Master" })';
+            } else {
+                var urlAction = '@Url.Action("Update", "Operation", new { area = "Master" })';
+            };
+
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        //新規登録/更新押下時Jsonに備考欄を格納
+        function addNote() {
+            var list = [];
+            for (let i = 0; i < $('#tblOperationNotes tr').length; i++) {
+                var item = $('#tblOperationNotes').find(`tr:eq(${i})`).find("td:eq(0)").text().trim();
+                if (item != '') {
+                    list.push(item);
+                }
+            }
+            // JSONでhiddataへ格納する
+            $("#hiddata").val(JSON.stringify(list));
+        }
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

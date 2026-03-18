@@ -1,0 +1,435 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AbbCode" xml:space="preserve">
+    <value>略号コード</value>
+  </data>
+  <data name="BaseName" xml:space="preserve">
+    <value>商品</value>
+  </data>
+  <data name="BowlIrisu" xml:space="preserve">
+    <value>ボール入数</value>
+  </data>
+  <data name="BrandDetail" xml:space="preserve">
+    <value>ブランド</value>
+  </data>
+  <data name="BrandId" xml:space="preserve">
+    <value>ブランドID</value>
+  </data>
+  <data name="BrandIdSearch" xml:space="preserve">
+    <value>ブランド：</value>
+  </data>
+  <data name="BrandName" xml:space="preserve">
+    <value>ブランド名</value>
+  </data>
+  <data name="CaseIrisu" xml:space="preserve">
+    <value>ケース入数</value>
+  </data>
+  <data name="CategoryId" xml:space="preserve">
+    <value>分類</value>
+  </data>
+  <data name="CategoryId1" xml:space="preserve">
+    <value>分類1</value>
+  </data>
+  <data name="CategoryId2" xml:space="preserve">
+    <value>分類2</value>
+  </data>
+  <data name="CategoryId3" xml:space="preserve">
+    <value>分類3</value>
+  </data>
+  <data name="CategoryId4" xml:space="preserve">
+    <value>分類4</value>
+  </data>
+  <data name="CategoryId5" xml:space="preserve">
+    <value>分類5</value>
+  </data>
+  <data name="CategoryIdSearch" xml:space="preserve">
+    <value>分類：</value>
+  </data>
+  <data name="CategoryName1" xml:space="preserve">
+    <value>分類名1</value>
+  </data>
+  <data name="CategoryName2" xml:space="preserve">
+    <value>分類名2</value>
+  </data>
+  <data name="CategoryName3" xml:space="preserve">
+    <value>分類名3</value>
+  </data>
+  <data name="CategoryName4" xml:space="preserve">
+    <value>分類名4</value>
+  </data>
+  <data name="CategoryName5" xml:space="preserve">
+    <value>分類名5</value>
+  </data>
+  <data name="ColorCount" xml:space="preserve">
+    <value>カラー数</value>
+  </data>
+  <data name="ColorRatio" xml:space="preserve">
+    <value>カラー比率</value>
+  </data>
+  <data name="DeleteFlag" xml:space="preserve">
+    <value>削除フラグ</value>
+  </data>
+  <data name="DiscountRate" xml:space="preserve">
+    <value>割引率</value>
+  </data>
+  <data name="Division" xml:space="preserve">
+    <value>事業部</value>
+  </data>
+  <data name="DivisionId" xml:space="preserve">
+    <value>事業部CD</value>
+  </data>
+  <data name="DivisionSearch" xml:space="preserve">
+    <value>事業部：</value>
+  </data>
+  <data name="EcStartDate" xml:space="preserve">
+    <value>EC表示開始日時</value>
+  </data>
+  <data name="FirstDbState" xml:space="preserve">
+    <value>初回配分状況</value>
+  </data>
+  <data name="Fku" xml:space="preserve">
+    <value>FKU</value>
+  </data>
+  <data name="GenderClass" xml:space="preserve">
+    <value>男女区分</value>
+  </data>
+  <data name="GenerationClass" xml:space="preserve">
+    <value>世代</value>
+  </data>
+  <data name="IcTagClass" xml:space="preserve">
+    <value>ICタグ有無区分</value>
+  </data>
+  <data name="InternalClass" xml:space="preserve">
+    <value>国内海外区分</value>
+  </data>
+  <data name="ItemCode" xml:space="preserve">
+    <value>アイテムコード</value>
+  </data>
+  <data name="ItemColor" xml:space="preserve">
+    <value>カラー</value>
+  </data>
+  <data name="ItemColorId" xml:space="preserve">
+    <value>カラーID</value>
+  </data>
+  <data name="ItemColorName" xml:space="preserve">
+    <value>カラー名</value>
+  </data>
+  <data name="ItemCustomerType" xml:space="preserve">
+    <value>顧客タイプ</value>
+  </data>
+  <data name="ItemCustomerTypeId" xml:space="preserve">
+    <value>顧客タイプID</value>
+  </data>
+  <data name="ItemId" xml:space="preserve">
+    <value>品番</value>
+  </data>
+  <data name="ItemIdName" xml:space="preserve">
+    <value>品番・品名</value>
+  </data>
+  <data name="ItemIdSearch" xml:space="preserve">
+    <value>品番：</value>
+  </data>
+  <data name="ItemKanaName" xml:space="preserve">
+    <value>品名カナ</value>
+  </data>
+  <data name="ItemKeyword" xml:space="preserve">
+    <value>アイテムキーワード</value>
+  </data>
+  <data name="ItemKeywordId" xml:space="preserve">
+    <value>アイテムキーワードID</value>
+  </data>
+  <data name="ItemName" xml:space="preserve">
+    <value>品名</value>
+  </data>
+  <data name="ItemNameSearch" xml:space="preserve">
+    <value>品名：</value>
+  </data>
+  <data name="ItemRank" xml:space="preserve">
+    <value>商品ランク</value>
+  </data>
+  <data name="ItemRankId" xml:space="preserve">
+    <value>商品ランクID</value>
+  </data>
+  <data name="ItemRankIdSearch" xml:space="preserve">
+    <value>商品ランク：</value>
+  </data>
+  <data name="ItemSeason" xml:space="preserve">
+    <value>シーズン</value>
+  </data>
+  <data name="ItemSeasonId" xml:space="preserve">
+    <value>シーズンID</value>
+  </data>
+  <data name="ItemSeasonName" xml:space="preserve">
+    <value>シーズン名</value>
+  </data>
+  <data name="ItemShortName" xml:space="preserve">
+    <value>品名略称</value>
+  </data>
+  <data name="ItemSize" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="ItemSizeDisplayOrder" xml:space="preserve">
+    <value>サイズ表示順</value>
+  </data>
+  <data name="ItemSizeId" xml:space="preserve">
+    <value>サイズID</value>
+  </data>
+  <data name="ItemSizeName" xml:space="preserve">
+    <value>サイズ名</value>
+  </data>
+  <data name="ItemSizePattern" xml:space="preserve">
+    <value>サイズパターン</value>
+  </data>
+  <data name="ItemSizePatternId" xml:space="preserve">
+    <value>サイズパターンID</value>
+  </data>
+  <data name="ItemSkuId" xml:space="preserve">
+    <value>SKU</value>
+  </data>
+  <data name="ItemSkuIdDetail" xml:space="preserve">
+    <value>品番SKU</value>
+  </data>
+  <data name="ItemSkuIdSearch" xml:space="preserve">
+    <value>品番SKU：</value>
+  </data>
+  <data name="Jan" xml:space="preserve">
+    <value>JAN</value>
+  </data>
+  <data name="JanSearch" xml:space="preserve">
+    <value>JAN：</value>
+  </data>
+  <data name="LuckyBagClass" xml:space="preserve">
+    <value>福袋予約品区分</value>
+  </data>
+  <data name="MainVendorId" xml:space="preserve">
+    <value>代表仕入先所在ID</value>
+  </data>
+  <data name="MainVendorIdSearch" xml:space="preserve">
+    <value>代表仕入先：</value>
+  </data>
+  <data name="MainVendorName" xml:space="preserve">
+    <value>代表仕入先所在</value>
+  </data>
+  <data name="Material" xml:space="preserve">
+    <value>素材</value>
+  </data>
+  <data name="MdClass" xml:space="preserve">
+    <value>MD区分</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NominalPrice" xml:space="preserve">
+    <value>想定売価</value>
+  </data>
+  <data name="NormalBuyingPrice" xml:space="preserve">
+    <value>標準下代</value>
+  </data>
+  <data name="NormalSellingPrice" xml:space="preserve">
+    <value>標準上代(税込)</value>
+  </data>
+  <data name="NormalSellingPriceExTax" xml:space="preserve">
+    <value>標準上代(税抜)</value>
+  </data>
+  <data name="NoveltyName" xml:space="preserve">
+    <value>付属品名</value>
+  </data>
+  <data name="OrderState" xml:space="preserve">
+    <value>発注状況</value>
+  </data>
+  <data name="OriginCountry" xml:space="preserve">
+    <value>原産国</value>
+  </data>
+  <data name="PieceVol" xml:space="preserve">
+    <value>単品容積</value>
+  </data>
+  <data name="PriceSearch" xml:space="preserve">
+    <value>価格帯：</value>
+  </data>
+  <data name="PriceTagId" xml:space="preserve">
+    <value>値札ID</value>
+  </data>
+  <data name="ProperPrice" xml:space="preserve">
+    <value>元上代(税込)</value>
+  </data>
+  <data name="ProperPriceExTax" xml:space="preserve">
+    <value>元上代(税抜)</value>
+  </data>
+  <data name="PurchaseBuyingPrice" xml:space="preserve">
+    <value>仕入下代</value>
+  </data>
+  <data name="SaleDateSearch" xml:space="preserve">
+    <value>販売期間：</value>
+  </data>
+  <data name="SaleEndDate" xml:space="preserve">
+    <value>販売終了日</value>
+  </data>
+  <data name="SaleStartDate" xml:space="preserve">
+    <value>販売開始日</value>
+  </data>
+  <data name="SeasonYear" xml:space="preserve">
+    <value>シーズン年</value>
+  </data>
+  <data name="SizeExpansion" xml:space="preserve">
+    <value>サイズ展開</value>
+  </data>
+  <data name="SizeExpansionId" xml:space="preserve">
+    <value>サイズ展開ID</value>
+  </data>
+  <data name="SkuNominalPrice" xml:space="preserve">
+    <value>SKU想定売価</value>
+  </data>
+  <data name="SkunormalBuyingPrice" xml:space="preserve">
+    <value>SKU標準下代</value>
+  </data>
+  <data name="SkunormalSellingPrice" xml:space="preserve">
+    <value>SKU標準上代(税込)</value>
+  </data>
+  <data name="SkunormalSellingPriceExTax" xml:space="preserve">
+    <value>SKU標準上代(税抜)</value>
+  </data>
+  <data name="SkuproperPrice" xml:space="preserve">
+    <value>SKU元上代(税込)</value>
+  </data>
+  <data name="SkuproperPriceExTax" xml:space="preserve">
+    <value>SKU元上代(税抜)</value>
+  </data>
+  <data name="SkupurchaseBuyingPrice" xml:space="preserve">
+    <value>SKU仕入下代</value>
+  </data>
+  <data name="StockMngClass" xml:space="preserve">
+    <value>在庫管理区分</value>
+  </data>
+  <data name="StoreGroup" xml:space="preserve">
+    <value>取扱店舗グループ</value>
+  </data>
+  <data name="StoreGroupId" xml:space="preserve">
+    <value>取扱店舗グループID</value>
+  </data>
+  <data name="WithdrawalDate" xml:space="preserve">
+    <value>回収日</value>
+  </data>
+  <data name="Zoning" xml:space="preserve">
+    <value>ゾーニング</value>
+  </data>
+  <data name="ZoningId" xml:space="preserve">
+    <value>ゾーニングID</value>
+  </data>
+</root>

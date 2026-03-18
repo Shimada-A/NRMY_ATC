@@ -1,0 +1,203 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.BoxSetting.Upload
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_BoxSetting03;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.UploadResult.BoxSettings != null)
+{
+    using (Html.BeginForm("Search", "BoxSetting", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        @* Sublbarea *@
+        <div class="sublbarea no_border stock_detail_load">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnUpload" class="Upload _pm">
+                            <img src="~/Content/img/upload.png" />
+                            @FormsResource.BTN_UPLOAD
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="sublbarea">
+            <div class="sortarea">
+                <ul>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.UploadResult.BoxSettings.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.UploadResult.BoxSettings.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.UploadResult.BoxSettings, Page => Url.Action("UploadErr", "BoxSetting", new { Page }), PagerHelper.Default)
+                }
+                @Html.HiddenFor(model => model.UploadConditions.WorkId)
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.UploadResult.BoxSettings.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div id="BoxSettingRows">
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @MasBoxSettingResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BoxSettingResource.CategoryId1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BoxSettingResource.CategoryId2
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BoxSettingResource.CategoryId3
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BoxSettingResource.CategoryId4
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BoxSettingResource.ItemId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BoxSettingResource.ThresholdClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BoxSettingResource.ThresholdSku
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BoxSettingResource.ThresholdRate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BoxSettingResource.ErrMsg
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Update", "BoxSetting", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.UploadResult.BoxSettings.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("BoxSettings[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.No)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryId1)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryId2)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName2)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryId3)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName3)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryId4)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName4)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @if (cModel.v.ThresholdClass == "1")
+                                            {
+                                                @Html.DisplayName(BoxSettingResource.ThresholdRate)
+                                            }
+                                            else if (cModel.v.ThresholdClass == "2")
+                                            {
+                                                @Html.DisplayName(BoxSettingResource.ThresholdSku)
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => cModel.v.ThresholdClass)
+                                            }
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ThresholdSku)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ThresholdRate)
+                                        </td>
+                                        <td class="fontred align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ErrMsg)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@Html.Partial("_FileUploadModal")
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "BoxSetting", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+    <script>
+    Dropzone.autoDiscover = false;
+        //ファイルアップロード
+        fileUploadModal.init();
+        $('#btnUpload').on('click', function () {
+            var urlAction = '@Url.Action("Upload", "BoxSetting", new { area = "Master" })';
+            var urlIndexAction = '@Url.Action("Index", "BoxSetting", new { area = "Master" })';
+            var urlErrAction = '@Url.Action("UploadErr", "BoxSetting", new { area = "Master" })';
+            fileUploadModal.setting({
+                url: urlAction,
+                title: "@BoxSettingResource.Title" + "@FormsResource.FileUplaodTitle",
+                acceptedFiles: ".xlsx",
+                successCallback: function (data) {
+                    if (data.err == 'true') {
+                        location.href = urlErrAction;
+                    } else {
+                        location.href = urlIndexAction;
+                    }
+                }
+            });
+            fileUploadModal.open();
+        });
+    </script>
+}

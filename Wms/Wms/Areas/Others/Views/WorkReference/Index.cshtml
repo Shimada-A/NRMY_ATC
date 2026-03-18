@@ -1,0 +1,374 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Others.Resources;
+@model Wms.Areas.Others.ViewModels.WorkReference.WorkReferenceViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_WorkReference;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "WorkReference", FormMethod.Post, new { id = "frmSearch", @class = "show_scroll" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="col-2 pl-0">@WorkReferenceResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CenterId,
+                                (IEnumerable<SelectListItem>)ViewBag.CenterList,
+                                     new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="vertical-align-top col-2 pl-0">
+                    @WorkReferenceResource.WorkStartDateS
+                </td>
+                <td>
+                    <div>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.WorkStartDateFrom, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;", @id = "txtWorkStartDateFrom" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(
+                                model => model.SearchConditions.WorkStartTimeFrom,
+                                new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "time_input", @id = "txtWorkStartTimeFrom", maxlength = "8" } })
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.WorkStartDateTo, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;", @id = "txtWorkStartDateTo" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(
+                                model => model.SearchConditions.WorkStartTimeTo,
+                                new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "time_input", @id = "txtWorkStartTimeTo", maxlength = "8" } })
+                        </span>
+                        <label class="bluecolor">
+                            @WorkReferenceResource.ValidPeriod
+                        </label>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.WorkStartDateFrom, "", new { id = "msgWorkStartDateFrom" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.WorkStartDateTo, "", new { id = "msgWorkStartDateTo" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.WorkStartTimeFrom, "", new { id = "msgWorkStartTimeFrom" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.WorkStartTimeTo, "", new { id = "msgWorkStartTimeTo" })
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-2 pl-0">@WorkReferenceResource.ProcessingTypeS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.ProcessingType,
+                                (IEnumerable<SelectListItem>)ViewBag.ProcessingTypeList,
+                                CommonResource.None, new { id = "ddlProcessingType", tabindex = "6" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-2 pl-0">@WorkReferenceResource.WorkUserS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.WorkUserId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtWorkUserId", tabindex = "7" } })
+                    @Html.EditorFor(model => model.SearchConditions.WorkUserName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtWorkUserName", tabindex = "8" } })
+                    @Html.LikeMark(CommonsResource.Like)
+                </td>
+            </tr>
+            <tr>
+                <td class="col-2 pl-0">@WorkReferenceResource.WorkStatusS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.WorkStatus,
+                                (IEnumerable<SelectListItem>)ViewBag.WorkStatusList,
+                                CommonResource.None, new { id = "ddlWorkStatus", tabindex = "9" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "WorkReference", new { area = "Others" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "101" })
+                    <button type="button" class="btn btn-outline-dark" id="btnSearch" tabindex="102">
+                        @FormsResource.BTN_SEARCH
+                    </button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+    }
+</div>
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+@if (Model.Results.WorkReferences != null)
+{
+    if (Model.Results.WorkReferences.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border stock_detail_load">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnDownload" class="download">
+                            <img src="~/Content/img/download.png" />
+                            @FormsResource.BTN_DOWNLOAD
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.WorkReferences.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.WorkReferences.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.WorkReferences, Page => Url.Action("Search", "WorkReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+        @* Content *@
+        @if (Model.Results.WorkReferences.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.ProcessingType
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.WorkUser
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.WorkStartDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.WorkEndDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.WorkBreakTime
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.WorkTime
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.WorkQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.WorkStatus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @WorkReferenceResource.ProcessingMessage
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cModel in Model.Results.WorkReferences.Select((v, i) => new { v, i }))
+                            {
+                                var key = String.Format("WorkReferences[{0}].", cModel.i);
+                                <tr>
+                                    <td class="align-middle text-right w_no">
+                                        @((cModel.i + 1) + (Model.Results.WorkReferences.PageNumber - 1) * Model.Results.WorkReferences.PageSize)
+                                    </td>
+                                    <td class="align-middle text-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.ProcessingName)
+                                    </td>
+                                    <td class="align-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.WorkUserId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.WorkUserName)
+                                    </td>
+                                    <td class="align-middle text-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.WorkStartDate)
+                                    </td>
+                                    <td class="align-middle text-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.WorkEndDate)
+                                    </td>
+                                    <td class="align-middle text-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.WorkBreakTime)
+                                    </td>
+                                    <td class="align-middle text-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.WorkTime)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.WorkQty)
+                                    </td>
+                                    <td class="align-middle text-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.WorkStatusName)
+                                    </td>
+                                    <td class="align-middle text-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.ProcessingMessage)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> 
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        const isEmpty = function (val) {
+            return !val;
+        };
+        const isHh24mmss = function (val) {
+            return val.match(/^([01]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/) !== null;
+        };
+        const addBlurEvent = function (id, func) {
+            $(id).off('blur').on('blur', func);
+        };
+        const addCheckTimeBlurEvent = function (timeId, messageId) {
+            const func = function () {
+                const val = $(timeId).val();
+
+                if (isEmpty(val) || isHh24mmss(val)) {
+                    $(messageId).text('');
+                    $(messageId).removeClass("field-validation-error");
+                    $(timeId).removeClass("input-validation-error");
+                    return;
+                } else {
+                    $(messageId).text('@WorkReferenceResource.MessageTimeFormatError');
+                    $(messageId).addClass("field-validation-error");
+                    $(timeId).addClass("input-validation-error");
+                }
+            };
+
+            addBlurEvent(timeId, func);
+        };
+
+        $("#btnSearch").on("click", function () {
+            if ($('body .input-validation-error').length) {
+                return;
+            }
+            if ($("#txtWorkStartDateFrom").val() == "" && $("#txtWorkStartTimeFrom").val()!="") {
+                $("#msgWorkStartDateFrom").text("@WorkReferenceResource.ErrNoDate");
+                $("#msgWorkStartDateFrom").addClass("field-validation-error");
+                $("#txtWorkStartDateFrom").addClass("input-validation-error");
+                return;
+            } else {
+                $("#msgWorkStartDateFrom").text("");
+                $("#msgWorkStartDateFrom").removeClass("field-validation-error");
+                $("#txtWorkStartDateFrom").removeClass("input-validation-error");
+            }
+            if ($("#txtWorkStartDateTo").val() == "" && $("#txtWorkStartTimeTo").val()!="") {
+                $("#msgWorkStartDateTo").text("@WorkReferenceResource.ErrNoDate");
+                $("#msgWorkStartDateTo").addClass("field-validation-error");
+                $("#txtWorkStartDateTo").addClass("input-validation-error");
+                return;
+            } else {
+                $("#msgWorkStartDateTo").text("");
+                $("#msgWorkStartDateTo").removeClass("field-validation-error");
+                $("#txtWorkStartDateTo").removeClass("input-validation-error");
+            }
+            var urlAction = '@Url.Action("Search", "WorkReference", new { area = "Others" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        $("#btnDownload").on("click", function () {
+            var urlAction = '@Url.Action("WorkReferenceDownload", "WorkReference", new { area = "Others" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        });
+
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+
+            addCheckTimeBlurEvent('#txtWorkStartTimeFrom', '#msgWorkStartTimeFrom');
+            addCheckTimeBlurEvent('#txtWorkStartTimeTo', '#msgWorkStartTimeTo');
+
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "WorkReference", new { area= "Others" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").attr("action", urlAction);
+                    $("#frmSearch").attr("method", "POST");
+                    $("#frmSearch").submit();
+                });
+            });
+        });
+
+        // Sort
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "WorkReference", new { area= "Others" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+    </script>
+}

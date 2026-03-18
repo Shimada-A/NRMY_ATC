@@ -1,0 +1,309 @@
+﻿@* ブランド検索の検索結果(Ajax.BeginFormで検索結果だけ差し替えるため部分ビューにする) *@
+@using PagedList.Mvc;
+@using Wms.Helpers;
+@using Resources = Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.SyukkasakiTransporterSearchModal.SyukkasakiTransporterSearchCondition
+
+<div class="mb-3">
+    <table>
+        <tr>
+            <td>@Resources.SyukkasakiTransporterResource.Center</td>
+            <td>
+                @Html.EditorFor(model => model.CenterName, new { htmlAttributes = new { @id = "lblCenterName", @style = "border:0; width:180px; outline:none;", @readonly = "readonly" } })
+                @Html.HiddenFor(model => model.CenterId, new { @id = "hidCenterId" })
+            </td>
+            <td class="w_6_short">@Resources.SyukkasakiTransporterResource.Brand</td>
+            <td colspan="3">
+                @Html.EditorFor(model => model.BrandId, new { htmlAttributes = new { @id = "lblBrandId", @class = "w_6_short", @style = "border:0; outline:none;", @readonly = "readonly" } })
+                @Html.EditorFor(model => model.BrandName, new { htmlAttributes = new { @id = "lblBrandName", @class = "w_18_normal", @style = "border:0; outline:none;", @readonly = "readonly" } })
+            </td>
+        </tr>
+        <tr>
+            <td>@Resources.SyukkasakiTransporterResource.StoreClassS</td>
+            <td style="padding-right: 40px;">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @if (Model.IsCenterOnly)
+                        {
+                            @Html.GeneralDropDownFor(model => model.StoreClass, "STORE_CLASS", Model.StoreClass, CommonResource.None, new { @class = "w_10_normal", @id = "txtStoreClass", tabindex = "1", disabled = "disabled" })
+                            @Html.HiddenFor(model => model.StoreClass, new { id = "hidStoreClass" })
+                        }
+                        else
+                        {
+                            @Html.GeneralDropDownFor(model => model.StoreClass, "STORE_CLASS", Model.StoreClass, CommonResource.None, new { @class = "w_10_normal", @id = "txtStoreClass", tabindex = "1" })
+                            @Html.HiddenFor(model => model.StoreClass, new { id = "hidStoreClass", disabled = "disabled" })
+                        }
+                    </div>
+                </div>
+                @Html.HiddenFor(model => model.IsCenterOnly, new { id = "hidIsCenterOnly" })
+            </td>
+            <td>@Resources.SyukkasakiTransporterResource.StoreRanksS</td>
+            <td style="padding-right: 40px;">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.GeneralDropDownFor(model => model.StoreRanks, "STORE_RANKS", Model.StoreRanks, CommonResource.None, new { @class = "w_10_normal", @id = "txtStoreRanks", tabindex = "2" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>@Resources.SyukkasakiTransporterResource.ShipToStoreS</td>
+            <td style="padding-right: 40px;">
+                @Html.EditorFor(model => model.ShipToStoreId, new { htmlAttributes = new { @class = "w_6_short _pm", @id = "txtShipToStoreId", tabindex = "3" } })
+                @Html.EditorFor(model => model.ShipToStoreName, new { htmlAttributes = new { @class = "w_10_normal _pm", @id = "txtShipToStoreName", tabindex = "4" } })
+                @Html.LikeMark(CommonsResource.Like)
+            </td>
+            <td>@SyukkasakiTransporterResource.StoreOutletsClassS</td>
+            <td>
+                @Html.EnumRadioButtonListFor(model => model.StoreOutletsClass, new { htmlAttributes = new { tabindex = "4" } })
+            </td>
+        </tr>
+        <tr>
+            <td>@Resources.SyukkasakiTransporterResource.AreaS</td>
+            <td colspan="5">
+                @Html.AreaButtonList("AreaItem", ((IEnumerable<SelectListItem>)ViewBag.PopAreaList), new { @id = "PopArea", @class = "pop-area" })
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@SyukkasakiTransporterResource.TransporterS</td>
+            <td colspan="3">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.TransporterId,
+                            (IEnumerable<SelectListItem>)ViewBag.TransporterList,
+                            CommonResource.None, new { id = "ddlTransporterId", tabindex = "17" })
+                    </div>
+                </div>
+                <span style="color:blue; text-align:right; padding-left:30px">@Resources.SyukkasakiTransporterResource.HeaderMassage1</span>
+            </td>
+            <td>
+                <button id="SyukkasakiTransporterSearch" type="button" class="btn btn-outline-dark" onclick="$('#frmSyukkasakiTransporterSearch').submit();">@FormsResource.BTN_SEARCH</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" style="color:blue; padding-right:60px">@Resources.SyukkasakiTransporterResource.HeaderMassage2</td>
+        </tr>
+    </table>
+
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+@if (Model.SyukkasakiTransporterViewModel != null)
+{
+    <div class="sublbarea" style="margin-left: 0px; margin-right: 0px;">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(m => m.SortKey, new { onchange = "$('#frmSyukkasakiTransporterSearch').submit();" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(m => m.OrderKey, new { onchange = "$('#frmSyukkasakiTransporterSearch').submit();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.SyukkasakiTransporterViewModel.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.SyukkasakiTransporterViewModel.Count() > 0)
+            {
+                    @Html.PagedListPager(Model.SyukkasakiTransporterViewModel, Page => Url.Action("Index", new { Page, Model.ShipToStoreId, Model.ShipToStoreName, Model.StoreClass, Model.StoreRanks, Model.AreaItem, Model.SortKey, Model.OrderKey, Model.CenterId, Model.CenterName}), PagerHelper.GetOptions("syukkasakiTransporterSearchResult", "syukkasakiTransporterSearchModal.adjust();"))
+            }
+        </div>
+    </div>
+    @*<div class="sublbarea no_border">*@
+    <div class="sortarea">
+        @*<ul style="margin-bottom:0px;">
+            <li>
+                @Html.RadioButtonFor(model => model.DayClass, "0", new { @class = "radio_input", style = "display:inherit;" })
+                <span class="radio_txt">@SyukkasakiTransporterResource.Main</span>
+            </li>
+            <li>
+                @Html.RadioButtonFor(model => model.DayClass, "1", new { @class = "radio_input", style = "display:inherit;" })
+                <span class="radio_txt">@SyukkasakiTransporterResource.Mon</span>
+            </li>
+            <li>
+                @Html.RadioButtonFor(model => model.DayClass, "2", new { @class = "radio_input", style = "display:inherit;" })
+                <span class="radio_txt">@SyukkasakiTransporterResource.Tue</span>
+            </li>
+            <li>
+                @Html.RadioButtonFor(model => model.DayClass, "3", new { @class = "radio_input", style = "display:inherit;" })
+                <span class="radio_txt">@SyukkasakiTransporterResource.Wed</span>
+            </li>
+            <li>
+                @Html.RadioButtonFor(model => model.DayClass, "4", new { @class = "radio_input", style = "display:inherit;" })
+                <span class="radio_txt">@SyukkasakiTransporterResource.Thu</span>
+            </li>
+            <li>
+                @Html.RadioButtonFor(model => model.DayClass, "5", new { @class = "radio_input", style = "display:inherit;" })
+                <span class="radio_txt">@SyukkasakiTransporterResource.Fri</span>
+            </li>
+            <li>
+                @Html.RadioButtonFor(model => model.DayClass, "6", new { @class = "radio_input", style = "display:inherit;" })
+                <span class="radio_txt">@SyukkasakiTransporterResource.Sat</span>
+            </li>
+            <li>
+                @Html.RadioButtonFor(model => model.DayClass, "7", new { @class = "radio_input", style = "display:inherit;" })
+                <span class="radio_txt">@SyukkasakiTransporterResource.Sun</span>
+            </li>
+            <li>
+                @Html.RadioButtonFor(model => model.DayClass, "8", new { @class = "radio_input", style = "display:inherit;" })
+                <span class="radio_txt">@SyukkasakiTransporterResource.Hol</span>
+            </li>
+        </ul>*@
+    </div>
+    @*</div>*@
+    <div class="Container" style="margin-top: 4px; margin-left: 0px; margin-right: 0px;">
+        <div>
+            <div class="tb_scroll">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="bg-grey w_checkbox"></th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.No
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.ShipToStore
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.Location
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.MainTransporter
+                            </th>
+                            @*<th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.Mon
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.Tue
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.Wed
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.Thu
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.Fri
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.Sat
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.Sun
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.SyukkasakiTransporterResource.Hol
+                            </th>*@
+                            <th hidden>
+                            </th>
+                            <th hidden>
+                            </th>
+                            <th hidden>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.SyukkasakiTransporterViewModel.Count(); i++)
+                        {
+                            var idx = (i + 1) + (Model.SyukkasakiTransporterViewModel.PageNumber - 1) * Model.SyukkasakiTransporterViewModel.PageSize;
+                            var chkid = "chk" + i;
+                            <tr>
+                                <td class="w_checkbox align-middle">
+                                    <label class="checkboxgroup">
+                                        @Html.CheckBox(chkid, new { @id = (chkid), @class = "check-box" })
+                                        <span class="chk_parts"></span>
+                                    </label>
+                                </td>
+                                <td class="align-middle text-right w_no">
+                                    @idx
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].ShipToStoreId)
+                                    <br />
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].ShipToStoreName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].PrefName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterName)
+                                </td>
+                                @*<td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterNameMon)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterNameTue)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterNameWed)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterNameThu)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterNameFri)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterNameSat)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterNameSun)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterNameHol)
+                                </td>*@
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].ShipToStoreClass)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].ShipToStoreId)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].ShipToStoreName)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterId)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterIdMon)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterIdTue)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterIdWed)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterIdThu)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterIdFri)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterIdSat)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterIdSun)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.DisplayFor(model => model.SyukkasakiTransporterViewModel[i].TransporterIdHol)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

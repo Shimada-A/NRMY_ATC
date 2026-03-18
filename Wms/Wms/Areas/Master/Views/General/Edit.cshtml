@@ -1,0 +1,302 @@
+﻿@using Share.Common.Resources;
+@using Share.Common;
+@using Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.General.GeneralInput
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_General02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Update", "General", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.General.ShipperId)
+            @Html.HiddenFor(model => model.InUpDiff)
+            @Html.HiddenFor(model => model.General.RegisterDiviCd)
+            @Html.HiddenFor(model => model.General.GenCdDigits)
+            @Html.HiddenFor(model => model.General.GenNameDigits)
+            @Html.HiddenFor(model => model.General.MaintenanceFlag)
+            @Html.HiddenFor(model => model.General.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+            <div class="form_content">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.General.CenterId)
+                    </dt>
+                    <dd>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @if (Model.InUpDiff == "0")
+                                {
+                                    @Html.DropDownListFor(
+                                            model => model.General.CenterId,
+                                            (IEnumerable<SelectListItem>)ViewBag.Loc, "", new { id = "ddlSerchLoc", @class = "_pm", disabled = true })
+                                    @Html.ValidationMessageFor(model => model.General.CenterId, "", new { tabindex = "1" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(
+                                            model => model.General.CenterId,
+                                            (IEnumerable<SelectListItem>)ViewBag.Loc, "", new { id = "ddlSerchLoc", @class = "_pm", disabled = true })
+                                }
+                                @Html.HiddenFor(model => model.General.CenterId, new { id = "CenterIdHidden" })
+                            </div>
+                        </div>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.General.GenDivCd)
+                    </dt>
+                    <dd>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @if (Model.InUpDiff == "0")
+                                {
+                                    @Html.DropDownListFor(
+                                            model => model.General.GenDivCd,
+                                            (IEnumerable<SelectListItem>)ViewBag.Gen, "", new { id = "ddlSerchGen", @class = "_pm", onchange = "GetCenterList()" })
+                                    @Html.ValidationMessageFor(model => model.General.GenDivCd, "", new { tabindex = "2" })
+                                }
+                                else
+                                {
+                                    //Edit
+                                    @Html.DropDownListFor(
+                                            model => model.General.GenDivCd,
+                                            (IEnumerable<SelectListItem>)ViewBag.Gen, "", new { id = "ddlSerchGen", @class = "_pm", disabled = true })
+                                    @Html.HiddenFor(model => model.General.GenDivCd)
+                                }
+                            </div>
+                        </div>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.General.GenCd)
+                    </dt>
+                    <dd>
+                        @if (Model.InUpDiff == "0")
+                        {
+                            @Html.EditorFor(model => model.General.GenCd, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "_pm" } })
+                            @Html.ValidationMessageFor(model => model.General.GenCd, "", new { })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.General.GenCd)
+                            @Html.HiddenFor(model => model.General.GenCd)
+                        }
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.General.GenName)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.General.GenName, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.General.GenName)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.General.OrderNo)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.General.OrderNo, new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.General.OrderNo)
+                    </dd>
+                </dl>
+            </div>
+
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @if (Model.SearchFlag)
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "General", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark asize" })
+            }
+            else
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "General", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark asize" })
+            }
+            @*<button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>*@
+            @if (Model.InUpDiff == "0")
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_CREATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_CREATE</button>
+            }
+            else
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+            }
+        </div>
+    }
+    if (Model.InUpDiff == "0")
+    {
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+    }
+    else
+    {
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+    }
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //GeneralEdit
+        var GeneralEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(GeneralEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(GeneralEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(GeneralEdit.SELECTORS.hdUpdateError).val() === GeneralEdit.CONST.STR_TRUE) {
+                    if ($(GeneralEdit.SELECTORS.hdUpdateError).attr(GeneralEdit.CONST.ATTR_ERROR_CODE) === GeneralEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(GeneralEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(GeneralEdit.SELECTORS.exclusiveUpdateDialog, GeneralEdit.GLOBAL.titleInformation, GeneralEdit.GLOBAL.msgExclusiveUpdate);
+                        $(GeneralEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(GeneralEdit.SELECTORS.hdUpdateError).attr(GeneralEdit.CONST.ATTR_ERROR_CODE) === GeneralEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(GeneralEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(GeneralEdit.SELECTORS.overWriteRecordDialog, GeneralEdit.GLOBAL.titleInformation, (GeneralEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(GeneralEdit.SELECTORS.AreaId).val())));
+                        $(GeneralEdit.SELECTORS.btnSubmitOverWriteDialog).attr(GeneralEdit.SELECTORS.form, GeneralEdit.SELECTORS.frmUpdate).attr(GeneralEdit.CONST.FORM_METHOD, GeneralEdit.CONST.POST).attr(GeneralEdit.CONST.FORM_ACTION, '@Url.Action("Update", "General", new { area = "Master" })').attr(GeneralEdit.SELECTORS.form, GeneralEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            GeneralEdit.init();
+        });
+
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+        function GetCenterList() {
+            if ("@Model.InUpDiff" == "0" && $("#ddlSerchGen").val() != "" && getUsable_Class() != 1) {
+                $("#ddlSerchLoc").removeAttr('disabled');
+            } else {
+                $("#ddlSerchLoc").attr('disabled', 'disabled');
+            }
+                    var urlAction = '@Url.Action("GetCenterList","General",new { area = "Master"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            genDivCd: $("#ddlSerchGen").val()
+                        },
+                        success: function (data) {
+                            $("#ddlSerchLoc").html("");
+                            $("#ddlSerchLoc").html(data.html);
+                            $("#ddlSerchLoc").val(data.value);
+                            if ($("#ddlSerchLoc").val() == "@@@@@@") {
+                                $("#ddlSerchLoc").attr('disabled', 'disabled');
+                            }
+                            $("#CenterIdHidden").val(data.value);
+                        }
+                    });
+        }
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,27 @@
+﻿@model Wms.ViewModels.Notice.NoticeViewModel
+
+<!-- Head menu ---------------------------------------------------- -->
+@for (var i = 0; i < Model.PopUpResults.NoticePopUpRows.Count; i++)
+{
+    var classItem = "";
+    //エラーと警告
+    if (Model.PopUpResults.NoticePopUpRows[i].MessageClass == 1 || Model.PopUpResults.NoticePopUpRows[i].MessageClass == 2)
+    {
+        classItem += " err";
+    }
+    <li>
+
+        <a style="vertical-align:top; ">
+            <i style="font-style:normal;">
+                @{
+                    var dt = Model.PopUpResults.NoticePopUpRows[i].OccurrenceDate.ToString("yyyy/MM/dd");
+                }
+                @Html.DisplayFor(model => dt)
+            </i>
+            <i style="font-style:normal; padding-left:1px">
+                @Html.DisplayFor(model => model.PopUpResults.NoticePopUpRows[i].Subject)
+            </i>
+        </a>
+
+    </li>
+}

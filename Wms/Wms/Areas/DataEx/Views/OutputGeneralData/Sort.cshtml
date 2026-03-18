@@ -1,0 +1,45 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.DataEx.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.DataEx.Controllers;
+@using Wms.Common;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditCondition
+@{
+    ViewBag.Title = "汎用データ出力";
+    Layout = "_OutputGeneralDataBase.cshtml";
+}
+
+<div id="detailArea">
+    @if (Model.Details != null)
+    {
+        @Html.Partial("~/Areas/Master/Views/EditLayout/_EditSortDetail.cshtml", Model);
+    }
+</div>
+
+@section BottomRightButtons{
+    <button type="button" id="btnToCondition" class="btn btn-outline-dark btnsize">@EditLayoutResource.EditCondition</button>
+}
+@section   OutputGeneralDataScripts{
+    <script>
+        function getLayoutDetails() {
+            $.get('@Url.OutputGeneralDataAction("GetOutputGeneralDataSortingObjectDetail")',
+                { templateId: $('#GeneralDataTemplateId').val() },
+                function (data) {
+                    $('#detailArea').html(data);
+                    formUtil.resetValidation('#dataForm');
+                    isGettingLayoutDetail = false;
+                    checkIsGetting();
+                }
+            );
+        }
+
+        addClickEvent('#btnToCondition', function () {
+            getForm('#dataForm', '@Url.OutputGeneralDataAction("Index")');
+        });
+    </script>
+
+
+    }

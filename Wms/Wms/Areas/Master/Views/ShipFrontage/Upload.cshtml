@@ -1,0 +1,174 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.ShipFrontage.Upload
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_ShipFrontage03;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.UploadResult.ShipFrontages != null)
+{
+    using (Html.BeginForm("Search", "ShipFrontage", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        @* Sublbarea *@
+        <div class="sublbarea no_border stock_detail_load">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnUpload" class="Upload _pm">
+                            <img src="~/Content/img/upload.png" />
+                            @FormsResource.BTN_UPLOAD
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="sublbarea">
+            <div class="sortarea">
+                <ul>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.UploadResult.ShipFrontages.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.UploadResult.ShipFrontages.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.UploadResult.ShipFrontages, Page => Url.Action("UploadErr", "ShipFrontage", new { Page }), PagerHelper.Default)
+                }
+                @Html.HiddenFor(model => model.UploadConditions.WorkId)
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.UploadResult.ShipFrontages.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div id="ShipFrontageRows">
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @ShipFrontageResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShipFrontageResource.BrandId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShipFrontageResource.BrandName 
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShipFrontageResource.LaneNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShipFrontageResource.FrontageNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShipFrontageResource.StoreId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShipFrontageResource.StoreName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShipFrontageResource.ErrMsg
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Update", "ShipFrontage", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.UploadResult.ShipFrontages.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("ShipFrontages[{0}].", cModel.i);
+                            <tr>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.No)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.BrandId)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.BrandName)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.LaneNo)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.FrontageNo)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.StoreId)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.StoreName)
+                                </td>
+                                <td class="fontred align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.ErrMsg)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                </td>
+                            </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@Html.Partial("_FileUploadModal")
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "ShipFrontage", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+    <script>
+        //ファイルアップロード
+        fileUploadModal.init();
+        $('#btnUpload').on('click', function () {
+            var urlAction = '@Url.Action("Upload", "ShipFrontage", new { area = "Master" })';
+            var urlIndexAction = '@Url.Action("Index", "ShipFrontage", new { area = "Master" })';
+            var urlErrAction = '@Url.Action("UploadErr", "ShipFrontage", new { area = "Master" })';
+            fileUploadModal.setting({
+                url: urlAction,
+                title: "@ShipFrontageResource.BaseName" + "@FormsResource.FileUplaodTitle",
+                acceptedFiles: ".xlsx",
+                successCallback: function (data) {
+                    if (data.err == 'true') {
+                        location.href = urlErrAction;
+                    } else {
+                        location.href = urlIndexAction;
+                    }
+                }
+            });
+            fileUploadModal.open();
+        });
+    </script>
+}

@@ -1,0 +1,862 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Move.Resources;
+@model Wms.Areas.Move.ViewModels.TransferReference.TransferReference01ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MOV_TransferReference01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "TransferReference", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table class="w-search">
+            <tr>
+                <td class="tdtitle">@TransferReferenceResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@TransferReferenceResource.CategoryS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId1,
+                                (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                CommonResource.None, new { id = "ddlCategoryId1", tabindex = "17", onchange = "CategoryChange(1)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId2,
+                                (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                CommonResource.None, new { id = "ddlCategoryId2", tabindex = "18", disabled = "disabled", onchange = "CategoryChange(2)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId3,
+                                (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                CommonResource.None, new { id = "ddlCategoryId3", tabindex = "19", disabled = "disabled", onchange = "CategoryChange(3)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId4,
+                                (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                CommonResource.None, new { id = "ddlCategoryId4", tabindex = "20", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransferReferenceResource.MoveClassS</td>
+                @*<td>
+                    @Html.EnumRadioButtonListFor(model => model.SearchConditions.TransferClass, new { onchange = "TransferClassChange()" })
+                </td>*@
+                <td>
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.StoreReturnFlag, new { id = "txtStoreReturnFlag", tabindex = "2", @placeholder = "", @class = "check-box", @onchange = "chgTransferClass();" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @TransferReferenceResource.StoreReturn
+                    &nbsp;&nbsp;
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.BaseMoveFlag, new { id = "txtBaseMoveFlag", tabindex = "3", @placeholder = "", @class = "check-box", @onchange = "chgTransferClass();" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @TransferReferenceResource.BaseMove
+                    &nbsp;&nbsp;
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.BaseMoveNoWmsCenterFlag, new { id = "txtBaseMoveNoWmsCenterFlag", tabindex = "4", @placeholder = "", @class = "check-box", @onchange = "chgTransferClass();" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @TransferReferenceResource.BaseMoveNoWmsCenter
+                </td>
+                <td class="tdtitle_large">@TransferReferenceResource.ItemCodeS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.ItemCode,
+                                (IEnumerable<SelectListItem>)ViewBag.ItemList,
+                                CommonResource.None, new { id = "ddlItemCode", tabindex = "21" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                @*<td class="tdtitle">@TransferReferenceResource.ArrivePlanDateS</td>
+                <td>
+                    <div>
+                        <label>
+                            @Html.RadioButtonFor(model => model.SearchConditions.ArriveDateClass, "ArrivePlanDate", new { tabindex = "30", @class = "radio_input", onChange = "ArriveDateClassChange('ArrivePlanDate')" })
+                            <span class="radio_parts"></span>
+                        </label>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ArrivePlanDateFrom, new { htmlAttributes = new { tabindex = "31", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ArrivePlanDateTo, new { htmlAttributes = new { tabindex = "32", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <label>
+                            @TransferReferenceResource.NotContainsUnplanned
+                        </label>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArrivePlanDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArrivePlanDateTo, "", new { })
+                    </div>
+                </td>*@
+                <td class="tdtitle">@TransferReferenceResource.DenpyoDateS</td>
+                <td>
+                    <div>
+                        <label>
+                            @Html.RadioButtonFor(model => model.SearchConditions.ArriveDateClass, "ArrivePlanDate", new { tabindex = "5", @class = "radio_input", onChange = "ArriveDateClassChange('ArrivePlanDate')" })
+                            <span class="radio_parts"></span>
+                        </label>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.DenpyoDateFrom, new { htmlAttributes = new { tabindex = "6", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.DenpyoDateTo, new { htmlAttributes = new { tabindex = "7", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <label>
+                            @TransferReferenceResource.NotContainsUnplanned
+                        </label>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.DenpyoDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.DenpyoDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle">@TransferReferenceResource.BrandS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "22" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "23" } })
+                    <div class="search">
+                        <button type="button" id="btnBrand" class="search_btn" tabindex="24" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransferReferenceResource.TransferResultDateS</td>
+                <td>
+                    <div>
+                        <label>
+                            @Html.RadioButtonFor(model => model.SearchConditions.ArriveDateClass, "TransferResultDate", new { tabindex = "8", @class = "radio_input", onChange = "ArriveDateClassChange('TransferResultDate')" })
+                            <span class="radio_parts"></span>
+                        </label>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.TransferResultDateFrom, new { htmlAttributes = new { tabindex = "9", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.TransferResultDateTo, new { htmlAttributes = new { tabindex = "10", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <label>
+                            @TransferReferenceResource.ContainsUnplanned
+                        </label>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.TransferResultDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.TransferResultDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle">@TransferReferenceResource.ItemIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @id = "txtItemId", tabindex = "25" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransferReferenceResource.TransferStatusS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                model => model.SearchConditions.TransferStatus
+                                     , "TRANSFER_STATUS", Model.SearchConditions.CenterId
+                                , CommonResource.None, new { @class = "w_10_normal", @id = "txtTransferStatus", tabindex = "11" })
+                        </div>
+                    </div>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.ContainsArchive, new { tabindex = "12", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @TransferReferenceResource.ContainsArchive
+                </td>
+                <td class="tdtitle">@TransferReferenceResource.ItemColorS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemColorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtItemColorId", tabindex = "26" } })
+                    @Html.EditorFor(model => model.SearchConditions.ItemColorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemColorName", tabindex = "27" } })
+                    <div class="search">
+                        <button type="button" id="btnItemColor" class="search_btn" tabindex="28" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_large">@TransferReferenceResource.TransferFromCenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.TransferFromCenterId
+                                , Wms.Common.Profile.User.UserId
+                                , CommonResource.None, new { @id = "ddlTransferFromCenterId", tabindex = "13" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@TransferReferenceResource.ItemSizeS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemSizeId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtItemSizeId", tabindex = "29" } })
+                    @Html.EditorFor(model => model.SearchConditions.ItemSizeName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemSizeName", tabindex = "30" } })
+                    @*<div class="search">
+                  <button type="button" id="btnItemSize" class="search_btn" tabindex="230" />
+            </div>*@
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransferReferenceResource.TransferFromStoreS</td>
+                <td>
+                    <button type="button" class="btn btn-outline-dark" id="btnShipTo" tabindex="14" data-toggle="modal" data-flag="" data-target="#SyukkasakiModal" data-id="#txtTransferFromStoreId" data-name="#txtTransferFromStoreName">@TransferReferenceResource.BtnStoreSelect</button><br />
+                </td>
+                <td class="tdtitle">@TransferReferenceResource.JanS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @id = "txtJan", tabindex = "31" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.TransferFromStoreName, new { htmlAttributes = new { @class = "w_50_normal overflow", @id = "txtTransferFromStoreName", tabindex = "15", @readonly = "readonly" } })
+                    @Html.HiddenFor(model => model.SearchConditions.TransferFromStoreId, new { id = "txtTransferFromStoreId" })
+                </td>
+                <td class="tdtitle">@TransferReferenceResource.DenpyoNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.DenpyoNo, new { htmlAttributes = new { @id = "txtDenpyoNo", tabindex = "32" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransferReferenceResource.DivisionS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.DivisionId,
+                                (IEnumerable<SelectListItem>)ViewBag.DivisionList,
+                                CommonResource.None, new { id = "ddlDivisionId", tabindex = "16" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@TransferReferenceResource.SlipNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.SlipNo, new { htmlAttributes = new { @id = "txtSlipNo", tabindex = "33" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "TransferReference", new { area = "Move" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "34" })
+                    <button class="btn btn-outline-dark head-btn" id="btnSearch" onclick="Search();" tabindex="35">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+        <input type="hidden" name="SearchConditions.UnplannedFlag" id="hidUnplannedFlag" value='@Model.SearchConditions.UnplannedFlag' />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        @Html.HiddenFor(model => model.SearchConditions.ArriveDateClass, new { id = "hidArriveDateClass" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.TransferReference01s != null)
+{
+    if (Model.Results.TransferReference01s.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border stock_detail_load">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnDownload" class="download">
+                            <img src="~/Content/img/download.png" />
+                            @FormsResource.BTN_DOWNLOAD
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.TransferReference01s.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.TransferReference01s.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.TransferReference01s, Page => Url.Action("Search", "TransferReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @TransferReferenceResource.ItemSkuQtySum @Html.DisplayFor(model => model.SearchConditions.ItemSkuQtySum)
+                    </li>
+                    <li>
+                        @TransferReferenceResource.ArrivePlanQtySum @Html.DisplayFor(model => model.SearchConditions.ArrivePlanQtySum)
+                    </li>
+                    <li>
+                        @TransferReferenceResource.ResultQtySum @Html.DisplayFor(model => model.SearchConditions.ResultQtySum)
+                    </li>
+                    <li>
+                        @TransferReferenceResource.SlipNoPlanQtySum @Html.DisplayFor(model => model.SearchConditions.SlipNoPlanQtySum)
+                    </li>
+                    <li>
+                        @TransferReferenceResource.SlipNoResultQtySum @Html.DisplayFor(model => model.SearchConditions.SlipNoResultQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.TransferReference01s.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.No
+                                </th>
+                                @*<th class="bg-grey align-middle">
+                                    @TransferReferenceResource.ArrivePlanDate
+                                </th>*@
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.TransferClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.DenpyoDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.TransferFromStore
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.SlipNoPlanQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.SlipNoResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.ItemSkuQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.ArrivePlanQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.ResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.TransferStatus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransferReferenceResource.ConfirmDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "TransferReference", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.TransferReference01s.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("TransferReference01s[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.TransferReference01s.PageNumber - 1) * Model.Results.TransferReference01s.PageSize)
+                                        </td>
+                                        @*<td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivePlanDate)
+                                        </td>*@
+                                        <td class="align-middle text-left">
+                                            @switch (cModel.v.TransferClass)
+                                            {
+                                                case "1":
+                                                    @TransferReferenceResource.BaseMove
+                                                    break;
+                                                case "2":
+                                                    @TransferReferenceResource.StoreReturn
+                                                    break;
+                                                case "3":
+                                                    @TransferReferenceResource.BaseMoveNoWmsCenter
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            @Html.DisplayFor(modelItem => cModel.v.DenpyoDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransferFromStoreId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.TransferFromStoreName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipNoPlanQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipNoResultQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSkuQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivePlanQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransferStatusName)
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            @Html.DisplayFor(modelItem => cModel.v.ConfirmDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            <button type="button" class="btn btn-dark btn-sm" onclick="Detail(@cModel.v.Seq,@cModel.v.LineNo,@cModel.v.UnplannedFlag)">@TransferReferenceResource.BtnDetail</button>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UnplannedFlag, new { Name = key + "UnplannedFlag" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @if (Model.Results.TransferReference01s != null && Model.Results.TransferReference01s.Count() > 0)
+        {
+            <button type="button" id="btnDetail" class="btn btn-dark btnsize" onclick="Detail(@Model.SearchConditions.Seq,'0')">@TransferReferenceResource.BtnDetailList</button>
+        }
+        else
+        {
+            <button type="button" id="btnDetail" class="btn btn-dark btnsize" disabled>@TransferReferenceResource.BtnDetailList</button>
+        }
+    </div>
+}
+@{
+    var storeConditions = new ViewDataDictionary { { "ParameterStoreId", Model.SearchConditions.TransferFromStoreId }, { "TempStoreId", Model.SearchConditions.TransferFromStoreId } };
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_ColorSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_SizeSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml", storeConditions)
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+    <script>
+        $("#btnDownload").on("click", function () {
+            var urlAction = '@Url.Action("TransferReference01Download", "TransferReference", new { area = "Move" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        });
+
+        /**
+         * Country class
+         */
+        var TransferReferenceView = {
+
+            /**
+             * CONST Object
+             */
+            CONST: {
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                FORM: 'form',
+                METHOD: 'method',
+                ACTION: 'action'
+            },
+
+            /**
+             * SELECTORS Object
+             */
+            SELECTORS: {
+                chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+                chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+                chkInRow: 'input[type=checkbox][class=check-box]',
+                tblRow: '#listData tbody tr',
+                btnDetail: '#btnDetail',
+                ddlSortKey: '#ddlSortKey',
+                form: 'form',
+                searchForm: '#frmSearch',
+                frmUpdate: 'frmUpdate',
+                btnBrand: '#btnBrand',
+                brandId:'#txtBrandId',
+                brandName:'#txtBrandName',
+                brandSelect: '#brandSelect',
+                colorSelect: '#colorSelect',
+                btnItemColor:'#btnItemColor',
+                colorId:'#txtItemColorId',
+                colorName:'#txtItemColorName',
+                sizeSelect: '#sizeSelect',
+                btnItemSize:'#btnItemSize',
+                sizeId:'#txtItemSizeId',
+                sizeName:'#txtItemSizeName',
+            },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus(0);
+                brandSearchModal.init();
+                colorSearchModal.init();
+                sizeSearchModal.init();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(TransferReferenceView.SELECTORS.btnBrand).on("click", brandSearchModal.open);
+
+                /**
+                * カラー検索ダイアログの設定
+                */
+                $(TransferReferenceView.SELECTORS.btnItemColor).on("click", colorSearchModal.open);
+
+                /**
+                * サイズ検索ダイアログの設定
+                */
+                $(TransferReferenceView.SELECTORS.btnItemSize).on("click", sizeSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(TransferReferenceView.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(TransferReferenceView.SELECTORS.brandId).val(brandId);
+                        $(TransferReferenceView.SELECTORS.brandName).val(brandName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(TransferReferenceView.SELECTORS.colorSelect).on("click", function () {
+                    $('#colorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var colorId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var colorName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(TransferReferenceView.SELECTORS.colorId).val(colorId);
+                        $(TransferReferenceView.SELECTORS.colorName).val(colorName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(TransferReferenceView.SELECTORS.sizeSelect).on("click", function () {
+                    $('#sizeSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var sizeId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var sizeName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(TransferReferenceView.SELECTORS.sizeId).val(sizeId);
+                        $(TransferReferenceView.SELECTORS.sizeName).val(sizeName);
+                    })
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+            },
+        }
+
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            TransferReferenceView.init();
+            var val = $('input:radio[name="SearchConditions.TransferClass"]:checked').val();
+            if (val == 1) {
+                $("#btnShipTo").attr("disabled","disabled");
+                $("#ddlTransferFromCenterId").removeAttr("disabled");
+                $("#txtTransferFromStoreName").val("");
+                $("#txtTransferFromStoreId").val("");
+            } else {
+                $("#btnShipTo").removeAttr("disabled");
+                $("#ddlTransferFromCenterId").attr("disabled","disabled");
+                $("#ddlTransferFromCenterId").val("");
+            }
+
+            var arriveDateClass = $('#hidArriveDateClass').val();
+
+            if (arriveDateClass == "ArrivePlanDate") {
+                $('input:radio[name="SearchConditions.ArrivePlanDate"]').val('checked', true);
+                $('input:radio[name="SearchConditions.TransferResultDate"]').val('checked', false);
+                $('input[name^="SearchConditions.ArrivePlanDate"]').prop('disabled', false);
+                $('input[name^="SearchConditions.TransferResultDate"]').prop('disabled', true);
+            } else if (arriveDateClass == "TransferResultDate") {
+                $('input:radio[name="SearchConditions.ArrivePlanDate"]').val('checked', false);
+                $('input:radio[name="SearchConditions.TransferResultDate"]').val('checked', true);
+                $('input[name^="SearchConditions.ArrivePlanDate"]').prop('disabled', true);
+                $('input[name^="SearchConditions.TransferResultDate"]').prop('disabled', false);
+            }
+
+            chgTransferClass();
+
+            if ($("#ddlCategoryId1").val() != '') {
+                $("#ddlCategoryId2").removeAttr('disabled');
+            }
+            if ($("#ddlCategoryId2").val() != '') {
+                    $("#ddlCategoryId3").removeAttr('disabled');
+            }
+            if ($("#ddlCategoryId3").val() != '') {
+                    $("#ddlCategoryId4").removeAttr('disabled');
+            }
+                @* Pageを変更時 *@
+                $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                    var urlAction ='@Url.Action("Search", "TransferReference", new { area= "Move" })';
+                    var pageUrl = urlAction + '?Page=';
+                    var page = $(item).attr("href").replace(pageUrl, "");
+                    page = page.replace("&class=btn-outline-dark", "");
+                    $(item).attr("href", "javascript:void(0);").click(function () {
+                        $("#hidPage").val(page);
+                        $("#hidSearchType").val("SortPage");
+                        $("#frmSearch").attr("action", urlAction);
+                        $("#frmSearch").attr("method", "POST");
+                        $("#frmSearch").submit();
+                    });
+                });
+        });
+
+        function TransferClassChange() {
+            var val = $('input:radio[name="SearchConditions.TransferClass"]:checked').val();
+            if (val == 1) {
+                $("#btnShipTo").attr("disabled","disabled");
+                $("#ddlTransferFromCenterId").removeAttr("disabled");
+                $("#txtTransferFromStoreName").val("");
+                $("#txtTransferFromStoreId").val("");
+            } else {
+                $("#btnShipTo").removeAttr("disabled");
+                $("#ddlTransferFromCenterId").attr("disabled","disabled");
+                $("#ddlTransferFromCenterId").val("");
+            }
+        }
+
+        function ArriveDateClassChange(val) {
+            $('#hidArriveDateClass').val(val);
+
+            if (val == "ArrivePlanDate") {
+                $('input[name^="SearchConditions.ArrivePlanDate"]').prop('disabled', false);
+                $('input[name^="SearchConditions.TransferResultDate"]').prop('disabled', true);
+            } else if (val == "TransferResultDate") {
+                $('input[name^="SearchConditions.ArrivePlanDate"]').prop('disabled', true);
+                $('input[name^="SearchConditions.TransferResultDate"]').prop('disabled', false);
+            }
+        }
+
+        function GetCategoryList(id) {
+            var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                data: {
+                    id: id + 1,
+                    category1: $("#ddlCategoryId1").val(),
+                    category2: $("#ddlCategoryId2").val(),
+                    category3: $("#ddlCategoryId3").val()
+                },
+                success: function (data) {
+                    $("#ddlCategoryId" + (id + 1)).html("");
+                    $("#ddlCategoryId" + (id + 1)).html(data.html);
+                }
+            });
+        }
+
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+
+        // Sort
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "TransferReference", new { area= "Move" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Search() {
+            $("#hidSearchType").val("Search");
+            var urlAction = '@Url.Action("Search", "TransferReference", new { area = "Move" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        $('#btnDetail').on("click", function () {
+            $("#hidLineNo").val(0);
+            var urlAction ='@Url.Action("DetailIndexSearch", "TransferReference", new { area= "Move" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        function Detail(seq,lineNo,unplannedFlag) {
+            $("#hidSeq").val(seq);
+            $("#hidLineNo").val(lineNo)
+            $("#hidUnplannedFlag").val(unplannedFlag);
+            var urlAction = '@Url.Action("DetailIndexSearch", "TransferReference", new { area = "Move" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+        //移動区分変更時
+        function chgTransferClass() {
+            if ($("#txtStoreReturnFlag").prop("checked") == true || $("#txtBaseMoveNoWmsCenterFlag").prop("checked") == true) {
+                $("#btnShipTo").removeAttr('disabled');
+                $("#txtTransferFromStoreName").removeAttr('disabled');
+            } else {
+                $("#btnShipTo").attr('disabled', 'disabled');
+                $("#txtTransferFromStoreName").val("");
+                $("#txtTransferFromStoreId").val("");
+                $("#txtTransferFromStoreName").attr('disabled', 'disabled');   
+            }
+            if ($("#txtBaseMoveFlag").prop("checked") == true) {
+                $("#ddlTransferFromCenterId").removeAttr('disabled');
+            } else {
+                $("#ddlTransferFromCenterId").val("");
+                $("#ddlTransferFromCenterId").attr('disabled', 'disabled');
+            }
+        }
+    </script>
+}

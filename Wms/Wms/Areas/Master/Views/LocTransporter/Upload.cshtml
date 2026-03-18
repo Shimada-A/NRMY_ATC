@@ -1,0 +1,309 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.LocTransporter.Upload
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_LocTransporter03;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.UploadResult.LocTransporters != null)
+{
+    using (Html.BeginForm("Search", "LocTransporter", FormMethod.Get, new { id = "frmSearch" }))
+    {
+@Html.AntiForgeryToken()
+@* Sublbarea *@
+<div class="sublbarea">
+    <div class="sortarea">
+        <ul>
+            <li>
+                <button type="button" id="btnUpload" class="Upload _pm">
+                    <img src="~/Content/img/upload.png" />
+                    @FormsResource.BTN_UPLOAD
+                </button>
+            </li>
+            <li class="totalcount">
+                @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.UploadResult.LocTransporters.TotalItemCount.ToString("N0"))
+            </li>
+        </ul>
+        @if (Model.UploadResult.LocTransporters.Count() > 0)
+                {
+        @Html.PagedListPager(Model.UploadResult.LocTransporters, Page => Url.Action("UploadErr", "LocTransporter", new { Page }), PagerHelper.Default)
+                }
+        @Html.HiddenFor(model => model.UploadConditions.WorkId)
+    </div>
+</div>
+    }
+
+@* Container *@
+<div class="Container">
+
+    @* Content *@
+    @if (Model.UploadResult.LocTransporters.Count() == 0)
+        {
+    <div>
+        <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+    </div>
+        }
+        else
+        {
+    <div id="LocTransporterRows">
+        <div class="tb_scroll" style="height:69vh;">
+            <table class="table table-bordered" id="listData">
+                <thead class="thead-right">
+                    <tr>
+                        <th class="align-middle bg-grey" rowspan="2">@LocTransporterResource.No</th>
+                        <th class="align-middle bg-grey" rowspan="2"><div class="w_5_normal">@LocTransporterResource.ShipFromCenter</div></th>
+                        <th class="align-middle bg-grey" rowspan="2"><div class="w_5_normal">@LocTransporterResource.ShipToStore</div></th>
+                        <th class="align-middle bg-grey" rowspan="2"><div class="w_5_normal">@LocTransporterResource.ShipStore</div></th>
+                        <th class="align-middle bg-grey" rowspan="2"><div class="w_5_normal">@LocTransporterResource.TekiyouStartDate</div></th>
+                        <th class="align-middle bg-grey" rowspan="2"><div class="w_5_normal">@LocTransporterResource.Transporter</div></th>
+                        <th class="align-middle bg-grey" rowspan="2"><div class="w_5_normal">@LocTransporterResource.LeadTime</div></th>
+                        @*<th class="align-middle text-center bg-grey" colspan="2">@LocTransporterResource.Mon</th>
+                        <th class="align-middle text-center bg-grey" colspan="2">@LocTransporterResource.Tue</th>
+                        <th class="align-middle text-center bg-grey" colspan="2">@LocTransporterResource.Wed</th>
+                        <th class="align-middle text-center bg-grey" colspan="2">@LocTransporterResource.Thu</th>
+                        <th class="align-middle text-center bg-grey" colspan="2">@LocTransporterResource.Fri</th>
+                        <th class="align-middle text-center bg-grey" colspan="2">@LocTransporterResource.Sat</th>
+                        <th class="align-middle text-center bg-grey" colspan="2">@LocTransporterResource.Sun</th>
+                        <th class="align-middle text-center bg-grey" colspan="2">@LocTransporterResource.Hol</th>*@
+                        <th class="align-middle bg-grey" rowspan="2"><div>@LocTransporterResource.ClientCdSagawa</div></th>
+                        <th class="align-middle bg-grey" rowspan="2"><div>@LocTransporterResource.ClientCdNaniwa</div></th>
+                        <th class="align-middle bg-grey" rowspan="2"><div>@LocTransporterResource.ClientCdWs</div></th>
+                        <th class="align-middle bg-grey" rowspan="2"><div>@LocTransporterResource.ErrMsg</div></th>
+                    </tr>
+                    @*<tr>
+                        @for (int i = 0; i < 8; i++)
+                        {
+                            <th class="align-middle twoth bg-grey"><div class="w_5_normal">@LocTransporterResource.Transporter</div></th>
+                            <th class="align-middle twoth bg-grey"><div class="w_1_bit">@LocTransporterResource.LeadTime</div></th>
+                        }
+                    </tr>*@
+                </thead>
+                <tbody>
+                    @using (Html.BeginForm("Update", "LocTransporter", FormMethod.Post, new { id = "frmUpdate" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        foreach (var rows in Model.UploadResult.LocTransporters.Select((v, i) => new { v, i }))
+                        {
+
+                            var key = String.Format("LocTransporters[{0}].", rows.i);
+                    <tr>
+                        <td class="align-middle">
+                            @(rows.i + 1)
+                        </td>
+                        <td class="align-middle">
+                            <div>@Html.DisplayFor(m => rows.v.CenterId)</div>
+                            <div>@Html.DisplayFor(m => rows.v.CenterName)</div>
+                        </td>
+                        <td class="align-middle">
+                            <div>@Html.DisplayFor(m => rows.v.ShipToStoreId)</div>
+                            <div>@Html.DisplayFor(m => rows.v.ShipToStoreName)</div>
+                            @Html.HiddenFor(m => rows.v.ShipToStoreId, new { Name = key + "ShipToStoreId", @id = key + "ShipToStoreId" })
+                            @Html.HiddenFor(m => rows.v.CenterId, new { Name = key + "CenterId", @id = key + "CenterId" })
+                            @Html.HiddenFor(m => rows.v.UpdateCount, new { Name = key + "UpdateCount", @id = key + "UpdateCount" })
+                        </td>
+                        <td class="align-middle">
+                            <div class="">
+                                @Html.DisplayFor(m => rows.v.PrefName)
+                                @Html.HiddenFor(m => rows.v.PrefName, new { Name = key + "PrefName", @id = key + "PrefName" })
+                                @Html.HiddenFor(m => rows.v.PrefId, new { Name = key + "PrefId", @id = key + "PrefId" })
+                            </div>
+                        </td>
+                        <td class="align-middle">
+                            @Html.DisplayFor(m => rows.v.StartDate)
+                            @Html.HiddenFor(m => rows.v.StartDate, new { Name = key + "StartDate", @id = key + "StartDate" })
+                        </td>
+                        <td class="align-middle">
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterId)
+                            </div>
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterName)
+                            </div>
+                            @Html.HiddenFor(m => rows.v.TransporterId, new { Name = key + "TransporterId", @id = key + "TransporterId" })
+                            @Html.HiddenFor(m => rows.v.TransporterName, new { Name = key + "TransporterName", @id = key + "TransporterName" })
+                        </td>
+                        <td class="text-right align-middle">
+                            @Html.DisplayFor(m => rows.v.LeadTimes)
+                            @Html.HiddenFor(m => rows.v.LeadTimes, new { Name = key + "LeadTimes", @id = key + "LeadTimes" })
+                        </td>
+                        @*<td class="align-middle">
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterIdMon)
+                            </div>
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterNameMon)
+                            </div>
+                            @Html.HiddenFor(m => rows.v.TransporterIdMon, new { Name = key + "TransporterIdMon", @id = key + "TransporterIdMon" })
+                            @Html.HiddenFor(m => rows.v.TransporterNameMon, new { Name = key + "TransporterNameMon", @id = key + "TransporterNameMon" })
+                        </td>
+                        <td class="text-right align-middle">
+                            @Html.DisplayFor(m => rows.v.LeadTimesMon)
+                            @Html.HiddenFor(m => rows.v.LeadTimesMon, new { Name = key + "LeadTimesMon", @id = key + "LeadTimesMon" })
+                        </td>
+                        <td class="align-middle">
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterIdTue)
+                            </div>
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterNameTue)
+                            </div>
+                            @Html.HiddenFor(m => rows.v.TransporterIdTue, new { Name = key + "TransporterIdTue", @id = key + "TransporterIdTue" })
+                            @Html.HiddenFor(m => rows.v.TransporterNameTue, new { Name = key + "TransporterNameTue", @id = key + "TransporterNameTue" })
+                        </td>
+                        <td class="text-right align-middle">
+                            @Html.DisplayFor(m => rows.v.LeadTimesTue)
+                            @Html.HiddenFor(m => rows.v.LeadTimesTue, new { Name = key + "LeadTimesTue", @id = key + "LeadTimesTue" })
+                        </td>
+                        <td class="align-middle">
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterIdWed)
+                            </div>
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterNameWed)
+                            </div>
+                            @Html.HiddenFor(m => rows.v.TransporterIdWed, new { Name = key + "TransporterIdWed", @id = key + "TransporterIdWed" })
+                            @Html.HiddenFor(m => rows.v.TransporterNameWed, new { Name = key + "TransporterNameWed", @id = key + "TransporterNameWed" })
+                        </td>
+                        <td class="text-right align-middle">
+                            @Html.DisplayFor(m => rows.v.LeadTimesWed)
+                            @Html.HiddenFor(m => rows.v.LeadTimesWed, new { Name = key + "LeadTimesWed", @id = key + "LeadTimesWed" })
+                        </td>
+                        <td class="align-middle">
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterIdThu)
+                            </div>
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterNameThu)
+                            </div>
+                            @Html.HiddenFor(m => rows.v.TransporterIdThu, new { Name = key + "TransporterIdThu", @id = key + "TransporterIdThu" })
+                            @Html.HiddenFor(m => rows.v.TransporterNameThu, new { Name = key + "TransporterNameThu", @id = key + "TransporterNameThu" })
+                        </td>
+                        <td class="text-right align-middle">
+                            @Html.DisplayFor(m => rows.v.LeadTimesThu)
+                            @Html.HiddenFor(m => rows.v.LeadTimesThu, new { Name = key + "LeadTimesThu", @id = key + "LeadTimesThu" })
+                        </td>
+                        <td class="align-middle">
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterIdFri)
+                            </div>
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterNameFri)
+                            </div>
+                            @Html.HiddenFor(m => rows.v.TransporterIdFri, new { Name = key + "TransporterIdFri", @id = key + "TransporterIdFri" })
+                            @Html.HiddenFor(m => rows.v.TransporterNameFri, new { Name = key + "TransporterNameFri", @id = key + "TransporterNameFri" })
+                        </td>
+                        <td class="text-right align-middle">
+                            @Html.DisplayFor(m => rows.v.LeadTimesFri)
+                            @Html.HiddenFor(m => rows.v.LeadTimesFri, new { Name = key + "LeadTimesFri", @id = key + "LeadTimesFri" })
+                        </td>
+                        <td class="align-middle">
+                            <div class="sort w_5_normal">
+                                @Html.DisplayFor(m => rows.v.TransporterIdSat)
+                            </div>
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterNameSat)
+                            </div>
+                            @Html.HiddenFor(m => rows.v.TransporterIdSat, new { Name = key + "TransporterIdSat", @id = key + "TransporterIdSat" })
+                            @Html.HiddenFor(m => rows.v.TransporterNameSat, new { Name = key + "TransporterNameSat", @id = key + "TransporterNameSat" })
+                        </td>
+                        <td class="text-right align-middle">
+                            @Html.DisplayFor(m => rows.v.LeadTimesSat)
+                            @Html.HiddenFor(m => rows.v.LeadTimesSat, new { Name = key + "LeadTimesSat", @id = key + "LeadTimesSat" })
+                        </td>
+                        <td class="align-middle">
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterIdSun)
+                            </div>
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterNameSun)
+                            </div>
+                            @Html.HiddenFor(m => rows.v.TransporterIdSun, new { Name = key + "TransporterIdSun", @id = key + "TransporterIdSun" })
+                            @Html.HiddenFor(m => rows.v.TransporterNameSun, new { Name = key + "TransporterNameSun", @id = key + "TransporterNameSun" })
+                        </td>
+                        <td class="text-right align-middle">
+                            @Html.DisplayFor(m => rows.v.LeadTimesSun)
+                            @Html.HiddenFor(m => rows.v.LeadTimesSun, new { Name = key + "LeadTimesSun", @id = key + "LeadTimesSun" })
+                        </td>
+                        <td class="align-middle">
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterIdHol)
+                            </div>
+                            <div>
+                                @Html.DisplayFor(m => rows.v.TransporterNameHol)
+                            </div>
+                            @Html.HiddenFor(m => rows.v.TransporterIdHol, new { Name = key + "TransporterIdHol", @id = key + "TransporterIdHol" })
+                            @Html.HiddenFor(m => rows.v.TransporterNameHol, new { Name = key + "TransporterNameHol", @id = key + "TransporterNameHol" })
+                        </td>
+                        <td class="text-right align-middle">
+                            @Html.DisplayFor(m => rows.v.LeadTimesHol)
+                            @Html.HiddenFor(m => rows.v.LeadTimesHol, new { Name = key + "LeadTimesHol", @id = key + "LeadTimesHol" })
+                        </td>*@
+                        <td class="align-middle">
+                            @Html.DisplayFor(m => rows.v.ClientCd)
+                            @Html.HiddenFor(m => rows.v.ClientCd, new { Name = key + "ClientCd", @id = key + "ClientCd" })
+                        </td>
+                        <td class="align-middle">
+                            @Html.DisplayFor(m => rows.v.ControlId)
+                            @Html.HiddenFor(m => rows.v.ControlId, new { Name = key + "ControlId", @id = key + "ControlId" })
+                        </td>
+                        <td class="align-middle">
+                            @Html.DisplayFor(m => rows.v.ConsignorId)
+                            @Html.HiddenFor(m => rows.v.ConsignorId, new { Name = key + "ConsignorId", @id = key + "ConsignorId" })
+                        </td>
+                        <td class="fontred align-middle">
+                            @Html.DisplayFor(m => rows.v.ErrMsg)
+                        </td>
+                    </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+        }
+</div>
+}
+
+@Html.Partial("_FileUploadModal")
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "LocTransporter", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+<script>
+
+    //ファイルアップロード
+    fileUploadModal.init();
+    $('#btnUpload').on('click', function () {
+        var urlAction = '@Url.Action("Upload", "LocTransporter", new { area = "Master" })';
+        var urlIndexAction = '@Url.Action("Index", "LocTransporter", new { area = "Master" })';
+        var urlErrAction = '@Url.Action("UploadErr", "LocTransporter", new { area = "Master" })';
+        fileUploadModal.setting({
+            url: urlAction,
+            title: "@LocTransporterResource.Title" + "@FormsResource.FileUplaodTitle",
+            acceptedFiles: ".xlsx",
+            successCallback: function (data) {
+                if (data.err == 'true') {
+                    location.href = urlErrAction;
+                } else {
+                    location.href = urlIndexAction;
+                }
+            }
+        });
+        fileUploadModal.open();
+    });
+</script>
+}

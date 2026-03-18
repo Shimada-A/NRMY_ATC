@@ -1,0 +1,281 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.EcAllocationCancel;
+@model Wms.Areas.Ship.ViewModels.EcAllocationCancel.EcAllocationCancelViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_EcAllocationCancel;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "EcAllocationCancel", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@EcAllocationCancelResource.CenterId</td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1", onchange = "GetBatchNoList()" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@EcAllocationCancelResource.AllocGroupNo</td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.AllocGroupNo,
+                                (IEnumerable<SelectListItem>)ViewBag.BatchNoList,
+                                CommonResource.None, new { id = "ddlBatchNo", tabindex = "2" })
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.AllocGroupNo)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td colspan="2" class="redcolor">@EcAllocationCancelResource.Comment1</td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td colspan="2" class="redcolor">@EcAllocationCancelResource.Comment2</td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td colspan="2" class="redcolor">@EcAllocationCancelResource.Comment3</td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td class="w_80_normal"></td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "EcAllocationCancel", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "3" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="4" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.EcAllocationCancels != null && Model.Results.EcAllocationCancels.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.EcAllocationCancels.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.EcAllocationCancels.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.EcAllocationCancels, Page => Url.Action("Search", "EcAllocationCancel", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    if (Model.Results.EcAllocationCancels.Count() > 0)
+    {
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @EcAllocationCancelResource.OrderQtySum @Html.DisplayFor(model => model.SearchConditions.OrderQtySum)
+                    </li>
+                    <li>
+                        @EcAllocationCancelResource.ItemSkuQtySum @Html.DisplayFor(model => model.SearchConditions.ItemSkuQtySum)
+                    </li>
+                    <li>
+                        @EcAllocationCancelResource.PlanQtySum @Html.DisplayFor(model => model.SearchConditions.PlanQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+}
+@if (Model.Results.EcAllocationCancels != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.EcAllocationCancels.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationCancelResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationCancelResource.ShipRequestDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationCancelResource.ShipInstructId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationCancelResource.OrderDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationCancelResource.TransporterName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationCancelResource.ArriveRequestDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationCancelResource.DataDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationCancelResource.OrderQty
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "EcAllocationCancel", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.EcAllocationCancels.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("EcAllocationCancels[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.EcAllocationCancels.PageNumber - 1) * Model.Results.EcAllocationCancels.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipRequestDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransporterName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArriveRequestDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.DataDate)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderQty)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipInstructId, new { Name = key + "ShipInstructId" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="submit" id="btnEcAllocationCancel" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm"
+                @(Model.Results.EcAllocationCancels != null && Model.Results.EcAllocationCancels.Count() > 0 ? "" : "disabled")>
+            @EcAllocationCancelResource.BtnEcAllocationCancel
+        </button>
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+    </div>
+}
+
+@Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_ALLOCATION_CANCEL)
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        $(document).ready(function () {
+            if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+            }
+        });
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "EcAllocationCancel", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        }
+        function Search() {
+                var urlAction = '@Url.Action("Search", "EcAllocationCancel", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        $('#submitCreate').on("click", function () {
+            var urlAction ='@Url.Action("CancelSearch", "EcAllocationCancel", new { area= "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        function GetBatchNoList() {
+                    var urlAction = '@Url.Action("GetBatchNoList","EcAllocationCancel",new { area = "Ship"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            centerId: $("#ddlCenterId").val()
+                        },
+                        success: function (data) {
+                            $("#ddlBatchNo").html("");
+                            $("#ddlBatchNo").html(data.html);
+                        }
+                    });
+        }
+    </script>
+}

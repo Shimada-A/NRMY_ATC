@@ -1,0 +1,659 @@
+﻿@using Share.Common;
+@using Share.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Stock.Resources;
+@using Wms.Helpers;
+@model Wms.Areas.Stock.ViewModels.ResearchReference.ResearchReferenceViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_ResearchReference;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("ReSearch", "ResearchReference", FormMethod.Post, new { id = "frmReSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(vm => vm.Condition.SelectedUniqueKey, new { @id = "hiddenSelectedUniqueKey1", @class = "hiddenSelectedUniqueKey" })
+        @Html.HiddenFor(vm => vm.Condition.PageNumber, new { @id = "hiddenPageNumber1", @class = "hiddenPageNumber" })
+        @Html.HiddenFor(vm => vm.Condition.SortOrder, new { @id = "hiddenSortOrder1", @class = "hiddenSortOrder" })
+        @Html.HiddenFor(vm => vm.Condition.AscDescSort, new { @id = "hiddenAscDesc1", @class = "hiddenAscDesc" })
+    }
+
+    @using (Html.BeginForm("Search", "ResearchReference", FormMethod.Post, new { id = "frmSearch", @class = "show_scroll" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelCenter
+                </td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.Condition.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelStatus
+                </td>
+                <td>
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.Condition.StatusNot, new { id = "txtStatusNot", tabindex = "2", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @ResearchReferenceResource.StatusNot
+                    &nbsp;&nbsp;
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.Condition.StatusDuring, new { id = "txtStatusDuring", tabindex = "3", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @ResearchReferenceResource.StatusDuring
+                    &nbsp;&nbsp;
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.Condition.StatusComplete, new { id = "txtStatusComplete", tabindex = "4", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @ResearchReferenceResource.StatusComplete
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle vertical-align-top">
+                    @ResearchReferenceResource.LabelOccurredDateTime
+                </td>
+                <td colspan="4" style="width: 512px;">
+                    <div>
+                        <span class="date_input">
+                            @Html.EditorFor(
+                                model => model.Condition.OccurredDateFrom,
+                                new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "startDate flatpickr", @id = "txtOccurredDateFrom" } })
+                            <span class="arrow">&nbsp;</span>
+
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(
+                                model => model.Condition.OccurredTimeFrom,
+                                new { htmlAttributes = new { tabindex = "6", @placeholder = "", @class = "time_input", @id = "txtOccurredTimeFrom", maxlength = "8" } })
+                        </span>
+                        @ResearchReferenceResource.LabelHypen
+                        <span class="date_input">
+                            @Html.EditorFor(
+                                model => model.Condition.OccurredDateTo,
+                                new { htmlAttributes = new { tabindex = "7", @placeholder = "", @class = "endDate flatpickr", @id = "txtOccurredDateTo" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(
+                                model => model.Condition.OccurredTimeTo,
+                                new { htmlAttributes = new { tabindex = "8", @placeholder = "", @class = "time_input", @id = "txtOccurredTimeTo", maxlength = "8" } })
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.Condition.OccurredDateFrom, "", new { id = "msgOccurredTimeFrom" })
+                        @Html.ValidationMessageFor(model => model.Condition.OccurredTimeTo, "", new { id = "msgOccurredTimeTo" })
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelRegistClass
+                </td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(
+                                model => model.Condition.RegistClass,
+                                CommonResource.None,
+                                new { @id = "ddlRegistClass", tabindex = "9" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelRegistUser
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.RegistUserId,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtRegistUserId", tabindex = "17" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle" style="width: 120px;">
+                    @ResearchReferenceResource.LabelLocation
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.LocationCd,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtLocationCd", tabindex = "10" } })
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelBatchNo
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.BatchNo,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBatchNo", tabindex = "18" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelShippingStore
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.ShippingStoreId,
+                        new { htmlAttributes = new { @class = "w_6_short", @id = "txtShippingStoreId", tabindex = "11" } })
+                    @Html.EditorFor(
+                        model => model.Condition.ShippingStoreName,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtShippingStoreName", tabindex = "12" } })
+                    <div class="search">
+                        <button type="button" id="btnStore" class="search_btn" tabindex="13" data-toggle="modal" data-target="#SyukkasakiModal" data-id="#txtShippingStoreId" data-name="#txtShippingStoreName" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelInvoiceNo
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.InvoiceNo,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtInvoiceNo", tabindex = "19" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelJan
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.Jan,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtJan", tabindex = "14" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelBoxNo
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.BoxNo,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBoxNo", tabindex = "20" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelSku
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.Sku,
+                        new { htmlAttributes = new { @class = "w_40_normal", @id = "txtSku", tabindex = "15" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelGrade
+                </td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.Condition.GradeId,
+                                (IEnumerable<SelectListItem>)ViewBag.GradeList,
+                                CommonResource.None, new { id = "ddlGrade", tabindex = "16" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6"></td>
+                <td colspan="2">
+                    @Html.ActionLink(
+                        FormsResource.BTN_CLEAR,
+                        "Index",
+                        "ResearchReference",
+                        new { area = "Stock" },
+                        new { tabindex = "101", type = "button", @class = "btn btn-outline-dark" })
+                    <button type="button" class="btn btn-outline-dark" id="btnSearch" tabindex="102">
+                        @FormsResource.BTN_SEARCH
+                    </button>
+                </td>
+            </tr>
+        </table>
+        @Html.HiddenFor(vm => vm.Condition.SelectedUniqueKey, new { @id = "hiddenSelectedUniqueKey2", @class = "hiddenSelectedUniqueKey" })
+        @Html.HiddenFor(vm => vm.Condition.PageNumber, new { @id = "hiddenPageNumber2", @class = "hiddenPageNumber" })
+        @Html.HiddenFor(vm => vm.Condition.SortOrder, new { @id = "hiddenSortOrder2", @class = "hiddenSortOrder" })
+        @Html.HiddenFor(vm => vm.Condition.AscDescSort, new { @id = "hiddenAscDesc2", @class = "hiddenAscDesc" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.IsShowResultList && !Model.Result.IsEmpty())
+{
+    <div class="sublbarea no_border stock_detail_load">
+        @using (Html.BeginForm("DownloadExcel", "ResearchReference", FormMethod.Post, new { id = "frmDownloadExcel" }))
+        {
+            @Html.AntiForgeryToken()
+        }
+        @using (Html.BeginForm("Print", "ResearchReference", FormMethod.Post, new { id = "frmPrint" }))
+        {
+            @Html.AntiForgeryToken()
+        }
+        <div class="sortarea">
+            <ul>
+                <li>
+                    <button type="button" id="btnDownload" class="download">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </li>
+                <li>
+                    <button type="button" id="btnPrint" class="download download-large">
+                        <img src="~/Content/img/print.png" />
+                        @ResearchReferenceResource.ButtonPrint
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.GetSortOrder, new { Name = "ResearchReferenceSortOrder", @id = "ddlSortOrder" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.Condition.AscDescSort, new { Name = "ResearchReferenceAscDescSort", @id = "ddlAscDesc" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Result.ResultRowList.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            <span class="pager">
+                @Html.PagedListPager(Model.Result.ResultRowList, pageNumber => Url.Action("ReSearch", "ResearchReference", new { pageNumber }), PagerHelper.Default)
+            </span>
+        </div>
+        <div style="text-align: end; padding-top: 40px; padding-right: 80px;">
+            @ResearchReferenceResource.LabelSkuQuantity
+            @Model.Result.ResultCount.CountSku
+        </div>
+    </div>
+}
+
+@if (Model.IsShowResultList)
+{
+    <div class="Container">
+        @if (Model.Result.IsEmpty())
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div class="tb_scroll" style="height: 70vh;">
+                <table class="table table-bordered" id="resultRowList" style="width: 140vw;">
+                    <thead>
+                        <tr>
+                            <th class="bg-grey  align-middle">
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThNumber
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThSlipNo
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThRegistDateTime
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThRegistClass
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThRegistUserId
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThBatchNo2
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThLocation2
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThInvoiceNo2
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThBoxNo
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThItem
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThColor
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThSize
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThJan
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThGrade
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThDiffQuantity
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThListPringFlag
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThStatus
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThResearchDateTime
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThResearchUserId
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThReferenceLocation
+                            </th>
+                            <th class="bg-grey  align-middle">
+                                @ResearchReferenceResource.ThResearchNote
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @Html.AntiForgeryToken()
+                        @foreach (var row in Model.Result.ResultRowList)
+                        {
+                            var key = string.Format("research.{0}.", row.RowNumber);
+                            var idRadio = string.Format("{0}radio", key);
+                            var idCheck = string.Format("{0}check", key);
+                            <tr>
+                                <td id="@row.CreateUniqueKey()" class="align-middle chk_cell uniqueKey">
+                                    <label>
+                                        <input type="radio" id='@idRadio' name="research.radio" class="radio_input" />
+                                        <span class="radio_parts"></span>
+                                    </label>
+                                    @Html.CheckBox("research.check", new { @id = idCheck, @class = "check-box", hidden = true })
+                                    @Html.Hidden("ResearchRegistClass", (int)row.RegistClass, new { @id = key + "ResearchRegistClass", @class = "registClass_input" })
+                                    @Html.Hidden("ResearchStatus", row.Status, new { @id = key + "ResearchStatus", @class = "Status_input" })
+                                </td>
+                                @using (Html.BeginForm("Input", "ResearchReference", FormMethod.Post, new { id = "frmInput" + row.RowNumber }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <td class="rowNumber">
+                                        @row.RowNumber
+                                        @Html.Hidden("Json", row.ToJson(), new { @id = key + "Json" })
+                                        @Html.Hidden("ResearchLocationCd", row.ResearchLocationCd, new { @id = key + "ResearchLocationCd" })
+                                        @Html.Hidden("ResearchUserId", row.ResearchUserId, new { @id = key + "ResearchUserId" })
+                                        @Html.Hidden("ResearchNote", row.ResearchNote, new { @id = key + "ResearchNote" })
+                                    </td>
+                                    <td>
+                                        @row.SlipNo
+                                    </td>
+                                    <td>
+                                        @row.GetOccurredDateTimeString()
+                                    </td>
+                                    <td>
+                                        @row.RegistClassName
+                                    </td>
+                                    <td>
+                                        @row.RegistUserId
+                                        <br />
+                                        @row.RegistUserName
+                                    </td>
+                                    <td>
+                                        @row.GetBatchNoForDisplay()
+                                    </td>
+                                    <td>
+                                        @row.GetLocationUpper()
+                                        <br />
+                                        @row.GetLocationLower()
+                                    </td>
+                                    <td>
+                                        @row.InvoiceNo
+                                    </td>
+                                    <td>
+                                        @row.BoxNo
+                                    </td>
+                                    <td>
+                                        @row.ItemId
+                                        <br />
+                                        @row.ItemName
+                                    </td>
+                                    <td>
+                                        @row.ColorId
+                                        <br />
+                                        @row.ColorName
+                                    </td>
+                                    <td>
+                                        @row.SizeId
+                                        <br />
+                                        @row.SizeName
+                                    </td>
+                                    <td>
+                                        @row.Jan
+                                    </td>
+                                    <td>
+                                        @row.GradeName
+                                    </td>
+                                    <td>
+                                        @row.DiffQuantity
+                                    </td>
+                                    <td>
+                                        @row.ListPrintFlagName
+                                    </td>
+                                    <td>
+                                        @row.StatusName
+                                    </td>
+                                    <td>
+                                        @row.GetResearchDateTimeString()
+                                    </td>
+                                    <td>
+                                        @row.ResearchUserId <br />
+                                        @row.ResearchUserName
+                                    </td>
+                                    <td>
+                                        @row.ResearchLocationCd
+                                    </td>
+                                    <td>
+                                        @row.ResearchNote
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+    </div>
+}
+
+@section Basefooter{
+    <div class="btnarea">
+        <button type="button" id="btnUpdate" class="btn btn-dark btnsize _pm">@ResearchReferenceResource.ButtonUpdate</button>
+        <button type="button" id="btnUpdateHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_Update" hidden>@ResearchReferenceResource.ButtonUpdate</button>
+        <button type="button" id="btnResearchInput" class="btn btn-dark btnsize">@ResearchReferenceResource.ButtonResearch</button>
+    </div>
+}
+
+@{
+    var storeConditions = new ViewDataDictionary { { "ParameterStoreId", Model.Condition.ShippingStoreId }, { "TempStoreId", Model.Condition.ShippingStoreId } };
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml", storeConditions)
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Update", Message = ResearchReferenceResource.MsgUpdate })
+
+
+@section LayoutScripts
+{
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+<script>
+        let selectedRowForm = null;
+        const isEmpty = function (val) {
+            return !val;
+        };
+        const isHh24mmss = function (val) {
+            return val.match(/^([01]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/) !== null;
+        };
+        //const addClickEvent = function (id, func) {
+        //    $(id).off('click').on('click', func);
+        //};
+        //const addChangeEvent = function (id, func) {
+        //    $(id).off('change').on('change', func);
+        //};
+        const addBlurEvent = function (id, func) {
+            $(id).off('blur').on('blur', func);
+        };
+        const addCheckTimeBlurEvent = function (timeId, messageId) {
+            const func = function () {
+                const val = $(timeId).val();
+
+                if (isEmpty(val) || isHh24mmss(val)) {
+                    $(messageId).text('');
+                    $(messageId).removeClass("field-validation-error");
+                    $(timeId).removeClass("input-validation-error");
+                    return;
+                } else {
+                    $(messageId).text('@ResearchReferenceResource.MessageTimeFormatError');
+                    $(messageId).addClass("field-validation-error");
+                    $(timeId).addClass("input-validation-error");
+                }
+            };
+
+            addBlurEvent(timeId, func);
+        };
+        const setPageInformation = function () {
+            const sortOrder = $('#ddlSortOrder option:selected').val();
+            const ascDesc = $('#ddlAscDesc option:selected').val();
+
+            if (sortOrder) {
+                $('.hiddenSortOrder').val(sortOrder);
+            }
+
+            if (ascDesc) {
+                $('.hiddenAscDesc').val(ascDesc);
+            }
+        };
+        const clearCheckBox = function () {
+            $('#resultRowList td .check-box').prop('checked', false);
+            $('#resultRowList td .radio_input').prop('checked', false);
+        };
+        const setCheckBox = function (selector) {
+            selector.find('.check-box').prop('checked', true);
+            selector.find('.radio_input').prop('checked', true);
+
+            const uniqueQuery = '&uniqueKey=';
+            const uniqueKey = selector.attr('id');
+
+            $('.pager').find('a').each(function (index, element) {
+                const href = $(element).attr('href');
+
+                if (href) {
+                    const i = href.indexOf(uniqueQuery);
+                    const newHref = i < 0 ? href : href.slice(0, i);
+
+                    $(element).attr('href', newHref + uniqueQuery + uniqueKey);
+                }
+            });
+        };
+
+        $(document).ready(function () {
+            if ('@Model.CanChangeCenter'.toLowerCase() === 'true') {
+                $('#ddlCenterId').removeAttr('disabled');
+            }
+
+            $('#btnResearchInput').attr('disabled', 'disabled');
+            $('#btnUpdate').attr('disabled', 'disabled');
+            clearCheckBox();
+            $('.uniqueKey').each(function (index, element) {
+                const uniqueKey = $(element).attr('id');
+
+                if (uniqueKey === '@Model.Result.SelectedUniqueKey') {
+                    setCheckBox($(element));
+                    $('#btnResearchInput').removeAttr('disabled');
+                    return false;
+                }
+            });
+
+            addCheckTimeBlurEvent('#txtOccurredTimeFrom', '#msgOccurredTimeFrom');
+            addCheckTimeBlurEvent('#txtOccurredTimeTo', '#msgOccurredTimeTo');
+            addClickEvent('#btnSearch', function () {
+                if ($('body .input-validation-error').length) {
+                    return;
+                }
+
+                $('#frmSearch').submit();
+            });
+            addChangeEvent('#ddlSortOrder, #ddlAscDesc', function () {
+                setPageInformation();
+                $('#frmReSearch').submit();
+            });
+            addClickEvent('#resultRowList td .radio_input', function () {
+                clearCheckBox();
+                setCheckBox($(this).parents('td'));
+                $('#btnResearchInput').removeAttr('disabled');
+
+                var registClass = $(this).parents('td').find('.registClass_input').val();
+                var status = $(this).parents('td').find('.Status_input').val();
+                if (registClass == "7" && status == "0") {
+                    $('#btnUpdate').removeAttr('disabled');
+                } else {
+                    $('#btnUpdate').attr('disabled', 'disabled');
+                };
+                $('.hiddenSelectedUniqueKey').val($(this).parents('td').attr('id'));
+                selectedRowForm = $(this).parents('tr').find('form');
+            });
+            addClickEvent('#btnResearchInput', function () {
+                if (!selectedRowForm) {
+                    return;
+                }
+
+                selectedRowForm.submit();
+            });
+            addClickEvent('#btnDownload', function () {
+                $('#frmDownloadExcel').submit();
+            });
+            addClickEvent('#btnPrint', function () {
+                $('#frmPrint').submit().attr('target', '_self');
+            });
+            addClickEvent('#btnUpdate', function () {
+                if (!selectedRowForm) {
+                    return;
+                }
+                $('#btnUpdateHidden').click();
+            });
+            addClickEvent('#Update', function () {
+                if (!selectedRowForm) {
+                    return;
+                }
+                var urlAction = '@Url.Action("Update", "ResearchReference", new { area = "Stock" })';
+                selectedRowForm.attr("action", urlAction);
+                selectedRowForm.submit();
+            });
+        });
+
+</script>
+}

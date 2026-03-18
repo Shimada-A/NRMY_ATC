@@ -1,0 +1,958 @@
+﻿@using Wms.Helpers;
+@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Move.Resources;
+@using Wms.Areas.Move.ViewModels.InputTransfer;
+@model Wms.Areas.Move.ViewModels.InputTransfer.InputTransfer02ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MOV_InputTransfer02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("InputSearch", "InputTransfer", FormMethod.Post, new { id = "frmInputSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@InputTransferResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@InputTransferResource.CategoryS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                            model => model.SearchConditions.CategoryId1,
+                            (IEnumerable<SelectListItem>
+                                )ViewBag.Category1List,
+                                CommonResource.None, new { id = "ddlCategoryId1", tabindex = "16", onchange = "CategoryChange(1)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                            model => model.SearchConditions.CategoryId2,
+                            (IEnumerable<SelectListItem>
+                                )ViewBag.Category2List,
+                                CommonResource.None, new { id = "ddlCategoryId2", tabindex = "17", disabled = "disabled", onchange = "CategoryChange(2)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                            model => model.SearchConditions.CategoryId3,
+                            (IEnumerable<SelectListItem>
+                                )ViewBag.Category3List,
+                                CommonResource.None, new { id = "ddlCategoryId3", tabindex = "18", disabled = "disabled", onchange = "CategoryChange(3)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                            model => model.SearchConditions.CategoryId4,
+                            (IEnumerable<SelectListItem>
+                                )ViewBag.Category4List,
+                                CommonResource.None, new { id = "ddlCategoryId4", tabindex = "19", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@InputTransferResource.MoveClassS</td>
+                @*<td>
+                    @Html.EnumRadioButtonListFor(model => model.SearchConditions.TransferClass, new { onchange = "TransferClassChange()" })
+                </td>*@
+                <td>
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.StoreReturnFlag, new { id = "txtStoreReturnFlag", tabindex = "2", @placeholder = "", @class = "check-box", @onchange = "chgTransferClass();" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @InputTransferResource.StoreReturn
+                    &nbsp;&nbsp;
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.BaseMoveFlag, new { id = "txtBaseMoveFlag", tabindex = "3", @placeholder = "", @class = "check-box", @onchange = "chgTransferClass();" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @InputTransferResource.BaseMove
+                    &nbsp;&nbsp;
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.BaseMoveNoWmsCenterFlag, new { id = "txtBaseMoveNoWmsCenterFlag", tabindex = "4", @placeholder = "", @class = "check-box", @onchange = "chgTransferClass();" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @InputTransferResource.BaseMoveNoWmsCenter
+                </td>
+                <td class="tdtitle_large">@InputTransferResource.ItemCodeS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.ItemCode,
+                                (IEnumerable<SelectListItem>)ViewBag.ItemList,
+                                CommonResource.None, new { id = "ddlItemCode", tabindex = "20" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                @*<td class="tdtitle">@InputTransferResource.ArrivePlanDateS</td>
+                <td>
+                    <div>
+                        <label>
+                            @Html.RadioButtonFor(model => model.SearchConditions.ArriveDateClass, "ArrivePlanDate", new { tabindex = "30", @class = "radio_input", onChange = "ArriveDateClassChange('ArrivePlanDate')" })
+                            <span class="radio_parts"></span>
+                        </label>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ArrivePlanDateFrom, new { htmlAttributes = new { tabindex = "30", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ArrivePlanDateTo, new { htmlAttributes = new { tabindex = "40", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <label>
+                            @InputTransferResource.NotContainsUnplanned
+                        </label>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArrivePlanDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArrivePlanDateTo, "", new { })
+                    </div>
+                </td>*@
+                <td class="tdtitle">@InputTransferResource.DenpyoDateS</td>
+                <td>
+                    <div>
+                        <label>
+                            @Html.RadioButtonFor(model => model.SearchConditions.ArriveDateClass, "ArrivePlanDate", new { tabindex = "5", @class = "radio_input", onChange = "ArriveDateClassChange('ArrivePlanDate')" })
+                            <span class="radio_parts"></span>
+                        </label>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.DenpyoDateFrom, new { htmlAttributes = new { tabindex = "6", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.DenpyoDateTo, new { htmlAttributes = new { tabindex = "7", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <label>
+                            @InputTransferResource.NotContainsUnplanned
+                        </label>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.DenpyoDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.DenpyoDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle">@InputTransferResource.BrandS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "21" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "22" } })
+                    <div class="search">
+                        <button type="button" id="btnBrand" class="search_btn" tabindex="160" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@InputTransferResource.TransferResultDateS</td>
+                <td>
+                    <div>
+                        <label>
+                            @Html.RadioButtonFor(model => model.SearchConditions.ArriveDateClass, "TransferResultDate", new { tabindex = "8", @class = "radio_input", onChange = "ArriveDateClassChange('TransferResultDate')" })
+                            <span class="radio_parts"></span>
+                        </label>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.TransferResultDateFrom, new { htmlAttributes = new { tabindex = "9", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.TransferResultDateTo, new { htmlAttributes = new { tabindex = "10", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <label>
+                            @InputTransferResource.ContainsUnplanned
+                        </label>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.TransferResultDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.TransferResultDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle">@InputTransferResource.ItemIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @id = "txtItemId", tabindex = "23" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_large">@InputTransferResource.TransferFromCenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                            model => model.SearchConditions.TransferFromCenterId
+                            , Wms.Common.Profile.User.UserId
+                            , CommonResource.None, new { @id = "ddlTransferFromCenterId", tabindex = "11" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@InputTransferResource.ItemColorS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemColorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtItemColorId", tabindex = "24" } })
+                    @Html.EditorFor(model => model.SearchConditions.ItemColorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemColorName", tabindex = "25" } })
+                    <div class="search">
+                        <button type="button" id="btnItemColor" class="search_btn" tabindex="200" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@InputTransferResource.TransferFromStoreS</td>
+                <td>
+                    <button type="button" class="btn btn-outline-dark" id="btnShipTo" tabindex="12" data-toggle="modal" data-flag="" data-target="#SyukkasakiModal" data-id="#txtTransferFromStoreId" data-name="#txtTransferFromStoreName">@InputTransferResource.BtnStoreSelect</button><br />
+                </td>
+                <td class="tdtitle">@InputTransferResource.ItemSizeS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemSizeId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtItemSizeId", tabindex = "26" } })
+                    @Html.EditorFor(model => model.SearchConditions.ItemSizeName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemSizeName", tabindex = "27" } })
+                    @*<div class="search">
+                        <button type="button" id="btnItemSize" class="search_btn" tabindex="230" />
+                    </div>*@
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.TransferFromStoreName, new { htmlAttributes = new { @class = "w_50_normal overflow", @id = "txtTransferFromStoreName", tabindex = "13", @readonly = "readonly" } })
+                    @Html.HiddenFor(model => model.SearchConditions.TransferFromStoreId, new { id = "txtTransferFromStoreId" })
+                </td>
+                <td class="tdtitle">@InputTransferResource.JanS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @id = "txtJan", tabindex = "28" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@InputTransferResource.TransferStatusS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @*状況 実績送信済は表示しない*@
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.TransferStatus,
+                                (IEnumerable<SelectListItem>)ViewBag.TransferStatusList,
+                                CommonResource.None, new { id = "txtTransferStatus", tabindex = "14" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@InputTransferResource.DenpyoNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.DenpyoNo, new { htmlAttributes = new { @id = "txtDenpyoNo", tabindex = "29" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@InputTransferResource.DivisionS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                            model => model.SearchConditions.DivisionId,
+                            (IEnumerable<SelectListItem>
+                                )ViewBag.DivisionList,
+                                CommonResource.None, new { id = "ddlDivisionId", tabindex = "15" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@InputTransferResource.SlipNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.SlipNo, new { htmlAttributes = new { @id = "txtSlipNo", tabindex = "30" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td></td>
+                <td class="tdtitle"></td>
+                <td colspan="4" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Input", "InputTransfer", new { area = "Move" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "31" })
+                    <button class="btn btn-outline-dark" id="btnSearch" onclick="Search();" tabindex="32">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+        @Html.HiddenFor(model => model.SearchConditions.FromMenu, new { id = "hidFromMenu" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        @Html.HiddenFor(model => model.SearchConditions.ArriveDateClass, new { id = "hidArriveDateClass" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.InputTransfer02s != null)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <span class="bluecolor">
+            @InputTransferResource.Comment1
+            <br />
+            @InputTransferResource.Comment2
+        </span>
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.InputTransfer02s.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.InputTransfer02s.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.InputTransfer02s, Page => Url.Action("InputSearch", "InputTransfer", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    if (Model.Results.InputTransfer02s.Count() > 0)
+    {
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @InputTransferResource.ItemSkuQtySum @Html.DisplayFor(model => model.SearchConditions.ItemSkuQtySum)
+                    </li>
+                    <li>
+                        @InputTransferResource.ArrivePlanQtySum @Html.DisplayFor(model => model.SearchConditions.ArrivePlanQtySum)
+                    </li>
+                    <li>
+                        @InputTransferResource.ResultQtySum @Html.DisplayFor(model => model.SearchConditions.ResultQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.InputTransfer02s.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.TransferClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.SlipNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.TransferFromStore
+                                </th>
+                                @*<th class="bg-grey align-middle">
+                                    @InputTransferResource.SlipSeq
+                                </th>*@
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.BoxNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.CategoryName1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.Item
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.ItemColor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.ItemSize
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.Jan
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.ArrivePlanQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.ResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InputTransferResource.TransferResultDate
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        @using (Html.BeginForm("UpdateSearch", "InputTransfer", FormMethod.Post, new { id = "frmUpdate" }))
+                        {
+                            <tbody>
+
+                                @Html.AntiForgeryToken()
+                                @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+                                @Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "UpdateWorking", Message = MessagesResource.QUE_UPDATE_WORKING })
+                                @for (var i = 0; i < Model.Results.InputTransfer02s.Count(); i++)
+                                {
+                                    var key = String.Format("Results.InputTransfer02s[{0}].", i);
+                                <tr>
+                                    <td class="align-middle text-right">
+                                        @((i + 1) + (Model.Results.InputTransfer02s.PageNumber - 1) * Model.Results.InputTransfer02s.PageSize)
+                                    </td>
+                                    <td class="align-middle">
+                                        @switch (Model.Results.InputTransfer02s[i].TransferClass)
+                                        {
+                                            case "1":
+                                                @InputTransferResource.BaseMove
+                                                break;
+                                            case "2":
+                                                @InputTransferResource.StoreReturn
+                                                break;
+                                            case "3":
+                                                @InputTransferResource.BaseMoveNoWmsCenter
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].SlipNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].TransferFromStoreId)<br />
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].TransferFromStoreName)
+                                    </td>
+                                    @*<td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].SlipSeq)
+                                    </td>*@
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].BoxNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].CategoryName1)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemId)<br />
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemColorId)<br />
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemColorName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemSizeId)<br />
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemSizeName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].Jan)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].ArrivePlanQty)
+                                    </td>
+                                    <td class="align-middle w_9_normal">
+                                        @if (Model.Results.InputTransfer02s[i].TransferStatus == "4")
+                                        {
+                                            @Html.EditorFor(modelItem => modelItem.Results.InputTransfer02s[i].InputResultQty, new { htmlAttributes = new { @class = "w_6_short text-right", id = key + "InputResultQty", disabled = "disabled" } })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].InputResultQty)}
+                                        else
+                                        {
+                                            @Html.EditorFor(modelItem => modelItem.Results.InputTransfer02s[i].InputResultQty, new { htmlAttributes = new { @class = "w_6_short text-right", id = key + "InputResultQty" } })
+                                        }
+                                        @Html.ValidationMessageFor(modelItem => modelItem.Results.InputTransfer02s[i].InputResultQty)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.InputTransfer02s[i].TransferResultDate)
+                                    </td>
+                                    <td class="template" hidden>
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].CenterId)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].SlipNo)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].SlipSeq)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].CategoryName1)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemId)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemName)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemColorId)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemColorName)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemSizeId)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].ItemSizeName)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].Jan)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].ArrivePlanQty)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].ShipperId)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].Seq)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].LineNo)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].ResultQty)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].UpdateCount)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.InputTransfer02s[i].TransferClass)
+                                        <input type="hidden" id="allowWorkingUpdate" name="allowWorkingUpdate" value="false" />
+                                        <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+                                        <input type="hidden" id="hidSelectedPage" name="selectedPage" value=0>
+                                        <input type="hidden" id="hdPrintFlg" value="@ViewBag.PrintFlg">
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        }
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @if (Model.SearchConditions.FromMenu)
+        {
+            @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", null, new { @class = "btn btn-outline-dark btnsiz" })
+        }
+        else
+        {
+            @Html.ActionLink(FormsResource.BTN_RETURN, "DetailsSearch", "TransferReference", new { area = "Move" }, new { @class = "btn btn-outline-dark btnsiz" })
+        }
+        <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+        <button id="btnWorkingUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_UpdateWorking" hidden>@FormsResource.BTN_UPDATE</button>
+        <button type="button" id="btnResultInput" class="btn btn-dark btnsize _pm" @(Model.Results.InputTransfer02s != null && Model.Results.InputTransfer02s.Count() > 0 ? "" : "disabled")>@InputTransferResource.BtnUpdate</button>
+        <button type="button" id="btnUpdateWork" onclick="UpdateWork();" hidden></button>
+        <button type="button" id="btnPrintHidden" hidden></button>
+    </div>
+}
+@{
+    var storeConditions = new ViewDataDictionary { { "ParameterStoreId", Model.SearchConditions.TransferFromStoreId }, { "TempStoreId", Model.SearchConditions.TransferFromStoreId } };
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_ColorSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_SizeSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml", storeConditions)
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+    <script>
+        var InputTransferView = {
+
+            /**
+             * CONST Object
+             */
+            CONST: {
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                FORM: 'form',
+                METHOD: 'method',
+                ACTION: 'action',
+                WORKING: 'WORKING',
+                ATTR_ERROR_CODE: 'errorcode',
+            },
+
+            /**
+             * SELECTORS Object
+             */
+            SELECTORS: {
+                chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+                chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+                chkInRow: 'input[type=checkbox][class=check-box]',
+                tblRow: '#listData tbody tr',
+                rowSelected: '#spnCheckedCounter',
+                btnResultInput: '#btnResultInput',
+                ddlSortKey: '#ddlSortKey',
+                chkChecked: ':checkbox:checked',
+                chkLabel: '#listData span.chk_parts',
+                form: 'form',
+                searchForm: '#frmInputSearch',
+                btnPrintHidden: '#btnPrintHidden',
+                frmUpdate: 'frmUpdate',
+                btnSubmit: 'button[type=submit],input[type=submit]',
+                btnBrand: '#btnBrand',
+                brandId:'#txtBrandId',
+                brandName:'#txtBrandName',
+                brandSelect: '#brandSelect',
+                colorSelect: '#colorSelect',
+                btnItemColor:'#btnItemColor',
+                colorId:'#txtItemColorId',
+                colorName:'#txtItemColorName',
+                sizeSelect: '#sizeSelect',
+                btnItemSize:'#btnItemSize',
+                sizeId:'#txtItemSizeId',
+                sizeName: '#txtItemSizeName',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowWorkingUpdate: '#allowWorkingUpdate',
+                hdPrintFlg: '#hdPrintFlg',
+            },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+                brandSearchModal.init();
+                colorSearchModal.init();
+                sizeSearchModal.init();
+                this.checkUpdateError();
+                this.checkPrint();
+            },
+
+            /**
+            * Check error when update record.
+            */
+            checkUpdateError: function () {
+                if ($(InputTransferView.SELECTORS.hdUpdateError).attr(InputTransferView.CONST.ATTR_ERROR_CODE) === InputTransferView.CONST.WORKING) {
+                    $('#btnWorkingUpdateHidden').click();
+                }
+            },
+
+            /**
+            * Check print.
+            */
+            checkPrint: function () {
+                if ($(InputTransferView.SELECTORS.hdPrintFlg).val() == "True") {
+                    $('#btnPrintHidden').click();
+                }
+            },
+
+            /**
+                * Register event for control
+                */
+            registerEvent: function () {
+
+                /**
+                * Dropdownlist change item
+                */
+                $(InputTransferView.SELECTORS.ddlSort).change(function (val) {
+                    $(InputTransferView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(InputTransferView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(InputTransferView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(InputTransferView.SELECTORS.btnBrand).on("click", brandSearchModal.open);
+
+                /**
+                * カラー検索ダイアログの設定
+                */
+                $(InputTransferView.SELECTORS.btnItemColor).on("click", colorSearchModal.open);
+
+                /**
+                * サイズ検索ダイアログの設定
+                */
+                $(InputTransferView.SELECTORS.btnItemSize).on("click", sizeSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(InputTransferView.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(InputTransferView.SELECTORS.brandId).val(brandId);
+                        $(InputTransferView.SELECTORS.brandName).val(brandName);
+                    })
+                });
+
+                /**
+                 *Click button get data Color
+                 */
+                $(InputTransferView.SELECTORS.colorSelect).on("click", function () {
+                    $('#colorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var colorId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var colorName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(InputTransferView.SELECTORS.colorId).val(colorId);
+                        $(InputTransferView.SELECTORS.colorName).val(colorName);
+                    })
+                });
+
+                /**
+                 *Click button get data Size
+                 */
+                $(InputTransferView.SELECTORS.sizeSelect).on("click", function () {
+                    $('#sizeSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var sizeId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var sizeName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(InputTransferView.SELECTORS.sizeId).val(sizeId);
+                        $(InputTransferView.SELECTORS.sizeName).val(sizeName);
+                    })
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function () {
+                // Enable/Disable button Edit
+                if (getUsable_Class() == 3) {
+                    if (@(Model.Results.InputTransfer02s != null && Model.Results.InputTransfer02s.Count() > 0)) {
+                        $(InputTransferView.SELECTORS.btnResultInput).removeAttr('disabled');
+                    }
+                }
+            },
+        }
+
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            InputTransferView.init();
+            $("#ddlPackageSortKey").removeClass("input-validation-error");
+            $("#ddlSortKey").removeClass("input-validation-error");
+            var val = $('input:radio[name="SearchConditions.TransferClass"]:checked').val();
+            if (val == 1) {
+                $("#btnShipTo").attr("disabled", "disabled");
+                $("#ddlTransferFromCenterId").removeAttr("disabled");
+                $("#txtTransferFromStoreName").val("");
+                $("#txtTransferFromStoreId").val("");
+            } else {
+                $("#btnShipTo").removeAttr("disabled");
+                $("#ddlTransferFromCenterId").attr("disabled", "disabled");
+                $("#ddlTransferFromCenterId").val("");
+            }
+
+            var transferClass = $('#hidTransferClass').val();
+
+            if (transferClass == "BaseMove") {
+                $('input[id="SearchConditions.TransferClass-1"]').prop('checked', true);
+                $('input[id="SearchConditions.TransferClass-2"]').prop('checked', false);
+            } else if (transferClass == "StoreReturn") {
+                $('input[id="SearchConditions.TransferClass-1"]').prop('checked', false);
+                $('input[id="SearchConditions.TransferClass-2"]').prop('checked', true);
+            }
+
+            var arriveDateClass = $('#hidArriveDateClass').val();
+
+            if (arriveDateClass == "ArrivePlanDate") {
+                $('input:radio[name="SearchConditions.ArrivePlanDate"]').val('checked', true);
+                $('input:radio[name="SearchConditions.TransferResultDate"]').val('checked', false);
+            } else if (arriveDateClass == "TransferResultDate") {
+                $('input:radio[name="SearchConditions.ArrivePlanDate"]').val('checked', false);
+                $('input:radio[name="SearchConditions.TransferResultDate"]').val('checked', true);
+            }
+            chgTransferClass();
+            if ($("#ddlCategoryId1").val() != '') {
+                $("#ddlCategoryId2").removeAttr('disabled');
+            }
+            if ($("#ddlCategoryId2").val() != '') {
+                    $("#ddlCategoryId3").removeAttr('disabled');
+            }
+            if ($("#ddlCategoryId3").val() != '') {
+                    $("#ddlCategoryId4").removeAttr('disabled');
+            }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("InputSearch", "InputTransfer", new { area= "Move" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSelectedPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $('#btnUpdateWork').click();
+                });
+            });
+        });
+
+        function TransferClassChange() {
+            var val = $('input:radio[name="SearchConditions.TransferClass"]:checked').val();
+            if (val == 1) {
+                $("#btnShipTo").attr("disabled", "disabled");
+                $("#ddlTransferFromCenterId").removeAttr("disabled");
+                $("#txtTransferFromStoreName").val("");
+                $("#txtTransferFromStoreId").val("");
+            } else {
+                $("#btnShipTo").removeAttr("disabled");
+                $("#ddlTransferFromCenterId").attr("disabled", "disabled");
+                $("#ddlTransferFromCenterId").val("");
+            }
+        }
+
+        // Sort
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmInputSearch");
+            var urlAction ='@Url.Action("InputSearch", "InputTransfer", new { area= "Move" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+        function ArriveDateClassChange(val) {
+            $('#hidArriveDateClass').val(val);
+
+            if (val == "ArrivePlanDate") {
+                $('input[name^="SearchConditions.ArrivePlanDate"]').prop('disabled', false);
+                $('input[name^="SearchConditions.TransferResultDate"]').prop('disabled', true);
+            } else if (val == "TransferResultDate") {
+                $('input[name^="SearchConditions.ArrivePlanDate"]').prop('disabled', true);
+                $('input[name^="SearchConditions.TransferResultDate"]').prop('disabled', false);
+            }
+        }
+
+        function GetCategoryList(id) {
+            var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                data: {
+                    id: id + 1,
+                    category1: $("#ddlCategoryId1").val(),
+                    category2: $("#ddlCategoryId2").val(),
+                    category3: $("#ddlCategoryId3").val()
+                },
+                success: function (data) {
+                    $("#ddlCategoryId" + (id + 1)).html("");
+                    $("#ddlCategoryId" + (id + 1)).html(data.html);
+                }
+            });
+        }
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+        function Search() {
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("InputSearch", "InputTransfer", new { area = "Move" })';
+                var $form = $("#frmInputSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        function UpdateWork() {
+            var urlAction = '@Url.Action("UpdateWorkSearch", "InputTransfer", new { area = "Move" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        $("#btnResultInput").on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        $('#UpdateWorking').on("click", function () {
+            $("#hidSearchType").val("Search");
+            $(InputTransferView.SELECTORS.hdAllowWorkingUpdate).val('true');
+            var urlAction = '@Url.Action("UpdateSearch", "InputTransfer", new { area = "Move" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        //移動区分変更時
+        function chgTransferClass() {
+            if ($("#txtStoreReturnFlag").prop("checked") == true || $("#txtBaseMoveNoWmsCenterFlag").prop("checked") == true) {
+                $("#btnShipTo").removeAttr('disabled');
+                $("#txtTransferFromStoreName").removeAttr('disabled');
+            } else {
+                $("#btnShipTo").attr('disabled', 'disabled');
+                $("#txtTransferFromStoreName").val("");
+                $("#txtTransferFromStoreId").val("");
+                $("#txtTransferFromStoreName").attr('disabled', 'disabled');
+            }
+            if ($("#txtBaseMoveFlag").prop("checked") == true) {
+                $("#ddlTransferFromCenterId").removeAttr('disabled');
+            } else {
+                $("#ddlTransferFromCenterId").val("");
+                $("#ddlTransferFromCenterId").attr('disabled', 'disabled');
+            }
+        }
+        $('#btnPrintHidden').on("click", function () {
+            var urlAction = '@Url.Action("Print", "InputTransfer", new { area= "Move" })';
+            var $form = $("#frmInputSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+            @*window.open("about:blank", "newtab");
+            var urlAction = '@Url.Action("Print", "InputTransfer", new { area= "Move" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.attr("target", "newtab");
+            $form.submit();
+            $form.attr("target", "_self");*@
+        });
+    </script>
+}

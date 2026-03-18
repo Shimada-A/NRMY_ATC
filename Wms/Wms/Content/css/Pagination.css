@@ -1,0 +1,47 @@
+﻿/*i3のPagingCSSをPagedListのHTMLに適用させる*/
+
+.main .sublbarea .sortarea div.pagination-container {
+    float: left;
+}
+
+.main .sublbarea .sortarea .paging li.active a {
+    background-color: #343a40;
+    color: #FFF;
+    border-color: #343a40;
+}
+
+.main .sublbarea .sortarea .paging li.PagedList-skipToPrevious a,
+.main .sublbarea .sortarea .paging li.PagedList-skipToNext a {
+    border: none;
+    position: relative;
+}
+
+    .main .sublbarea .sortarea .paging li.PagedList-skipToPrevious a:before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border: 0px;
+        border-bottom: solid 1px #000;
+        border-left: solid 1px #000;
+        -ms-transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+        position: absolute;
+        top: 8px;
+        right: 6px;
+    }
+
+    .main .sublbarea .sortarea .paging li.PagedList-skipToNext a:before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border: 0px;
+        border-top: solid 1px #000;
+        border-right: solid 1px #000;
+        -ms-transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+        position: absolute;
+        top: 8px;
+        left: 6px;
+    }

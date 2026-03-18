@@ -1,0 +1,265 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Returns.Resources;
+@using Wms.Areas.Returns.ViewModels.PurchaseReturnReference;
+@model Wms.Areas.Returns.ViewModels.PurchaseReturnReference.PurchaseReturnReference02ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_RET_PurchaseReference02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("DetailSearch", "PurchaseReturnReference", FormMethod.Post, new { id = "frmDetailSearch" }))
+{
+    if (Model.Results.PurchaseReturnReference02s.Count > 0)
+    {
+        <div class="headareawithborder">
+            <table class="headtable">
+                <tr>
+                    <td>
+                        @PurchaseReturnReferenceResource.ReturnDateS
+                        @Html.DisplayFor(model => Model.Results.PurchaseReturnReference02s[0].ArriveDate)
+                    </td>
+                    <td>
+                        @PurchaseReturnReferenceResource.ReturnUserS
+                        @Html.DisplayFor(model => Model.Results.PurchaseReturnReference02s[0].InputUserId)
+                        @Html.DisplayFor(model => Model.Results.PurchaseReturnReference02s[0].InputUserName)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @PurchaseReturnReferenceResource.ReturnIdS
+                        @Html.DisplayFor(model => Model.Results.PurchaseReturnReference02s[0].ReturnId)
+                    </td>
+                    <td>
+                        @PurchaseReturnReferenceResource.RetuenClassS
+                        @Html.DisplayFor(model => Model.Results.PurchaseReturnReference02s[0].ReturnClassName)
+                    </td>
+                    <td></td>
+                </tr>
+                @if (Model.Results.PurchaseReturnReference02s[0].RetuenClass == (byte)PurchaseReturnReference01SearchConditions.ReturnClasses.Correction)
+                {
+                    <tr>
+                        <td colspan="2">
+                            @PurchaseReturnReferenceResource.InvoiceNoS
+                            @Html.DisplayFor(model => Model.Results.PurchaseReturnReference02s[0].InvoiceNo)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+    <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+    <input type="hidden" name="SearchConditions.HidReturnId" id="hidReturnId" value='@Model.SearchConditions.HidReturnId' />
+    @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+    @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+    @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.Results.PurchaseReturnReference02s != null && Model.Results.PurchaseReturnReference02s.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border stock_detail_load">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @if (Model.Results.PurchaseReturnReference02s[0].RetuenClass == (byte)PurchaseReturnReference01SearchConditions.ReturnClasses.Return)
+                        {
+                            <button type="button" id="btnPrintReturn" class="download" style="width:200px">
+                                <img src="~/Content/img/print.png" />
+                                @PurchaseReturnReferenceResource.BtnPrintReturn
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" id="btnPrintCorrection" class="download" style="width:200px">
+                                <img src="~/Content/img/print.png" />
+                                @PurchaseReturnReferenceResource.BtnPrintCorrection
+                            </button>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.PurchaseReturnReference02s.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.Vendor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.CategoryName1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.Item
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.ItemColor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.ItemSize
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.Jan
+                                </th>
+                                @if (Model.Results.PurchaseReturnReference02s[0].RetuenClass == (byte)PurchaseReturnReference01SearchConditions.ReturnClasses.Return)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnReferenceResource.NormalBuyingPrice
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnReferenceResource.ReturnQty
+                                    </th>
+                                }
+                                else
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnReferenceResource.SaiQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnReferenceResource.NormalBuyingPrice
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnReferenceResource.WBuyingPrice
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnReferenceResource.SellingPrice
+                                    </th>
+                                }
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cModel in Model.Results.PurchaseReturnReference02s.Select((v, i) => new { v, i }))
+                            {
+                                var key = String.Format("PurchaseReturnReference02s[{0}].", cModel.i);
+                                <tr>
+                                    <td class="align-middle text-right">
+                                        @(cModel.i + 1)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.VendorId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.VendorName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.CategoryName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                    </td>
+                                    @if (Model.Results.PurchaseReturnReference02s[0].RetuenClass == (byte)PurchaseReturnReference01SearchConditions.ReturnClasses.Return)
+                                    {
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NormalBuyingPrice)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ReturnQty)
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ReturnQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NormalBuyingPrice)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.PurchaseBuyingPrice)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NormalSellingPriceExTax)
+                                        </td>
+                                    }
+                                <td class="template" hidden>
+                                    @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                    @Html.HiddenFor(modelItem => cModel.v.Page, new { Name = key + "Page" })
+                                    @Html.HiddenFor(modelItem => cModel.v.ReturnId, new { Name = key + "ReturnId" })
+                                </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "PurchaseReturnReference", new { area = "Returns" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        $("#btnPrintReturn").on("click", function () {
+            var urlAction = '@Url.Action("PrintReturn", "PurchaseReturnReference", new { area = "Returns" })';
+            var $form = $("#frmDetailSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.attr("target", "newtab");
+            $form.submit();
+            $form.attr("target", "_self");
+        });
+        $("#btnPrintCorrection").on("click", function () {
+            var urlAction = '@Url.Action("PrintCorrection", "PurchaseReturnReference", new { area = "Returns" })';
+            var $form = $("#frmDetailSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.attr("target", "newtab");
+            $form.submit();
+            $form.attr("target", "_self");
+        });
+
+    });
+
+    </script>
+}

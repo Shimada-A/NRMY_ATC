@@ -1,0 +1,1237 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.EcAllocation.EcAllocationViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_EcAllocation01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@Html.Partial("_WaitDialog")
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "EcAllocation", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.SearchConditions.AddConditions)
+        <table>
+            <tr>
+                <td class="tdtitle">@EcAllocationResource.CenterId</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@EcAllocationResource.AllocationStatus</td>
+                <td colspan="2" class="w_14_long">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                model => model.SearchConditions.AllocationState
+                                , "EC_ALLOC_STATUS", Model.SearchConditions.CenterId
+                                , "", new { @id = "txtAllocationState", tabindex = "2" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle addcondition">@EcAllocationResource.ShipInstructIdS</td>
+                <td class="addcondition">
+                    @Html.EditorFor(model => model.SearchConditions.ShipInstructId, new { htmlAttributes = new { @id = "txtShipInstructId", tabindex = "26" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@EcAllocationResource.AllocDate</td>
+                <td colspan="2">
+                    <div class="sortarea">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocDateFrom, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "flatpickr flatpickr_single flatpickr-input" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocTimeFrom, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "time_input", @onblur = "TimeBlur();" } })
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocDateTo, new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "flatpickr flatpickr_single flatpickr-input" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocTimeTo, new { htmlAttributes = new { tabindex = "6", @placeholder = "", @class = "time_input", @onblur = "TimeBlur();" } })
+                        </span>
+                    </div><br />
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocDateFrom, "", new { id = "AllocDateFromMessage" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocTimeFrom, "", new { id = "AllocTimeFromMessage" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocDateTo, "", new { id = "AllocDateToMessage" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocTimeTo, "", new { id = "AllocTimeToMessage" })
+                    </div>
+                </td>
+                <td class="tdtitle addcondition">@EcAllocationResource.ItemId</td>
+                <td class="addcondition">
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @id = "txtItemId", tabindex = "27" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr class="removecondition">
+                <td class="tdtitle">@EcAllocationResource.ShipDate</td>
+                <td colspan="4">
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.ShipDateBeforeToday, new { tabindex = "7", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @EcAllocationResource.ShipDateBeforeToday
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.ShipDateAfterToday, new { tabindex = "8", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @EcAllocationResource.ShipDateAfterToday
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <button type="button" id="btnAddCondition" class="btnaddcondition" tabindex="9">
+                        <img src="~/Content/img/addcondition.png" />
+                        <span>
+                            @EcAllocationResource.BtnAddCondition
+                        </span>
+                    </button>
+                </td>
+            </tr>
+            <tr class="addcondition">
+                <td class="tdtitle">@EcAllocationResource.ShipPlanDates</td>
+                <td colspan="2">
+                    <div class="sortarea" style="width:600px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ShipPlanDateFrom, new { htmlAttributes = new { tabindex = "10", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ShipPlanDateTo, new { htmlAttributes = new { tabindex = "11", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ShipPlanDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ShipPlanDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle">@EcAllocationResource.Jan</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @id = "txtJan", tabindex = "28" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr class="addcondition">
+                <td class="tdtitle">@EcAllocationResource.EcStatus</td>
+                <td colspan="2">
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.Single, new { tabindex = "12", @placeholder = "", @class = "check-box", @onclick = "CheckboxChange()" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @EcAllocationResource.Single
+                </td>
+                <td class="tdtitle">@EcAllocationResource.ItemSkuId</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @id = "txtItemSkuId", tabindex = "29" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr class="addcondition">
+                <td class="tdtitle"></td>
+                <td colspan="4">
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.Order, new { tabindex = "13", @placeholder = "", @class = "check-box", @onclick = "CheckboxChange()" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @EcAllocationResource.Order
+                    (
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.OrderBatchNo, new { tabindex = "14", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @EcAllocationResource.OrderBatchNo
+                    )
+                </td>
+            </tr>
+            <tr class="addcondition">
+                <td class="tdtitle"></td>
+                <td colspan="4">
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.Gas, new { tabindex = "15", @placeholder = "", @class = "check-box", @onclick = "CheckboxChange()" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @EcAllocationResource.Gas
+                    (
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.BatchNoInUnit, new { tabindex = "16", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @EcAllocationResource.BatchNoInUnit
+                    )
+                </td>
+            </tr>
+            <tr class="addcondition">
+                <td class="tdtitle"></td>
+                <td colspan="4">
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.All, new { tabindex = "17", @placeholder = "", @class = "check-box", @onclick = "CheckboxChange()" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @EcAllocationResource.All
+                    (
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.AllOrderBatchNo, new { tabindex = "18", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @EcAllocationResource.AllOrderBatchNo
+                    )
+                </td>
+            </tr>
+            <tr class="addcondition">
+                <td class="tdtitle">@EcAllocationResource.TransporterId</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.TransporterId,
+                                (IEnumerable<SelectListItem>)ViewBag.TransporterList,
+                                CommonResource.None, new { id = "ddlTransporterId", tabindex = "19" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr class="addcondition">
+                <td class="tdtitle">@EcAllocationResource.TransporterDateClass</td>
+                <td colspan="4">
+                    @Html.EnumRadioButtonListFor(model => model.SearchConditions.TransporterDateClass, new { onchange = "TransporterDateClassChange()" })
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.TransporterDate, new { htmlAttributes = new { tabindex = "23", @placeholder = "", @class = "flatpickr flatpickr_single flatpickr-input", @style = "height:30px;", id = "ddlTransporterDate" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                </td>
+            </tr>
+            <tr class="addcondition">
+                <td class="tdtitle">@EcAllocationResource.TransporterArea</td>
+                <td colspan="4">
+                    <button type="button" class="btn btn-outline-dark" id="btnTransporterArea" tabindex="24">@EcAllocationResource.BtnTransporterArea</button><br />
+                    @Html.EditorFor(model => model.SearchConditions.TransporterAreaName, new { htmlAttributes = new { @class = "w_50_normal overflow", @id = "txtTransporterAreaName", tabindex = "25", @readonly = "readonly" } })
+                    @Html.HiddenFor(model => model.SearchConditions.TransporterArea, new { id = "txtTransporterArea" })
+                </td>
+            </tr>
+            <tr class="addcondition">
+                <td colspan="5">
+                    <button type="button" id="btnHideCondition" class="btnhidecondition">
+                        <img src="~/Content/img/hidecondition.png" />
+                        <span>
+                            @EcAllocationResource.BtnHideCondition
+                        </span>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <div class="sortarea" style="width:60rem">
+                        <ul>
+                            <li>
+                                <button type="button" id="btnItemPrint" class="download" style="width:11vw" tabindex="30">
+                                    <img src="~/Content/img/print.png" />
+                                    @EcAllocationResource.BtnAllocErrItemPrint
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" id="btnOrderPrint" class="download" style="width:11vw" tabindex="31">
+                                    <img src="~/Content/img/print.png" />
+                                    @EcAllocationResource.BtnAllocErrOrderPrint
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" id="btnItemDownload" class="download" style="width:9vw" tabindex="32">
+                                    <img src="~/Content/img/download.png" />
+                                    @EcAllocationResource.BtnAllocErrItemDownload
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" id="btnOrderDownload" class="download" style="width:9vw" tabindex="33">
+                                    <img src="~/Content/img/download.png" />
+                                    @EcAllocationResource.BtnAllocErrOrderDownload
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "EcAllocation", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "34" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="35" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        @Html.HiddenFor(model => model.SearchConditions.AllocationName, new { id = "hidAllocationName" })
+        <input type="hidden" name="SearchConditions.ItemSkuSum" id="hidItemSkuSum" value="@Model.SearchConditions.ItemSkuSum" />
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        @Html.HiddenFor(model => model.SearchConditions.AllocationName, new { id = "hidAllocationName" })
+        @Html.HiddenFor(model => model.SearchConditions.Print, new { id = "hidPrint" })
+        <div style="display:none">
+            <table>
+                @if (Model.Results.EcAllocations != null)
+                {
+                    for (int i = 0; i < Model.Results.EcAllocations.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.EcAllocations[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.EcAllocations[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.EcAllocations[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.EcAllocations[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.EcAllocations != null)
+{
+    if (Model.Results.EcAllocations.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.EcAllocations.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.EcAllocations.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.EcAllocations, Page => Url.Action("Search", "EcAllocation", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+        <div class="sublbarea no_border stock_detail_head" style="height:50px">
+            <table>
+                <tr>
+                    <td>@EcAllocationResource.AllocName</td>
+                    <td>
+                        @Html.RequiredMark()
+                        @Html.EditorFor(model => model.SearchConditions.AllocationName, new { htmlAttributes = new { @onblur = "AllocationNameBlur()", @class = "w_40_normal", @id = "txtAllocationName", tabindex = "3", @placeholder = @DcAllocationResource.AllocationNamePH } })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocationName, "", new { id = "msgAllocationName" })
+                    </td>
+                </tr>
+            </table>
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @EcAllocationResource.OrderSum @Html.DisplayFor(model => model.SearchConditions.OrderSum)
+                    </li>
+                    <li>
+                        @EcAllocationResource.ItemSkuSum @Html.DisplayFor(model => model.SearchConditions.ItemSkuSum)
+                    </li>
+                    <li>
+                        @EcAllocationResource.InstructQtySum @Html.DisplayFor(model => model.SearchConditions.InstructQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.EcAllocations.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:69vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.ShipRequestDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.ShipInstructId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.OrderDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.TransporterName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.TransporterDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.AllocUpDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.EcShipClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.InstructQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcAllocationResource.AllocState
+                                </th>
+                                <th class="bg-grey align-middle">
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "EcAllocation", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.EcAllocations.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("EcAllocations[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="w_checkbox align-middle">
+                                            <label class="checkboxgroup">
+                                                @Html.CheckBoxFor(modelItem => cModel.v.IsCheck, new { @id = (key + "CheckedValue"), @class = "check-box", onclick = "SetCheckValue(" + @cModel.i + ")" })
+                                                <span class="chk_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.EcAllocations.PageNumber - 1) * Model.Results.EcAllocations.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipRequestDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransporterName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArriveRequestDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.DataDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.EcShipClass)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderQty)
+                                        </td>
+                                        <td class="align-middle">
+                                            @if (cModel.v.AllocFlag == 0)
+                                            {
+                                                <span>@EcAllocationResource.NoAlloc</span>
+                                            }
+                                            else if (cModel.v.OrderQty > cModel.v.AllocQty && cModel.v.AllocQty > 0)
+                                            {
+                                                <span>@EcAllocationResource.AllocErrHas</span>
+                                            }
+                                            else if (cModel.v.AllocQty == 0)
+                                            {
+                                                <span>@EcAllocationResource.AllocAllErr</span>
+                                            }
+                                        </td>
+                                        <td class="align-middle" style="width:100px;">
+                                            <button type="button" id=@("Detail"+ cModel.i) class="btn btn-dark" onclick="ShowDetails('@(cModel.v.Seq)','@(cModel.v.LineNo)')">@EcAllocationResource.BtnDetail</button>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.AllocFlag, new { Name = key + "AllocFlag", id = key + "AllocFlag" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="dialog" class="i02_01">
+            </div>
+        }
+
+    </div> }
+@*Bottomnav*@
+@section Basefooter{
+    @Html.Partial("_CheckBoxCounter")
+    <div class="btnarea">
+        <button type="button" id="BtnAllocErrHidden" class="btn btn-dark btnsize_large _pm" data-toggle="modal" data-target="#confirm_EcAllocRelieve" hidden>@EcAllocationResource.BtnAllocErr</button>
+        <button type="button" id="BtnAllocHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_EcAllocUpdate" hidden>@EcAllocationResource.BtnAllocation</button>
+        <button type="button" id="BtnAllocErr" class="btn btn-dark btnsize_large _pm">@EcAllocationResource.BtnAllocErr</button>
+        <button type="button" id="BtnAlloc" class="btn btn-dark btnsize _pm">@EcAllocationResource.BtnAllocation</button>
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+        <button id="btnErrorMsg" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrorMsg" hidden></button>
+    </div>
+}
+@using (Html.BeginForm("Search", "EcAllocation", FormMethod.Post, new { id = "frmPrint" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.SearchConditions.Ret)
+}
+@{
+    var areaConditions = new ViewDataDictionary { { "ParameterDeliareaGroup", Model.SearchConditions.TransporterArea } };
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_DeliareaGroupSearchModal.cshtml", areaConditions)
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "EcAllocUpdate", Message = EcAllocationResource.QUE_EC_ALLOCATION })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "EcAllocRelieve", Message = EcAllocationResource.QUE_EC_ALLOCATION_RELIEVE })
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrorMsg", Message = Share.Common.Resources.MessagesResource.MSG_NOT_FOUND })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        $("#btnItemPrint").on("click", function () {
+
+            var urlAction = '@Url.Action("ItemPrintCheck", "EcAllocation", new { area = "Ship" })';
+
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                success: function (data) {
+                    if (data != null) {
+                        if (data ==0) {
+                            var urlAction = '@Url.Action("ItemPrint", "EcAllocation", new { area = "Ship" })';
+                            window.open("about:blank", "newtab");
+                                var $form = $("#frmSearch");
+                                $form.attr("action", urlAction);
+                                $form.attr("method", "POST");
+                                $form.attr("target", "newtab");
+                                $form.submit();
+                                $form.attr("target", "_self");
+                        }
+                        else {
+                            $("#btnErrorMsg").click();
+                        }
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                }
+            });
+
+
+        });
+        $("#btnOrderPrint").on("click", function () {
+
+             var urlAction = '@Url.Action("OrderPrintCheck", "EcAllocation", new { area = "Ship" })';
+
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                success: function (data) {
+                    if (data != null) {
+                        if (data ==0) {
+                           window.open("about:blank", "newtab");
+                            var urlAction = '@Url.Action("OrderPrint", "EcAllocation", new { area = "Ship" })';
+                            var $form = $("#frmSearch");
+                            $form.attr("action", urlAction);
+                            $form.attr("method", "POST");
+                            $form.attr("target", "newtab");
+                            $form.submit();
+                            $form.attr("target", "_self");
+                        }
+                        else {
+                            $("#btnErrorMsg").click();
+                        }
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                }
+            });
+
+
+        });
+        $("#btnItemDownload").on("click", function () {
+            var urlAction = '@Url.Action("ItemDownload", "EcAllocation", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        });
+        $("#btnOrderDownload").on("click", function () {
+            var urlAction = '@Url.Action("OrderDownload", "EcAllocation", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        });
+    /**
+     * Country class
+     */
+        var curentSelectedCnt = 0;
+        var curentSelectedCntDiff = 0;
+        var curentSelectedErrCnt = 0;
+        var curentSelectedErrCntDiff = 0;
+    var EcAllocationView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=checkbox][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            rowSelected: '#spnCheckedCounter',
+            BtnAllocErr: '#BtnAllocErr',
+            BtnAlloc: '#BtnAlloc',
+            ddlSortKey: '#ddlSortKey',
+            ddlPackageSortKey: '#ddlPackageSortKey',
+            chkChecked: ':checkbox:checked',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnTransporterArea: '#btnTransporterArea',
+            txtTransporterArea: '#txtTransporterArea',
+            txtTransporterAreaName: '#txtTransporterAreaName',
+            deliareaGroupSelect: '#deliareaGroupSelect',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus(0,0);
+                deliareaGroupSearchModal.init();
+                curentSelectedCnt = $(EcAllocationView.SELECTORS.chkCheckedInTable).length;
+                if ('@(Model.Results.EcAllocations != null)' == 'True') {
+                    if ('@(Model.Results.EcAllocations != null && Model.Results.EcAllocations.Count() > 0)' == 'True') {
+                        for (var i = 0; i < @(Model.Results.EcAllocations == null ? 0 : Model.Results.EcAllocations.Count()); i++) {
+                            if ($("#listData input[id='EcAllocations["+i+"].AllocFlag'").val() != "0" && $("#listData input[type=checkbox][id='EcAllocations["+i+"].CheckedValue']").is(':checked')) {
+                                curentSelectedErrCnt = curentSelectedErrCnt + 1;
+                            }
+                        }
+                    }
+                }
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Stop event fired when click to checkbox
+                 */
+                $(EcAllocationView.SELECTORS.chkLabel).click(function (evt) {
+                    evt.stopPropagation();
+                });
+
+                /**
+                 * Check box click
+                 */
+                $(EcAllocationView.SELECTORS.chkInTable).click(function (evt) {
+                    evt.stopPropagation();
+                    var errcnt = 0;
+                    curentSelectedCntDiff = curentSelectedCnt - $(EcAllocationView.SELECTORS.chkCheckedInTable).length;
+                    if ('@(Model.Results.EcAllocations != null)' == 'True') {
+                        if ('@(Model.Results.EcAllocations != null && Model.Results.EcAllocations.Count() > 0)' == 'True') {
+                            for (var i = 0; i < @(Model.Results.EcAllocations == null ? 0 : Model.Results.EcAllocations.Count()); i++) {
+                                if ($("#listData input[id='EcAllocations["+i+"].AllocFlag'").val() != "0" && $("#listData input[type=checkbox][id='EcAllocations["+i+"].CheckedValue']").is(':checked')) {
+                                    errcnt = errcnt + 1;
+                                }
+                            }
+                        }
+                    }
+                    curentSelectedErrCntDiff = curentSelectedErrCnt - errcnt;
+                    EcAllocationView.setButtonStatus(curentSelectedCntDiff,curentSelectedErrCntDiff);
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(EcAllocationView.SELECTORS.ddlSort).change(function (val) {
+                    $(EcAllocationView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(EcAllocationView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(EcAllocationView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(EcAllocationView.SELECTORS.ddlPackageSortKey).change(function (val) {
+                    $(EcAllocationView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(EcAllocationView.SELECTORS.btnTransporterArea).on("click", deliareaGroupSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(EcAllocationView.SELECTORS.deliareaGroupSelect).on("click", function () {
+                    var ids = [];
+                    var names = [];
+                    $('#deliareaGroupSearchResult input[type=checkbox]:checked').each(function (index, item) {
+                        var area = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        var areaName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                        ids.push(area);
+                        names.push(areaName);
+                    })
+                    ids = ids.toString().split(',');
+                    names = names.join('、').split('、');
+
+                    ids = Array.from(new Set(ids));
+                    names = Array.from(new Set(names));
+                    $(EcAllocationView.SELECTORS.txtTransporterArea).val(ids.toString());
+                    $(EcAllocationView.SELECTORS.txtTransporterAreaName).val(names.join('、'));
+                });
+                /**
+                 * Button check all clicked
+                 */
+                $(EcAllocationView.SELECTORS.btnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("AllSelectedSearch", "EcAllocation", new { area= "Ship" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+
+                /**
+                 * Button UnCheck all clicked
+                 */
+                $(EcAllocationView.SELECTORS.btnUnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("UnSelectedSearch", "EcAllocation", new { area= "Ship" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt,difErrCnt) {
+                // Display row is selected
+                $(EcAllocationView.SELECTORS.rowSelected).text(@Model.SearchConditions.SelectedCnt - difCnt);
+                var errCnt = @Model.SearchConditions.SelectedErrCnt - difErrCnt;
+                // Enable/Disable button Edit
+                if (errCnt >= 1) {
+                    if (getUsable_Class() != 1) {
+                        $(EcAllocationView.SELECTORS.BtnAllocErr).removeAttr('disabled');
+                    }
+                } else {
+                    $(EcAllocationView.SELECTORS.BtnAllocErr).attr('disabled', 'disabled');
+                }
+                if ($(EcAllocationView.SELECTORS.rowSelected).text() >= 1) {
+                    if (getUsable_Class() != 1) {
+                        $(EcAllocationView.SELECTORS.BtnAlloc).removeAttr('disabled');
+                    }
+                } else {
+                    $(EcAllocationView.SELECTORS.BtnAlloc).attr('disabled', 'disabled');
+                }
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        EcAllocationView.init();
+        if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+            $("#btnErrorMessage").click();
+        }
+        if ($("#hidPrint").val() == "Print") {
+            $("#hidPrint").val("")
+            window.open("about:blank", "newtab");
+            var urlAction ='@Url.Action("ReportPrint", "EcAllocation", new { area= "Ship" })';
+            var $form = $("#frmPrint");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.attr("target", "newtab");
+            $form.submit();
+            $form.attr("target", "_self");
+        }
+        $(".addcondition").hide();
+            @* Pageを変更時 *@
+            $(".paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "EcAllocation", new { area= "Ship" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").attr("action", urlAction);
+                    $("#frmSearch").attr("method", "POST");
+                    $("#frmSearch").submit();
+                });
+            });
+        if ('@Model.SearchConditions.AddConditions' == 'True') {
+            $(".addcondition").show();
+            $("#btnAddCondition").hide();
+            $(".removecondition").hide();
+            $("#SearchConditions_AddConditions").val(true);
+        } else {
+                $(".addcondition").hide();
+                $("#btnAddCondition").show();
+                $(".removecondition").show();
+                $("#SearchConditions_AddConditions").val(false);
+        }
+        if ($("#SearchConditions_Order").get(0).checked && !$("#SearchConditions_Single").get(0).checked && !$("#SearchConditions_Gas").get(0).checked) {
+            $("#SearchConditions_OrderBatchNo").removeAttr('disabled');
+        } else {
+            $("#SearchConditions_OrderBatchNo").attr('disabled', 'disabled');
+            $("#SearchConditions_OrderBatchNo").prop("checked",false);
+        }
+        if ($("#SearchConditions_Gas").get(0).checked && !$("#SearchConditions_Single").get(0).checked && !$("#SearchConditions_Order").get(0).checked) {
+            $("#SearchConditions_BatchNoInUnit").removeAttr('disabled');
+        } else {
+            $("#SearchConditions_BatchNoInUnit").attr('disabled', 'disabled');
+            $("#SearchConditions_BatchNoInUnit").prop("checked",false);
+        }
+        if ($("#SearchConditions_All").get(0).checked) {
+            $("#SearchConditions_AllOrderBatchNo").removeAttr('disabled');
+        } else {
+            $("#SearchConditions_AllOrderBatchNo").attr('disabled', 'disabled');
+            $("#SearchConditions_AllOrderBatchNo").prop("checked",false);
+        }
+        var val = $('input:radio[name="SearchConditions.TransporterDateClass"]:checked').val();
+        if (val == 2) {
+            $("#ddlTransporterDate").removeAttr("disabled");
+        } else {
+            $("#ddlTransporterDate").attr("disabled","disabled");
+            $("#ddlTransporterDate").val("");
+        }
+    });
+
+    function TransporterDateClassChange() {
+        var val = $('input:radio[name="SearchConditions.TransporterDateClass"]:checked').val();
+        if (val == 2) {
+            $("#ddlTransporterDate").removeAttr("disabled");
+        } else {
+            $("#ddlTransporterDate").attr("disabled","disabled");
+            $("#ddlTransporterDate").val("");
+        }
+    }
+
+    function CheckboxChange() {
+        if ($("#SearchConditions_Order").get(0).checked && !$("#SearchConditions_Single").get(0).checked && !$("#SearchConditions_Gas").get(0).checked) {
+            $("#SearchConditions_OrderBatchNo").removeAttr('disabled');
+        } else {
+            $("#SearchConditions_OrderBatchNo").attr('disabled', 'disabled');
+            $("#SearchConditions_OrderBatchNo").prop("checked",false);
+        }
+        if ($("#SearchConditions_Gas").get(0).checked && !$("#SearchConditions_Single").get(0).checked && !$("#SearchConditions_Order").get(0).checked) {
+            $("#SearchConditions_BatchNoInUnit").removeAttr('disabled');
+        } else {
+            $("#SearchConditions_BatchNoInUnit").attr('disabled', 'disabled');
+            $("#SearchConditions_BatchNoInUnit").prop("checked",false);
+        }
+        if ($("#SearchConditions_All").get(0).checked) {
+            $("#SearchConditions_AllOrderBatchNo").removeAttr('disabled');
+        } else {
+            $("#SearchConditions_AllOrderBatchNo").attr('disabled', 'disabled');
+            $("#SearchConditions_AllOrderBatchNo").prop("checked",false);
+        }
+    }
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidPackageSortKey").val($("#ddlPackageSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "EcAllocation", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function SetCheckValue(lineNo) {
+            $('input[type=checkbox][id$="SearchConditions.EcAllocations[' + lineNo + '].CheckedValue"]').each(function (i, item) {
+                $(item).trigger('click');
+                });
+        }
+        function byteLength(str) {
+            var len = 0;
+            for (var i=0; i<str.length; i++) {
+             var c = str.charCodeAt(i);
+             if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
+               len++;
+             }
+             else {
+              len+=2;
+             }
+            }
+            return len;
+        }
+        function ConditionsCheck(mod) {
+            var msgAllocationName = '#msgAllocationName';
+            var idAllocationName = '#txtAllocationName';
+            var iddateFrom = '#SearchConditions_AllocDateFrom';
+            var iddateTo = '#SearchConditions_AllocDateTo';
+            var idFromtime = '#SearchConditions_AllocTimeFrom';
+            var idTotime = '#SearchConditions_AllocTimeTo';
+            var msgdateFrom = '#AllocDateFromMessage';
+            var msgdateTo = '#AllocDateToMessage';
+            var msgFromtime = '#AllocTimeFromMessage';
+            var msgTotime = '#AllocTimeToMessage';
+            if (mod == 'upd') {
+                if ($(idAllocationName).val()=="") {
+                    $(msgAllocationName).html('<span id="AllocationNameError" class="">'+'@DcAllocationResource.AllocationNmRequired' +'</span>');
+                    $(msgAllocationName).addClass("field-validation-error");
+                    $(idAllocationName).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgAllocationName).html("")
+                    $(msgAllocationName).removeClass("field-validation-error")
+                    $(idAllocationName).removeClass("input-validation-error")
+                }
+                if ($(idAllocationName).val()!="" && byteLength($(idAllocationName).val()) > 40) {
+                    $(msgAllocationName).html('<span id="AllocationNameError" class="">'+'@DcAllocationResource.AllocationNmMaxLength' +'</span>');
+                    $(msgAllocationName).addClass("field-validation-error");
+                    $(idAllocationName).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgAllocationName).html("")
+                    $(msgAllocationName).removeClass("field-validation-error")
+                    $(idAllocationName).removeClass("input-validation-error")
+                }
+            }
+
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                if (!IsTime($(idFromtime).val().replace(":",""))) {
+                    $(msgFromtime).html('<span id="AllocTimeFromError" class="">'+'@DcAllocationResource.ErrTime' +'</span>');
+                    $(msgFromtime).addClass("field-validation-error");
+                    $(idFromtime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgFromtime).html("")
+                    $(msgFromtime).removeClass("field-validation-error")
+                    $(idFromtime).removeClass("input-validation-error")
+                }
+            }
+
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                if (!IsTime($(idTotime).val().replace(":",""))) {
+                    $(msgTotime).html('<span id="AllocTimeToError" class="">'+'@DcAllocationResource.ErrTime' +'</span>');
+                    $(msgTotime).addClass("field-validation-error");
+                    $(idTotime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgTotime).html("")
+                    $(msgTotime).removeClass("field-validation-error")
+                    $(idTotime).removeClass("input-validation-error")
+                }
+            }
+            var str = "";
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                str = $(idFromtime).val().replace(":", "").replace(":", "");
+                $(idFromtime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                str = $(idTotime).val().replace(":", "").replace(":", "");
+                $(idTotime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+            if ($(iddateFrom).val()=="" && $(idFromtime).val()!="") {
+                $(msgdateFrom).html('<span id="SearchConditions_AllocDateFrom_error" class="">'+'@DcAllocationResource.ErrNoDate' +'</span>');
+                $(msgdateFrom).addClass("field-validation-error");
+                $(iddateFrom).addClass("input-validation-error");
+                return false;
+            } else {
+                $(msgdateFrom).html("")
+                $(msgdateFrom).removeClass("field-validation-error")
+                $(iddateFrom).removeClass("input-validation-error")
+            }
+            if ($(iddateTo).val()=="" && $(idTotime).val()!="") {
+                $(msgdateTo).html('<span id="SearchConditions_AllocDateTo_error" class="">'+'@DcAllocationResource.ErrNoDate' +'</span>');
+                $(msgdateTo).addClass("field-validation-error");
+                $(iddateTo).addClass("input-validation-error");
+                return false;
+            } else {
+                $(msgdateTo).html("")
+                $(msgdateTo).removeClass("field-validation-error")
+                $(iddateTo).removeClass("input-validation-error")
+            }
+                var date1 = $(iddateFrom).val().replace(/\//g, "");
+                var date2 = $(iddateTo).val().replace(/\//g, "");
+                var time1 = $(idFromtime).val().replace(/\:/g, "");
+                var time2 = $(idTotime).val().replace(/\:/g, "");
+                var msg = "@String.Format(MessagesResource.ERR_DATE_MINMAX, DcAllocationResource.AllocDateTimeFrom, DcAllocationResource.AllocDateTimeTo)";
+            if (!(validateDate.checkDate(date1, time1, date2, time2, "SearchConditions_AllocDateFrom", "SearchConditions.AllocDateFrom", msg))) return false;
+            return true;
+        }
+        function Search() {
+            if (ConditionsCheck('search')) {
+            $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "EcAllocation", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+        }
+            $("#btnAddCondition").on("click", function () {
+                $(".addcondition").show();
+                $("#btnAddCondition").hide();
+                $(".removecondition").hide();
+                $("#SearchConditions_AddConditions").val(true);
+            });
+            $("#btnHideCondition").on("click", function () {
+                $(".addcondition").hide();
+                $("#btnAddCondition").show();
+                $(".removecondition").show();
+                $("#SearchConditions_AddConditions").val(false);
+            });
+        function AllocationNameBlur() {
+            var msgAllocationName = '#msgAllocationName';
+            var idAllocationName = '#txtAllocationName';
+                    $(msgAllocationName).html("")
+                    $(msgAllocationName).removeClass("field-validation-error")
+            $(idAllocationName).removeClass("input-validation-error")
+            $("#hidAllocationName").val($(idAllocationName).val());
+        }
+        function TimeBlur() {
+            var idFromtime = '#SearchConditions_AllocTimeFrom';
+            var idTotime = '#SearchConditions_AllocTimeTo';
+            var msgFromtime = '#AllocTimeFromMessage';
+            var msgTotime = '#AllocTimeToMessage';
+
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                if (!IsTime($(idFromtime).val().replace(":",""))) {
+                    $(msgFromtime).html('<span id="AllocTimeFromError" class="">'+'@DcAllocationResource.ErrTime' +'</span>');
+                    $(msgFromtime).addClass("field-validation-error");
+                    $(idFromtime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgFromtime).html("")
+                    $(msgFromtime).removeClass("field-validation-error")
+                    $(idFromtime).removeClass("input-validation-error")
+                }
+            }
+
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                if (!IsTime($(idTotime).val().replace(":",""))) {
+                    $(msgTotime).html('<span id="AllocTimeToError" class="">'+'@DcAllocationResource.ErrTime' +'</span>');
+                    $(msgTotime).addClass("field-validation-error");
+                    $(idTotime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgTotime).html("")
+                    $(msgTotime).removeClass("field-validation-error")
+                    $(idTotime).removeClass("input-validation-error")
+                }
+            }
+            var str = "";
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                str = $(idFromtime).val().replace(":", "").replace(":", "");
+                $(idFromtime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                str = $(idTotime).val().replace(":", "").replace(":", "");
+                $(idTotime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+        }
+        function IsTime(value) {
+            value = value.replace(":", "");
+            return value.match(/^([01][0-9]|2[0-3])([0-5][0-9])([0-5][0-9])$/);
+        }
+
+        $('#BtnAllocErr').on("click", function () {
+            if (!validateForm($('#frmSearch')) || !ConditionsCheck('search')) {
+                return;
+            }
+            $('#BtnAllocErrHidden').click();
+        });
+        $('#BtnAlloc').on("click", function () {
+            if (!validateForm($('#frmSearch')) || !ConditionsCheck('upd')) {
+                return;
+            }
+            $('#BtnAllocHidden').click();
+        });
+        $('#EcAllocUpdate').on("click", function () {
+            $('#confirm_EcAllocUpdate').css("display", "none");
+            $("#hidAllocationName").val($("#txtAllocationName").val());
+
+            document.getElementById('waitDialog').style.display = 'initial';
+            var urlAction = '@Url.Action("EcAllocUpdateSearch", "EcAllocation", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        $('#EcAllocRelieve').on("click", function () {
+            var urlAction = '@Url.Action("EcAllocRelieveSearch", "EcAllocation", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        //EC引当(明細)ダイアログ
+        var current_scrollY;
+        $(function () {
+            $("#dialog").dialog({
+                autoOpen: false,
+                width: 1100,
+                Height: 100,
+                modal: true,
+                position: { my: 'center top+30', at: 'center top', of: "body" },
+                dialogClass: 'modalct',
+                resizable: false
+            });
+
+            $(".ui-icon-closethick").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    $("#dialog").dialog("close");
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+            $(".btn_close").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    /*$("#dialog").dialog("close");*/
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+        });
+        $(document.body).on("click",
+            ".ui-widget-overlay",
+            function () {
+                $.each($(".ui-dialog"),
+                    function () {
+                        var $dialog = $(this).children(".ui-dialog-content");
+                        if ($dialog.dialog("option", "modal")) {
+                            $('.wrap').attr({ style: '' });
+                            $('html, body').prop({ scrollTop: current_scrollY });
+                            $dialog.dialog("close");
+                        }
+                    });
+            });
+        function ShowDetails(seq,lineNo) {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialog").dialog("open");
+            searchDialogData(seq,lineNo);
+            }
+
+        function searchDialogData(seq,lineNo) {
+            var urlAction = '@Url.Action("Detail", "EcAllocation", new { area = "Ship" })';
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    Seq: seq,
+                    LineNo: lineNo
+                },
+                success: function (data) {
+                    $("#dialog").html("");
+                    $("#dialog").html(data);
+                    $("#dialog").dialog(
+                        {
+                            width: 1200,
+                            height:800
+                        });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                }
+            });
+        }
+        function closeDialog() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialog').dialog('close');
+        }
+    </script>
+}
+
+

@@ -1,0 +1,168 @@
+﻿@using PagedList.Mvc;
+@using Wms.Helpers;
+@model Wms.Areas.Master.ViewModels.SyukkasakiSearchModal.SyukkasakiSearchCondition
+
+<div class="mb-3">
+    <table class="w-100">
+        <tr>
+            <td>出荷先区分：</td>
+            <td>
+                <div class="sort">
+                    <div class="sort_inner">
+                        @*@Html.EnumDropDownListFor(model => model.LocKbn, new { @id = "drpLocClass", @onchange = "fun();" })*@
+                        @Html.GeneralDropDownFor(model => model.StoreClass, "STORE_CLASS", Model.StoreClass, CommonResource.None, new { @class = "w_10_normal", @id = "txtPopStoreClass", tabindex = "15" })
+                    </div>
+                </div>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>出荷先ID：</td>
+            <td>@Html.EditorFor(model => model.StoreId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtPopStoreId", tabindex = "1" } })</td>
+            <td>出荷先名：</td>
+            <td>
+                @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "w_30_normal", @id = "txtPopStoreName", tabindex = "2" } })
+                @Html.LikeMark(CommonsResource.Like)
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                @Html.AreaButtonList("AreaItem", ((IEnumerable<SelectListItem>)ViewBag.PopAreaList), new { @id = "PopArea", @class = "pop-area" })
+            </td>
+            <td>
+                <button id="btnPopSearch" type="button" class="btn btn-outline-dark" onclick="$('#frmPopSearch').submit();">@FormsResource.BTN_SEARCH</button>
+            </td>
+        </tr>
+    </table>
+</div>
+@Html.HiddenFor(model => model.ParameterStoreId, new { value = ViewData["ParameterStoreId"] })
+@*@Html.Hidden("TempStoreId")*@
+@Html.HiddenFor(model => model.TempStoreId, new { value = ViewData["TempStoreId"] })
+@*  <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>*@
+@if (Model.SyukkasakiViewModel != null)
+{
+    <div class="sublbarea mb-3 m-0">
+        <div class="sortarea">
+            <ul>
+                <li class="totalcount">
+                    表示順：
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SortKey, new { Name = "SortKey", @id = "ddlPopSortKey", onchange = "Pop_SFlag= false; $('#frmPopSearch').submit();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.Sort, new { Name = "Sort", @id = "ddlPopSort", onchange = "Pop_SFlag= false; $('#frmPopSearch').submit();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount adfa">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.SyukkasakiViewModel.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            <div id="pop_div_page" class="pagination-container">
+                @if (Model.SyukkasakiViewModel.Count() > 0)
+                {
+                    //@Html.PagedListPager(Model.SyukkasakiViewModel, Page => Url.Action("Index", new { Model.StoreId, Model.StoreName, Model.StoreClass, Model.SortKey, Model.Sort, Page, Model.AreaItem }), PagerHelper.GetOptions("ajaxDiv", "setCheckboxs()"))
+                    @Html.PagedListPager(Model.SyukkasakiViewModel, Page => Url.Action(null, new { Page }), PagerHelper.GetOptions("ajaxDiv", "setCheckboxs()"))
+                    @Html.Hidden("Page")
+                }
+                <script>
+                    $(document).ready(function () {
+                        $('#pop_div_page ul li a').each(function (index, item) {
+                            if ($(item).attr('href') !== undefined) {
+                                $(item).attr("href", $(item).attr('href').toString() + "&ParameterStoreId=" + $('#ParameterStoreId').val() + "&TempStoreId=" + $('#TempStoreId').val());
+                            }
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+
+    @* result body *@
+    <div class="Container">
+        <div>
+            <div class="tb_scroll mbody-tb-h overflow-auto position-relative">
+                <table id="tb_pop" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="w_checkbox bg-grey"></th>
+                            <th class="w_checkbox bg-grey">No</th>
+                            <th class="w_30_normal bg-grey">出荷先</th>
+                            <th class="w_3_veryshort bg-grey">所在地</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @* 検索一覧 *@
+                        @for (int i = 0; i < Model.SyukkasakiViewModel.Count(); i++)
+                        {
+
+                            var idx = (i + 1) + (Model.SyukkasakiViewModel.PageNumber - 1) * Model.SyukkasakiViewModel.PageSize;
+                            var chkid = "chk" + i;
+                            <tr>
+                                <td class="align-middle">
+                                    <label class="checkboxgroup">
+                                        @if (Model.SyukkasakiViewModel[i].IsCheck)
+                                        {
+                                            @Html.CheckBox(chkid, new { @id = (chkid), @class = "check-box", @onchange = "setCheckboxs('set');", @Checked = "checked" })
+                                        }
+                                        else
+                                        {
+                                            @Html.CheckBox(chkid, new { @id = (chkid), @class = "check-box", @onchange = "setCheckboxs('set');" })
+                                        }
+                                        @*@Html.CheckBox(chkid, new { @id = (chkid), @class = "check-box", @onchange = "setCheckboxs('set');" })*@
+                                        <span class="chk_parts"></span>
+                                    </label>
+                                </td>
+
+                                <td class="align-middle text-right w_no"> @idx </td>
+                                <td>
+                                    <div>
+                                        @Html.DisplayFor(model => model.SyukkasakiViewModel[i].SHIP_TO_STORE_ID)
+                                    </div>
+                                    <div>
+                                        @Html.DisplayFor(model => model.SyukkasakiViewModel[i].SHIP_TO_STORE_NAME)
+                                    </div>
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(model => model.SyukkasakiViewModel[i].PREF_NAME)
+                                </td>
+                                @Html.HiddenFor(model => model.SyukkasakiViewModel[i].SHIP_TO_STORE_ID, new { Name = "SHIP_TO_STORE_ID" })
+                                @Html.HiddenFor(model => model.SyukkasakiViewModel[i].SHIP_TO_STORE_NAME, new { Name = "SHIP_TO_STORE_NAME" })
+                                @Html.HiddenFor(model => model.SyukkasakiViewModel[i].SHIP_TO_STORE_CLASS, new { Name = "SHIP_TO_STORE_CLASS" })
+                                @Html.HiddenFor(model => model.SyukkasakiViewModel[i].PREF_NAME, new { Name = "PREF_NAME" })
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    if ($('#syukkasakiTransporterSearchModalDialog').length) {
+        @*フォーカスが当たらないため明示的に制御 *@
+        $("#txtPopStoreId").on('click', function () {
+            $("#txtPopStoreId").blur().focus();
+        });
+
+        $("#txtPopStoreName").on('click', function () {
+            $("#txtPopStoreName").blur().focus();
+        });
+    }
+</script>

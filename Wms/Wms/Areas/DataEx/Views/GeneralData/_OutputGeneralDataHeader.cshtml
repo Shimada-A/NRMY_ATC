@@ -1,0 +1,47 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+@using Wms.Areas.Master.Resources;
+@using PagedList.Mvc;
+
+@model Wms.Areas.DataEx.ViewModels.GeneralData.GeneralDataViewModel
+
+
+    @Html.HiddenFor(model  => model.GeneralDataTemplateIdRelatingData)
+    <table>
+        <tr>
+            <td class="tdtitle_10">@EditLayoutResource.EncodeType :</td>
+            <td colspan="2">
+                @Html.DisplayFor(model => model.EncodeTypeName)
+                @Html.HiddenFor(model => model.EncodeType)
+            </td>
+            <td class="tdtitle_10">@EditLayoutResource.FileType :</td>
+            <td>
+                @Html.DisplayFor(model => model.FileTypeName)
+                @Html.HiddenFor(model => model.FileType)
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle_10">@EditLayoutResource.HeadingRow :</td>
+            <td colspan="2">
+                @Html.DisplayFor(model => model.HeadingRowName)
+                @Html.HiddenFor(model => model.HeadingRow)
+            </td>
+            <td class="tdtitle_10">@EditLayoutResource.EncloseType :</td>
+            <td>
+                @Html.DisplayFor(model => model.EncloseTypeName)
+                @Html.HiddenFor(model => model.EncloseType)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <hr />
+            </td>
+        </tr>
+
+    </table>
+

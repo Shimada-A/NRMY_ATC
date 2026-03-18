@@ -1,0 +1,156 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Inventory.Resources;
+@model Wms.Areas.Inventory.ViewModels.Input.InputViewModel
+
+<div>
+    <div class="tb_scroll" style="height:70vh;">
+        <table class="table table-bordered" id="listData">
+            <thead>
+                <tr>
+                    <th class="bg-grey align-middle w_1_bit">
+                        @InputResource.No
+                    </th>
+                    <th class="bg-grey align-middle " style="width:160px;">
+                        @InputResource.LocationCd
+                    </th>
+                    <th class="bg-grey align-middle w_5_norma">
+                        @InputResource.CaseClassName
+                    </th>
+                    <th class="bg-grey align-middle" style="width:180px;">
+                        @InputResource.BoxNo
+                    </th>
+                    <th class="bg-grey align-middle">
+                        @InputResource.Item
+                    </th>
+                    <th class="bg-grey align-middle">
+                        @InputResource.ItemColor
+                    </th>
+                    <th class="bg-grey align-middle w_5_normal">
+                        @InputResource.ItemSize
+                    </th>
+                    <th class="bg-grey align-middle" style="width:120px;">
+                        @InputResource.Jan
+                    </th>
+                    <th class="bg-grey align-middle">
+                        @InputResource.StockQtyStart
+                    </th>
+                    <th class="bg-grey align-middle w_5_normal">
+                        @InputResource.ResultQty
+                    </th>
+                    <th class="bg-grey align-middle ">
+                        @InputResource.DifferenceQty
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Results.InputList.Count(); i++)
+                {
+                    var key = String.Format("InputList[{0}].", i);
+                    <tr>
+                        <td class="align-middle text-right w_1_bit">
+                            @((i + 1) + (Model.SearchConditions.Page - 1) * Model.SearchConditions.PageSize)
+                        </td>
+                        @if (!Model.Results.InputList[i].AddFlag)
+                        {
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.Results.InputList[i].LocationCd)
+                                @Html.HiddenFor(modelItem => Model.Results.InputList[i].LocationCd)
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="align-middle">
+                                @Html.EditorFor(modelItem => Model.Results.InputList[i].LocationCd, new { htmlAttributes = new { onchange = "LocationCdChange(this.value," + @i + ")" , style = "width:160px;" } })<br />
+                                @Html.ValidationMessageFor(modelItem => Model.Results.InputList[i].LocationCd, "", new { id = "LocationCd-errormessage" + i, style = "margin-left:0px;" })
+                            </td>
+                        }
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => Model.Results.InputList[i].CaseClassName)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].CaseClassName)
+                        </td>
+                        @if (!Model.Results.InputList[i].AddFlag)
+                        {
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.Results.InputList[i].BoxNo)
+                                @Html.HiddenFor(modelItem => Model.Results.InputList[i].BoxNo)
+                            </td>
+                        }
+                        else
+                        {
+                            if (Model.Results.InputList[i].CaseClass == 2)
+                            {
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => Model.Results.InputList[i].BoxNo)
+                                    @Html.HiddenFor(modelItem => Model.Results.InputList[i].BoxNo)
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="align-middle">
+                                    @Html.EditorFor(modelItem => Model.Results.InputList[i].BoxNo, new { htmlAttributes = new { style = "width:180px;" } })<br />
+                                    @Html.ValidationMessageFor(modelItem => Model.Results.InputList[i].BoxNo, "", new { id = "BoxNo-errormessage" + i, style = "margin-left:0px;" })
+                                </td>
+                            }
+                        }
+                        <td class="align-middle" id=@("item"+i)>
+                            @Html.DisplayFor(modelItem => Model.Results.InputList[i].ItemId)<br />
+                            @Html.DisplayFor(modelItem => Model.Results.InputList[i].ItemName)
+                        </td>
+                        <td class="align-middle" id=@("itemcolor"+i)>
+                            @Html.DisplayFor(modelItem => Model.Results.InputList[i].ItemColorId)<br />
+                            @Html.DisplayFor(modelItem => Model.Results.InputList[i].ItemColorName)
+                        </td>
+                        <td class="align-middle" id=@("itemsize"+i)>
+                            @Html.DisplayFor(modelItem => Model.Results.InputList[i].ItemSizeId)<br />
+                            @Html.DisplayFor(modelItem => Model.Results.InputList[i].ItemSizeName)
+                        </td>
+                        @if (!Model.Results.InputList[i].AddFlag)
+                        {
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.Results.InputList[i].Jan)
+                                @Html.HiddenFor(modelItem => Model.Results.InputList[i].Jan)
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="align-middle">
+                                @Html.EditorFor(modelItem => Model.Results.InputList[i].Jan, new { htmlAttributes = new { onchange = "JanChange(this.value," + @i + ")" , style = "width:120px;" } })<br />
+                                @Html.ValidationMessageFor(modelItem => Model.Results.InputList[i].Jan, "", new { id = "Jan-errormessage" + i, style = "margin-left:0px;" })
+                            </td>
+                        }
+                        <td class="align-middle text-right">
+                            @Html.DisplayFor(modelItem => Model.Results.InputList[i].StockQtyStart)
+                        </td>
+                        <td class="align-middle">
+                            @Html.EditorFor(modelItem => Model.Results.InputList[i].ResultQty, new { htmlAttributes = new { onchange = "ResultQtyChange(this.value," + @i + ")", @class = "w_5_normal text-right" } })<br />
+                            @Html.ValidationMessageFor(modelItem => Model.Results.InputList[i].ResultQty, "", new { id = "ResultQty-errormessage" + i, style = "margin-left:0px;" })
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].DifferenceQty)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].AddFlag)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ChangeModel)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].Seq)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].CenterId)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].InventoryNo)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].InventorySeq)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ItemSkuId)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ItemId)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ItemName)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ItemColorId)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ItemColorName)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ItemSizeId)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ItemSizeName)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].StockQtyStart)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].CaseClass)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].GradeId)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ResultQtyHid)
+                            @Html.HiddenFor(modelItem => Model.Results.InputList[i].ResultQtyBefore)
+                        </td>
+                        <td class="align-middle text-right" id=@("DifferenceQty"+i) style=@(Model.Results.InputList[i].DifferenceQty<0 ? "color:red":"")>
+                            @Html.DisplayFor(modelItem => Model.Results.InputList[i].DifferenceQty)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

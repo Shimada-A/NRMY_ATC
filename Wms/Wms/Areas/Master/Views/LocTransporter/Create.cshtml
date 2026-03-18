@@ -1,0 +1,1068 @@
+﻿@using Wms.Areas.Master.ViewModels.LocTransporter;
+@model Wms.Areas.Master.ViewModels.LocTransporter.Create
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_LocTransporter02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@*message*@
+@Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    <div id="alert-danger" class="alert alert-danger" role="alert" style="display:none">
+        @Model
+    </div>
+</div>
+
+<div class=" ml-5 mt-4 mb-5">
+    <table>
+        <tr>
+            <td>
+                @LocTransporterResource.ShipFromCenter：
+            </td>
+            <td>
+                <span class="p-3">@Html.DisplayFor(m => m.CenterId)</span>
+                @Html.HiddenFor(m => m.CenterId)
+            </td>
+            <td>
+                <span class="p-3">@Html.DisplayFor(m => m.CenterName)</span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" class="bluecolor">
+                @LocTransporterResource.Comment
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+</div>
+@using (Html.BeginForm("Insert", "LocTransporter", FormMethod.Post, new { id = "frmInsert" }))
+{
+    <div class="ml-3 mr-3 overflow-auto tb_scroll" style="height: 65vh;">
+        <table class="table table-bordered tb_select " id="tb_loc">
+            <thead>
+                <tr>
+                    <th class="align-middle w_checkbox  bg-grey" rowspan="2" id="th_Check"><div class="w_checkbox_min">*</div></th>
+                    <th class="align-middle  bg-grey" rowspan="2" id="th_No">No</th>
+                    <th class="align-middle  bg-grey" rowspan="2" id="th_ShipToStore">
+                        <div class="w_5_normal">@LocTransporterResource.ShipToStore</div>
+                    </th>
+                    <th class="align-middle  bg-grey" rowspan="2" id="th_ShipStore">
+                        <div class="w_5_normal">@LocTransporterResource.ShipStore</div>
+                    </th>
+                    <th class="align-middle  bg-grey" rowspan="2" id="th_TekiyouStartDate">@LocTransporterResource.TekiyouStartDate</th>
+                    <th class="align-middle  bg-grey" rowspan="2" id="th_MainTransporter">@LocTransporterResource.MainTransporter</th>
+                    <th class="align-middle  bg-grey" rowspan="2" id="th_MainLeadTime">@LocTransporterResource.MainLeadTime</th>
+                    <th class="align-middle  bg-grey" rowspan="2" id="th_ClientCd">@LocTransporterResource.ClientCdSagawa</th>
+                    <th class="align-middle  bg-grey" rowspan="2" id="th_ClientCd">@LocTransporterResource.ClientCdNaniwa</th>
+                    <th class="align-middle  bg-grey" rowspan="2" id="th_ClientCd">@LocTransporterResource.ClientCdWs</th>
+                    @*<th class="text-center  bg-grey" colspan="2">@LocTransporterResource.Mon</th>
+        <th class="text-center  bg-grey" colspan="2">@LocTransporterResource.Tue</th>
+        <th class="text-center  bg-grey" colspan="2">@LocTransporterResource.Wed</th>
+        <th class="text-center  bg-grey" colspan="2">@LocTransporterResource.Thu</th>
+        <th class="text-center  bg-grey" colspan="2">@LocTransporterResource.Fri</th>
+        <th class="text-center  bg-grey" colspan="2">@LocTransporterResource.Sat</th>
+        <th class="text-center  bg-grey" colspan="2">@LocTransporterResource.Sun</th>
+        <th class="text-center  bg-grey" colspan="2">@LocTransporterResource.Hol</th>*@
+                </tr>
+                @*<tr>
+                    @foreach (string item in Enum.GetNames(typeof(Create.Holidays)))
+                    {
+                        <th class="twoth bg-grey" id="th_Transporter_@item">@LocTransporterResource.Transporter</th>
+                        <th class="twoth bg-grey multiLine" id="th_LeadTime_@item">@LocTransporterResource.LeadTime</th>
+                    }
+                </tr>*@
+            </thead>
+            <tbody>
+                @if (Model.SearchConditions.GetRows != null)
+                {
+                    foreach (var rows in Model.SearchConditions.GetRows.Select((v, i) => new { v, i }))
+                    {
+                        var key = String.Format("LocTransporters[{0}].", rows.i);
+                        <tr>
+                            <td class="w_checkbox align-middle ltWidthS">
+                                <label class="checkboxgroup">
+                                    @Html.CheckBox(key + "IsCheck2", new { @id = (key + "CheckedValue"), @class = "check-box" })
+                                    <span class="chk_parts"></span>
+                                </label>
+                            </td>
+                            <td class="ltWidthS align-middle">
+                                <div class="rowid">
+                                    @(rows.i + 1)
+                                </div>
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div>@Html.DisplayFor(m => rows.v.ShipToStoreId)</div>
+                                <div>@Html.DisplayFor(m => rows.v.ShipToStoreName)</div>
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="">
+                                    @Html.DisplayFor(m => rows.v.PrefName)
+                                </div>
+                                @Html.HiddenFor(m => rows.v.AreaId, new { Name = key + "AreaId", @id = key + "AreaId" })
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                @Html.DisplayFor(m => rows.v.StartDate)
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.TransporterId, new SelectList(ViewBag.TransportersList, "Value", "Text", rows.v.TransporterId), new { id = key + "TransporterId", Name = key + "TransporterId", @class = "ddlTransporterId"})
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidth align-middle">
+                                <input class="w_1_bit LeadTimes" type="text" name=@(key + "LeadTimes" ) value=@rows.v.LeadTimes maxlength="2" />
+                            </td>
+                            @*<td class="ltWidthM align-middle">
+                                <div class="sort w_5_normal">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.TransporterIdMon, new SelectList(ViewBag.TransportersList, "Value", "Text", rows.v.TransporterIdMon), new { id = key + "TransporterIdMon", Name = key + "TransporterIdMon" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthS align-middle">
+                                <input class="w_1_bit LeadTimes" type="text" name=@(key + "LeadTimesMon" ) value=@rows.v.LeadTimesMon maxlength="2" />
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort w_5_normal">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.TransporterIdTue, new SelectList(ViewBag.TransportersList, "Value", "Text", rows.v.TransporterIdTue), new { id = key + "TransporterIdTue", Name = key + "TransporterIdTue" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthS align-middle">
+                                <input class="w_1_bit LeadTimes" type="text" name=@(key + "LeadTimesTue" ) value=@rows.v.LeadTimesTue maxlength="2" />
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort w_5_normal">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.TransporterIdWed, new SelectList(ViewBag.TransportersList, "Value", "Text", rows.v.TransporterIdWed), new { id = key + "TransporterIdWed", Name = key + "TransporterIdWed" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthS align-middle">
+                                <input class="w_1_bit LeadTimes" type="text" name=@(key + "LeadTimesWed" ) value=@rows.v.LeadTimesWed maxlength="2" />
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort w_5_normal">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.TransporterIdThu, new SelectList(ViewBag.TransportersList, "Value", "Text", rows.v.TransporterIdThu), new { id = key + "TransporterIdThu", Name = key + "TransporterIdThu" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthS align-middle">
+                                <input class="w_1_bit LeadTimes" type="text" name=@(key + "LeadTimesThu" ) value=@rows.v.LeadTimesThu maxlength="2" />
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort w_5_normal">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.TransporterIdFri, new SelectList(ViewBag.TransportersList, "Value", "Text", rows.v.TransporterIdFri), new { id = key + "TransporterIdFri", Name = key + "TransporterIdFri" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthS align-middle">
+                                <input class="w_1_bit LeadTimes" type="text" name=@(key + "LeadTimesFri" ) value=@rows.v.LeadTimesFri maxlength="2" />
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort w_5_normal">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.TransporterIdSat, new SelectList(ViewBag.TransportersList, "Value", "Text", rows.v.TransporterIdSat), new { id = key + "TransporterIdSat", Name = key + "TransporterIdSat" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthS align-middle">
+                                <input class="w_1_bit LeadTimes" type="text" name=@(key + "LeadTimesSat" ) value=@rows.v.LeadTimesSat maxlength="2" />
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort w_5_normal">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.TransporterIdSun, new SelectList(ViewBag.TransportersList, "Value", "Text", rows.v.TransporterIdSun), new { id = key + "TransporterIdSun", Name = key + "TransporterIdSun" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthS align-middle">
+                                <input class="w_1_bit LeadTimes" type="text" name=@(key + "LeadTimesSun" ) value=@rows.v.LeadTimesSun maxlength="2" />
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort w_5_normal">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.TransporterIdHol, new SelectList(ViewBag.TransportersList, "Value", "Text", rows.v.TransporterIdHol), new { id = key + "TransporterIdHol", Name = key + "TransporterIdHol" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthS align-middle">
+                                <input class="w_1_bit LeadTimes" type="text" name=@(key + "LeadTimesHol" ) value=@rows.v.LeadTimesHol maxlength="2" />
+                            </td>*@
+                            <td class="ltWidthM align-middle">
+                                <div class="sort">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.ClientCd, new SelectList(ViewBag.SagawaClientList, "Value", "Text", rows.v.ClientCd),CommonResource.None, new {id = key + "ClientCd", Name = key + "ClientCd", @class = "ddlClientCd"})
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.ControlId, new SelectList(ViewBag.NaniwaControlList, "Value", "Text", rows.v.ControlId), CommonResource.None, new { id = key + "ControlId", Name = key + "ControlId", @class = "_pm ddlControlId" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ltWidthM align-middle">
+                                <div class="sort">
+                                    <div class="sort_inner">
+                                        @Html.DropDownListFor(m => rows.v.ConsignorId, new SelectList(ViewBag.WsConsignorList, "Value", "Text", rows.v.ConsignorId), CommonResource.None, new { id = key + "ConsignorId", Name = key + "ConsignorId", @class = "_pm ddlConsignorId" })
+                                    </div>
+                                </div>
+                            </td>
+                            @Html.HiddenFor(m => rows.v.ShipToStoreId, new { Name = key + "ShipToStoreId", @id = key + "ShipToStoreId" })
+                            @Html.HiddenFor(m => rows.v.ShipToStoreClass, new { Name = key + "ShipToStoreClass", @id = key + "ShipToStoreClass" })
+                            @Html.HiddenFor(m => rows.v.StartDate, new { Name = key + "StartDate", @id = key + "StartDate", @class = "primaryKey" })
+                            @Html.HiddenFor(m => rows.v.CenterId, new { Name = key + "CenterId", @id = key + "CenterId" })
+                            @Html.HiddenFor(m => rows.v.RowId, new { Name = key + "RowId", @id = key + "RowId" })
+                            @Html.HiddenFor(m => rows.v.UpdateCount, new { Name = key + "UpdateCount", @id = key + "UpdateCount" })
+                        </tr>
+                    }
+
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+
+<div class="ml-3 mr-3 tb_scroll_child">
+    <table class="table table-bordered tb_select " id="table_AllUpdate">
+        <tbody>
+            <tr>
+                <td class="text-center w_8_normal bg-white ltWidthXL" colspan="4" id="tb_AllUpdate_btnAllUpdate">
+                    <button id="btnAllUpdate" type="button" class="btn btn-dark">
+                        @LocTransporterResource.BTN_ALL_UPDATE
+                    </button>
+                </td>
+                <td class="bg-white ltWidthM" id="tb_AllUpdate_StartDate">
+                    <div id="divStartDate">
+                        <span class="date_input">
+                            @Html.Editor("templateDate", new { htmlAttributes = new { @id = "ddlStartDate", tabindex = "4", @placeholder = "", @class = "flatpickr flatpickr_single flatpickr-input", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                </td>
+                <td class="bg-white ltWidthM" id="tb_AllUpdate_MainTransporterId">
+                    <div class="sort">
+                        <div class="sort_inner" id="drpTemplate">
+                            @Html.DropDownList("dll", (IEnumerable<SelectListItem>)ViewBag.TransportersList, new { id = "ddlTransporterId" , @class = "ddlTransporterId" })
+                        </div>
+                    </div>
+                </td>
+                <td class="bg-white ltWidthS" id="tb_AllUpdate_MainLeadTimes">
+                    <input class="w_1_bit" type="text" id="LeadTimes" value="0" maxlength="2">
+                </td>
+                @*@foreach (string item in Enum.GetNames(typeof(Create.Holidays)))
+                {
+                    var txtkey = "txtLeadTimes" + item;
+                    <td class="bg-white ltWidthM" id="tb_AllUpdate_Transporter_@item">
+                        <div class="sort w_5_normal">
+                            <div class="sort_inner">
+                                @Html.DropDownList("dll", (IEnumerable<SelectListItem>)ViewBag.TransportersList, new { id = "ddlTransporterId" + item })
+                            </div>
+                        </div>
+                    </td>
+                    <td class="bg-white ltWidthS" id="tb_AllUpdate_Leadtime_@item">
+                        <input class="w_1_bit" type="text" id="@txtkey" value="0" maxlength="2">
+                    </td>
+                }*@
+                <td class="bg-white ltWidthM">
+                    <div class="sort">
+                        <div class="sort_inner" id="drpClient">
+                            @Html.DropDownList("ClientCd", (IEnumerable<SelectListItem>)ViewBag.SagawaClientList,CommonResource.None,new { id = "ddlClientCd" , @class = "ddlClientCd"})
+                        </div>
+                    </div>
+                </td>
+                <td class="bg-white ltWidthM">
+                    <div class="sort">
+                        <div class="sort_inner" id="drpControl">
+                            @Html.DropDownList("ControlId", (IEnumerable<SelectListItem>)ViewBag.NaniwaControlList, CommonResource.None,new { id = "ddlControlId" , @class = "ddlControlId" })
+                        </div>
+                    </div>
+                </td>
+                <td class="bg-white ltWidthM">
+                    <div class="sort">
+                        <div class="sort_inner" id="drpConsignorId">
+                            @Html.DropDownList("ConsignorId", (IEnumerable<SelectListItem>)ViewBag.WsConsignorList, CommonResource.None,new { id = "ddlConsignorId", @class = "ddlConsignorId" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="hidden" id="hdShipToStoreId">
+    <input type="hidden" id="hdShipToStoreName">
+    <input type="hidden" id="hdShipToStoreClass">
+    <input type="hidden" id="hdPrefId">
+</div>
+
+@* 出荷先を追加する 画面 *@
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml")
+
+@section Basefooter{
+    <div class="row vw-100">
+        <div class="col-auto ">
+            @Html.Partial("_CheckBoxCounter")
+        </div>
+
+        <div class="btnarea">
+            <button type="button" class="btn btn-outline-dark btnsize" data-toggle="modal" data-flag="" data-target="#SyukkasakiModal" data-id="#hdShipToStoreId" data-name="#hdShipToStoreName" data-class="#hdShipToStoreClass" data-pref="#hdPrefId">
+                @LocTransporterResource.BTN_SYUKKASAKI_SELECT
+            </button>
+            <button type="button" id="btnDelete" class="btn btn-outline-danger btnsize">
+                @LocTransporterResource.BTN_CLEAR
+            </button>
+            <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+            <button type="button" id="btnSave" class="btn btn-dark btnsize">
+                @FormsResource.BTN_SAVE
+            </button>
+        </div>
+    </div>
+}
+
+@section LayoutScripts{
+    <script type="text/javascript">
+    var LocTransporterMasterEdit = {
+        /**
+        * Constants
+        */
+        CONST: {
+            ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+            ATTR_ERROR_CODE: 'errorcode',
+            STR_TRUE: 'True',
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            GET: 'get'
+        },
+
+        /**
+         * Global variables
+         */
+        GLOBAL: {
+            textChanged: false,
+            msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+            titleInformation: '@MessagesResource.TITLE_INFORMATION',
+        },
+
+        /**
+         * Jquery selector
+         */
+        SELECTORS: {
+            form: 'form',
+            frmUpdate: 'frmInsert',
+            hdUpdateError: '#hdUpdateError',
+            btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+            exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+            chkInTable: '#tb_loc input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#tb_loc input[type=checkbox][id$=".CheckedValue"]:checked',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            rowSelected: '#spnCheckedCounter',
+            chkChecked: ':checkbox:checked',
+            chkLabel: '#tb_loc span.chk_parts',
+        },
+
+        /**
+         * Init function
+         */
+        init: function () {
+            // Set up event
+            this.setUpEvent();
+
+            this.setStorageInit();
+            this.setCheckboxs();
+
+            // check error when update
+            this.checkUpdateError();
+        },
+
+        /**
+         * Set up event
+         */
+        setUpEvent: function () {
+            $('#tb_loc').width($('#table_AllUpdate').width());
+            $('#tb_AllUpdate_btnAllUpdate').width($('#th_check').width() + $('#th_No').width() + $('#th_ShipToStore').width() + $('#th_ShipStore').width());
+            $('#tb_AllUpdate_StartDate').width($('#th_TekiyouStartDate').width());
+            $('#tb_AllUpdate_MainTransporter').width($('#th_MainTransporter').width());
+            $('#tb_AllUpdate_MainLeadTimes').width($('#th_MainLeadTime').width());
+            $('#tb_Transporter_Mon').width($('#th_Transporter_Mon').width());
+            $('#tb_LeadTime_Mon').width($('#th_LeadTime_Mon').width());
+            $('#tb_Transporter_Tue').width($('#th_Transporter_Tue').width());
+            $('#tb_LeadTime_Tue').width($('#th_LeadTime_Tue').width());
+            $('#tb_Transporter_Wed').width($('#th_Transporter_Wed').width());
+            $('#tb_LeadTime_Wed').width($('#th_LeadTime_Wed').width());
+            $('#tb_Transporter_Thu').width($('#th_Transporter_Thu').width());
+            $('#tb_LeadTime_Thu').width($('#th_LeadTime_Thu').width());
+            $('#tb_Transporter_Fri').width($('#th_Transporter_Fri').width());
+            $('#tb_LeadTime_Fri').width($('#th_LeadTime_Fri').width());
+            $('#tb_Transporter_Sat').width($('#th_Transporter_Sat').width());
+            $('#tb_LeadTime_Sat').width($('#th_LeadTime_Sat').width());
+            $('#tb_Transporter_Sun').width($('#th_Transporter_Sun').width());
+            $('#tb_LeadTime_Sun').width($('#th_LeadTime_Sun').width());
+            $('#tb_Transporter_Hol').width($('#th_Transporter_Hol').width());
+            $('#tb_LeadTime_Hol').width($('#th_LeadTime_Hol').width());
+            /**
+            * Stop event fired when click to checkbox
+            */
+            $(LocTransporterMasterEdit.SELECTORS.chkLabel).click(function (evt) {
+                evt.stopPropagation();
+            });
+
+            /**
+            * Check box click
+            */
+            $(LocTransporterMasterEdit.SELECTORS.chkInTable).click(function (evt) {
+                evt.stopPropagation();
+                LocTransporterMasterEdit.setCheckboxs('set');
+            });
+
+            /**
+            * Button check all clicked
+            */
+            $(LocTransporterMasterEdit.SELECTORS.btnCheckAll).click(function () {
+                if ($("#tb_loc").length) {
+                    $(LocTransporterMasterEdit.SELECTORS.chkInTable).prop('checked', true);
+                    LocTransporterMasterEdit.setRowidsFlag(true);
+                }
+            });
+
+            /**
+            * Button UnCheck all clicked
+            */
+            $(LocTransporterMasterEdit.SELECTORS.btnUnCheckAll).click(function () {
+                if ($("#tb_loc").length) {
+                    $(LocTransporterMasterEdit.SELECTORS.chkInTable).prop('checked', false);
+                    LocTransporterMasterEdit.setRowidsFlag(false);
+                }
+            });
+        },
+
+        /**
+        *
+        */
+        setRowidsFlag: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys_Create');
+            if (rowids != null) {
+                var jrid = JSON.parse(rowids);
+                $.each(jrid, function (key) {
+                    jrid[key] = flag;
+                });
+                storage.setItem('PKeys_Create', JSON.stringify(jrid));
+            }
+            LocTransporterMasterEdit.setCheckboxs('set');
+        },
+
+        // save page
+        setCheckboxs: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys_Create');
+            if (rowids != null) {
+                var cnt = 0;
+                var jrid = JSON.parse(rowids);
+                var checkboxs = $("#tb_loc input[type=checkbox]");
+                $.each(checkboxs, function () {
+                    var row = $(this).parent().parent().parent();
+                    var rowid = row.find(".rowid").html().trim();
+
+                    if (flag == 'set') {
+                        jrid[rowid] = $(this).is(':checked');
+                    }
+                    else {
+                        if (jrid[rowid]) {
+                            $(this).prop("checked", true);
+                        }
+                    }
+                });
+
+                if (flag == 'set') {
+                    storage.setItem('PKeys_Create', JSON.stringify(jrid));
+                }
+
+                $.each(jrid, function (key, value) {
+                    if (value) {
+                        cnt++;
+                    }
+                });
+                if ($('#frmInsert').length > 0) {
+                    $(LocTransporterMasterEdit.SELECTORS.rowSelected).text(cnt);
+                }
+            }
+
+        },
+
+        setStorageInit: function () {
+            if (window.localStorage) {
+                var storage = window.localStorage;
+                storage.removeItem('PKeys_Create');
+                var rowids = {};
+
+                var checkboxs = $("#tb_loc input[type=checkbox]")
+                $.each(checkboxs, function () {
+                    var row = $(this).parent().parent().parent();
+                    var rowid = row.find(".rowid").html().trim();;
+
+                    rowids[rowid] = $(this).is(':checked');
+                });
+
+                var storage = window.localStorage;
+                storage.setItem('PKeys_Create', JSON.stringify(rowids));
+            }
+        },
+
+        /**
+         * Check error when update record.
+         */
+        checkUpdateError: function () {
+            if ($(LocTransporterMasterEdit.SELECTORS.hdUpdateError).val() === LocTransporterMasterEdit.CONST.STR_TRUE) {
+                if ($(LocTransporterMasterEdit.SELECTORS.hdUpdateError).attr(LocTransporterMasterEdit.CONST.ATTR_ERROR_CODE) === LocTransporterMasterEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                    // show message box
+                    $(LocTransporterMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                    messageDialog.open(LocTransporterMasterEdit.SELECTORS.exclusiveUpdateDialog, LocTransporterMasterEdit.GLOBAL.titleInformation, LocTransporterMasterEdit.GLOBAL.msgExclusiveUpdate);
+                    $(LocTransporterMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                        window.location = "Index";
+                    });
+                }
+            }
+        }
+    }
+    </script>
+
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+
+    @*  *@
+<script type="text/javascript">
+    const adjustScroll = function () {
+        const parent = $('.tb_scroll');
+        const child = $('.tb_scroll_child');
+
+        if (parent.get(0) && parent.get(0).scrollHeight > parent.innerHeight()) {
+            child.addClass('addScroll');
+        } else {
+            child.removeClass('addScroll');
+        }
+
+        child.scrollLeft(parent.scrollLeft());
+    };
+
+    $(document).ready(function () {
+        String.prototype.format = function () {
+            if (arguments.length == 0) return this;
+            for (var s = this, i = 0; i < arguments.length; i++)
+                s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i]);
+            return s;
+        };
+
+        var date = new Date();
+        var startdate = "" + date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+        $("#ddlStartDate").val(startdate);
+        $("#ddlStartDate").attr('value', startdate);
+
+        LocTransporterMasterEdit.init();
+        //adjustScroll();
+
+        /// <summary>
+        /// 登録するボタン押下
+        /// </summary>
+        $('#btnSave').click(function () {
+            if (!inputChk()) return;
+            if (!RepeatChk()) return;
+            if (!DuplicateChk()) return;
+            if (!NaniwaSortingChk()) return;
+
+            if (validateForm($('#frmInsert'))) {
+                $("#updconfirm").modal({
+                    show: true,
+                    backdrop: true
+                });
+            }
+        });
+
+        //エラーチェック
+        function inputChk() {
+
+            var Check = $("#tb_loc tbody tr");
+            var ERR_NUMBER = '@Share.Common.Resources.MessagesResource.ERR_NUMBER';
+            var ERR_LENGTH = '@Share.Common.Resources.MessagesResource.ERR_LENGTH';
+            var ERR_REQUIRED = '@Share.Common.Resources.MessagesResource.ERR_REQUIRED';
+            var err = true;
+            var alert = $("#alert-danger");
+            alert.css('display', 'none');
+
+            Check.each(function () {
+
+                var row = $(this);
+                var rowid = row.find(".rowid").html().trim();
+                var tList = row.find(".LeadTimes");
+                var transporter = row.find(".ddlTransporterId");
+
+                transporter.each(function () {
+                    var clientCd = row.find(".ddlClientCd")
+                    var sagawaClientRequiered = '配送業者が佐川急便の場合、佐川顧客コード';
+
+                    if (transporter.val() == "02" && clientCd.val() == '') {
+                        alert.html(ERR_REQUIRED.format(rowid, sagawaClientRequiered));
+                        err = false;
+                        return false;
+                    }
+
+                    var clientCd = row.find(".ddlControlId")
+                    var naniwaClientRequiered = '配送業者が浪速運送の場合、浪速顧客コード';
+
+                    if (transporter.val() == "03" && clientCd.val() == '') {
+                        alert.html(ERR_REQUIRED.format(rowid, naniwaClientRequiered));
+                        err = false;
+                        return false;
+                    }
+
+                    var clientCd = row.find(".ddlConsignorId")
+                    var WsClientRequiered = '配送業者がワールドサプライの場合、WS顧客コード';
+
+                    if (transporter.val() == "08" && clientCd.val() == '') {
+                        alert.html(ERR_REQUIRED.format(rowid, WsClientRequiered));
+                        err = false;
+                        return false;
+                    }
+                })
+
+                tList.each(function () {
+                    var text = $(this);
+                    var name = text.attr('name')
+                    name = GetLeadTiemName(name);
+                    if (text.val().trim() === '') {
+                        alert.html(ERR_REQUIRED.format(rowid, name));
+                        err = false;
+                        return false;
+
+                    }
+                    else {
+                        if (!isNaN(text.val())) {
+                            if (text.val() > 99) {
+                                alert.html(ERR_LENGTH.format(rowid, name, '2'));
+                                err = false;
+                                return false;
+                            }
+                        } else {
+                            alert.html(ERR_NUMBER.format(rowid, name));
+                            err = false;
+                            return false;
+                        }
+                    }
+                });
+
+                if (!err) {
+                    alert.css('display', 'block');
+                    return false;
+                }
+            });
+
+            return err;
+
+        }
+
+        //登録済みチェック
+        function RepeatChk() {
+            var Check = $("#tb_loc tbody tr");
+            var err = true;
+            var alert = $("#alert-danger");
+            var ERR_ALREADY_SAVED_ROW = '@Share.Common.Resources.MessagesResource.ERR_ALREADY_SAVED_ROW';
+
+            Check.each(function () {
+
+                var rowid = $(this).find(".rowid").html().trim();
+                var idx = rowid - 1;
+                var key = 'LocTransporters[' + idx + '].'
+                var shiptostoreid = $("input[name='" + key + 'ShipToStoreId' + "']").val();
+
+                var startdate = $("input[name='" + key + 'StartDate' + "']").val();
+                var centerid = $("input[name='" + key + 'CenterId' + "']").val();
+                var rid = $("input[name='" + key + 'RowId' + "']").val();
+                err = GetTargetById(shiptostoreid, startdate, centerid, rid);
+
+                if (!err) {
+                    alert.html(ERR_ALREADY_SAVED_ROW.format(rowid));
+                    alert.css('display', 'block');
+                    return false;
+                }
+            });
+
+            console.log(err);
+            return err;
+
+        }
+
+        //出荷先と適用開始日が両方同じ行がないかチェック
+        function DuplicateChk() {
+            var Check = $("#tb_loc tbody tr");
+            var err = true;
+            var alert = $("#alert-danger");
+            var ERR_DUPLICATE_ROW = '@Wms.Resources.MessageResource.ERR_DUPLICATE_ROW';
+            var arrShiptostoreId = [];
+            var arrStartdate = [];
+
+            Check.each(function () {
+
+                var rowid = $(this).find(".rowid").html().trim();
+                var idx = rowid - 1;
+                var key = 'LocTransporters[' + idx + '].';
+                var shiptostoreid = $("input[name='" + key + 'ShipToStoreId' + "']").val();
+                var startdate = new Date($("input[name='" + key + 'StartDate' + "']").val());
+
+                for (var i = 0; i < arrShiptostoreId.length; i++) {
+                    //同じ出荷先が２行以上あった場合、適用開始日も同じだったらエラー
+                    if (arrShiptostoreId[i] == shiptostoreid) {
+                        if (startdate.getFullYear() + '/' + (startdate.getMonth() + 1) + '/' + startdate.getDate() == arrStartdate[i]) {
+                            alert.html(ERR_DUPLICATE_ROW.format(i + 1, rowid));
+                            alert.css('display', 'block');
+                            err = false;
+                            return false;
+                        }
+                    }
+                }
+
+                arrShiptostoreId[idx] = shiptostoreid;
+                arrStartdate[idx] = startdate.getFullYear() + '/' + (startdate.getMonth() + 1) + '/' + startdate.getDate();
+            });
+
+            console.log(err);
+            return err;
+
+        }
+
+        // 配送業者が03：浪速のとき 浪速仕分コード設定がない店舗の場合はエラー
+        function NaniwaSortingChk() {
+            const transpoterIdNaniwa = "03";
+            var err = true;
+         
+            $("#tb_loc tbody tr").each(function () {
+                var rowid = $(this).find(".rowid").html().trim();
+                var idx = rowid - 1;
+                var key = 'LocTransporters[' + idx + '].';
+                if ($("select[name='" + key + 'TransporterId' + "']").val() == transpoterIdNaniwa) {
+                    var shipToStoreId = $("input[name='" + key + 'ShipToStoreId' + "']").val();
+                    var check = CheckNaniwaSorting(shipToStoreId);
+                    if (!check) {
+                        $("#alert-danger").html('行No' + rowid + '：@Wms.Resources.MessageResource.ERR_LOC_TRANSPORTER_NANIWA');
+                        $("#alert-danger").css('display', 'block');
+                        err = false;
+                        return false;
+                    }
+                }
+            });
+            return err;
+        }
+
+        function GetLeadTiemName(name) {
+            var temp = name.split('.');
+            if (temp.length > 1) {
+                switch (temp[1]) {
+                    case 'LeadTimes':
+                        name = '@Wms.Areas.Master.Resources.LocTransporterResource.LeadTimes';
+                        break;
+                    case 'LeadTimesMon':
+                        name = '@Wms.Areas.Master.Resources.LocTransporterResource.LeadTimesMon';
+                        break;
+                    case 'LeadTimesTue':
+                        name = '@Wms.Areas.Master.Resources.LocTransporterResource.LeadTimesTue';
+                        break;
+                    case 'LeadTimesWed':
+                        name = '@Wms.Areas.Master.Resources.LocTransporterResource.LeadTimesWed';
+                        break;
+                    case 'LeadTimesThu':
+                        name = '@Wms.Areas.Master.Resources.LocTransporterResource.LeadTimesThu';
+                        break;
+                    case 'LeadTimesFri':
+                        name = '@Wms.Areas.Master.Resources.LocTransporterResource.LeadTimesFri';
+                        break;
+                    case 'LeadTimesSat':
+                        name = '@Wms.Areas.Master.Resources.LocTransporterResource.LeadTimesSat';
+                        break;
+                    case 'LeadTimesSun':
+                        name = '@Wms.Areas.Master.Resources.LocTransporterResource.LeadTimesSun';
+                        break;
+                    case 'LeadTimesHol':
+                        name = '@Wms.Areas.Master.Resources.LocTransporterResource.LeadTimesHol';
+                        break;
+                    default:
+                        ''
+                }
+                return name;
+            }
+
+            return ' ';
+
+        }
+
+        /// <summary>
+        /// 既に登録されています。
+        /// </summary>
+        function GetTargetById(shiptostoreid, startdate, centerid, rowid) {
+            var parameters = { 'ShipToStoreId': shiptostoreid, 'StartDate': startdate, 'CenterId': centerid, 'RowId': rowid}
+
+            var repeat = true;
+            $.ajax({
+                type: "post",
+                url: "@Url.Action("GetTargetById","LocTransporter")",
+                data: parameters,
+                async: false,
+                success: function (data) {
+                    if (data.success) {
+                        repeat = false;
+                    }
+                }
+            });
+            return repeat;
+        }
+
+        /// <summary>
+        /// 浪速に設定された店について浪速仕分コードマスタ設定されていない店があります。浪速へ設定できません。
+        /// </summary>
+        function CheckNaniwaSorting(shipToStoreId) {
+            var ret = false;
+         
+            $.ajax({
+                type: "post",
+                url: "@Url.Action("CheckNaniwaSorting", "LocTransporter")",
+                data: { 'ShipToStoreId': shipToStoreId },
+                async: false,
+                success: function (data) {
+                    if (data.success) {
+                        ret = true;
+                    }
+                }
+            });
+            return ret;
+        }
+
+        /// <summary>
+        /// 戻るボタン押下
+        /// </summary>
+        $('#btnReturn').click(function () {
+            window.location.href = "@Url.Action("Index","LocTransporter")";
+        });
+
+        /// <summary>
+        /// センター別店舗別配送業者追加
+        /// </summary>
+        function AddLocTransporter() {
+
+            var targetShipToStoreId = $("#hdShipToStoreId").val().split(',');
+            var targetShipToStoreName = $("#hdShipToStoreName").val().split('、');
+            var targetShipToStoreClass = $("#hdShipToStoreClass").val().split('、');
+            var targetPrefId = $("#hdPrefId").val().split('、');
+
+            var obj = $("#tb_loc tbody");
+            var index = obj.find("tr").length;
+            var tr;
+            var drpListHtml = $("#drpTemplate").html();
+            var drpClientHtml = $("#drpClient").html();
+            var drpControlHtml = $("#drpControl").html();
+            var drpConsignorIdHtml = $("#drpConsignorId").html();
+
+            $.each(targetShipToStoreId, function (idx, value) {
+                var td;
+                var ShipToStoreId = value;
+                var ShipToLocName = targetShipToStoreName[idx];
+                var ShipToStoreClass = targetShipToStoreClass[idx];
+                var PrefName = targetPrefId[idx];
+                var CenterId = $("#CenterId").val();
+                var date = new Date();
+                var startdate = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+
+                td += '<td class="align-middle w_checkbox">';
+                td += '    <label class="checkboxgroup">';
+                td += '        <input class="check-box" type="checkbox" id="LocTransporters[' + index + '].CheckedValue" name="LocTransporters[' + index + '].IsCheck2">';
+                td += '        <input name="LocTransporters[' + index + '].IsCheck2" type="hidden" value="false">';
+                td += '        <span class="chk_parts"></span>';
+                td += '    </label>';
+                td += '</td>';
+                td += '<td><div class="rowid">' + (index + 1) + '</div></td>'
+                td += '<td class="align-middle"><div>' + ShipToStoreId + '</div><div name=>' + ShipToLocName + '</div></td>';
+                td += '<td class="align-middle">' + PrefName + '</td>';
+                // START_DATE
+                td += '<td class="align-middle"><span class="date_input"><input class="flatpickr flatpickr_single flatpickr-input temp startdate_flatpickr text-box single-line" id="LocTransporters[' + index + '].StartDate" name="LocTransporters[' + index + '].StartDate" type="text" value="' + startdate + '" readonly="readonly"><span class="arrow">&nbsp;</span></td>';
+                // TransporterId
+                td += '<td class="align-middle"><div class="sort"><div class="sort_inner">' + drpListHtml.replace('id="ddlTransporterId"', 'name="LocTransporters[' + index + '].TransporterId"') + '</div></div></td > ';
+                // LeadTimes
+                td += '<td class="align-middle"><input name="LocTransporters[' + index + '].LeadTimes" class="w_1_bit LeadTimes" type="text"  value="0" maxlength="2" /></td>';
+                // ClientCd
+                td += '<td class="align-middle"><div class="sort"><div class="sort_inner">' + drpClientHtml.replace('id="ddlClientCd"', 'name="LocTransporters[' + index + '].ClientCd"') + '</div></div></td > ';
+                // ControlId
+                td += '<td class="align-middle"><div class="sort"><div class="sort_inner">' + drpControlHtml.replace('id="ddlControlId"', 'name="LocTransporters[' + index + '].ControlId"') + '</div></div></td > ';
+                // ConsignorId
+                td += '<td class="align-middle"><div class="sort"><div class="sort_inner">' + drpConsignorIdHtml.replace('id="ddlConsignorId"', 'name="LocTransporters[' + index + '].ConsignorId"') + '</div></div></td > ';
+                //// TransporterIdMON
+                //td += '<td class="align-middle"><div class="sort w_5_normal"><div class="sort_inner">' + drpListHtml.replace('id="ddlTransporterId"', 'name="LocTransporters[' + index + '].TransporterIdMon"') + '</div></div></td>';
+                //// LeadTimesMON
+                //td += '<td class="align-middle"><input name="LocTransporters[' + index + '].LeadTimesMon" class="w_1_bit LeadTimes" type="text"  value="0" maxlength="2" /></td>';
+                //// TransporterIdTUE
+                //td += '<td class="align-middle"><div class="sort w_5_normal"><div class="sort_inner">' + drpListHtml.replace('id="ddlTransporterId"', 'name="LocTransporters[' + index + '].TransporterIdTue"') + '</div></div></td>';
+                //// LeadTimesTUE
+                //td += '<td class="align-middle"><input name="LocTransporters[' + index + '].LeadTimesTue" class="w_1_bit LeadTimes" type="text"  value="0" maxlength="2" /></td>';
+                //// TransporterIdWED
+                //td += '<td class="align-middle"><div class="sort w_5_normal"><div class="sort_inner">' + drpListHtml.replace('id="ddlTransporterId"', 'name="LocTransporters[' + index + '].TransporterIdWed"') + '</div></div></td>';
+                //// LeadTimesWED
+                //td += '<td class="align-middle"><input name="LocTransporters[' + index + '].LeadTimesWed" class="w_1_bit LeadTimes" type="text"  value="0" maxlength="2" /></td>';
+                //// TransporterIdTHU
+                //td += '<td class="align-middle"><div class="sort w_5_normal"><div class="sort_inner">' + drpListHtml.replace('id="ddlTransporterId"', 'name="LocTransporters[' + index + '].TransporterIdThu"') + '</div></div></td>';
+                //// LeadTimesTHU
+                //td += '<td class="align-middle"><input name="LocTransporters[' + index + '].LeadTimesThu" class="w_1_bit LeadTimes" type="text"  value="0" maxlength="2" /></td>';
+                //// TransporterIdFRI
+                //td += '<td class="align-middle"><div class="sort w_5_normal"><div class="sort_inner">' + drpListHtml.replace('id="ddlTransporterId"', 'name="LocTransporters[' + index + '].TransporterIdFri"') + '</div></div></td>';
+                //// LeadTimesFRI
+                //td += '<td class="align-middle"><input name="LocTransporters[' + index + '].LeadTimesFri" class="w_1_bit LeadTimes" type="text"  value="0" maxlength="2" /></td>';
+                //// TransporterIdSAT
+                //td += '<td class="align-middle"><div class="sort w_5_normal"><div class="sort_inner">' + drpListHtml.replace('id="ddlTransporterId"', 'name="LocTransporters[' + index + '].TransporterIdSat"') + '</div></div></td>';
+                //// LeadTimesSAT
+                //td += '<td class="align-middle"><input name="LocTransporters[' + index + '].LeadTimesSat" class="w_1_bit LeadTimes" type="text"  value="0" maxlength="2" /></td>';
+                //// TransporterIdSUN
+                //td += '<td class="align-middle"><div class="sort w_5_normal"><div class="sort_inner">' + drpListHtml.replace('id="ddlTransporterId"', 'name="LocTransporters[' + index + '].TransporterIdSun"') + '</div></div></td>';
+                //// LeadTimesSUN
+                //td += '<td class="align-middle"><input name="LocTransporters[' + index + '].LeadTimesSun" class="w_1_bit LeadTimes" type="text"  value="0" maxlength="2" /></td>';
+                //// TransporterIdHOL
+                //td += '<td class="align-middle"><div class="sort w_5_normal"><div class="sort_inner">' + drpListHtml.replace('id="ddlTransporterId"', 'name="LocTransporters[' + index + '].TransporterIdHol"') + '</div></div></td>';
+                //// LeadTimesHOL
+                //td += '<td class="align-middle"><input name="LocTransporters[' + index + '].LeadTimesHol" class="w_1_bit LeadTimes" type="text"  value="0" maxlength="2" /></td>';
+                //
+                td += '<input name="LocTransporters[' + index + '].ShipToStoreId" type="hidden" value="' + ShipToStoreId + '">'
+                td += '<input name="LocTransporters[' + index + '].ShipToStoreClass" type="hidden" value="' + ShipToStoreClass + '">'
+                td += '<input name="LocTransporters[' + index + '].CenterId" type="hidden" value="' + CenterId + '">'
+                td += '<input name="LocTransporters[' + index + '].StartDate" type="hidden" value="' + startdate + '">'
+                td += '<input name="LocTransporters[' + index + '].RowId" type="hidden">'
+                td += '<input name="LocTransporters[' + index + '].UpdateCount" type="hidden" value="' + 0 + '">'
+                tr += '<tr>' + td + '</tr>';
+                index++;
+            });
+
+            obj.append(tr);
+
+            LocTransporterMasterEdit.setUpEvent();
+
+            @*今回追加された行の日付要素のみを対象とする*@
+            $(".temp").flatpickr({
+                "locale": "ja",
+                dateFormat: "Y/m/d"
+            });
+            @*仮のclassを削除*@
+            $(".startdate_flatpickr").removeClass('temp');
+        }
+
+        /// <summary>
+        /// 出荷先を選択する画面　選択するボタン押下
+        /// </summary>
+        $(document).on('click', '#btnPopSelect', function () {
+            if ($("#hdShipToStoreId").val().length > 0) {
+                AddLocTransporter();
+                $(this).attr("data-dismiss", "modal");
+
+                //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+                $("input").on("keydown", function (e) {
+                    if (e.which == 13) {
+                        e.preventDefault();
+                        var inputObj = $("input:visible");
+                        var nextIndex = inputObj.index(this) + 1;
+                        if (inputObj[nextIndex]) {
+                            $("input:visible")[nextIndex].focus();
+                        }
+                    }
+                });
+            }
+            else {
+                $(this).removeAttr("data-dismiss");
+            }
+
+            window.localStorage.setItem('Pop_PKeys', JSON.stringify({}));
+            $("#tb_pop tbody tr input[type=checkbox]").prop("checked", false);
+
+            enableSubmit();
+            adjustScroll();
+        });
+
+        /// <summary>
+        /// 一括変更するボタン押下
+        /// </summary>
+        $('#btnAllUpdate').click(function () {
+
+            $("[name$='.StartDate'][class!='primaryKey']").val($("#ddlStartDate").val());
+            $("[name$='.StartDate'][class!='primaryKey']").attr('value', $("#ddlStartDate").val());
+            $("select[name$='.TransporterId']").val($("#ddlTransporterId").val());
+            //$("select[name$='.TransporterIdSun']").val($("#ddlTransporterIdSun").val());
+            //$("select[name$='.TransporterIdMon']").val($("#ddlTransporterIdMon").val());
+            //$("select[name$='.TransporterIdTue']").val($("#ddlTransporterIdTue").val());
+            //$("select[name$='.TransporterIdWed']").val($("#ddlTransporterIdWed").val());
+            //$("select[name$='.TransporterIdThu']").val($("#ddlTransporterIdThu").val());
+            //$("select[name$='.TransporterIdFri']").val($("#ddlTransporterIdFri").val());
+            //$("select[name$='.TransporterIdSat']").val($("#ddlTransporterIdSat").val());
+            //$("select[name$='.TransporterIdHol']").val($("#ddlTransporterIdHol").val());
+
+            $("input[name$='.LeadTimes']").val($("#LeadTimes").val());
+            //$("input[name$='.LeadTimesSun']").val($("#txtLeadTimesSun").val());
+            //$("input[name$='.LeadTimesMon']").val($("#txtLeadTimesMon").val());
+            //$("input[name$='.LeadTimesTue']").val($("#txtLeadTimesTue").val());
+            //$("input[name$='.LeadTimesWed']").val($("#txtLeadTimesWed").val());
+            //$("input[name$='.LeadTimesThu']").val($("#txtLeadTimesThu").val());
+            //$("input[name$='.LeadTimesFri']").val($("#txtLeadTimesFri").val());
+            //$("input[name$='.LeadTimesSat']").val($("#txtLeadTimesSat").val());
+            //$("input[name$='.LeadTimesHol']").val($("#txtLeadTimesHol").val());
+            $("select[name$='.ClientCd']").val($("#ddlClientCd").val());
+            $("select[name$='.ControlId']").val($("#ddlControlId").val());
+            $("select[name$='.ConsignorId']").val($("#ddlConsignorId").val());
+        });
+
+        /// <summary>
+        /// 削除するボタン押下
+        /// </summary>
+        $('#btnDelete').click(function () {
+            var chkrows = $("#tb_loc tbody tr input[type=checkbox]:checked");
+            chkrows.each(function () {
+                var row = $(this).parent().parent().parent();
+                row.remove();
+            });
+            var rows = $("#tb_loc tbody tr");
+            var idx = 0;
+            rows.each(function () {
+                //行番号を変更する
+                $(this).find("[name^='LocTransporters']").each(function () {
+                    var name = $(this).attr('name');
+                    name = name.slice(0 , name.indexOf('[') + 1) + idx + name.slice(name.indexOf(']'),name.length)
+                    $(this).attr('name',name);
+                });
+                idx++;
+                $(this).children('td').eq(1).html('<div class="rowid">' + idx + '</div>');
+            });
+
+            adjustScroll();
+            LocTransporterMasterEdit.setStorageInit();
+            LocTransporterMasterEdit.setCheckboxs();
+        });
+
+        $('.tb_scroll').scroll(function () {
+            adjustScroll();
+        });
+    });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+</script>
+
+}

@@ -1,0 +1,863 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Others.Resources;
+@using Wms.Areas.Others.ViewModels.WorkingReference;
+@model Wms.Areas.Others.ViewModels.WorkingReference.WorkingReferenceViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_WorkingReference;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+@* Head *@
+@using (Html.BeginForm("Search", "WorkingReference", FormMethod.Post, new { id = "frmSearch" }))
+{
+    <div id="div_search" class="head head_white collapse">
+        @Html.AntiForgeryToken()
+        <table>
+            <colgroup>
+                <col class="tdtitle" />
+                <col width="1000px" />
+                <col class="tdtitle_large" />
+            </colgroup>
+            <tr>
+                <td class="tdtitle">@WorkingReferenceResource.CenterIdS : </td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1", @onchange = "getCenterId();" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@WorkingReferenceResource.SearchKind :</td>
+                <td>
+                    @Html.RadioButtonFor(model => model.SearchConditions.SearchKind, 1, new { @checked = "checked", tabindex = "2", @class = "radio_input _pm", style = "display:inherit;" })
+                    <span class="radio_txt">@WorkingReferenceResource.Shiire</span>
+                    @Html.RadioButtonFor(model => model.SearchConditions.SearchKind, 2, new { tabindex = "3", @class = "radio_input _pm", style = "display:inherit;" })
+                    <span class="radio_txt">@WorkingReferenceResource.Ido</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td>
+                    @Html.RadioButtonFor(model => model.SearchConditions.SearchKind, 3, new { tabindex = "4", @class = "radio_input _pm", style = "display:inherit;" })
+                    <span class="radio_txt">@WorkingReferenceResource.Pic</span>
+                    @Html.RadioButtonFor(model => model.SearchConditions.SearchKind, 4, new { tabindex = "5", @class = "radio_input _pm", style = "display:inherit;" })
+                    <span class="radio_txt">@WorkingReferenceResource.Store</span>
+                    @Html.RadioButtonFor(model => model.SearchConditions.SearchKind, 5, new { tabindex = "6", @class = "radio_input _pm", style = "display:inherit;" })
+                    <span class="radio_txt">@WorkingReferenceResource.Stock</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="alignright">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "WorkingReference", new { area = "Others" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="7" onclick="Search();">@FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.ShiireKey, new { id = "hidShiireKey" })
+        @Html.HiddenFor(model => model.SearchConditions.IdoKey, new { id = "hidIdoKey" })
+        @Html.HiddenFor(model => model.SearchConditions.PicKey, new { id = "hidPicKey" })
+        @Html.HiddenFor(model => model.SearchConditions.StoreKey, new { id = "hidStoreKey" })
+        @Html.HiddenFor(model => model.SearchConditions.StockKey, new { id = "hidStockKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        @Html.HiddenFor(model => model.SearchConditions.InvoiceNo, new { id = "hidInvoiceNo" })
+        @Html.HiddenFor(model => model.SearchConditions.ItemSkuId, new { id = "hidItemSkuId" })
+        @Html.HiddenFor(model => model.SearchConditions.SlipNo, new { id = "hidSlipNo" })
+        @Html.HiddenFor(model => model.SearchConditions.BoxNo, new { id = "hidBoxNo" })
+        @Html.HiddenFor(model => model.SearchConditions.HaitaSeq, new { id = "hidHaitaSeq" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value="@Model.SearchConditions.Seq" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        <input type="hidden" name="SearchConditions.SearchKind" id="hidSearchKind" value="@Model.SearchConditions.SearchKind" />
+    </div>
+}
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.WorkingReferences != null && Model.Results.WorkingReferences.Count() > 0 && Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Shiire)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.ShiireKey, new { Name = "SearchConditions.ShiireKey", @id = "ddlShiireKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.WorkingReferences.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.WorkingReferences.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.WorkingReferences, Page => Url.Action("Search", "WorkingReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.WorkingReferences != null && Model.Results.WorkingReferences.Count() > 0 && Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Ido)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.IdoKey, new { Name = "SearchConditions.IdoKey", @id = "ddlIdoKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.WorkingReferences.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.WorkingReferences.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.WorkingReferences, Page => Url.Action("Search", "WorkingReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.WorkingReferences != null && Model.Results.WorkingReferences.Count() > 0 && Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Pic)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.PicKey, new { Name = "SearchConditions.PicKey", @id = "ddlPicKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.WorkingReferences.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.WorkingReferences.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.WorkingReferences, Page => Url.Action("Search", "WorkingReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.WorkingReferences != null && Model.Results.WorkingReferences.Count() > 0 && Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Store)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.StoreKey, new { Name = "SearchConditions.StoreKey", @id = "ddlStoreKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.WorkingReferences.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.WorkingReferences.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.WorkingReferences, Page => Url.Action("Search", "WorkingReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.WorkingReferences != null && Model.Results.WorkingReferences.Count() > 0 && Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Stock)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.StockKey, new { Name = "SearchConditions.StockKey", @id = "ddlStockKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.WorkingReferences.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.WorkingReferences.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.WorkingReferences, Page => Url.Action("Search", "WorkingReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.WorkingReferences != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.WorkingReferences.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                @if (Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Shiire)
+                {
+                    <div class="tb_scroll" style="height:59vh;">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">&nbsp;</th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.StartDate
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.WorkUser
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.WorkMachine
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.InvoiceNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.ItemIdName
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.Color
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.Size
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.Jan
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cModel in Model.Results.WorkingReferences.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("WorkingReferences[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            <label>
+                                                <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetIsCheck(1,'@(cModel.v.InvoiceNo)','@(cModel.v.ItemSkuId)')" />
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                            @Html.CheckBox(key + "IsCheck", new { @id = (key + "IsCheck"), @class = "check-box", hidden = true })
+                                        </td>
+                                        <td class="align-middle  w_no">
+                                            @Html.DisplayFor(modelItem => cModel.v.LineNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StartDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TerminalInfo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InvoiceNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.InvoiceNo, new { Name = key + "InvoiceNo" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ItemSkuId, new { Name = key + "ItemSkuId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else if (Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Ido)
+                {
+                    <div class="tb_scroll" style="height:59vh;">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">&nbsp;</th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.StartDate
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.WorkUser
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.SlipNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.TransferClass
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.TransFromStoreClass
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.TransFromStoreName
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.PlanQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.ResultQty
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cModel in Model.Results.WorkingReferences.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("WorkingReferences[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            <label>
+                                                <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetIsCheck(2,'@(cModel.v.SlipNo)','@(cModel.v.HaitaSeq)')" />
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                            @Html.CheckBox(key + "IsCheck", new { @id = (key + "IsCheck"), @class = "check-box", hidden = true })
+                                        </td>
+                                        <td class="align-middle  w_no">
+                                            @Html.DisplayFor(modelItem => cModel.v.LineNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StartDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @if (cModel.v.TransferClass == 1)
+                                            {
+                                                @WorkingReferenceResource.BaseMove
+                                            }
+                                            else
+                                            {
+                                                @WorkingReferenceResource.StoreReturn
+                                            }
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransFromStoreClass)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransferFromStoreName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivePlanQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.SlipNo, new { Name = key + "SlipNo" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.HaitaSeq, new { Name = key + "HaitaSeq" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else if (Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Pic)
+                {
+                    <div class="tb_scroll" style="height:59vh;">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.PicDate
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.PicUser
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.PicKind
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.BatchNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.LocationCd
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.ItemIdName
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.Color
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.Size
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.Jan
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.HikiQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.ResultQty
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cModel in Model.Results.WorkingReferences.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("WorkingReferences[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle  w_no">
+                                            @Html.DisplayFor(modelItem => cModel.v.LineNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StartDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.PicKind)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BatchNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.HikiQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.LocationCd, new { Name = key + "LocationCd" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else if (Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Store)
+                {
+                    <div class="tb_scroll" style="height:59vh;">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.StoreShiwakeDate
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.ShiwakeUser
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.BatchNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.ItemIdName
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.Color
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.Size
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.Jan
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.LaneNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.FrontageNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.ShipToStoreName
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.HikiQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.ShiwakeResultQty
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cModel in Model.Results.WorkingReferences.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("WorkingReferences[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle  w_no">
+                                            @Html.DisplayFor(modelItem => cModel.v.LineNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StartDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BatchNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LaneNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.FrontageNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipToStoreName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.HikiQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else if (Model.SearchConditions.SearchKind == WorkingReferenceSearchConditions.SearchKinds.Stock)
+                {
+                    <div class="tb_scroll" style="height:59vh;">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">&nbsp;</th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.StartDate
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.WorkUser
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.WorkMachine
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.BoxNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.SkuQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.PlanQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @WorkingReferenceResource.ResultQty
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cModel in Model.Results.WorkingReferences.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("WorkingReferences[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            <label>
+                                                <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetIsCheck(3,'@(cModel.v.BoxNo)','@(cModel.v.HaitaSeq)')" />
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                            @Html.CheckBox(key + "IsCheck", new { @id = (key + "IsCheck"), @class = "check-box", hidden = true })
+                                        </td>
+                                        <td class="align-middle  w_no">
+                                            @Html.DisplayFor(modelItem => cModel.v.LineNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StartDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.WorkUserName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TerminalInfo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.SkuQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.SortPlanQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.SortResultQty)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.BoxNo, new { Name = key + "BoxNo" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.HaitaSeq, new { Name = key + "HaitaSeq" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button id="btnDeleteHidden" type="button" class="btn btn-outline-danger btnsize _pm" data-toggle="modal" data-target="#confirm_Confirm" hidden>@WorkingReferenceResource.BTN_DELETE</button>
+        <button type="submit" id="btnDelete" class="btn btn-outline-danger btnsize _pm">@WorkingReferenceResource.BTN_DELETE</button>
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+    </div>
+}
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Confirm", Message = @WorkingReferenceResource.ConfirmMsgDelete })
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+    <script>
+    Dropzone.autoDiscover = false;
+        $(document).ready(function () {
+            if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+            }
+            $('#btnDetails').attr('disabled', 'disabled');
+            $('#btnDelete').attr('disabled', 'disabled');
+            clearCheckBox();
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var $form = $("#frmSearch");
+                var urlAction ='@Url.Action("Search", "WorkingReference", new { area= "Others" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                });
+            });
+        });
+        // Sort
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            if ($("#hidSearchKind").val() == '@WorkingReferenceSearchConditions.SearchKinds.Shiire') {
+                $("#hidShiireKey").val($("#ddlShiireKey").val());
+            } else if ($("#hidSearchKind").val() == '@WorkingReferenceSearchConditions.SearchKinds.Ido') {
+                $("#hidIdoKey").val($("#ddlIdoKey").val());
+            } else if ($("#hidSearchKind").val() == '@WorkingReferenceSearchConditions.SearchKinds.Pic') {
+                $("#hidPicKey").val($("#ddlPicKey").val());
+            } else if ($("#hidSearchKind").val() == '@WorkingReferenceSearchConditions.SearchKinds.Stock') {
+                $("#hidStockKey").val($("#ddlStockKey").val());
+            } else {
+                $("#hidStoreKey").val($("#ddlStoreKey").val());
+            }
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "WorkingReference", new { area= "Others" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Search() {
+                var urlAction = '@Url.Action("Search", "WorkingReference", new { area = "Others" })';
+                var $form = $("#frmSearch");
+                $("#hidPage").val(1);
+                $("#hidSearchType").val("Search");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+
+    $('#btnDelete').on("click", function () {
+        if ($('#listData input[type=radio][id$=".CheckedValue"]:checked').length == 0) {
+            alert("対象データを選択してください");
+            return;
+        };
+            var urlAction = '@Url.Action("Delete", "WorkingReference", new { area = "Others" })';
+            var $form = $("#frmSearch");
+            $("#hidSearchType").val("Search");
+            $form.attr("action", urlAction);
+            $('#btnDeleteHidden').click();
+        });
+
+    $('#Confirm').on("click", function () {
+        var urlAction ='@Url.Action("Delete", "WorkingReference", new { area = "Others" })';
+        var $form = $("#frmSearch");
+        $("#hidSearchType").val("Search");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+    function SetIsCheck(kbn, param1, param2) {
+        setCheckBox($(this).parents('td'));
+        if (kbn == 1) {
+            $("#hidInvoiceNo").val(param1);
+            $("#hidItemSkuId").val(param2);
+        } else if (kbn == 2) {
+            $("#hidSlipNo").val(param1);
+            $("#hidHaitaSeq").val(param2);
+        } else {
+            $("#hidBoxNo").val(param1);
+            $("#hidHaitaSeq").val(param2);
+        }
+        $('#btnDelete').removeAttr('disabled');
+    };
+
+    const clearCheckBox = function () {
+        $('#listData td .check-box').prop('checked', false);
+        $('#listData td .radio_input').prop('checked', false);
+        };
+
+    const setCheckBox = function (selector) {
+            $('#listData input[type=checkbox][id$=".IsCheck"]').prop("checked", false);
+            selector.find('.check-box').prop('checked', true);
+            selector.find('.radio_input').prop('checked', true);
+        };
+    </script>
+}

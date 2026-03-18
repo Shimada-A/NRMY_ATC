@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ButtonPrint" xml:space="preserve">
+    <value>在庫調整履歴照会リスト</value>
+  </data>
+  <data name="FromStore" xml:space="preserve">
+    <value>返品元店舗：</value>
+  </data>
+  <data name="ItemCodeS" xml:space="preserve">
+    <value>アイテム：</value>
+  </data>
+  <data name="Jan1" xml:space="preserve">
+    <value>JAN1</value>
+  </data>
+  <data name="Jan2" xml:space="preserve">
+    <value>JAN2</value>
+  </data>
+  <data name="LabelAdjustReason" xml:space="preserve">
+    <value>調整理由：</value>
+  </data>
+  <data name="LabelBrand" xml:space="preserve">
+    <value>ブランド：</value>
+  </data>
+  <data name="LabelCategory" xml:space="preserve">
+    <value>分類：</value>
+  </data>
+  <data name="LabelCenter" xml:space="preserve">
+    <value>センター：</value>
+  </data>
+  <data name="LabelColor" xml:space="preserve">
+    <value>カラー：</value>
+  </data>
+  <data name="LabelDivision" xml:space="preserve">
+    <value>事業部：</value>
+  </data>
+  <data name="LabelHypen" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="LabelItem" xml:space="preserve">
+    <value>品番：</value>
+  </data>
+  <data name="LabelJan" xml:space="preserve">
+    <value>JAN：</value>
+  </data>
+  <data name="LabelLocationFrom" xml:space="preserve">
+    <value>調整元ロケーション：</value>
+  </data>
+  <data name="LabelLocationTo" xml:space="preserve">
+    <value>調整先ロケーション：</value>
+  </data>
+  <data name="LabelSize" xml:space="preserve">
+    <value>サイズ：</value>
+  </data>
+  <data name="LabelSku" xml:space="preserve">
+    <value>SKU：</value>
+  </data>
+  <data name="LabelStockAdjustDate" xml:space="preserve">
+    <value>在庫調整日：</value>
+  </data>
+  <data name="LabelStockAdjustNumber" xml:space="preserve">
+    <value>在庫調整No：</value>
+  </data>
+  <data name="LabelTilde" xml:space="preserve">
+    <value>～</value>
+  </data>
+  <data name="LabelVendor" xml:space="preserve">
+    <value>代表仕入先：</value>
+  </data>
+  <data name="ReportBoxNoFrom" xml:space="preserve">
+    <value>調整前ケースNo</value>
+  </data>
+  <data name="ReportBoxNoTo" xml:space="preserve">
+    <value>調整後ケースNo</value>
+  </data>
+  <data name="ReportCategoryId1" xml:space="preserve">
+    <value>分類コード1</value>
+  </data>
+  <data name="ReportCenterId" xml:space="preserve">
+    <value>センターID</value>
+  </data>
+  <data name="ReportCenterName" xml:space="preserve">
+    <value>センター名</value>
+  </data>
+  <data name="ReportColorId" xml:space="preserve">
+    <value>カラーID</value>
+  </data>
+  <data name="ReportColorName" xml:space="preserve">
+    <value>カラー名</value>
+  </data>
+  <data name="ReportGradeFrom" xml:space="preserve">
+    <value>調整前格付</value>
+  </data>
+  <data name="ReportGradeTo" xml:space="preserve">
+    <value>調整後格付</value>
+  </data>
+  <data name="ReportIssuerCode" xml:space="preserve">
+    <value>発行者コード</value>
+  </data>
+  <data name="ReportIssuerDateTime" xml:space="preserve">
+    <value>発行日時</value>
+  </data>
+  <data name="ReportIssuerName" xml:space="preserve">
+    <value>発行者名</value>
+  </data>
+  <data name="ReportItemId" xml:space="preserve">
+    <value>品番</value>
+  </data>
+  <data name="ReportItemName" xml:space="preserve">
+    <value>品名</value>
+  </data>
+  <data name="ReportLocationFrom" xml:space="preserve">
+    <value>調整前ロケーション</value>
+  </data>
+  <data name="ReportLocationTo" xml:space="preserve">
+    <value>調整後ロケーション</value>
+  </data>
+  <data name="ReportSizeId" xml:space="preserve">
+    <value>サイズID</value>
+  </data>
+  <data name="ReportSizeName" xml:space="preserve">
+    <value>サイズ名</value>
+  </data>
+  <data name="ReportUserId" xml:space="preserve">
+    <value>ユーザーID</value>
+  </data>
+  <data name="SlipNo" xml:space="preserve">
+    <value>伝票No：</value>
+  </data>
+  <data name="SortOrderDateNumberSku" xml:space="preserve">
+    <value>在庫調整日→在庫調整番号→SKU</value>
+  </data>
+  <data name="SortOrderDateSkuNumber" xml:space="preserve">
+    <value>在庫調整日→SKU→在庫調整番号</value>
+  </data>
+  <data name="SortOrderSkuDateNumber" xml:space="preserve">
+    <value>SKU→在庫調整日→在庫調整番号</value>
+  </data>
+  <data name="ThAdjustQuantity" xml:space="preserve">
+    <value>調整数</value>
+  </data>
+  <data name="ThCaseNo" xml:space="preserve">
+    <value>ケースNo</value>
+  </data>
+  <data name="ThCategory1" xml:space="preserve">
+    <value>分類1</value>
+  </data>
+  <data name="ThColor" xml:space="preserve">
+    <value>カラー</value>
+  </data>
+  <data name="ThFrom" xml:space="preserve">
+    <value>調整前</value>
+  </data>
+  <data name="ThGrade" xml:space="preserve">
+    <value>格付</value>
+  </data>
+  <data name="ThItem" xml:space="preserve">
+    <value>品番・品名</value>
+  </data>
+  <data name="ThJan" xml:space="preserve">
+    <value>JAN</value>
+  </data>
+  <data name="ThLocation" xml:space="preserve">
+    <value>ロケーション</value>
+  </data>
+  <data name="ThNote" xml:space="preserve">
+    <value>備考</value>
+  </data>
+  <data name="ThNumber" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ThReason" xml:space="preserve">
+    <value>理由</value>
+  </data>
+  <data name="ThSize" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="ThStockAdjustDate" xml:space="preserve">
+    <value>在庫調整日</value>
+  </data>
+  <data name="ThStockAdjustNumber" xml:space="preserve">
+    <value>在庫調整番号</value>
+  </data>
+  <data name="ThTo" xml:space="preserve">
+    <value>調整後</value>
+  </data>
+  <data name="ThUserIdE" xml:space="preserve">
+    <value>担当者コード</value>
+  </data>
+  <data name="ThUserName" xml:space="preserve">
+    <value>担当者</value>
+  </data>
+  <data name="ThUserNameE" xml:space="preserve">
+    <value>担当者名</value>
+  </data>
+</root>

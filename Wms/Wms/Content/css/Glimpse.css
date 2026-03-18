@@ -1,0 +1,4 @@
+﻿/*GlimpseのHUDが隠れないようにする*/
+.main .bottomnav {
+    z-index: 0;
+}

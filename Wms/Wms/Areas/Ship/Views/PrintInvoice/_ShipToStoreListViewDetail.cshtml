@@ -1,0 +1,41 @@
+﻿@using Wms.Areas.Ship.Resources;
+<!-- 表示データ用のモデルを定義 -->
+@model Wms.Areas.Ship.ViewModels.PrintInvoice.ZanShipStore
+@{
+    Layout = null;
+}
+@if (Model.ZanShipStores is null)
+{
+    <div>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</div>
+}
+else
+{
+    <div class="tb_scroll" style="height: 450px;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="bg-grey">
+                        @PrintInvoiceResource.ShipToStoreId
+                    </th>
+                    <th class="bg-grey">
+                        @PrintInvoiceResource.StoreName
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ZanShipStores.Count(); i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => model.ZanShipStores[i].ShipToStoreId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.ZanShipStores[i].StoreName)
+                        </td>
+                    </tr>
+                }
+                <tr>
+            </tbody>
+        </table>
+    </div>
+}

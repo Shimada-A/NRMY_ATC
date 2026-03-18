@@ -1,0 +1,109 @@
+﻿@* 仕入先検索の検索結果(Ajax.BeginFormで検索結果だけ差し替えるため部分ビューにする) *@
+@using PagedList.Mvc;
+@using Resources = Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.TransporterSearchModal.TransporterSearchCondition
+
+<h1>@Resources.SharedResource.TransporterTitle</h1>
+<br />
+<ul class="sortarea">
+    <li>
+        @Resources.TransporterResource.TransporterIdSearch
+        @Html.EditorFor(model => model.TransporterId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtTransporterId", tabindex = "1" } })
+    </li>
+    <li>
+        @Resources.TransporterResource.TransporterNameSearch
+        @Html.EditorFor(model => model.TransporterName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtTransporterName", tabindex = "2" } })
+    </li>
+    <li>
+        <div class="search">
+            <button id="TransporterSearch" type="button" class="btn btn-outline-dark" onclick="$('#frmTransporterSearch').submit();">@FormsResource.BTN_SEARCH</button>
+        </div>
+    </li>
+</ul>
+@Html.HiddenFor(model => model.ParameterTransporterId, new { value = ViewData["ParameterTransporterId"] })
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+@if (Model.TransporterViewModel != null)
+{
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(m => m.SortKey, new { onchange = "$('#frmTransporterSearch').submit();" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(m => m.OrderKey, new { onchange = "$('#frmTransporterSearch').submit();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.TransporterViewModel.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.TransporterViewModel.Count() > 0)
+            {
+                @Html.PagedListPager(Model.TransporterViewModel, Page => Url.Action("Index", new { Page, Model.TransporterId, Model.TransporterName, Model.SortKey, Model.OrderKey }), PagerHelper.GetOptions("transporterSearchResult", "transporterSearchModal.adjust();"))
+            }
+        </div>
+    </div>
+    <div class="Container">
+        <div>
+            <div class="tb_scroll">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="bg-grey w_checkbox"></th>
+                            <th class="bg-grey">
+                                No
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.TransporterResource.TransporterId
+                            </th>
+                            <th class="bg-grey">
+                                @Resources.TransporterResource.TransporterName
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.TransporterViewModel.Count(); i++)
+                        {
+                            var idx = (i + 1) + (Model.TransporterViewModel.PageNumber - 1) * Model.TransporterViewModel.PageSize;
+                            var chkid = "chk" + i;
+                            <tr>
+                                <td class="align-middle">
+                                    <label class="checkboxgroup">
+                                        @if (Model.TransporterViewModel[i].IsCheck)
+                                        {
+                                            @Html.CheckBox(chkid, new { @id = (chkid), @class = "check-box", @Checked = "checked" })
+                                        }
+                                        else
+                                        {
+                                            @Html.CheckBox(chkid, new { @id = (chkid), @class = "check-box" })
+                                        }
+                                        <span class="chk_parts"></span>
+                                    </label>
+                                </td>
+                                <td class="align-middle text-right w_no">
+                                    @idx
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.TransporterViewModel[i].Transporters.TransporterId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.TransporterViewModel[i].Transporters.TransporterName)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

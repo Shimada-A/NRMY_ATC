@@ -1,0 +1,967 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Stock.Resources;
+@using Wms.Helpers;
+@model Wms.Areas.Stock.ViewModels.Reference.ReferenceViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_Reference;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "Reference", FormMethod.Post, new { id = "frmSearch", @class = "show_scroll" }))
+    {
+        @Html.AntiForgeryToken()
+    <table class="">
+        <tr>
+            <td class="tdtitle">@ReferenceResource.CenterIdS</td>
+            <td colspan="3">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.CenterDropDownFor(
+                            model => model.SearchConditions.CenterId
+                            , Wms.Common.Profile.User.UserId
+                            , "", new { @id = "ddlCenterId", tabindex = "1" })
+                    </div>
+                </div>
+            </td>
+            <td class="tdtitle">@ReferenceResource.DivisionIdS</td>
+            <td colspan="4">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.SearchConditions.DivisionId,
+                            (IEnumerable<SelectListItem>)ViewBag.DivisionList,
+                            CommonResource.None, new { id = "ddlDivisionId", tabindex = "17" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle_large">@ReferenceResource.LocationClassS</td>
+            <td colspan="3">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.SearchConditions.LocationClass,
+                            (IEnumerable<SelectListItem>)ViewBag.LocationClassList,
+                            CommonResource.None, new { id = "ddlLocationClass", tabindex = "2" })
+                    </div>
+                </div>
+            </td>
+            <td class="tdtitle">@ReferenceResource.BrandIdS</td>
+            <td colspan="4">
+                @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "18" } })
+                @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "column_byte_40", @id = "txtBrandName", tabindex = "19" } })
+                <div class="search">
+                    <button type="button" id="btnBrandId" class="search_btn" tabindex="20" />
+                </div>
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@ReferenceResource.Locsec1S</td>
+            <td colspan="3">
+                @Html.EditorFor(model => model.SearchConditions.Locsec1, new { htmlAttributes = new { @class = "w_6_short", @id = "txtLocsec1", tabindex = "3" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+            <td class="tdtitle">@ReferenceResource.MainVendorIdS</td>
+            <td colspan="4">
+                @Html.EditorFor(model => model.SearchConditions.MainVendorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtMainVendorId", tabindex = "21" } })
+                @Html.EditorFor(model => model.SearchConditions.MainVendorName, new { htmlAttributes = new { @class = "column_byte_40", @id = "txtMainVendorName", tabindex = "22" } })
+                <div class="search">
+                    <button type="button" id="btnMainVendor" class="search_btn" tabindex="23" />
+                </div>
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@ReferenceResource.LocationCdS</td>
+            <td class="column_byte_20" colspan="3">
+                @Html.EditorFor(model => model.SearchConditions.LocationCdFrom, new { htmlAttributes = new { @class = "column_byte_20", @id = "txtLocationCdFrom", tabindex = "4" } })
+            </td>
+            <td class="tdtitle">@ReferenceResource.CategoryIdS</td>
+            <td colspan="4">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.SearchConditions.CategoryId1,
+                            (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                            CommonResource.None, new { id = "ddlCategoryId1", tabindex = "24", onchange = "CategoryChange(1)" })
+                    </div>
+                </div>
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.SearchConditions.CategoryId2,
+                            (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                            CommonResource.None, new { id = "ddlCategoryId2", tabindex = "25", disabled = "disabled", onchange = "CategoryChange(2)" })
+                    </div>
+                </div>
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.SearchConditions.CategoryId3,
+                            (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                            CommonResource.None, new { id = "ddlCategoryId3", tabindex = "26", disabled = "disabled", onchange = "CategoryChange(3)" })
+                    </div>
+                </div>
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.SearchConditions.CategoryId4,
+                            (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                            CommonResource.None, new { id = "ddlCategoryId4", tabindex = "27", disabled = "disabled" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">&nbsp;</td>
+            <td>～</td>
+            <td class="column_byte_20" colspan="2">
+                @Html.EditorFor(model => model.SearchConditions.LocationCdTo, new { htmlAttributes = new { @class = "column_byte_20", @id = "txtLocationCdTo", tabindex = "5" } })
+            </td>
+            <td class="tdtitle">@ReferenceResource.ItemCodeS</td>
+            <td colspan="4">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.SearchConditions.ItemCode,
+                            (IEnumerable<SelectListItem>)ViewBag.ItemList,
+                            CommonResource.None, new { id = "ddlItemCode", tabindex = "28" })
+                    </div>
+                </div>
+            </td>
+            
+        </tr>
+        <tr>
+            <td class="tdtitle">@ReferenceResource.JanS</td>
+            <td colspan="3">
+                @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @id = "txtJan", tabindex = "6", @class = "column_byte_25" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+            <td class="tdtitle">@ReferenceResource.BoxNoS</td>
+            <td colspan="4">
+                @Html.EditorFor(model => model.SearchConditions.BoxNo, new { htmlAttributes = new { @id = "txtBoxNo", tabindex = "29", @class = "column_byte_25" } })
+            </td>
+            
+        </tr>
+        <tr>
+            <td class="tdtitle">@ReferenceResource.ItemIdS</td>
+            <td colspan="3">
+                @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @id = "txtItemId", tabindex = "7", @class = "column_byte_25" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+            <td class="tdtitle">@ReferenceResource.ItemSkuIdS</td>
+            <td colspan="4">
+                @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @id = "txtItemSkuId", tabindex = "30", @class = "column_byte_35" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@ReferenceResource.ItemColorIdS</td>
+            <td colspan="8">
+                @Html.EditorFor(model => model.SearchConditions.ItemColorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtItemColorId", tabindex = "8" } })
+                @Html.EditorFor(model => model.SearchConditions.ItemColorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemColorName", tabindex = "9" } })
+                <div class="search">
+                    <button type="button" id="btnItemColor" class="search_btn" tabindex="10" />
+                </div>
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@ReferenceResource.ItemSizeIdS</td>
+            <td colspan="8">
+                @Html.EditorFor(model => model.SearchConditions.ItemSizeId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtItemSizeId", tabindex = "11" } })
+                @Html.EditorFor(model => model.SearchConditions.ItemSizeName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemSizeName", tabindex = "12" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@ReferenceResource.GrageIdS</td>
+            <td colspan="8">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.SearchConditions.GradeId,
+                            (IEnumerable<SelectListItem>)ViewBag.GradeList,
+                            CommonResource.None, new { id = "ddlGradeId", tabindex = "14" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@ReferenceResource.StockQtyFlagS</td>
+            <td colspan="8">
+                <label class="chklist">
+                    @Html.CheckBoxFor(model => model.SearchConditions.StockQtyFlag, new { tabindex = "15", @placeholder = "", @class = "check-box" })
+                    <span class="chk_parts">
+                    </span>
+                </label>
+                @ReferenceResource.StockQtyFlagC
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@ReferenceResource.StorageStatusS</td>
+            <td colspan="8">
+                <label class="chklist">
+                    @Html.CheckBoxFor(model => model.SearchConditions.StorageStatus, new { tabindex = "16", @placeholder = "", @class = "check-box" })
+                    <span class="chk_parts">
+                    </span>
+                </label>
+                @ReferenceResource.StorageStatusC
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7">
+            </td>
+            <td colspan="2">
+                @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Reference", new { area = "Stock" }, new { tabindex = "31", type = "button", @class = "btn btn-outline-dark" })
+                <button class="btn btn-outline-dark" id="btnSearch" tabindex="32" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+            </td>
+        </tr>
+    </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.PackageSortKey, new { id = "hidPackageSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.ResultType, new { id = "hidResultType" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        <div style="display:none">
+            @if (Model.Results.References != null && Model.Results.References.Count() > 0 && Model.SearchConditions.ResultType == ResultTypes.Stock)
+            {
+                <table>
+
+                    @for (int i = 0; i < Model.Results.References.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.References[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.References[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.References[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.References[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.References != null && Model.Results.References.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border stock_detail_load">
+        <div class="sortarea">
+            <ul>
+                @* 管理者の場合、JAN付きの帳票発行可能にする *@
+                @if (ViewBag.PermissionLevel == PermissionLevelClasses.PermissionLevelSystemManager)
+                {
+                    <li>
+                        <button type="button" id="btnPrintJan" class="download">
+                            <img src="~/Content/img/print.png" />
+                            @ReferenceResource.BtnPrintJan
+                        </button>
+                    </li>
+                }
+                <li>
+                    <button type="button" id="btnDownload" class="download">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </li>
+                <li>
+                    <button type="button" id="btnPrint" class="download">
+                        <img src="~/Content/img/print.png" />
+                        @ReferenceResource.BtnPrint
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="sublbarea no_border">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-outline-dark active" id="lblStock">
+                <input type="radio" name="options" id="Stock" autocomplete="off"> @ReferenceResource.BtnStock
+            </label>
+            <label class="btn btn-outline-dark" id="lblPackageStock">
+                <input type="radio" name="options" id="PackageStock" autocomplete="off"> @ReferenceResource.BtnPackageStock
+            </label>
+        </div>
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                            {
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            }
+                            else
+                            {
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.PackageSortKey, new { Name = "SearchConditions.PackageSortKey", @id = "ddlPackageSortKey", @onchange = "getSortData();" })
+                            }
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.References.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.References.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.References, Page => Url.Action("Search", "Reference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    if (Model.Results.References.Count() > 0)
+    {
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @ReferenceResource.LocationSum @Html.DisplayFor(model => model.SearchConditions.LocationSum)
+                    </li>
+                    <li>
+                        @ReferenceResource.ItemSkuSum @Html.DisplayFor(model => model.SearchConditions.ItemSkuSum)
+                    </li>
+                    <li>
+                        @ReferenceResource.StockQtySum @Html.DisplayFor(model => model.SearchConditions.StockQtySum)
+                    </li>
+                    @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                    {
+                        <li>
+                            @ReferenceResource.AllocQtySum @Html.DisplayFor(model => model.SearchConditions.AllocQtySum)
+                        </li>
+                        <li>
+                            @ReferenceResource.UnAllocQtySum @Html.DisplayFor(model => model.SearchConditions.UnAllocQtySum)
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+}
+@if (Model.Results.References != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.References.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                                {
+                                    <th class="bg-grey align-middle">&nbsp;</th>
+                                }
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.LocationCd
+                                </th>
+                                @if (Model.SearchConditions.ResultType == ResultTypes.PackageStock)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @ReferenceResource.BoxNo
+                                    </th>
+                                }
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.CategoryId1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.ItemIdName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.ItemColor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.ItemSize
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.Jan
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.Grade
+                                </th>
+                                @if (Model.SearchConditions.ResultType == ResultTypes.PackageStock)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @ReferenceResource.InvoiceNo
+                                    </th>
+                                }
+                                @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @ReferenceResource.CaseQty
+                                    </th>
+                                }
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.StockQty
+                                </th>
+                                @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @ReferenceResource.AllocQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @ReferenceResource.UnAllocQty
+                                    </th>
+                                }
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "ItemSku", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.References.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("References[{0}].", cModel.i);
+                                    <tr>
+                                        @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                                        {
+                                            <td class="w_checkbox align-middle">
+                                                <label class="checkboxgroup">
+                                                    @Html.CheckBoxFor(modelItem => cModel.v.IsCheck, new { @id = (key + "CheckedValue"), @class = "check-box", onclick = "SetCheckValue(" + @cModel.i + ")" })
+                                                    <span class="chk_parts"></span>
+                                                </label>
+                                            </td>
+                                        }
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.References.PageNumber - 1) * Model.Results.References.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                        </td>
+                                        @if (Model.SearchConditions.ResultType == ResultTypes.PackageStock)
+                                        {
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                            </td>
+                                        }
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.GradeName)
+                                        </td>
+                                        @if (Model.SearchConditions.ResultType == ResultTypes.PackageStock)
+                                        {
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => cModel.v.InvoiceNo)
+                                            </td>
+                                        }
+                                        @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                                        {
+                                            <td class="align-middle text-right">
+                                                @Html.DisplayFor(modelItem => cModel.v.CaseQty)
+                                            </td>
+                                        }
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.StockQty)
+                                        </td>
+                                        @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                                        {
+                                            <td class="align-middle text-right">
+                                                @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                            </td>
+                                            <td class="align-middle text-right">
+                                                @Html.DisplayFor(modelItem => cModel.v.UnAllocQty)
+                                            </td>
+                                        }
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+    {
+        @Html.Partial("_CheckBoxCounter")
+    }
+    <div class="btnarea">
+        @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+        {
+            <button type="submit" id="btnPackageStock" class="btn btn-dark btnsize" form="frmUpdate" formmethod="post" formaction=@Url.Action("PackageStockSearch", "Reference", new { area = "Stock", controller = "Reference", action = "PackageStockSearch" })>@ReferenceResource.BaseName</button>
+        }
+    </div>
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_VendorSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_ColorSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_SizeSearchModal.cshtml")
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        $("#btnDownload").on("click", function () {
+            var urlAction = '@Url.Action("Download", "Reference", new { area = "Stock" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "Post");
+            $form.submit();
+
+            setTimeout(function () {
+                if ($(ReferenceView.SELECTORS.rowSelected).text() >= 1) {
+                    $(ReferenceView.SELECTORS.btnPackageStock).removeAttr('disabled');
+                } 
+            },1000)
+        });
+
+        $("#btnPrint").on("click", function () {
+            var urlAction = '@Url.Action("Print", "Reference", new { area = "Stock" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+
+            setTimeout(function () {
+                if ($(ReferenceView.SELECTORS.rowSelected).text() >= 1) {
+                    $(ReferenceView.SELECTORS.btnPackageStock).removeAttr('disabled');
+                }
+            }, 1000)
+        });
+
+        $("#btnPrintJan").on("click", function () {
+            var urlAction = '@Url.Action("PrintJan", "Reference", new { area = "Stock" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+
+            setTimeout(function () {
+                if ($(ReferenceView.SELECTORS.rowSelected).text() >= 1) {
+                    $(ReferenceView.SELECTORS.btnPackageStock).removeAttr('disabled');
+                }
+            }, 1000)
+        });
+    /**
+     * Country class
+     */
+        var curentSelectedCnt = 0;
+        var curentSelectedCntDiff = 0;
+    var ReferenceView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=checkbox][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            rowSelected: '#spnCheckedCounter',
+            btnPackageStock: '#btnPackageStock',
+            ddlSortKey: '#ddlSortKey',
+            ddlPackageSortKey: '#ddlPackageSortKey',
+            chkChecked: ':checkbox:checked',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnBrandId: '#btnBrandId',
+            brandId:'#txtBrandId',
+            brandName:'#txtBrandName',
+            brandSelect: '#brandSelect',
+            btnMainVendor:'#btnMainVendor',
+            colorSelect: '#colorSelect',
+            btnItemColor:'#btnItemColor',
+            colorId:'#txtItemColorId',
+            colorName:'#txtItemColorName',
+            sizeSelect: '#sizeSelect',
+            btnItemSize:'#btnItemSize',
+            sizeId:'#txtItemSizeId',
+            sizeName:'#txtItemSizeName',
+            mainVendorId:'#txtMainVendorId',
+            mainVendorName:'#txtMainVendorName',
+            vendorSelect: '#vendorSelect',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus(0);
+                brandSearchModal.init();
+                vendorSearchModal.init();
+                colorSearchModal.init();
+                sizeSearchModal.init();
+                curentSelectedCnt = $(ReferenceView.SELECTORS.chkCheckedInTable).length;
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Stop event fired when click to checkbox
+                 */
+                $(ReferenceView.SELECTORS.chkLabel).click(function (evt) {
+                    evt.stopPropagation();
+                });
+
+                /**
+                 * Check box click
+                 */
+                $(ReferenceView.SELECTORS.chkInTable).click(function (evt) {
+                    evt.stopPropagation();
+                    curentSelectedCntDiff = curentSelectedCnt - $(ReferenceView.SELECTORS.chkCheckedInTable).length;
+                    ReferenceView.setButtonStatus(curentSelectedCntDiff);
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(ReferenceView.SELECTORS.ddlSort).change(function (val) {
+                    $(ReferenceView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(ReferenceView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(ReferenceView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(ReferenceView.SELECTORS.ddlPackageSortKey).change(function (val) {
+                    $(ReferenceView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(ReferenceView.SELECTORS.btnBrandId).on("click", brandSearchModal.open);
+
+                /**
+                * 仕入先検索ダイアログの設定
+                */
+                $(ReferenceView.SELECTORS.btnMainVendor).on("click", vendorSearchModal.open);
+
+                /**
+                * カラー検索ダイアログの設定
+                */
+                $(ReferenceView.SELECTORS.btnItemColor).on("click", colorSearchModal.open);
+
+                ///**
+                //* サイズ検索ダイアログの設定
+                //*/
+                //$(ReferenceView.SELECTORS.btnItemSize).on("click", sizeSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(ReferenceView.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(ReferenceView.SELECTORS.brandId).val(brandId);
+                        $(ReferenceView.SELECTORS.brandName).val(brandName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(ReferenceView.SELECTORS.vendorSelect).on("click", function () {
+                    $('#vendorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var vendorId = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        var vendorName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                        $(ReferenceView.SELECTORS.mainVendorId).val(vendorId);
+                        $(ReferenceView.SELECTORS.mainVendorName).val(vendorName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(ReferenceView.SELECTORS.colorSelect).on("click", function () {
+                    $('#colorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var colorId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var colorName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(ReferenceView.SELECTORS.colorId).val(colorId);
+                        $(ReferenceView.SELECTORS.colorName).val(colorName);
+                    })
+                });
+
+                ///**
+                // *Click button get data Vendor
+                // */
+                //$(ReferenceView.SELECTORS.sizeSelect).on("click", function () {
+                //    $('#sizeSearchResult input[type=radio]:checked').each(function (index, item) {
+                //        var sizeId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                //        var sizeName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                //        $(ReferenceView.SELECTORS.sizeId).val(sizeId);
+                //        $(ReferenceView.SELECTORS.sizeName).val(sizeName);
+                //    })
+                //});
+
+                /**
+                 * Button check all clicked
+                 */
+                $(ReferenceView.SELECTORS.btnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidResultType").val("Stock");
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("AllSelectedSearch", "Reference", new { area= "Stock" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+
+                /**
+                 * Button UnCheck all clicked
+                 */
+                $(ReferenceView.SELECTORS.btnUnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidResultType").val("Stock");
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("UnSelectedSearch", "Reference", new { area= "Stock" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+                // Display row is selected
+                $(ReferenceView.SELECTORS.rowSelected).text(@Model.SearchConditions.SelectedCnt - difCnt );
+                // Enable/Disable button Edit
+                if ($(ReferenceView.SELECTORS.rowSelected).text() >= 1) {
+                    $(ReferenceView.SELECTORS.btnPackageStock).removeAttr('disabled');
+                } else {
+                    $(ReferenceView.SELECTORS.btnPackageStock).attr('disabled', 'disabled');
+                }
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        ReferenceView.init();
+        $("#ddlPackageSortKey").removeClass("input-validation-error");
+        $("#ddlSortKey").removeClass("input-validation-error");
+        if ($("#ddlCategoryId1").val() != '') {
+            $("#ddlCategoryId2").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId2").val() != '') {
+                $("#ddlCategoryId3").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId3").val() != '') {
+                $("#ddlCategoryId4").removeAttr('disabled');
+        }
+        if ('@Model.SearchConditions.ResultType'=='@ResultTypes.PackageStock') {
+            $("#lblPackageStock").addClass("active");
+            $("#lblStock").removeClass("active");
+            $("#PackageStock").prop("checked", true);
+            $("#Stock").prop("checked", false);
+        } else {
+            $("#lblStock").addClass("active");
+            $("#lblPackageStock").removeClass("active");
+            $("#PackageStock").prop("checked", false);
+            $("#Stock").prop("checked", true);
+        }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "Reference", new { area= "Stock" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").attr("action", urlAction);
+                    $("#frmSearch").attr("method", "POST");
+                    $("#frmSearch").submit();
+                });
+            });
+    });
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidPackageSortKey").val($("#ddlPackageSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "Reference", new { area= "Stock" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function GetCategoryList(id) {
+                    var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            id: id + 1,
+                            category1: $("#ddlCategoryId1").val(),
+                            category2: $("#ddlCategoryId2").val(),
+                            category3: $("#ddlCategoryId3").val()
+                        },
+                        success: function (data) {
+                            $("#ddlCategoryId" + (id + 1)).html("");
+                            $("#ddlCategoryId" + (id + 1)).html(data.html);
+                        }
+                    });
+        }
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+        function SetCheckValue(lineNo) {
+            $('input[type=checkbox][id$="SearchConditions.References[' + lineNo + '].CheckedValue"]').each(function (i, item) {
+                $(item).trigger('click');
+                });
+        }
+        function Search() {
+                $("#hidResultType").val("Stock");
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "Reference", new { area = "Stock" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+            $("#Stock").on("click", function () {
+                $("#hidResultType").val("Stock");
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "Reference", new { area = "Stock" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            });
+            $("#PackageStock").on("click", function () {
+                $("#hidResultType").val("PackageStock");
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "Reference", new { area = "Stock" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            });
+        $('#btnPackageStock').on("click", function () {
+                $("#hidResultType").val("PackageStock");
+                $("#hidSearchType").val("Search");
+                var urlAction ='@Url.Action("PackageStockSearch", "Reference", new { area= "Stock" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            });
+    </script>
+}

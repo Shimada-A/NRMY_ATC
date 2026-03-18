@@ -1,0 +1,133 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.EcReference.EcReference02ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_RET_EcReference02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("DetailSearch", "EcReference", FormMethod.Post, new { id = "frmDetailSearch" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="headarea sortheadareaheight">
+        <table class="headtable">
+            <tr>
+                <td>
+                    @EcReferenceResource.ShipInstructIdS
+                    @Html.DisplayFor(modelItem => modelItem.Results.EcReference02s.FirstOrDefault().ShipInstructId)
+                </td>
+                <td>
+                    @EcReferenceResource.ArriveDateS
+                    @Html.DisplayFor(modelItem => modelItem.Results.EcReference02s.FirstOrDefault().ArriveDate)
+                </td>
+                <td>
+                    @EcReferenceResource.RelatedOrderNoS
+                    @Html.DisplayFor(modelItem => modelItem.Results.EcReference02s.FirstOrDefault().RelatedOrderNo)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @EcReferenceResource.KakuDateS
+                    @Html.DisplayFor(modelItem => modelItem.Results.EcReference02s.FirstOrDefault().KakuDate)
+                </td>
+                <td>
+                    @EcReferenceResource.ReturnIdS
+                    @Html.DisplayFor(modelItem => modelItem.Results.EcReference02s.FirstOrDefault().ReturnId)
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    <div class="Container">
+        <div>
+            <div class="tb_scroll">
+                <table class="table table-bordered" id="listData">
+                    <thead>
+                        <tr>
+                            <th class="bg-grey align-middle">
+                                @EcReferenceResource.No
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @EcReferenceResource.CategoryName1
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @EcReferenceResource.Item
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @EcReferenceResource.ItemColor
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @EcReferenceResource.ItemSize
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @EcReferenceResource.JAN
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @EcReferenceResource.ResultQty
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @EcReferenceResource.ReturnQty
+                            </th>
+                            <th hidden>
+                            </th>
+                        </tr>
+                    </thead>
+                    @if (Model.Results.EcReference02s != null && Model.Results.EcReference02s.Count() > 0)
+                    {
+                        <tbody>
+                            @for (int i = 0; i < Model.Results.EcReference02s.Count(); i++)
+                            {
+                                var key = String.Format("EcReference02s[{0}].", Model.Results.EcReference02s[i]);
+                                <tr>
+                                    <td class="align-middle text-right w_no">
+                                        @(i + 1)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].CategoryName1)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].ItemId)<br />
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].ItemName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].ItemColorId)<br />
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].ItemColorName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].ItemSizeId)<br />
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].ItemSizeName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].Jan)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].ResultQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => Model.Results.EcReference02s[i].ReturnQty)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "EcReference", new { area = "Returns" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}

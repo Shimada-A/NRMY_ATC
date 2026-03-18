@@ -1,0 +1,651 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+
+@model Wms.Areas.Ship.ViewModels.PrintInvoice.PrintInvoiceConditions
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_PrintInvoice;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("Search", "PrintInvoice", FormMethod.Post, new { id = "frmPrint", autocomplete = "off" }))
+{
+
+    @Html.AntiForgeryToken()
+
+    <div class="head head_white collapse show">
+        <table>
+            <tr>
+                <td>@PrintInvoiceResource.PrnClassS</td>
+                <td>
+                    @Html.EnumRadioButtonListFor(model => model.PrnClass, new { htmlAttributes = new { tabindex = "2", @id = "chkPrnClass" } })
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.ChkOldData, new { id = "chkChkOldData", tabindex = "2", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @PrintInvoiceResource.ChkOldData
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.ChkOtherListScan, new { id = "chkOtherListScan", tabindex = "2", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @PrintInvoiceResource.ChkOtherListScan
+                </td>
+            </tr>
+            <tr>
+                <td>@PrintInvoiceResource.BoxNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.BoxNo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtBoxNo", tabindex = "4", onfocus = "this.select();" } })
+                    @Html.ValidationMessageFor(model => model.BoxNo, "", new { id = "msgErr" })
+                    @Html.EditorFor(model => model.ErrMassage, new { htmlAttributes = new { @style = "border:0; color:red;width:920px;outline:none;", @readonly = "readonly", @id = "txtMassage" } })
+
+                </td>
+            </tr>
+            <tr hidden id="ScanView">
+                <td></td>
+                <td colspan="4">
+                    @PrintInvoiceResource.ScanAssortViewTitle
+                    <table id="ScanViewTable" style="display: block; overflow-y: auto; max-height: 130px; margin-top: -5px; line-height: 20px; ">
+                        @Html.Partial("~/Areas/Ship/Views/PrintInvoice/_ScanAssortView.cshtml", Model)
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>@PrintInvoiceResource.DeliNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.DeliNo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtDeliNo", tabindex = "5", onfocus = "this.select();" } })
+                    @Html.EditorFor(model => model.ErrMassage, new { htmlAttributes = new { @style = "border:0; color:red;width:600px;outline:none;", @readonly = "readonly", @id = "txtErrMassage2" } })
+                </td>
+            </tr>
+            <tr>
+                <td>@PrintInvoiceResource.PrintCenterIdS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(model => model.UserCenterId, Wms.Common.Profile.User.UserId, "", new { @id = "ddlUserCenterId", name = "ddlUserCenterId", disabled = "disabled" })
+                            @Html.HiddenFor(model => model.UserCenterId, new { @id = "hidUserCenterId", @name = "UserCenterId" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="bluecolor">@PrintInvoiceResource.SagawaComment</td>
+            </tr>
+            <tr>
+                <td colspan="3" style="padding-top:50px;">
+                    @*<button class="btn btn-outline-dark" id="btnSet" type="button" tabindex="-1" onclick="KickChangePrintInfo();">@PrintInvoiceResource.Setting</button>
+                        <button class="btn btn-outline-dark" id="btnSetDeliYamato" type="button" tabindex="-1" onclick="KickChangeDeliYamato();">@PrintInvoiceResource.SettingYamato</button>
+                        <button class="btn btn-outline-dark" id="btnSetDeliSagawa" type="button" tabindex="-1" onclick="KickChangeDeliSagawa();">@PrintInvoiceResource.SettingSagawa</button>
+                        <button class="btn btn-outline-dark" id="btnSetDeliNaniwa" type="button" tabindex="-1" onclick="KickChangeDeliNaniwa();">@PrintInvoiceResource.SettingNaniwa</button>*@
+                    @Html.HiddenFor(model => model.PermissonLavel, new { @id = "hidPermission" })
+                    @Html.HiddenFor(model => model.Ret, new { @id = "hidRet" })
+                    @Html.HiddenFor(model => model.SlipDate, new { @id = "hidSlipDate" })
+                    @Html.HiddenFor(model => model.InvoiceNo, new { @id = "hidInvoiceNo" })
+                    @Html.HiddenFor(model => model.ShippingHoldClass, new { @id = "hidShippingHoldClass" })
+                    @Html.HiddenFor(model => model.CenterId, new { @id = "hidCenterId" })
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+        <button id="btnPrintMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#infoConfirm" hidden></button>
+        <button id="btnConfirmMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_ConMsg" hidden></button>
+        @*入荷伝票日付選択画面用ボタン*@
+        <button id="btnArriveDateConfirm" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#ArriveDateConfirmDialog" hidden></button>
+    </div>
+}
+
+@*/入荷伝票日付確認ダイアログ*@
+<div class="modal fade" id="ArriveDateConfirmDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p class="confirm-message">@PrintInvoiceResource.ComfirmDialogTitle</p>
+                <table>
+                    <tr>
+                        <td>
+                            @PrintInvoiceResource.ComfirmDialogInvoiceNoS
+                            <label id="lblItemInvoiceNo"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @PrintInvoiceResource.ComfirmDialogSlipDateS
+                            <span class="date_input">
+                                <input id="ItemSlipDate" class="flatpickr" tabindex="2" type="text" value="" readonly="readonly">
+                                <span class="arrow">&nbsp;</span>
+                            </span>
+                            <div class="field-validation-valid" style="margin-left: 100px;" id="SlipDateMessage"></div>
+                            <input type="hidden" id="hidClosedDate">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color: #0000FF;">@PrintInvoiceResource.ComfirmDialogMessage1</td>
+                    </tr>
+                    <tr>
+                        <td style="color: #0000FF;">@PrintInvoiceResource.ComfirmDialogMessage2 </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">@FormsResource.BTN_CANCEL</button>
+                <button type="button" class="confirm- btn btn-dark" id="btnSlipDateConfrim" data-dismiss="modal">@FormsResource.BTN_CONFIRM</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = Model.ErrMassage })
+@Html.Partial("_InformationMessageDialog", PrintInvoiceResource.PrintInvoiceMessage)
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "ConMsg" })
+@Html.Partial("~/Areas/Ship/Views/PrintInvoice/_ShipToStoreListView.cshtml",  new Wms.Areas.Ship.ViewModels.PrintInvoice.ZanShipStore() { ZanShipStores = null })
+
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        var PrintInvoiceView = {
+            /**
+             * CONST Object
+             */
+            CONST: {
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                FORM: 'form',
+                METHOD: 'method',
+                ACTION: 'action'
+            },
+
+            /**
+             * SELECTORS Object
+             */
+            SELECTORS: {
+                chkInTablePrn1: 'input[type=radio][id$="PrnClass-1"]',
+                chkInTablePrn2: 'input[type=radio][id$="PrnClass-2"]',
+                chkInTablePrn3: 'input[type=radio][id$="PrnClass-3"]',
+                form: 'form',
+                searchForm: '#frmPrint',
+                btnSubmit: 'button[type=submit],input[type=submit]',
+            },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.setButtonStatus();
+                $('#txtMassage').val("");
+                $('#txtErrMassage2').val("");
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+
+            },
+
+            InvoicePrintUrl : ""
+        }
+
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            if ('@Model.ErrMassage' != '') {
+                $("#txtMassage").hide();
+                $("#txtErrMassage2").hide();
+                $("#btnErrorMessage").click();
+            }
+            $('#txtMassage').val("");
+            if ($('input[type=radio][id$="PrnClass-1"]').prop('checked')) {
+                $('#txtDeliNo').attr('disabled', 'disabled');
+                $("#chkChkOldData").prop("checked", false);
+                $('#chkChkOldData').attr('disabled', 'disabled');
+            } else {
+                $("#txtDeliNo").removeAttr('disabled');
+                $('#chkChkOldData').removeAttr('disabled');
+            }
+
+            ShipToStoreListModal.init();
+        });
+
+        $("#infoConfirm").on("keydown", function (e) {
+            if (e.keyCode == 13) {
+                if ($("#infoConfirm").is(":visible")) {
+                    $("#submitInfo").click();
+                }
+            }
+        });
+
+        $("#submitInfo").on("click", function () {
+            if (PrintInvoiceView.InvoicePrintUrl != "") {
+                location.href = PrintInvoiceView.InvoicePrintUrl;
+            }
+            $("#txtBoxNo").focus();
+        });
+
+        $('input[name="PrnClass"]:radio').change(function () {
+            $('#txtMassage').val("");
+            $('#txtErrMassage2').val("");
+            if ($('input[type=radio][id$="PrnClass-1"]').prop('checked')) {
+                $('#txtDeliNo').attr('disabled', 'disabled');
+                $("#txtDeliNo").val("");
+                $("#chkChkOldData").prop("checked", false);
+                $('#chkChkOldData').attr('disabled', 'disabled');
+            } else {
+                $("#txtDeliNo").removeAttr('disabled');
+                $('#chkChkOldData').removeAttr('disabled');
+            }
+        });
+
+        function PrintOut(confirmed) {
+            $('#txtMassage').val("");
+            $('#txtErrMassage2').val("");
+            PrintInvoiceView.InvoicePrintUrl = "";
+            TextBoxdisabled(true);
+
+            var radios = document.getElementsByName("PrnClass");
+            var prnClass;
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    prnClass = radios[i].value;
+                    break;
+                }
+            }
+            var chkOldData;
+            if ($("#chkChkOldData").prop('checked')) {
+                chkOldData = 1;
+            } else {
+                chkOldData = 0;
+            };
+            var urlAction = "";
+            if (prnClass == "0") {
+                urlAction = '@Url.Action("PrintNew", "PrintInvoice", new { area= "Ship" })'; //新規
+            } else {
+                urlAction = '@Url.Action("PrintRe", "PrintInvoice", new { area= "Ship" })'; //再発行
+            }
+
+            if (confirmed === undefined) confirmed = false;
+
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                data: {
+                    userCenterId: $("#ddlUserCenterId").val(),
+                    prnClass: prnClass,
+                    boxSize: $("#txtBoxSize").val(),
+                    boxNo: $("#txtBoxNo").val(),
+                    deliNo: $("#txtDeliNo").val(),
+                    chkOldData: chkOldData,
+                    confirmed: confirmed
+                },
+                success: function (data) {
+                    TextBoxdisabled(false);
+
+                    if (data.status == 0) {
+                        //印刷実行
+                        if (data.prnClass == "0") {
+                            PrintNew(data);
+                        } else if (data.prnClass == "1") {
+                            //納品書再発行
+                            location.href = data.retPath;
+                        } else {
+                            //送り状再発行
+                            location.href = data.retPath;
+                        }
+
+                        // 海外アソートスキャンリスト更新
+                        GetAssortView();
+
+                        if ($("#txtBoxNo").val() != "") {
+                            $("#txtBoxNo").val("");
+                            $("#txtBoxNo").focus();
+                        } else {
+                            $("#txtDeliNo").val("");
+                            $("#txtDeliNo").focus();
+                        }
+                    } else {
+                        if (data.status == 20 || data.status == 21) {
+                            //キャンセルの場合
+                            if ($("#txtBoxNo").val() != "") {
+                                $("#txtMassage").val(data.errmessage);
+                            } else {
+                                $("#txtErrMassage2").val(data.errmessage);
+                            }
+                            var urlAction = '@Url.Action("Search", "PrintInvoice", new { area= "Ship" })';
+                            var $form = $("#frmPrint");
+                            $form.attr("action", urlAction);
+                            $form.attr("method", "POST");
+                            $form.submit();
+                        } else if ( prnClass == 0 && data.status == 100) {
+                            // 海外検品アソートの出荷に該当しないか確認をする
+                            PrintOutAssort();
+                        } else if (data.status >= 800) {
+                            //アラート表示
+                            $("#confirm_ConMsg .confirm-message").text(data.errmessage);
+                            $("#btnConfirmMessage").click();
+                        } else {
+                            if ($("#txtBoxNo").val() != "") {
+                                $("#txtMassage").val(data.errmessage);
+                                $("#txtMassage").css('color', 'red');
+                                $("#txtMassage").show();
+                                $("#txtBoxNo").focus();
+                            } else {
+                                $("#txtErrMassage2").val(data.errmessage);
+                                $("#txtErrMassage2").css('color', 'red');
+                                $("#txtErrMassage2").show();
+                                $("#txtDeliNo").focus()
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 入荷伝票日付　確認ダイアログで確認押下時
+        $("#btnSlipDateConfrim").click(function () {
+            if ($("#ItemSlipDate").val() == "") {
+                $("#SlipDateMessage").html('@PrintInvoiceResource.SlipDateRequired');
+                $("#SlipDateMessage").addClass("field-validation-error");
+                $("#ItemSlipDate").addClass("input-validation-error");
+                return false;
+            }
+
+            var slipDate = new Date($("#ItemSlipDate").val());
+            var closedDate = new Date($("#hidClosedDate").val());
+            if (slipDate <= closedDate) {
+                $("#SlipDateMessage").html('@PrintInvoiceResource.SlipDateMessage');
+                $("#SlipDateMessage").addClass("field-validation-error");
+                $("#ItemSlipDate").addClass("input-validation-error");
+                return false;
+            }
+
+            $("#hidSlipDate").val($("#ItemSlipDate").val());
+            PrintOutAssortExe();
+        });
+
+        // 海外アソート出荷の印刷チェックを行う
+        function PrintOutAssort() {
+            let form = $('#frmPrint').get(0);
+            let formData = new FormData(form);
+            var urlAction = '@Url.Action("CheckAssort", "PrintInvoice", new { area= "Ship" })';
+
+            TextBoxdisabled(true);
+
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                data: formData ,
+                processData: false,  //ajaxがdataを整形しない指定
+                contentType: false,  //contentTypeもfalseに指定
+                success: function (data) {
+                    TextBoxdisabled(false);
+
+                    if (data.Status == 0) {
+                        $("#hidCenterId").val(data.CenterId)
+                        $("#hidInvoiceNo").val(data.InvoiceNo);
+                        $("#hidSlipDate").val(data.SlipDate);
+                        $("#hidShippingHoldClass").val(data.ShippingHoldClass);
+                        if (data.DialogFlg) {
+                            // 確認ダイアログを開く
+                            $("#lblItemInvoiceNo").text(data.InvoiceNo);
+                            $("#ItemSlipDate").val(data.SlipDate);
+                            $("#hidClosedDate").val(data.ClosedDate);
+                            $("#SlipDateMessage").html("");
+                            $("#SlipDateMessage").removeClass("field-validation-error");
+                            $("#ItemSlipDate").removeClass("input-validation-error");
+
+                            $("#btnArriveDateConfirm").click();
+                        } else {
+                            // 確定ボタン押下後の印刷処理へ
+                            PrintOutAssortExe();
+                        }
+                    } else {
+                        $("#txtMassage").val(data.Message);
+                        $("#txtMassage").css('color', 'red');
+                        $("#txtMassage").show();
+                        $("#txtBoxNo").focus();
+                    }
+                }
+            });
+        }
+
+        // 確定ボタン押下後の処理
+        function PrintOutAssortExe() {
+            let form = $('#frmPrint').get(0);
+            let formData = new FormData(form);
+            var urlAction = '@Url.Action("ConfirmDialog", "PrintInvoice", new { area= "Ship" })';
+
+            TextBoxdisabled(true);
+
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                data: formData ,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    TextBoxdisabled(false);
+
+                    if (data.Status == 0) {
+                        PrintNew(data);
+
+                        //ビューの取得
+                        GetAssortView(data.PrintInvoiceConditions)
+
+                        if ($("#txtBoxNo").val() != "") {
+                            $("#txtBoxNo").val("");
+                            $("#txtBoxNo").focus();
+                        } else {
+                            $("#txtDeliNo").val("");
+                            $("#txtDeliNo").focus();
+                        }
+                    } else {
+                        // エラーセット
+                        $("#txtMassage").val(data.Message);
+                        $("#txtMassage").css('color', 'red');
+                        $("#txtMassage").show();
+                        $("#txtBoxNo").focus();
+                    }
+                }
+            });
+        }
+
+        // テキストボックス入力制御
+        function TextBoxdisabled(bool) {
+            if (bool) {
+                $("#txtBoxNo").attr('disabled', 'disabled');
+                $("#txtDeliNo").attr('disabled', 'disabled');
+            }
+            else {
+                $("#txtBoxNo").removeAttr('disabled');
+
+                if (!$('input[type=radio][id$="PrnClass-1"]').prop('checked')) {
+                    $("#txtDeliNo").removeAttr('disabled');
+                }
+            }
+        }
+
+        // 新規発行
+        function PrintNew(data) {
+            if (data.retDeliUrl != "" && data.retNouUrl != "") {
+                //納品書印刷
+                location.href = data.retNouUrl;
+                //送り状印刷メッセージ表示
+                PrintInvoiceView.InvoicePrintUrl = data.retDeliUrl;
+                $("#btnPrintMessage").click();
+            }
+            else if (data.retDeliUrl != "") {
+                //送り状印刷
+                location.href = data.retDeliUrl;
+            }
+            else if (data.retNouUrl != "") {
+                //納品書印刷
+                location.href = data.retNouUrl;
+            }
+
+            if (data.message != undefined && data.message != "") {
+                $("#txtMassage").val(data.message);
+                $("#txtMassage").css('color', 'blue');
+                $("#txtMassage").show();
+            }
+
+            if (data.Message != undefined && data.Message != "") {
+                $("#txtMassage").val(data.Message);
+                $("#txtMassage").css('color', 'blue');
+                if (data.WorkInvoiceFlag) {
+                    $("#txtMassage").css('color', 'green');
+                }
+                $("#txtMassage").show();
+            }
+        }
+
+        // 海外アソートビューの取得を行う
+        function GetAssortView(PrintInvoiceConditions) {
+            var urlAction = '@Url.Action("GetAssortView", "PrintInvoice", new { area= "Ship" })';
+            var successFunc = function (result) {
+                $("#ScanViewTable").html(result);
+                if ($("#ScanViewTable").children().length > 0) {
+                    $("#ScanView").removeAttr("hidden");
+                }
+                else {
+                    $("#ScanView").attr("hidden", "hidden");
+                }
+            };
+
+            if (typeof PrintInvoiceConditions === "undefined") {
+                let form = $('#frmPrint').get(0);
+                let formData = new FormData(form);
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    data: formData,
+                    processData: false,  //ajaxがdataを整形しない指定
+                    contentType: false,  //contentTypeもfalseに指定
+                    success: successFunc
+                });
+            }
+            else {
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    data: PrintInvoiceConditions,
+                    success: successFunc
+                });
+            }
+        }
+
+        // リンククリック時に出荷店舗残一覧を表示する
+        $(document).on('click', '.GetZanStoreList', function (e) {
+            e.preventDefault(); // ページ遷移を防ぐ
+            var urlAction = '@Url.Action("GetZanStoreList", "PrintInvoice", new { area= "Ship" })';
+            var target = $(this).parent().parent();
+            var targetinvoiceNo = target.find("[name$= 'InvoiceNo']").val();
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                data: { InvoiceNo: targetinvoiceNo },
+                success: function (result) {
+                    $("#ShipToStoreDetail").html(result);
+                }
+            });
+            ShipToStoreListModal.open();
+        });
+
+        $("#confirm_ConMsg button").on("click", () => {
+            if ($("#txtBoxNo").val() != "") {
+                $("#txtBoxNo").focus();
+            } else {
+                $("#txtDeliNo").focus();
+            }
+        });
+
+        $("#ConMsg").on("click", () => {
+            $("#confirm_ConMsg .close").click();
+            PrintOut(true);
+        });
+
+        /**
+        * ケーススキャン処理
+        */
+        $('#txtBoxNo').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                if ($(this).val() == "" && $('input[type=radio][id$="PrnClass-1"]').prop('checked')) {
+                    $('#txtMassage').val("ケースNoは必須入力です");
+                    $("#txtMassage").css('color', 'red');
+                    $("txtBoxNo").focus();
+                    return false;
+                }
+                if ($(this).val() == "" && $("#txtDeliNo").val() == "") {
+                    $('#txtMassage').val("ケースNoもしくは送り状番号を入力してください");
+                    $("#txtMassage").css('color', 'red');
+                    $("txtBoxNo").focus();
+                    return false;
+                }
+
+                //印刷
+                PrintOut();
+            }
+        });
+
+        /**
+        * 送り状番号スキャン処理
+        */
+        $('#txtDeliNo').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                if ($(this).val() == "" && $("#txtBoxNo").val() == "") {
+                    $('#txtErrMassage2').val("ケースNoもしくは送り状番号を入力してください");
+                    $("txtDeliNo").focus();
+                    return false;
+                }
+
+                //印刷
+                PrintOut();
+            }
+        });
+
+        $('#txtBoxNo').change(function () {
+            $('#txtMassage').val("");
+            $('#txtErrMassage2').val("");
+        })
+        $('#txtDeliNo').change(function () {
+            $('#txtMassage').val("");
+            $('#txtErrMassage2').val("");
+        })
+
+        $('#ErrMsg').click(function () {
+            if ($('#txtBoxNo').val() != "") {
+                $('#txtBoxNo').focus();
+            }
+        });
+
+        //印刷定義設定
+        function KickChangePrintInfo() {
+            // 引数に帳票名（Job ファイル名）を指定します
+            cwebclient.ChangePrintInfo("PrintBtoBInvoice");
+        }
+        function KickChangeDeliYamato() {
+            cwebclient.ChangePrintInfo("invoice_yamato");
+        }
+        function KickChangeDeliSagawa() {
+            cwebclient.ChangePrintInfo("invoice_sagawa");
+        }
+        function KickChangeDeliNaniwa() {
+            cwebclient.ChangePrintInfo("invoice_naniwa");
+        }
+    </script>
+}
+
+

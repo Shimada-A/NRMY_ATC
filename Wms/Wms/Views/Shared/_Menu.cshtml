@@ -1,0 +1,82 @@
+﻿@* サイドメニュー *@
+@using Wms.Helpers;
+@model IEnumerable<Wms.ViewModels.MenuProgram>
+
+<aside class="layout-sidebar">
+
+    <div id="logo" class="sidebar-header">
+        <a href="~/Home" class="top-logo">
+            <img src="~/Content/img/companylogo_landscape.png" title="ダッシュボード" alt="ダッシュボード" />
+        </a>
+    </div>
+    <div class="layout-sidebar-scroll">
+
+        <nav class="sidebar-main">
+            @Html.MenuTree(Model)
+            <!--<ul class="nav-drawer">
+                <li class="nav-item"> <a href="~/Home/index"><i class="mdi mdi-home"></i> ダッシュボード</a> </li>
+                <li class="nav-item nav-item-has-subnav">
+                    <a href="javascript:void(0)"><i class="mdi mdi-ambulance"></i> 入荷業務</a>
+                    <ul class="nav-subnav">
+                        <li> <a href="#">業務1</a> </li>
+                        <li> <a href="#">業務2</a> </li>
+                        <li> <a href="#">業務3</a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item nav-item-has-subnav">
+                    <a href="javascript:void(0)"><i class="mdi mdi-truck-delivery"></i> 出荷業務</a>
+                    <ul class="nav-subnav">
+                        <li> <a href="#">業務</a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item nav-item-has-subnav">
+                    <a href="javascript:void(0)"><i class="mdi mdi-store"></i> 在庫業務</a>
+                    <ul class="nav-subnav">
+                        <li> <a href="#">業務</a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item nav-item-has-subnav">
+                    <a href="javascript:void(0)"><i class="mdi mdi-backspace"></i>返品業務</a>
+                    <ul class="nav-subnav">
+                        <li> <a href="#">業務</a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item nav-item-has-subnav">
+                    <a href="#"><i class="mdi mdi-dns"></i> 棚卸業務</a>
+                    <ul class="nav-subnav">
+                        <li> <a href="#">業務</a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item nav-item-has-subnav">
+                    <a href="#"><i class="mdi mdi-television-guide"></i> マスタ</a>
+                    <ul class="nav-subnav">
+                        <li> <a href="~/Master/Transporter/index">配送業者マスタ</a> </li>
+                        <li> <a href="~/LocTransporter">別店舗別配送業者マスタ</a> </li>
+                        <li> <a href="~/Warehouses/index">倉庫マスタ</a> </li>
+                        <li> <a href="~/Locations">ロケーションマスタ</a> </li>
+                        <li> <a href="~/Master/Store/index">店舗マスタ</a> </li>
+                        <li> <a href="~/Master/User/index">利用者マスタ</a> </li>
+                        <li> <a href="~/Master/ItemSku/index">商品マスタ</a> </li>
+                        <li> <a href="~/Master/Vendor/index">仕入先マスタ</a> </li>
+                        <li> <a href="~/Master/BoxSetting/index">ケース閾値設定マスタ</a> </li>
+                        <li> <a href="~/Master/UserProgram/index">機能権限設定</a> </li>
+                        <li> <a href="~/Master/ShipFrontage/index">出荷レーン間口マスタ</a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item nav-item-has-subnav">
+                    <a href="#"><i class="mdi mdi-microsoft"></i> その他業務</a>
+                    <ul class="nav-subnav">
+                        <li> <a href="#">業務</a> </li>
+                    </ul>
+                </li>
+            </ul>-->
+        </nav>
+
+    </div>
+
+</aside>
+<script type="text/javascript">
+    $('.layout-sidebar').hide();
+    $('.layout-sidebar').addClass('aside-open');
+    $("body").addClass('layout-sidebar-close');
+</script>

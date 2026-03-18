@@ -1,0 +1,389 @@
+﻿@model Wms.Areas.Master.ViewModels.UserProgram.UserProgramInput
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_SetPermission02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Update", "UserProgram", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+@*message*@
+@Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+@Html.AntiForgeryToken()
+@* Container *@
+<div class="Container">
+    @if (Model != null)
+        {
+    <div>
+        <div class="tb_scroll">
+            <table class="table table-bordered" id="listData">
+                <thead>
+                    <tr>
+                        <th class="bg-grey" rowspan="2" style="vertical-align: middle;">
+                            @UserProgramResource.No
+                        </th>
+                        <th class="bg-grey" rowspan="2" style="vertical-align: middle;">
+                            @UserProgramResource.ProgramName
+                        </th>
+                        <th class="bg-grey" rowspan="2" style="vertical-align: middle;">
+                            @UserProgramResource.ProgramClass
+                        </th>
+                        @switch (Model.UserProgramViewModel[0].PermissionLevel)
+                                {
+                                    case ProgramPermissionLevelClasses.PermissionLevelNonPermission:
+                        <th class="bg-grey" colspan="6">
+                            @UserProgramResource.UsableClass
+                        </th>
+                                        break;
+                                    default:
+                        <th class="bg-grey">
+                            @UserProgramResource.UsableClass
+                        </th>
+                                        break;
+                                }
+                        <th hidden>
+                        </th>
+                    </tr>
+                    <tr>
+                        @switch (Model.UserProgramViewModel[0].PermissionLevel)
+                                {
+                                    case ProgramPermissionLevelClasses.PermissionLevelUserManager:
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelUserManager
+                        </th>
+                                        break;
+                                    case ProgramPermissionLevelClasses.PermissionLevelWarehouseManager:
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelWarehouseManager
+                        </th>
+                                        break;
+                                    case ProgramPermissionLevelClasses.PermissionLevelClericalWorker:
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelClericalWorker
+                        </th>
+                                        break;
+                                    case ProgramPermissionLevelClasses.PermissionLevelWarehouseWorker:
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelWarehouseWorker
+                        </th>
+                                        break;
+                                    case ProgramPermissionLevelClasses.PermissionLevelPartTimeJobber:
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelPartTimeJobber
+                        </th>
+                                        break;
+                                    case ProgramPermissionLevelClasses.PermissionLevelHeadOfficeWorker:
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelHeadOfficeWorker
+                        </th>
+                                        break;
+                                    default:
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelUserManager
+                        </th>
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelWarehouseManager
+                        </th>
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelClericalWorker
+                        </th>
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelWarehouseWorker
+                        </th>
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelPartTimeJobber
+                        </th>
+                        <th class="bg-grey">
+                            @UserProgramResource.PermissionLevelHeadOfficeWorker
+                        </th>
+                                        break;
+                                }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cModel in Model.UserProgramViewModel.Select((v, i) => new { v, i }))
+                            {
+                                var key = String.Format("UserProgramViewModel[{0}].", cModel.i);
+                    <tr>
+                        <td>
+                            @(cModel.i + 1)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => cModel.v.ProgramName)
+                        </td>
+                        <td>
+                            @switch (cModel.v.ProgramClass)
+                                        {
+                                            case "1":
+                            @UserProgramResource.ProgramPc
+                                                break;
+                                            case "2":
+                            @UserProgramResource.ProgramHandy
+                                                break;
+                                            case "3":
+                            @UserProgramResource.ProgramReport
+                                                break;
+                                            case "4":
+                            @UserProgramResource.ProgramIOrF
+                                                break;
+                                            case "5":
+                            @UserProgramResource.ProgramHandyApi
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                        </td>
+                        @switch (Model.UserProgramViewModel[0].PermissionLevel)
+                                    {
+                                        case ProgramPermissionLevelClasses.PermissionLevelUserManager:
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass2, new { htmlAttributes = new { tabindex = "1" }, @class = "_pm", Name = key + "UsableClass2" })
+                                </div>
+                            </div>
+                        </td>
+                                            break;
+                                        case ProgramPermissionLevelClasses.PermissionLevelWarehouseManager:
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass3, new { htmlAttributes = new { tabindex = "1" }, @class = "_pm", Name = key + "UsableClass3" })
+                                </div>
+                            </div>
+                        </td>
+                                            break;
+                                        case ProgramPermissionLevelClasses.PermissionLevelClericalWorker:
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass4, new { htmlAttributes = new { tabindex = "1" }, @class = "_pm", Name = key + "UsableClass4" })
+                                </div>
+                            </div>
+                        </td>
+                                            break;
+                                        case ProgramPermissionLevelClasses.PermissionLevelWarehouseWorker:
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass5, new { htmlAttributes = new { tabindex = "1" }, @class = "_pm", Name = key + "UsableClass5" })
+                                </div>
+                            </div>
+                        </td>
+                                            break;
+                                        case ProgramPermissionLevelClasses.PermissionLevelPartTimeJobber:
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass6, new { htmlAttributes = new { tabindex = "1" }, @class = "_pm", Name = key + "UsableClass6" })
+                                </div>
+                            </div>
+                        </td>
+                                            break;
+                                        case ProgramPermissionLevelClasses.PermissionLevelHeadOfficeWorker:
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass7, new { htmlAttributes = new { tabindex = "1" }, @class = "_pm", Name = key + "UsableClass7" })
+                                </div>
+                            </div>
+                        </td>
+                                            break;
+                                        default:
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass2, new { htmlAttributes = new { tabindex = "1" }, @class = "_pm", Name = key + "UsableClass2" })
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass3, new { htmlAttributes = new { tabindex = "2" }, @class = "_pm", Name = key + "UsableClass3" })
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass4, new { htmlAttributes = new { tabindex = "3" }, @class = "_pm", Name = key + "UsableClass4" })
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass5, new { htmlAttributes = new { tabindex = "4" }, @class = "_pm", Name = key + "UsableClass5" })
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass6, new { htmlAttributes = new { tabindex = "5" }, @class = "_pm", Name = key + "UsableClass6" })
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(modelItem => cModel.v.UsableClass7, new { htmlAttributes = new { tabindex = "6" }, @class = "_pm", Name = key + "UsableClass7" })
+                                </div>
+                            </div>
+                        </td>
+                                            break;
+                                    }
+                        <td class="template" hidden>
+                            @Html.HiddenFor(modelItem => cModel.v.ProgramId, new { Name = key + "ProgramId" })
+                            @Html.HiddenFor(modelItem => cModel.v.ProgramClass, new { Name = key + "ProgramClass" })
+                            @Html.HiddenFor(modelItem => cModel.v.ProgramName, new { Name = key + "ProgramName" })
+                            @Html.HiddenFor(modelItem => cModel.v.PermissionLevel, new { Name = key + "PermissionLevel" })
+                            @Html.HiddenFor(modelItem => cModel.v.UsableFlg2, new { Name = key + "UsableFlg2" })
+                            @Html.HiddenFor(modelItem => cModel.v.UsableFlg3, new { Name = key + "UsableFlg3" })
+                            @Html.HiddenFor(modelItem => cModel.v.UsableFlg4, new { Name = key + "UsableFlg4" })
+                            @Html.HiddenFor(modelItem => cModel.v.UsableFlg5, new { Name = key + "UsableFlg5" })
+                            @Html.HiddenFor(modelItem => cModel.v.UsableFlg6, new { Name = key + "UsableFlg6" })
+                            @Html.HiddenFor(modelItem => cModel.v.UsableFlg7, new { Name = key + "UsableFlg7" })
+                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount2, new { Name = key + "UpdateCount2" })
+                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount3, new { Name = key + "UpdateCount3" })
+                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount4, new { Name = key + "UpdateCount4" })
+                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount5, new { Name = key + "UpdateCount5" })
+                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount6, new { Name = key + "UpdateCount6" })
+                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount7, new { Name = key + "UpdateCount7" })
+                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                        </td>
+                    </tr>
+                            }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @* Hidden Fields *@
+
+    <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+    <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+</div>
+
+@* Bottom Nav *@
+@section Basefooter{
+    <div class="btnarea">
+        @*@Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "UserProgram", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })*@
+        <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+        <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+        <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+    </div>
+}
+@Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //UserProgramEdit
+        var UserProgramEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(UserProgramEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(UserProgramEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(UserProgramEdit.SELECTORS.hdUpdateError).val() === UserProgramEdit.CONST.STR_TRUE) {
+                    if ($(UserProgramEdit.SELECTORS.hdUpdateError).attr(UserProgramEdit.CONST.ATTR_ERROR_CODE) === UserProgramEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(UserProgramEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(UserProgramEdit.SELECTORS.exclusiveUpdateDialog, UserProgramEdit.GLOBAL.titleInformation, UserProgramEdit.GLOBAL.msgExclusiveUpdate);
+                        $(UserProgramEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(UserProgramEdit.SELECTORS.hdUpdateError).attr(UserProgramEdit.CONST.ATTR_ERROR_CODE) === UserProgramEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(UserProgramEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(UserProgramEdit.SELECTORS.overWriteRecordDialog, UserProgramEdit.GLOBAL.titleInformation, (UserProgramEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(UserProgramEdit.SELECTORS.AreaId).val())));
+                        $(UserProgramEdit.SELECTORS.btnSubmitOverWriteDialog).attr(UserProgramEdit.SELECTORS.form, UserProgramEdit.SELECTORS.frmUpdate).attr(UserProgramEdit.CONST.FORM_METHOD, UserProgramEdit.CONST.POST).attr(UserProgramEdit.CONST.FORM_ACTION, '@Url.Action("Update", "UserProgram", new { area = "Master" })').attr(UserProgramEdit.SELECTORS.form, UserProgramEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            UserProgramEdit.init();
+        });
+
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+    </script>
+}

@@ -1,0 +1,266 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Arrival.Resources;
+@using Wms.Areas.Arrival.ViewModels.InputPurchase;
+@model Wms.Areas.Arrival.ViewModels.InputPurchase.InputPurchase02ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_ARR_InputPurchase02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("Update", "InputPurchase", FormMethod.Post, new { id = "frmUpdate" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="headareawithborder">
+        <table class="headtable">
+            <tr>
+                <td>@InputPurchaseResource.ArrivePlanDateS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.SearchConditions.ArrivePlanDate)
+                </td>
+                <td>@InputPurchaseResource.VendorS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.SearchConditions.VendorId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.SearchConditions.VendorName)
+                </td>
+            </tr>
+            <tr>
+                <td>@InputPurchaseResource.InvoiceNoS</td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.SearchConditions.InvoiceNo)
+                </td>
+                <td>@InputPurchaseResource.PoIdS</td>
+                <td colspan="2">
+                    @Html.DisplayFor(modelItem => modelItem.SearchConditions.PoId)
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+    </div>
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.Results.InputPurchase02s != null)
+    {
+        if (Model.Results.InputPurchase02s.Count() > 0)
+        {
+            <div class="sublbarea no_border stock_detail_head">
+                <div class="sortarea">
+                    <ul>
+                        <li>
+                            @InputPurchaseResource.SkuQtySum @Html.DisplayFor(model => model.SearchConditions.ItemSkuQtySum)
+                        </li>
+                        <li>
+                            @InputPurchaseResource.ArrivePlanQtySum @Html.DisplayFor(model => model.SearchConditions.ArrivePlanQtySum)
+                        </li>
+                        <li>
+                            @InputPurchaseResource.ResultQtySum @Html.DisplayFor(model => model.SearchConditions.ResultQtySum)
+                        </li>
+                        <li>
+                            <button id="btnAllSet" type="button" class="btn btn-outline-dark btn-sm" onclick="AllSet()" @(Model.SearchConditions.ResultQtySum == 0 ? "" : "disabled")>@InputPurchaseResource.BtnAllSet</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        }
+    }
+    if (Model.Results.InputPurchase02s != null)
+    {
+
+        @* Container *@
+        <div class="Container">
+
+            @* Content *@
+            @if (Model.Results.InputPurchase02s.Count() == 0)
+            {
+                <div>
+                    <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <div class="tb_scroll">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.InvoiceSeq
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.BoxNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.CategoryName1
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.Item
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.ItemColor
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.ItemSize
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.Jan
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.ArrivePlanQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @InputPurchaseResource.ResultQty
+                                    </th>
+                                    <th hidden>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (var i = 0; i < Model.Results.InputPurchase02s.Count(); i++)
+                                {
+                                    var key = String.Format("InputPurchase02s[{0}].", i);
+                                    <tr>
+                                        <td class="align-middle text-right">
+                                            @(i + 1)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].InvoiceSeq)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].BoxNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].CategoryName1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemId)<br />
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemSizeName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].Jan)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.InputPurchase02s[i].PlanQty)
+                                        </td>
+                                        <td class="align-middle w_9_normal">
+                                            @Html.EditorFor(modelItem => modelItem.Results.InputPurchase02s[i].InputResultQty, new { htmlAttributes = new { @class = "w_6_short text-right", id = key + "InputResultQty", onchange = "ResetBtn()" } })
+                                            @Html.ValidationMessageFor(modelItem => modelItem.Results.InputPurchase02s[i].InputResultQty)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].InvoiceSeq)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].BoxNo)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].CategoryName1)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemId)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemName)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemColorId)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemColorName)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemSizeId)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].ItemSizeName)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].Jan)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].PlanQty, new { id = key + "PlanQty" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].PackingResultQty)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].ShipperId)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].CenterId)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].Seq)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].LineNo)
+                                            @Html.HiddenFor(modelItem => modelItem.Results.InputPurchase02s[i].UpdateCount)
+                                            <input type="hidden" id="isConfirmed" name="isConfirmed" value="0" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div> }
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @if (Model.SearchConditions.FromPurchaseReference)
+        {
+            @Html.ActionLink(FormsResource.BTN_RETURN, "DetailResultInput", "PurchaseReference", new { area = "Arrival" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+        }
+        else
+        {
+            @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "InputPurchase", new { area = "Arrival" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+        }
+        <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+        <button type="button" id="btnResultInput" class="btn btn-dark btnsize _pm" @(Model.Results.InputPurchase02s != null && Model.Results.InputPurchase02s.Count() > 0 ? "" : "disabled")>@InputPurchaseResource.BtnUpdate</button>
+        <button id="btnConfirm" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_Confirm" hidden></button>
+    </div>
+}
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Confirm", Message = (string)ViewBag.ErrorMessage })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            if ('@ViewBag.Status' == '@ProcedureStatus.ConfirmLoss') {
+                $("#btnConfirm").click();
+            }
+        });
+
+        $('#Confirm').on("click", function () {
+            $('#isConfirmed').val('1');
+            var urlAction = '@Url.Action("Update", "InputPurchase", new { area = "Arrive" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        $("#btnResultInput").on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        function AllSet() {
+            for (var i = 0; i <@Model.Results.InputPurchase02s.Count(); i++) {
+                if ($("input[ id='InputPurchase02s[" + i + "].InputResultQty' ] ").val() == '') {
+                    $("input[ id='InputPurchase02s[" + i +"].InputResultQty' ] ").val($("input[ id='InputPurchase02s["+i+"].PlanQty' ] ").val());
+                }
+            }
+                $("#btnAllSet").attr('disabled', 'disabled');
+        }
+        function ResetBtn() {
+            var have = false;
+            for (var i = 0; i <@Model.Results.InputPurchase02s.Count(); i++) {
+                if ($("input[ id='InputPurchase02s[" + i + "].InputResultQty' ] ").val() != '') {
+                    have = true;
+                    break;
+                }
+            }
+            if (!have) {
+                $("#btnAllSet").removeAttr('disabled');
+            } else {
+                $("#btnAllSet").attr('disabled', 'disabled');
+            }
+        }
+    </script>
+}

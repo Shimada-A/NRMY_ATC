@@ -1,0 +1,781 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Resources;
+@model Wms.ViewModels.Notice.NoticeViewModel
+@{
+    ViewBag.Title = Wms.Resources.HomeResource.ReceptionNoticeBtnText;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@* 共通ヘッダー *@
+@Html.Partial("_DetailHeader", Model)
+
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.ReceiveDetails.NoticeReceiveRows != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.ReceiveDetails.NoticeReceiveRows.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfFileName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfSeq
+                                </th>
+                                @switch (Model.DetailHeader.TableName)
+                                {
+                                    case "R_PO":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PoId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PoCenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_ARRIVE_PLANS":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PoId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PoCenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.BranchNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ArriveCenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ArrivePlanDate
+                                        </th>
+                                        break;
+                                    case "R_FOLLOW_DB":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ShipInstructId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.DbCenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ShipToStoreId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.InstructDate
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_FIRST_DB":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ShipInstructId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.DbCenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ShipToStoreId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.DistributeDate
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_TRANSFER_PLANS":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.SlipNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.TransferFromStoreId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.TransferToCenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.SlipDate
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_DELIVERY_SLIPS":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.DeliverySlipNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.SlipDate
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PoId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_ASN":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.DeliverySlipNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.SlipDate
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PoId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CartonId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_ARRIVE_RESULT_UNRCV":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.DeliverySlipNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.SlipDate
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PoId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        break;
+                                    case "R_ARRIVE_RESULTS":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PoId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ArriveCenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.BranchNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PartnerSlipNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CartonId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_TRANSFER_RESULTS":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.SlipNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.TransferFromStoreId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.TransferToCenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.BoxNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_SHIP_PACKING_INFO":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.BoxNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_INVENTORY_SCAN":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.InventoryNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.SizeId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.LocationCd
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.BoxNo
+                                        </th>
+                                        break;
+                                    case "R_PACKING_ARRIVE_PLANS":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.BoxNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.BoxSeq
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.InvoiceNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.InvoiceSeq
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        break;
+                                    case "R_ECSHIPS":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ShipInstructId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ShipInstructSeq
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        break;
+                                    case "R_GAS":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.GasBatchNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSkuID
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.BoxNo
+                                        </th>
+                                        break;
+                                    case "R_ITEM_SKU":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemColorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSizeId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.VendorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.Jan
+                                        </th>
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfErrColumnComment
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfErrClass
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("frmDetailReceive", "Notice", FormMethod.Post, new { id = "frmDetailReceive" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.ReceiveDetails.NoticeReceiveRows.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("NoticeReceiveRows[{0}].", cModel.i);
+                            <tr>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.RowNo)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.IfFileName)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.IfSeq)
+                                </td>
+                                @switch (Model.DetailHeader.TableName)
+                                {
+                                    case "R_PO":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.PoId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_ARRIVE_PLANS":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.PoId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BranchNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArriveCenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivePlanDate)
+                                        </td>
+                                        break;
+                                    case "R_FOLLOW_DB":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InstructDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_FIRST_DB":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.DistributeDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_TRANSFER_PLANS":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransferFromStoreId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransferToCenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_DELIVERY_SLIPS":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.PoId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_ASN":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.PoId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CartonId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_ARRIVE_RESULT_UNRCV":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.PoId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        break;
+                                    case "R_ARRIVE_RESULTS":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.PoId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BranchNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.PartnerSlipNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CartonId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_TRANSFER_RESULTS":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.SlipNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransferFromStoreId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransferToCenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_SHIP_PACKING_INFO":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_INVENTORY_SCAN":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                        </td>
+                                        break;
+                                    case "R_PACKING_ARRIVE_PLANS":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BoxSeq)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InvoiceNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InvoiceSeq)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        break;
+                                    case "R_ECSHIPS":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructSeq)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        break;
+                                    case "R_GAS":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.GasBatchNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSkuId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                        </td>
+                                        break;
+                                    case "R_ITEM_SKU":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.VendorId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                        </td>
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.IfErrColumnComment)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.IfErrClassNm)
+                                </td>
+                            </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Notice", new { rowId = Model.DetailHeader.RowId }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+
+    </script>
+}

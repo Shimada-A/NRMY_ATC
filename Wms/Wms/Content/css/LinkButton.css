@@ -1,0 +1,98 @@
+﻿/*
+    LinkButton
+    aタグの見た目をボタンにする
+*/
+a.btn1 {
+    width: 160px;
+    height: 44px;
+    border-radius: 3px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    display: inline-flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: #273238;
+    color: #FFF;
+}
+
+a.btn2 {
+    width: 160px;
+    height: 44px;
+    border-radius: 3px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    display: inline-flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: #ffffff;
+    border: 1px solid #263138;
+    color: #111111;
+}
+
+a.btn4 {
+    width: 160px;
+    height: 44px;
+    border-radius: 3px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    display: inline-flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid #ffffff;
+    color: #ffffff;
+}
+
+a.btn.btn5 {
+    width: 160px;
+    height: 44px;
+    border-radius: 3px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    display: inline-flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: #FFF;
+    border: 1px solid #FF0000;
+    color: #FF0000;
+}
+
+a[disabled] {
+    background-color: #cccccc;
+    border: 1px solid #999999;
+    color: #999999;
+}
+
+a.btn_small {
+    border-radius: 3px;
+    font-weight: bold;
+    display: inline-flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    cursor: pointer;
+    width: auto;
+    height: 32px;
+    padding: 0 16px;
+    line-height: 32px;
+    font-size: 1.2rem;
+}
+
+@media all and (-ms-high-contrast:none) {
+    a.btn_small {
+        padding-top: 2px;
+    }
+}

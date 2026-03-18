@@ -1,0 +1,758 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Arrival.Resources;
+@model Wms.Areas.Arrival.ViewModels.ConfirmActual.ConfirmActualViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_ARR_ConfirmActual;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "ConfirmActual", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table class="w-search">
+            <tr>
+                <td class="tdtitle">@ConfirmActualResource.CenterIdS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@ConfirmActualResource.ArrivalStatusS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.ArrivalStatus,
+                                (IEnumerable<SelectListItem>)ViewBag.ArrivalStatus,
+                                new { id = "ddlArrivalStatus", tabindex = "16" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ConfirmActualResource.ArrivePlanDateS</td>
+                <td>
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.ArrivePlanDateFrom, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                    &nbsp;-&nbsp;
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.ArrivePlanDateTo, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                    <span>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArrivePlanDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArrivePlanDateTo, "", new { })
+                    </span>
+                </td>
+                <td class="tdtitle">@ConfirmActualResource.InvoiceNo</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.InvoiceNo, new { htmlAttributes = new { @id = "txtInvoiceNo", tabindex = "17" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ConfirmActualResource.ArriveDateS</td>
+                <td>
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.ArriveDate, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                    <span>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArriveDate, "", new { })
+                    </span>
+                </td>
+                <td class="tdtitle">@ConfirmActualResource.PoIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.PoId, new { htmlAttributes = new { @id = "txtPoId", tabindex = "18" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ConfirmActualResource.DivisionCdS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.DivisionCd,
+                                (IEnumerable<SelectListItem>)ViewBag.DivisionList,
+                                CommonResource.None, new { id = "ddlDivisionCd", tabindex = "5" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@ConfirmActualResource.ItemIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @id = "txtItemId", tabindex = "19" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ConfirmActualResource.BrandIdS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "6" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "7" } })
+                    <div class="search">
+                        <button type="button" id="btnBrandId" class="search_btn" tabindex="8" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ConfirmActualResource.VendorIdS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.VendorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtVendorId", tabindex = "9" } })
+                    @Html.EditorFor(model => model.SearchConditions.VendorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtVendorName", tabindex = "10" } })
+                    <div class="search">
+                        <button type="button" id="btnVendor" class="search_btn" tabindex="11" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ConfirmActualResource.CategoryIdS</td>
+                <td colspan="3">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId1,
+                                (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                CommonResource.None, new { id = "ddlCategoryId1", tabindex = "12", onchange = "CategoryChange(1)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId2,
+                                (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                CommonResource.None, new { id = "ddlCategoryId2", tabindex = "13", disabled = "disabled", onchange = "CategoryChange(2)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId3,
+                                (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                CommonResource.None, new { id = "ddlCategoryId3", tabindex = "14", disabled = "disabled", onchange = "CategoryChange(3)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId4,
+                                (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                CommonResource.None, new { id = "ddlCategoryId4", tabindex = "15", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "ConfirmActual", new { area = "Arrival" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark head-btn" id="btnSearch" tabindex="20" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        <div style="display:none">
+            <table>
+                @if (Model.Results.ConfirmActuals != null)
+                {
+                    for (int i = 0; i < Model.Results.ConfirmActuals.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.ConfirmActuals[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.ConfirmActuals[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.ConfirmActuals[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.ConfirmActuals[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.ConfirmActuals != null)
+{
+    if (Model.Results.ConfirmActuals.Count() > 0)
+    {
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.ConfirmActuals.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.ConfirmActuals.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.ConfirmActuals, Page => Url.Action("Search", "ConfirmActual", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @ConfirmActualResource.ItemSkuSum @Html.DisplayFor(model => model.SearchConditions.ItemSkuSum)
+                    </li>
+                    <li>
+                        @ConfirmActualResource.ArrivePlanQtySum @Html.DisplayFor(model => model.SearchConditions.ArrivePlanQtySum)
+                    </li>
+                    <li>
+                        @ConfirmActualResource.ResultQtySum @Html.DisplayFor(model => model.SearchConditions.ResultQtySum)
+                    </li>
+                    <li>
+                        @ConfirmActualResource.ArrivePlanSlipQtySum @Html.DisplayFor(model => model.SearchConditions.ArrivePlanSlipQtySum)
+                    </li>
+                    <li>
+                        @ConfirmActualResource.ResultSlipQtySum @Html.DisplayFor(model => model.SearchConditions.ResultSlipQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.ConfirmActuals.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    &nbsp;
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.ArrivePlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.ArriveDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.Vendor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.InvoiceNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.PoId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.CategopyName1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.ItemIdName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.SkuQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.PlanBoxNoQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.ResultBoxNoQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.ArrivePlanQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.ResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmActualResource.ArrivalStatus
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Update", "ConfirmActual", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.ConfirmActuals.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("ConfirmActuals[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="w_checkbox align-middle">
+                                            <label class="checkboxgroup">
+                                                @Html.CheckBoxFor(modelItem => cModel.v.IsCheck, new { @id = (key + "CheckedValue"), @class = "check-box", onclick = "SetCheckValue(" + @cModel.i + ")" })
+                                                <span class="chk_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.ConfirmActuals.PageNumber - 1) * Model.Results.ConfirmActuals.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivePlanDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArriveDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.VendorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.VendorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InvoiceNo)
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            @Html.DisplayFor(modelItem => cModel.v.PoId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.SkuQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.PlanBoxNoQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultBoxNoQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivePlanQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivalStatus):
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivalStatusName)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ArrivePlanDate, new { Name = key + "ArrivePlanDate" })
+                                            @Html.HiddenFor(modelItem => cModel.v.InvoiceNo, new { Name = key + "InvoiceNo" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    @Html.Partial("_CheckBoxCounter")
+    <div class="btnarea">
+        <button id="btnUpdateConfirmedArrivalHidden" type="button" class="btn btn-outline-danger btnsize _pm" data-toggle="modal" data-target="#confirm_ConfirmedArrival" hidden>@FormsResource.BTN_CONFIRM_DELETE</button>
+        <button type="submit" id="btnUpdateConfirmedArrival" class="btn btn-outline-danger btnsize _pm">@FormsResource.BTN_CONFIRM_DELETE</button>
+
+        <button type="submit" id="btnJumpScreen" class="btn btn-outline-dark btnsize" form="frmSearch" formmethod="post" formaction=@Url.Action("Jump", "ConfirmActual", new { area = "Arrival", controller = "ConfirmActual", action = "Jump" })>@FormsResource.BTN_PURCHASEREFERENCE_DETAIL</button>
+
+        <button id="btnUpdateArrivedHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_Arrived" hidden>@FormsResource.BTN_CONFIRM_ACTUAL</button>
+        <button type="submit" id="btnUpdateArrived" class="btn btn-dark btnsize _pm">@FormsResource.BTN_CONFIRM_ACTUAL</button>
+
+    </div>
+}
+
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_VendorSearchModal.cshtml")
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "ConfirmedArrival", Message = MessagesResource.QUE_CONFIRM_DELETE })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Arrived", Message = MessagesResource.QUE_CONFIRM_ACTUAL })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+     * Country class
+     */
+    var curentSelectedCnt = 0;
+    var curentSelectedCntDiff = 0;
+    var ConfirmActualView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=checkbox][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            rowSelected: '#spnCheckedCounter',
+            ddlArrivalStatus: '#ddlArrivalStatus',
+            ddlSortKey: '#ddlSortKey',
+            chkChecked: ':checkbox:checked',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnJumpScreen: '#btnJumpScreen',
+            btnUpdateConfirmedArrival: '#btnUpdateConfirmedArrival',
+            btnUpdateArrived: '#btnUpdateArrived',
+            btnBrandId: '#btnBrandId',
+            brandId:'#txtBrandId',
+            brandName:'#txtBrandName',
+            brandSelect: '#brandSelect',
+            btnVendor:'#btnVendor',
+            vendorId:'#txtVendorId',
+            vendorName:'#txtVendorName',
+            vendorSelect: '#vendorSelect',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus(0);
+                brandSearchModal.init();
+                vendorSearchModal.init();
+                curentSelectedCnt = $(ConfirmActualView.SELECTORS.chkCheckedInTable).length;
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Stop event fired when click to checkbox
+                 */
+                $(ConfirmActualView.SELECTORS.chkLabel).click(function (evt) {
+                    evt.stopPropagation();
+                });
+
+                /**
+                 * Check box click
+                 */
+                $(ConfirmActualView.SELECTORS.chkInTable).click(function (evt) {
+                    evt.stopPropagation();
+                    curentSelectedCntDiff = curentSelectedCnt - $(ConfirmActualView.SELECTORS.chkCheckedInTable).length;
+                    ConfirmActualView.setButtonStatus(curentSelectedCntDiff);
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(ConfirmActualView.SELECTORS.ddlSort).change(function (val) {
+                    $(ConfirmActualView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(ConfirmActualView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(ConfirmActualView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(ConfirmActualView.SELECTORS.btnBrandId).on("click", brandSearchModal.open);
+
+                /**
+                * 仕入先検索ダイアログの設定
+                */
+                $(ConfirmActualView.SELECTORS.btnVendor).on("click", vendorSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(ConfirmActualView.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(ConfirmActualView.SELECTORS.brandId).val(brandId);
+                        $(ConfirmActualView.SELECTORS.brandName).val(brandName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(ConfirmActualView.SELECTORS.vendorSelect).on("click", function () {
+                    $('#vendorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var vendorId = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        var vendorName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                        $(ConfirmActualView.SELECTORS.vendorId).val(vendorId);
+                        $(ConfirmActualView.SELECTORS.vendorName).val(vendorName);
+                    })
+                });
+
+                /**
+                 * Button check all clicked
+                 */
+                $(ConfirmActualView.SELECTORS.btnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("AllSelectedSearch", "ConfirmActual", new { area= "Arrival" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+
+                /**
+                 * Button UnCheck all clicked
+                 */
+                $(ConfirmActualView.SELECTORS.btnUnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("UnSelectedSearch", "ConfirmActual", new { area= "Arrival" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+
+                // Display row is selected
+                //$(ConfirmActualView.SELECTORS.rowSelected).text($(ConfirmActualView.SELECTORS.chkCheckedInTable).length);
+                $(ConfirmActualView.SELECTORS.rowSelected).text(@Model.SearchConditions.SelectedCnt - difCnt );
+
+                // Enable/Disable button btnJumpScreen
+                if ($(ConfirmActualView.SELECTORS.rowSelected).text() > 0 && $(ConfirmActualView.SELECTORS.ddlArrivalStatus).val() == '4' ) {
+                    if (getUsable_Class() == 3)
+                    {
+                        $(ConfirmActualView.SELECTORS.btnUpdateConfirmedArrival).removeAttr('disabled');
+                    }
+                } else {
+                    $(ConfirmActualView.SELECTORS.btnUpdateConfirmedArrival).attr('disabled', 'disabled');
+                }
+
+                // Enable/Disable button btnJumpScreen
+                if ($(ConfirmActualView.SELECTORS.rowSelected).text() == 1) {
+                    $(ConfirmActualView.SELECTORS.btnJumpScreen).removeAttr('disabled');
+                } else {
+                    $(ConfirmActualView.SELECTORS.btnJumpScreen).attr('disabled', 'disabled');
+                }
+
+                // Enable/Disable button btnJumpScreen
+                if ($(ConfirmActualView.SELECTORS.rowSelected).text() > 0 && $(ConfirmActualView.SELECTORS.ddlArrivalStatus).val() == '3' ) {
+                    if (getUsable_Class() == 3)
+                    {
+                        $(ConfirmActualView.SELECTORS.btnUpdateArrived).removeAttr('disabled');
+                    }
+                } else {
+                    $(ConfirmActualView.SELECTORS.btnUpdateArrived).attr('disabled', 'disabled');
+                }
+
+
+
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        ConfirmActualView.init();
+        $("#ddlSortKey").removeClass("input-validation-error");
+        if ($("#ddlCategoryId1").val() != '') {
+            $("#ddlCategoryId2").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId2").val() != '') {
+                $("#ddlCategoryId3").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId3").val() != '') {
+                $("#ddlCategoryId4").removeAttr('disabled');
+        }
+
+        @* Pageを変更時 *@
+        $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+            var urlAction = '@Url.Action("Search", "ConfirmActual", new { area= "Arrival" })';
+            var pageUrl = urlAction + '?Page=';
+            var page = $(item).attr("href").replace(pageUrl, "");
+            page = page.replace("&class=btn-outline-dark", "");
+            $(item).attr("href", "javascript:void(0);").click(function () {
+                $("#hidPage").val(page);
+                $("#hidSearchType").val("SortPage");
+                $("#frmSearch").attr("action", urlAction);
+                $("#frmSearch").attr("method", "POST");
+                $("#frmSearch").submit();
+            });
+        });
+
+    });
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "ConfirmActual", new { area= "Arrival" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Search() {
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "ConfirmActual", new { area = "Arrival" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        function GetCategoryList(id) {
+                    var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            id: id + 1,
+                            category1: $("#ddlCategoryId1").val(),
+                            category2: $("#ddlCategoryId2").val(),
+                            category3: $("#ddlCategoryId3").val()
+                        },
+                        success: function (data) {
+                            $("#ddlCategoryId" + (id + 1)).html("");
+                            $("#ddlCategoryId" + (id + 1)).html(data.html);
+                        }
+                    });
+        }
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+
+        function SetCheckValue(lineNo) {
+            $('input[type=checkbox][id$="SearchConditions.ConfirmActuals[' + lineNo + '].CheckedValue"]').each(function (i, item) {
+                $(item).trigger('click');
+            });
+        }
+
+        $('#btnUpdateConfirmedArrival').on("click", function () {
+            $('#btnUpdateConfirmedArrivalHidden').click();
+        });
+
+        $('#btnUpdateArrived').on("click", function () {
+            $('#btnUpdateArrivedHidden').click();
+        });
+
+        $('#ConfirmedArrival').on("click", function () {
+            var urlAction = '@Url.Action("UpdateConfirmedArrival", "ConfirmActual", new { area = "Arrival" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        $('#Arrived').on("click", function () {
+            var urlAction = '@Url.Action("UpdateArrived", "ConfirmActual", new { area = "Arrival" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+    </script>
+}
+
+

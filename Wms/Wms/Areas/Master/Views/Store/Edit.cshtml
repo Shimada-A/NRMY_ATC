@@ -1,0 +1,436 @@
+﻿@using Share.Common.Resources;
+@using Share.Common;
+@using Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.Store.Detail
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Store02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Store", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @* Container *@
+<div class="Container">
+    @if (Model != null)
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.ShipperId)
+        @Html.HiddenFor(model => model.StoreId)
+        @Html.HiddenFor(model => model.StoreClass)
+        @Html.HiddenFor(model => model.StoreName1)
+        @Html.HiddenFor(model => model.StoreShortName)
+        @Html.HiddenFor(model => model.DivisionId)
+        @Html.HiddenFor(model => model.DivisionName)
+        @Html.HiddenFor(model => model.EcClass)
+        @Html.HiddenFor(model => model.StoreRankId)
+        @Html.HiddenFor(model => model.StoreMail1)
+        @Html.HiddenFor(model => model.OpenDate)
+        @Html.HiddenFor(model => model.CloseDate)
+        @Html.HiddenFor(model => model.PrefId)
+        @Html.HiddenFor(model => model.SaleBaseClass)
+        @Html.HiddenFor(model => model.ControlCenterId)
+        @Html.HiddenFor(model => model.RoundClass)
+        @Html.HiddenFor(model => model.TempStoreClass)
+        //閉店区分追加
+        @Html.HiddenFor(model => model.CloseClass)
+        @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+    <div class="form_content">
+        <dl>
+            <dt>@Html.DisplayName(StoreResource.StoreId)</dt>
+            <dd>
+                @Html.Raw(Model.StoreId)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(StoreResource.StoreName)</dt>
+            <dd>
+                @Html.Raw(Model.StoreName1)
+                @Html.Raw(Model.StoreName2)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayNameFor(model => model.StoreShortName)</dt>
+            <dd>
+                @Html.Raw(Model.StoreShortName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreZip)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.StoreZip, new { htmlAttributes = new { tabindex = "1", @placeholder = "", @class = "_pm" } })
+                @Html.ValidationMessageFor(model => model.StoreZip, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StorePrefName)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.StorePrefName, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "_pm" } })
+                @Html.ValidationMessageFor(model => model.StorePrefName, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreCityName)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.StoreCityName, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "w_40_normal _pm" } })
+                @Html.ValidationMessageFor(model => model.StoreCityName, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreAddress1)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.StoreAddress1, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "w_40_normal _pm" } })
+                @Html.ValidationMessageFor(model => model.StoreAddress1, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreAddress2)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.StoreAddress2, new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "w_40_normal _pm" } })
+                @Html.ValidationMessageFor(model => model.StoreAddress2, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreAddress3)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.StoreAddress3, new { htmlAttributes = new { tabindex = "6", @placeholder = "", @class = "w_40_normal _pm" } })
+                @Html.ValidationMessageFor(model => model.StoreAddress3, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreTel)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.StoreTel, new { htmlAttributes = new { tabindex = "7", @placeholder = "", @class = "_pm" } })
+                @Html.ValidationMessageFor(model => model.StoreTel, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreFax)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.StoreFax, new { htmlAttributes = new { tabindex = "8", @placeholder = "", @class = "_pm" } })
+                @Html.ValidationMessageFor(model => model.StoreFax, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreMail1)
+            </dt>
+            <dd>
+                @Html.Raw(Model.StoreMail1)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.EcClass)
+            </dt>
+            <dd>
+                @Html.Raw(Model.EcClass)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreRankId)
+            </dt>
+            <dd>
+                @Html.Raw(Model.StoreRankId)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.OpenDate)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.OpenDate, "{0:yyyy/MM/dd}")
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.CloseDate)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CloseDate, "{0:yyyy/MM/dd}")
+            </dd>
+        </dl>
+        @*<dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.AreaId)
+            </dt>
+            <dd>
+                @Html.Raw(Model.AreaId)
+            </dd>
+        </dl>*@
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.PrefId)
+            </dt>
+            <dd>
+                @Html.Raw(Model.PrefId)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StockOutDisableFlag)
+            </dt>
+            <dd>
+                <label class="chklist">
+                    @Html.CheckBoxFor(model => model.StockOutDisableFlag, new { tabindex = "9", @placeholder = "", @class = "check-box _pm" })
+                    <span class="chk_parts">
+                    </span>
+                </label>
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.InspectionMustFlag)
+            </dt>
+            <dd>
+                <label class="chklist">
+                    @Html.CheckBoxFor(model => model.InspectionMustFlag, new { tabindex = "10", @placeholder = "", @class = "check-box _pm" })
+                    <span class="chk_parts">
+                    </span>
+                </label>
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayName(StoreResource.Division)
+            </dt>
+            <dd>
+                @Html.Raw(Model.DivisionName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.InvoiceStoreName)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.InvoiceStoreName, new { htmlAttributes = new { tabindex = "11", @placeholder = "", @class = "w_40_normal _pm" } })
+                @Html.ValidationMessageFor(model => model.InvoiceStoreName, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.PatternId)
+            </dt>
+            <dd>
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                                model => model.PatternId,
+                                (IEnumerable<SelectListItem>)ViewBag.PatternIdList, CommonResource.None, new { id = "ddlPatternId", @class = "_pm" })
+                        @Html.HiddenFor(model => model.PatternId)
+                    </div>
+                </div>
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.SaleBaseClass)
+            </dt>
+            <dd>
+                @Html.Raw(Model.SaleBaseClass)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.ControlCenterId)
+            </dt>
+            <dd>
+                @Html.Raw(Model.ControlCenterId)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.RoundClass)
+            </dt>
+            <dd>
+                @Html.Raw(Model.RoundClass)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.TempStoreClass)
+            </dt>
+            <dd>
+                @Html.Raw(Model.TempStoreClass)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.CloseClass)
+            </dt>
+            <dd>
+                @Html.Raw(Model.CloseClass)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.DeleteFlag)
+            </dt>
+            <dd>
+                <label class="chklist">
+                    @Html.CheckBoxFor(model => model.DeleteFlag, new { tabindex = "12", @class = "check-box _pm", onclick = "return false;" })
+                    <span class="chk_parts">
+                    </span>
+                </label>
+            </dd>
+        </dl>
+    </div>
+
+        @* Hidden Fields *@
+
+        <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+        <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+    }
+</div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Store", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+            <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+        </div>
+    }
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //StoreMasterEdit
+        var StoreMasterEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(StoreMasterEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(StoreMasterEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(StoreMasterEdit.SELECTORS.hdUpdateError).val() === StoreMasterEdit.CONST.STR_TRUE) {
+                    if ($(StoreMasterEdit.SELECTORS.hdUpdateError).attr(StoreMasterEdit.CONST.ATTR_ERROR_CODE) === StoreMasterEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(StoreMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(StoreMasterEdit.SELECTORS.exclusiveUpdateDialog, StoreMasterEdit.GLOBAL.titleInformation, StoreMasterEdit.GLOBAL.msgExclusiveUpdate);
+                        $(StoreMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(StoreMasterEdit.SELECTORS.hdUpdateError).attr(StoreMasterEdit.CONST.ATTR_ERROR_CODE) === StoreMasterEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(StoreMasterEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(StoreMasterEdit.SELECTORS.overWriteRecordDialog, StoreMasterEdit.GLOBAL.titleInformation, (StoreMasterEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(StoreMasterEdit.SELECTORS.AreaId).val())));
+                        $(StoreMasterEdit.SELECTORS.btnSubmitOverWriteDialog).attr(StoreMasterEdit.SELECTORS.form, StoreMasterEdit.SELECTORS.frmUpdate).attr(StoreMasterEdit.CONST.FORM_METHOD, StoreMasterEdit.CONST.POST).attr(StoreMasterEdit.CONST.FORM_ACTION, '@Url.Action("Update", "Store", new { area = "Master" })').attr(StoreMasterEdit.SELECTORS.form, StoreMasterEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        /**
+         * Register event click for buttons
+         */
+        $(document).ready(function () {
+            StoreMasterEdit.init();
+        });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

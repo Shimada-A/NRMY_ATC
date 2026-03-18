@@ -1,0 +1,229 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+@using Share.Common;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.Index
+@{
+
+    ViewBag.Title = EditLayoutResource.EditLayout_Select;
+    Layout = "_EditLayoutBase.cshtml";
+}
+@using (Html.BeginForm("SearchIndex", "EditLayout", FormMethod.Get, new { id = "frmSearch" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div id="div_search" class="head head_white">
+
+        <table>
+            <tr>
+                <td class="tdtitle_10">@EditLayoutResource.IoClass :</td>
+                <td colspan="5">
+                    @Html.EnumDropDownInSortArea(model => model.IoClass,
+                     htmlAttributes: new { tabindex = "8" })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_10">@EditLayoutResource.LayoutName :</td>
+                <td colspan="5">
+                    @Html.EditorFor(model => model.LayoutName, new { htmlAttributes = new { @class = "w_30_normal", tabindex = "6" } })
+                    @Html.LikeMark(CommonsResource.Like)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="5" class="text-right">
+                    <div style="width:1000px;">
+                        @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "EditLayout", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
+                        <button type="button" class="btn btn-outline-dark head-btn" id="btnSearch" tabindex="15">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+}
+
+@Html.Partial("_Message")
+
+@if (Model.Results != null)
+{
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @EditLayoutResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EditLayoutResource.IoClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EditLayoutResource.LayoutName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EditLayoutResource.MakeUser
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EditLayoutResource.LastUpdateUser
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Detail", "EditLayout", FormMethod.Post, new { id = "frmData" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Results[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            @Html.BooleanRadioButtonFor(model => model.Results[cModel.i].Checked, onClickEvent: "checkRadio();")
+                                        </td>
+
+                                        <td class="align-middle text-right w_no">
+                                            @(cModel.i + 1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.HiddenFor(model => model.Results[cModel.i].TemplateId)
+                                            @Html.HiddenFor(model => model.Results[cModel.i].IoClass)
+                                            @Html.DisplayAndHiddenFor(modelItem => Model.Results[cModel.i].IoClassName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayAndHiddenFor(modelItem => Model.Results[cModel.i].TemplateName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayAndHiddenFor(modelItem => Model.Results[cModel.i].MakeUserName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayAndHiddenFor(modelItem => Model.Results[cModel.i].LastUpdateUserName)
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+@section EditLayoutBaseFooter{
+    <div class="btnarea">
+        <button type="button" id="btnCreate" class="btn  btn-outline-dark btnsize">@EditLayoutResource.Create</button>
+        <button type="button" id="btnDelete" class="btn btn-outline-danger btnsize">@EditLayoutResource.Delete</button>
+        <button type="button" id="btnDetail" class="btn btn-outline-dark btnsize">@EditLayoutResource.ToDetail</button>
+    </div>
+}
+
+@section EditLayoutScripts{
+    <script>
+        $(function () {
+            // イベント
+            addClickEvent('#btnCreate', function () {
+                var ioClass = $('#IoClass').val();
+                // 新規データ重複チェック
+                // 作成しようとしているデータが存在していないかをチェック
+                $.get(
+                    '@Url.EditLayoutAction("SearchLayout")',
+                    { shipperId: shipperId, ioClass:ioClass , templateName: $('#LayoutName').val() },
+                    function (data) {
+                        // レスポンスデータのTemplateNameがセットされていれば、既に登録されている
+                        if (data.TemplateName != null) {
+                            alert('@EditLayoutResource.ExistsLayoutName');
+                            return;
+                        }
+
+                        // 存在していなければ新規作成
+                        if (ioClass == "Import") {
+                            getForm('#frmSearch', '@Url.EditLayoutAction("EditImport")');
+                        } else {
+                            postForm('#frmSearch', '@Url.EditLayoutAction("EditOutputFromIndex")');
+                        }
+                    }
+                );
+            });
+
+            // 詳細画面へ
+            addClickEvent('#btnDetail', function () {
+                var ioClass = $('input[type=radio]:checked').parents('tr').find('input[name$="IoClass"]').val();
+                if (ioClass == "Import") {
+                    postForm('#frmData', '@Url.EditLayoutAction("EditImportFromIndex")');
+                } else {
+                    postForm('#frmData', '@Url.EditLayoutAction("EditOutputFromIndex")');
+                }
+            });
+
+            // 各イベント設定
+            // 削除処理呼び出し
+            addClickEvent('#btnDelete', function () {
+                postForm('#frmData','@Url.EditLayoutAction("Delete")');
+            });
+            addClickEvent('#btnSearch', search); // 検索
+            addChangeEvent('#IoClass', checkSearchValues); // IO区分の変更イベント
+            addChangeEvent('#LayoutName', checkSearchValues); // レイアウト名変更イベント
+
+            // 値初期化
+            checkSearchValues();
+            checkRadio();
+        });
+
+        function search() {
+            getForm('#frmSearch','@Url.EditLayoutAction("SearchIndex")');
+        }
+
+        $('#LayoutName').on('keydown', function (e) {
+            if (e.keyCode === 13) {
+                search();
+            }
+        });
+
+        // 入出力区分とレイアウト名が共に入力された場合のみ、
+        // 新規登録ボタン押下可能とする
+        function checkSearchValues() {
+            var ioClass = $('#IoClass');
+            var layoutName = $('#LayoutName');
+            if (ioClass.val() == 'None' || ioClass.val() == undefined
+                || layoutName.val() == '' || layoutName.val() == undefined) {
+                itemOff('#btnCreate');
+            } else {
+                itemOn('#btnCreate');
+            }
+        }
+
+        // ラジオボタンのチェックイベント
+        // ボタンのon/off切り替え
+        function checkRadio() {
+            var radios = $('input[type=radio]:checked');
+            if (radios.length == 0) {
+                itemOff('#btnDelete');
+                itemOff('#btnDetail');
+            } else {
+                itemOn('#btnDelete');
+                itemOn('#btnDetail');
+            }
+        }
+    </script>
+}
+

@@ -1,0 +1,697 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Helpers;
+@using Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.PurchaseReturns.PurchaseReturnsViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_RET_PurchaseReturns;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("Search", "PurchaseReturns", FormMethod.Post, new { id = "frmSearch", @class = "show_scroll" }))
+{
+    <div id="div_search" class="head head_white collapse">
+
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnsResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                            model => model.SearchConditions.CenterId
+                            , Wms.Common.Profile.User.UserId
+                            , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr style="display: none;">
+                <td class="tdtitle">@PurchaseReturnsResource.VendorS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.VendorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtVendorId", tabindex = "2" } })
+                    @Html.EditorFor(model => model.SearchConditions.VendorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtVendorName", tabindex = "3" } })
+                    <div class="search">
+                        <button type="button" id="btnVendor" class="search_btn" tabindex="11" />
+                    </div>
+                    @Html.RequiredMark()
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                    @Html.ValidationMessageFor(model => model.SearchConditions.VendorId)
+                </td>
+                <td style="color:red">@TempData["VENDOR_CHECK"]</td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnsResource.ItemIdS</td>
+                <td class="">
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemId", tabindex = "4" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.ItemId)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnsResource.JanS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtJan", tabindex = "5" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.Jan)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnsResource.ItemSkuIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemSkuId", tabindex = "6" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.ItemSkuId)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "PurchaseReturns", new { area = "Returns" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button type="button" class="btn btn-outline-dark head-btn" id="btnSearch" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.Print, new { id = "hidPrint" })
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value="@Model.SearchConditions.Seq" />
+        <input type="hidden" name="SearchConditions.ZeroFlgCnt" id="hidZeroFlgCnt" value="@Model.SearchConditions.ZeroFlgCnt" />
+    </div>
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+    if (Model.Results.PurchaseReturns != null && Model.Results.PurchaseReturns.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.PurchaseReturns.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.PurchaseReturns.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.PurchaseReturns, Page => Url.Action("ReSearch", "PurchaseReturns", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+        if (Model.Results.PurchaseReturns.Count() > 0)
+        {
+            <div class="sublbarea no_border stock_detail_head" style="display: none;">
+                <div class="sortarea">
+                    <ul>
+                        <li>
+                            @PurchaseReturnsResource.VendorS @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[0].VendorId) @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[0].VendorName)
+                        </li>
+                        <li>
+                            @PurchaseReturnsResource.StockQtySumS @Html.DisplayFor(model => Model.Results.PurchaseReturns[0].StockQtySum)
+                        </li>
+                        <li id="StockQtySumDisp">
+                            @PurchaseReturnsResource.ReturnQtySumS @Html.DisplayFor(model => Model.Results.PurchaseReturns[0].StockQtySum)
+                        </li>
+                        @Html.HiddenFor(model => Model.Results.PurchaseReturns[0].StockQtySum, new { @id = "StockQtySum" })
+                    </ul>
+                </div>
+            </div>
+        }
+    }
+    if (Model.Results.PurchaseReturns != null)
+    {
+        @* Container *@
+        <div class="Container">
+
+            @* Content *@
+            @if (Model.Results.PurchaseReturns.Count() == 0)
+            {
+                <div>
+                    <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <div class="text-right">
+                        @Html.Label(PurchaseReturnsResource.RetuenQtyComment, new { @class = "color-blue" })
+                    </div>
+                    <div class="tb_scroll" style="height: 64vh;">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.CategoryName1
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.Item
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.ItemColor
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.ItemSize
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.Jan
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.NormalBuyingPrice
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.StockQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.InvoiceNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.BuyingPrice
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.ReturnableQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PurchaseReturnsResource.ReturnQty
+                                    </th>
+                                    <th class="bg-grey">
+
+                                    </th>
+                                    <th hidden>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @using (Html.BeginForm("Detail", "EcReference", FormMethod.Post, new { id = "frmUpdate" }))
+                                {
+                                    for (int i = 0; i < Model.Results.PurchaseReturns.Count(); i++)
+                                    {
+                                        var key = String.Format("EcReference01s[{0}].", Model.Results.PurchaseReturns[i]);
+                                        <tr>
+                                            <td class="align-middle text-right w_no">
+                                                @(i + 1)
+                                                @Html.HiddenFor(modelItem => Model.Results.PurchaseReturns[i].LineNo)
+                                                @Html.HiddenFor(modelItem => Model.Results.PurchaseReturns[i].Seq, new { @id = "Seq_" + i })
+                                                @Html.HiddenFor(modelItem => Model.Results.PurchaseReturns[i].ItemSkuId, new { @id = "ItemSkuId_" + i })
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].CategoryName1)
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].ItemId)<br />
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].ItemName)
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].ItemColorId)<br />
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].ItemColorName)
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].ItemSizeId)<br />
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].ItemSizeName)
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].Jan)
+                                            </td>
+                                            <td class="align-middle text-right">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].NormalBuyingPrice)
+                                            </td>
+                                            <td class="align-middle text-right">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].StockQty)
+                                                @Html.HiddenFor(modelItem => Model.Results.PurchaseReturns[i].StockQty, new { @id = "StockQty_" + i })
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].InvoiceNo)
+                                                @Html.HiddenFor(modelItem => Model.Results.PurchaseReturns[i].InvoiceNo, new { @id = "InvoiceNo_" + i })
+                                            </td>
+                                            <td class="align-middle text-right">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].BuyingPrice)
+                                                @Html.HiddenFor(modelItem => Model.Results.PurchaseReturns[i].BuyingPrice, new { @id = "BuyingPrice_" + i })
+                                            </td>
+                                            <td class="align-middle text-right">
+                                                @Html.DisplayFor(modelItem => Model.Results.PurchaseReturns[i].ReturnableQty)
+                                                @Html.HiddenFor(modelItem => Model.Results.PurchaseReturns[i].ReturnableQty, new { @id = "ReturnableQty_" + i })
+                                                @Html.HiddenFor(modelItem => Model.Results.PurchaseReturns[i].ArriveQty, new { @id = "ArriveQty_" + i })
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                @Html.EditorFor(modelItem => Model.Results.PurchaseReturns[i].ReturnQty, new { htmlAttributes = new { @id = "ReturnQty_" + i, @onchange = "inputCheck(" + i + ");", @class = "w_5_normal" } })
+                                                @Html.ValidationMessageFor(modelItem => Model.Results.PurchaseReturns[i].ReturnQty, "")
+                                                @Html.Label(" ", new { id = "ReturnQtyMessage" + i })
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <button type="button" class="btn btn-dark" data-search-type="invoice" data-index="@i">@PurchaseReturnsResource.InvoiceNoSearch</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                        <input type="hidden" id="clickRowIndex" />
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+<div id="dialog" class="i02_01">
+</div>
+@*Bottomnav*@
+@section Basefooter{
+<div class="btnarea">
+    @if (Model.Results.PurchaseReturns != null && Model.Results.PurchaseReturns.Count() > 0)
+    {
+        <button type="button" id="btnCreateMessageDialogHidden" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_CreateMsg" hidden>@PurchaseReturnsResource.BTN_CREATE</button>
+        <button type="button" id="btnPriceMessageDialogHidden" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_PriceMsg" hidden>@FormsResource.BTN_UPDATE</button>
+        <button type="button" id="btnMultiInvoiceMessageDialogHidden" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_MultiInvoiceMsg" hidden></button>
+        <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+        <button type="button" id="btnCreate" class="btn btn-dark btnsize" disabled="disabled">@PurchaseReturnsResource.BTN_CREATE</button>
+    }
+</div>
+}
+@{
+}
+@using (Html.BeginForm("Search", "PurchaseReturns", FormMethod.Post, new { id = "frmPrint" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.SearchConditions.Ret)
+}
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "CreateMsg", Message = @PurchaseReturnsResource.CreateMsg })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "PriceMsg", Message = @PurchaseReturnsResource.PriceMsg })
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "MultiInvoiceMsg", Message = @PurchaseReturnsResource.MultiInvoiceMsg })
+@section LayoutScripts{
+    <script>
+        $(document).ready(function () {
+            //vendorReturnSearchModal.init();
+            var length = $("#listData").find("tr").length;
+            var btnCnt = 0;
+            for (var i = 0; i < length; i++) {
+                if (Number($("#ReturnQty_" + i).val()) > 0) {
+                    btnCnt = btnCnt + 1;
+                }
+                else {
+                    $("#btnCreate").attr('disabled', true)
+                }
+            }
+            if (btnCnt > 0) {
+                $("#btnCreate").attr('disabled', false)
+            }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var $form = $("#frmSearch");
+                var urlAction ='@Url.Action("ReSearch", "PurchaseReturns", new { area= "Returns" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                });
+            });
+
+            if ($("#hidPrint").val() == "Print") {
+                $("#hidPrint").val("")
+                //window.open("about:blank", "newtab");
+                var urlAction ='@Url.Action("ReportPrint", "PurchaseReturns", new { area= "Returns" })';
+                var $form = $("#frmPrint");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.attr("target", "newtab");
+                $form.submit();
+                $form.attr("target", "_self");
+            }
+
+            $("input").on("keydown", function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+
+                    var inputObj = $("input:visible");
+                    var nextIndex = inputObj.index(this) + 1;
+                    if (inputObj[nextIndex]) {
+                        $("input:visible")[nextIndex].focus();
+                    }
+                }
+            });
+        });
+
+        function Search() {
+            if (!$("#txtItemId").val() && !$("#txtJan").val() && !$("#txtItemSkuId").val()) {
+                $("#txtItemId")
+                    .data("rule-required", true)
+                    .data("msg-required", "@Wms.Areas.Returns.Resources.PurchaseReturnsResource.RequiredEitherJan");
+                $("#txtJan")
+                    .data("rule-required", true)
+                    .data("msg-required", "@Wms.Areas.Returns.Resources.PurchaseReturnsResource.RequiredEitherJan");
+                $("#txtItemSkuId")
+                    .data("rule-required", true)
+                    .data("msg-required", "@Wms.Areas.Returns.Resources.PurchaseReturnsResource.RequiredEitherJan");
+            } else {
+                $("#txtItemId").data("rule-required", false);
+                $("#txtJan").data("rule-required", false);
+                $("#txtItemSkuId").data("rule-required", false);
+            }
+
+            if (!validateForm($('#frmSearch'))) {
+                return;
+            }
+
+            $("#hidSearchType").val("Search");
+            var urlAction = '@Url.Action("Search", "PurchaseReturns", new { area = "Returns" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        @*ボタン活性化処理/返品数合計計算*@
+        $('input[type="number"]').change(function () {
+            var length = $("#listData").find("tr").length;
+            var btnCnt = 0;
+            for (var i = 0; i < length; i++) {
+                if (Number($("#ReturnQty_" + i).val()) > 0) {
+                    btnCnt = btnCnt + 1;
+                }
+                else {
+                    $("#btnCreate").attr('disabled', true)
+                }
+            }
+            if (btnCnt > 0) {
+                $("#btnCreate").attr('disabled', false)
+            }
+            @*返品数合計計算*@
+            var stockSumBefore = $("#StockQtySum").val();
+            var stockDiffSum = 0;
+            for (var i = 0; i < length - 1; i++) {
+                stockDiffSum = stockDiffSum + ($("#StockQty_" + i).val() - $("#ReturnQty_" + i).val());
+            }
+            $("#StockQtySumDisp").html('返品数：' + (stockSumBefore - stockDiffSum));
+
+        });
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("ReSearch", "PurchaseReturns", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        @*入力値チェック*@
+        function inputCheck(row) {
+            var stockQty = Number($("#StockQty_" + row).val());
+            var returnQty = Number($("#ReturnQty_" + row).val());
+            if (returnQty > stockQty) {
+                $('#ReturnQtyMessage' + row).html('<span id="ReturnQtyMessage" class="">@PurchaseReturnsResource.StockOverMsg</span>');
+                $('#ReturnQtyMessage' + row).addClass("field-validation-error");
+                $("#ReturnQty_" + row).addClass("input-validation-error");
+                return false;
+            }
+
+            var returnableQty = Number($('#ReturnableQty_' + row).val());
+            if (returnableQty < returnQty) {
+                $('#ReturnQtyMessage' + row).html('<span id="ReturnQtyMessage" class="">@PurchaseReturnsResource.ReturnableOverMsg</span>');
+                $('#ReturnQtyMessage' + row).addClass("field-validation-error");
+                $("#ReturnQty_" + row).addClass("input-validation-error");
+                return false;
+            }
+
+            $('#ReturnQtyMessage' + row).html("");
+            $('#ReturnQtyMessage' + row).removeClass("field-validation-error");
+            $("#ReturnQty_" + row).removeClass("input-validation-error");
+            return true;
+        }
+
+        $('#btnCreate').on("click", function () {
+            @* 複数納品書番号チェック *@
+            var len = $("#listData").find("tr").length;
+            var array = [];
+            for (var i = 0; i < len; i++) {
+                var invoiceNo = $('#InvoiceNo_' + i).val();
+                var returnQty = Number($("#ReturnQty_" + i).val());
+                if (returnQty > 0) {
+                    if ($.inArray(invoiceNo, array) == -1) {
+                        array.push(invoiceNo);
+                    }
+                }
+            }
+
+            if (array.length != 1) {
+                $('#btnMultiInvoiceMessageDialogHidden').click();
+                return;
+            }
+
+            //モーダル表示
+            $('#btnCreateMessageDialogHidden').click();
+        });
+
+        @*登録前チェック*@
+        $('#CreateMsg').on("click", function () {
+            @* モーダル非表示 *@
+            $('.modal').fadeOut();
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $('#icesword').modal('hide');
+
+            var len = $("#listData").find("tr").length;
+            var errCnt = 0;
+            @*返品数チェック*@
+            for (var i = 0; i < len; i++) {
+                if (!inputCheck(i)) errCnt++;
+            }
+            if (errCnt > 0) {
+                return;
+            }
+            @*下代に0円が含まれるかチェック*@
+            var chkCnt = 0;
+            for (var i = 0; i < len; i++) {
+                if ($("#BuyingPrice_" + i).val() == 0) {
+                    chkCnt = chkCnt + 1
+                }
+            }
+
+            if (chkCnt > 0) {
+                $('#btnPriceMessageDialogHidden').click();
+                return;
+            }
+
+            //window.open("about:blank", "newtab");
+            var $form = $("#frmSearch");
+            var urlAction = '@Url.Action("Create", "PurchaseReturns", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        $("#PriceMsg").on("click", function () {
+            var $form = $("#frmSearch");
+            var urlAction = '@Url.Action("Create", "PurchaseReturns", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        //モーダル設定箇所
+        var current_scrollY;
+        $(function () {
+            $("#dialog").dialog({
+                autoOpen: false,
+                width: 1100,
+                Height: 100,
+                modal: true,
+                position: { my: 'center top+30', at: 'center top', of: "body" },
+                dialogClass: 'modalct',
+                resizable: false
+            });
+
+            $(".ui-icon-closethick").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    $("#dialog").dialog("close");
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+            $(".btn_close").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    /*$("#dialog").dialog("close");*/
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+        });
+        $(document.body).on("click",
+            ".ui-widget-overlay",
+            function () {
+                $.each($(".ui-dialog"),
+                    function () {
+                        var $dialog = $(this).children(".ui-dialog-content");
+                        if ($dialog.dialog("option", "modal")) {
+                            $('.wrap').attr({ style: '' });
+                            $('html, body').prop({ scrollTop: current_scrollY });
+                            $dialog.dialog("close");
+                        }
+                    });
+            });
+
+        //モーダル表示(仕入先)
+        $("#btnVendor").on("click", function () {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialog").dialog("open");
+            searchDialogData();
+        });
+
+        //表示データ取得(仕入先)
+        function searchDialogData() {
+            var urlAction = '../PurchaseReturns/VenderReturnModal';
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    centerId: $("#ddlCenterId").val()
+                },
+                success: function (data) {
+                    $("#dialog").html("");
+                    $("#dialog").html(data);
+                    $("#dialog").dialog(
+                        {
+                            width: 1200,
+                            height: 800
+                        });
+                    $("#vendorReturnSelect").attr('disabled', true);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                }
+            });
+        }
+
+        //モーダル閉じる(仕入先)
+        function closeDialog() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialog').dialog('close');
+        }
+
+        //モーダルラジオボタンチェック時(仕入先)
+        function chkRadio(idx) {
+            $("#chkIndex").val(idx);
+            $("#vendorReturnSelect").attr('disabled', false);
+        }
+
+        //モーダル選択時(仕入先)
+        function chkDialog() {
+            var idx = $("#chkIndex").val();
+            $("#txtVendorId").val($("#hidVendorId" + idx).text().trim());
+            $("#txtVendorName").val($("#hidVendorName" + idx).text().trim());
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialog').dialog('close');
+        }
+
+        //モーダル表示(納品書番号)
+        $('[data-search-type="invoice"]').on("click", function () {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialog").dialog("open");
+
+            var index = $(this).data('index');
+            $('#clickRowIndex').val(index);
+            searchDialogDataInvoiceNo();
+        });
+
+        //表示データ取得(納品書番号)
+        function searchDialogDataInvoiceNo() {
+            var idx = $('#clickRowIndex').val();
+            var urlAction = '@Url.Action("InvoiceModal", "PurchaseReturns", new { area= "Returns" })';
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    centerId: $("#ddlCenterId").val(),
+                    itemSkuId: $('#ItemSkuId_' + idx).val(),
+                    seq: $('#Seq_' + idx).val()
+                },
+                success: function (data) {
+                    $("#dialog").html("");
+                    $("#dialog").html(data);
+                    $("#dialog").dialog(
+                        {
+                            width: 600,
+                            height: 850
+                        });
+                    $("#InvoiceNoReturnSelect").attr('disabled', true);
+                },
+            });
+        }
+
+        //モーダル閉じる(納品書番号)
+        function closeDialogInvoice() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialog').dialog('close');
+        }
+
+        //モーダルラジオボタンチェック時(納品書番号)
+        function chkRadioInvoice(idx) {
+            $("#chkIndexInvoice").val(idx);
+            $("#InvoiceNoReturnSelect").attr('disabled', false);
+        }
+
+        //モーダル選択時(納品書番号)
+        function chkDialogInvoice() {
+            var clickidx = $('#clickRowIndex').val();
+            var chkidx = $("#chkIndexInvoice").val();
+
+            $('#InvoiceNo_' + clickidx).val($('#InvoiceSearch_InvoiceNo_' + chkidx).val());
+            $('#BuyingPrice_' + clickidx).val($('#InvoiceSearch_BuyingPrice_' + chkidx).val());
+            $('#ArriveQty_' + clickidx).val($('#InvoiceSearch_ResultQty_' + chkidx).val());
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("ReSearch", "PurchaseReturns", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+    </script>
+}

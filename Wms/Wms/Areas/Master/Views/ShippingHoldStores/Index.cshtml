@@ -1,0 +1,443 @@
+﻿@model Wms.Areas.Master.ViewModels.ShippingHoldStores.Index
+@{
+    /**/
+
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_ShippingHoldStores;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "ShippingHoldStores", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        <table>
+            <tr>
+                <td class="tbtitle">@ShippingHoldStoreResource.BrandH</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "1" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "2" } })
+                    <div class="search">
+                        <button type="button" id="btnBrand" class="search_btn" tabindex="160" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tbtitle">@ShippingHoldStoreResource.ShipStoreH</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.StoreId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtStoreId", tabindex = "3" } })
+                    @Html.EditorFor(model => model.SearchConditions.StoreName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtStoreName", tabindex = "4" } })
+                    <div class="search">
+                        <button type="button" id="btnStore" class="search_btn _pm" data-toggle="modal" data-target="#SyukkasakiModal" data-id="#txtStoreId" data-name="#txtStoreName" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5.3rem;"></td>
+                <td style="width: 12rem;"></td>
+                <td class="alignright">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "ShippingHoldStores", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="4">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.Seq, new { id = "hidSeq" })
+
+    }
+</div>
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Details.ShippingHoldStores != null)
+{
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Details.ShippingHoldStores.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Details.ShippingHoldStores.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Details.ShippingHoldStores, Page => Url.Action("Search", "ShippingHoldStores", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Details.ShippingHoldStores.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:71vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @ShippingHoldStoreResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShippingHoldStoreResource.BrandId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShippingHoldStoreResource.BrandName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShippingHoldStoreResource.ShipStoreId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ShippingHoldStoreResource.ShipStoreName
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("IndexConfirm", "ShippingHoldStores", FormMethod.Post, new { id = "frmConfirm", @leave_confirm = "yes" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Details.ShippingHoldStores.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("ShippingHoldStores[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="w_checkbox align-middle">
+                                            <label class="checkboxgroup">
+                                                @Html.CheckBox(key + "IsCheck", new { @id = (key + "CheckedValue"), @class = "check-box" })
+                                                <span class="chk_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @Html.DisplayFor(modelItem => cModel.v.No)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BrandId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BrandName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StoreId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StoreName)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.StoreId, new { Name = key + "StoreId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.BrandId, new { Name = key + "BrandId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.No, new { Name = key + "No", @class = "No" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq", @class = "Seq" })
+                                        </td>
+                                    </tr>
+                                }
+                                <input id="hiddata" type="hidden" name="CheckList" />
+                                <input id="hidSeq" type = "hidden" name="Seq" value="@Model.SearchConditions.Seq" />
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="col-auto">
+        @Html.Partial("_CheckBoxCounter")
+    </div>
+    <div class="btnarea">
+        <button id="btnConfirmHidden" type="button" class="btn btn-outline-danger btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>
+            @ShippingHoldStoreResource.BtnConfirm
+        </button>
+        <button type="button" id="btnConfirm" class="btn btn-dark btnsize _pm">@ShippingHoldStoreResource.BtnConfirm</button>
+    </div>
+}
+
+@Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+
+<script>
+
+    var PageView = {
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+            btnConfirm: '#btnConfirm',
+            ddlSortKey: '#ddlSortKey',
+            frmConfirm: 'frmConfirm',
+            btnSubmit: 'button[type=submit],input[type=submit]'
+        },
+
+        /**
+         * Init data
+         */
+        init: function () {
+            this.registerEvent();
+            this.setCheckboxs();
+            this.setButtonStatus();
+            // ドロップダウンリスト
+            $("#ddlSortKey").val('@((byte)Model.SearchConditions.SortKey)');
+            $("#ddlSort").val('@((byte)Model.SearchConditions.Sort)')
+        },
+
+        /**
+         * Register event for control
+         */
+        registerEvent: function () {
+
+            /**
+             * Check box click
+             */
+            $(PageView.SELECTORS.chkInTable).click(function (evt) {
+                evt.stopPropagation();
+                PageView.setButtonStatus();
+            });
+
+            /**
+            * Dropdownlist change item
+            */
+            $(PageView.SELECTORS.ddlSort).change(function (val) {
+                $(PageView.SELECTORS.btnSearch).click();
+            });
+
+            /**
+             * Dropdownlist change item
+             */
+            $(PageView.SELECTORS.ddlSortKey).change(function (val) {
+                $(PageView.SELECTORS.btnSearch).click();
+            });
+
+            $("#btnConfirm").click(function () {
+                var list = PageView.getCheckList();
+                $("#hiddata").val(JSON.stringify(list));
+                $('#btnConfirmHidden').click();
+            });
+
+            $(".confirm-update").click(function () {
+                PageView.setStorageInit();
+                var urlAction = '@Url.Action("IndexConfirm", "ShippingHoldStores", new { area= "Master" })';
+                $("#frmConfirm").attr("action", urlAction);
+                $("#frmConfirm").attr("method", "POST");
+                $("#frmConfirm").submit();
+            });
+        },
+
+        /**
+         * Enable/Disable button Edit
+         */
+        setButtonStatus: function () {
+            // 一つもチェックされていない場合は、確定ボタンを非活性にする
+            if ($("#listData").length) {
+                $(PageView.SELECTORS.btnConfirm).removeAttr('disabled');
+            } else {
+                $(PageView.SELECTORS.btnConfirm).attr('disabled', 'disabled');
+            }
+
+            //検索ボタン押下
+            $(PageView.SELECTORS.btnSearch).click(function () {
+                var urlAction = '@Url.Action("Search", "ShippingHoldStores", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "GET");
+                $form.submit();
+                PageView.setStorageInit();
+            });
+
+            // 全選択ボタン押下時
+            $("#rbCheckAll").click(function () {
+                if ($("#listData").length) {
+                    $(PageView.SELECTORS.chkInTable).prop('checked', true);
+                    PageView.setRowidsFlag(true);
+                }
+            });
+
+            // 全解除ボタン押下時
+            $("#rbUnCheckAll").click(function () {
+                if ($("#listData").length) {
+                    $(PageView.SELECTORS.chkInTable).prop('checked', false);
+                    PageView.setRowidsFlag(false);
+                }
+            });
+            PageView.setCheckboxs('set')
+        },
+
+        setRowidsFlag: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+                var jrid = JSON.parse(rowids);
+                $.each(jrid, function (key) {
+                    jrid[key].ShippingHoldClass = flag;
+                });
+                storage.setItem('PKeys', JSON.stringify(jrid));
+            }
+            PageView.setButtonStatus();
+        },
+
+        setCheckboxs: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+                var cnt = 0;
+                var jrid = JSON.parse(rowids);
+                var checkboxs = $("#listData input[type=checkbox]")
+                checkboxs.each(function () {
+                    var row = $(this).parent().parent().parent();
+                    var rowid = row.find(".No").val();
+                    if (flag == 'set') {
+                        jrid[rowid].ShippingHoldClass = $(this).is(':checked');
+                    }
+                    else {
+                        if (jrid[rowid].ShippingHoldClass) {
+                            $(this).prop("checked", true);
+                        }
+                    }
+                });
+                if (flag == 'set') {
+                    storage.setItem('PKeys', JSON.stringify(jrid));
+                }
+                $.each(jrid, function (key, value) {
+                    if (value.ShippingHoldClass) {
+                        cnt++;
+                    }
+                });
+                if ($('#frmConfirm').length > 0) {
+                    $("#spnCheckedCounter").text(cnt);
+                }
+            }
+        },
+
+        setStorageInit: function () {
+            if (window.localStorage) {
+                var storage = window.localStorage;
+                storage.removeItem('PKeys');
+                var data = {
+                    'Seq': @Model.SearchConditions.Seq,
+                };
+                var url = "@Url.Action("GetRowId", "ShippingHoldStores")";
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    async: false,
+                    success: function (data) {
+                        var rowids = {};
+                        for (var i = 0; data.resultList.length > i; i++) {
+                            rowids[data.resultList[i].No] = {
+                                'ShippingHoldClass': data.resultList[i].ShippingHoldClass,
+                                'Seq': data.resultList[i].Seq,
+                                'No': data.resultList[i].No
+                            };
+                        };
+                        var storage = window.localStorage;
+                        storage.setItem('PKeys', JSON.stringify(rowids));
+                    }
+                });
+            }
+        },
+
+        getCheckList: function () {
+            var list = [];
+            var storage = window.localStorage;
+            rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+                var jrid = JSON.parse(rowids);
+                $.each(jrid, function (key) {
+                    if (jrid[key]) {
+                        list.push(jrid[key]);
+                    }
+                });
+            }
+            return list;
+        }
+    }
+
+     /**
+     * Page loaded
+     */
+    $(document).ready(function () {
+        brandSearchModal.init();
+        if ('@Model.SearchConditions.UpdateWorkFlag' === 'True') {
+             PageView.setStorageInit();
+        }
+        PageView.init();
+    });
+
+     function ClearConditons() {
+         $("#txtBrandId").val("");
+         $("#txtBrandName").val("");
+    }
+
+    /**
+    * ブランド検索ダイアログの設定
+    */
+    $("#btnBrand").on("click", brandSearchModal.open);
+
+    /**
+    *Click button get data Brand
+    */
+    $("#brandSelect").on("click", function () {
+        $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+            var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+            var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+            $("#txtBrandId").val(brandId);
+            $("#txtBrandName").val(brandName);
+        })
+    });
+
+     // Sort
+     function getSortData() {
+         $("#hidSort").val($("#ddlSort").val());
+         $("#hidSortKey").val($("#ddlSortKey").val());
+
+         var $form = $("#frmSearch");
+         var urlAction ='@Url.Action("Search", "ShippingHoldStores", new { area= "Master" })';
+         $form.attr("action", urlAction);
+         $form.attr("method", "GET");
+         $form.submit();
+     }
+
+</script>
+}

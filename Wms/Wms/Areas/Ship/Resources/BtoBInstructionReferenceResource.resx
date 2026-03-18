@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllocDate" xml:space="preserve">
+    <value>データ受信日</value>
+  </data>
+  <data name="AllocDateTimeS" xml:space="preserve">
+    <value>データ受信日：</value>
+  </data>
+  <data name="AllocQty" xml:space="preserve">
+    <value>引当数</value>
+  </data>
+  <data name="AsortUserName" xml:space="preserve">
+    <value>店仕分・摘取担当者</value>
+  </data>
+  <data name="BatchNoS" xml:space="preserve">
+    <value>バッチNo：</value>
+  </data>
+  <data name="BoxNo" xml:space="preserve">
+    <value>ケースNo</value>
+  </data>
+  <data name="BoxNoS" xml:space="preserve">
+    <value>ケースNo：</value>
+  </data>
+  <data name="BrandS" xml:space="preserve">
+    <value>ブランド：</value>
+  </data>
+  <data name="BtnCancel" xml:space="preserve">
+    <value>出荷キャンセル</value>
+  </data>
+  <data name="BtnDetail" xml:space="preserve">
+    <value>指示明細へ</value>
+  </data>
+  <data name="BtnInstructDetail" xml:space="preserve">
+    <value>指示明細</value>
+  </data>
+  <data name="BtnPackageDetail" xml:space="preserve">
+    <value>梱包明細</value>
+  </data>
+  <data name="BtnSkuList" xml:space="preserve">
+    <value>SKU一覧</value>
+  </data>
+  <data name="CancelFlag" xml:space="preserve">
+    <value>出荷キャンセルのみ表示</value>
+  </data>
+  <data name="CancelS" xml:space="preserve">
+    <value>キャンセル：</value>
+  </data>
+  <data name="CategoryName1" xml:space="preserve">
+    <value>分類1</value>
+  </data>
+  <data name="CategoryS" xml:space="preserve">
+    <value>分類：</value>
+  </data>
+  <data name="CenterS" xml:space="preserve">
+    <value>センター：</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="CompleteDate" xml:space="preserve">
+    <value>出荷完了日：</value>
+  </data>
+  <data name="CompleteFlagName" xml:space="preserve">
+    <value>完了状態</value>
+  </data>
+  <data name="DeliNo" xml:space="preserve">
+    <value>送り状No</value>
+  </data>
+  <data name="DeliShiwakeCdS" xml:space="preserve">
+    <value>配送業者仕分コード：</value>
+  </data>
+  <data name="DivisionS" xml:space="preserve">
+    <value>事業部：</value>
+  </data>
+  <data name="EmergencyClassName" xml:space="preserve">
+    <value>緊急</value>
+  </data>
+  <data name="EmergencyS" xml:space="preserve">
+    <value>緊急：</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>未完了</value>
+  </data>
+  <data name="InstructClassName" xml:space="preserve">
+    <value>指示区分</value>
+  </data>
+  <data name="InstructClassS" xml:space="preserve">
+    <value>指示区分：</value>
+  </data>
+  <data name="InstructIdS" xml:space="preserve">
+    <value>出荷指示ID：</value>
+  </data>
+  <data name="InstructQty" xml:space="preserve">
+    <value>予定数</value>
+  </data>
+  <data name="InstructQtySum" xml:space="preserve">
+    <value>予定数合計：</value>
+  </data>
+  <data name="InstructSeqS" xml:space="preserve">
+    <value>明細ID：</value>
+  </data>
+  <data name="Item" xml:space="preserve">
+    <value>品番・品名</value>
+  </data>
+  <data name="ItemColor" xml:space="preserve">
+    <value>カラー</value>
+  </data>
+  <data name="ItemColorId" xml:space="preserve">
+    <value>カラーID</value>
+  </data>
+  <data name="ItemColorName" xml:space="preserve">
+    <value>カラー名</value>
+  </data>
+  <data name="ItemId" xml:space="preserve">
+    <value>品番</value>
+  </data>
+  <data name="ItemIdS" xml:space="preserve">
+    <value>品番：</value>
+  </data>
+  <data name="ItemName" xml:space="preserve">
+    <value>品名</value>
+  </data>
+  <data name="ItemSize" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="ItemSizeId" xml:space="preserve">
+    <value>サイズID</value>
+  </data>
+  <data name="ItemSizeName" xml:space="preserve">
+    <value>サイズ名</value>
+  </data>
+  <data name="ItemSkuSum" xml:space="preserve">
+    <value>SKU数合計：</value>
+  </data>
+  <data name="JAN" xml:space="preserve">
+    <value>JAN</value>
+  </data>
+  <data name="JanS" xml:space="preserve">
+    <value>JAN：</value>
+  </data>
+  <data name="LackOfResultFlag" xml:space="preserve">
+    <value>実績数不足あり</value>
+  </data>
+  <data name="ListDetail" xml:space="preserve">
+    <value>明細情報</value>
+  </data>
+  <data name="ListPackageDetail" xml:space="preserve">
+    <value>梱包明細情報</value>
+  </data>
+  <data name="MainVendorS" xml:space="preserve">
+    <value>代表仕入先：</value>
+  </data>
+  <data name="MakeDateTimeS" xml:space="preserve">
+    <value>受信日時：</value>
+  </data>
+  <data name="MsgStockOutFix" xml:space="preserve">
+    <value>表示されている梱包明細データの欠品確定をします。よろしいですか？</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NouhinPrnUserName" xml:space="preserve">
+    <value>納品書発行担当者</value>
+  </data>
+  <data name="PicQty" xml:space="preserve">
+    <value>ピック数</value>
+  </data>
+  <data name="ResultQty" xml:space="preserve">
+    <value>実績数</value>
+  </data>
+  <data name="ResultQtySum" xml:space="preserve">
+    <value>実績数合計：</value>
+  </data>
+  <data name="SeqSum" xml:space="preserve">
+    <value>明細数合計：</value>
+  </data>
+  <data name="ShipAllocStatusOldS" xml:space="preserve">
+    <value>過去分含む</value>
+  </data>
+  <data name="ShipAllocStatusS" xml:space="preserve">
+    <value>状態：</value>
+  </data>
+  <data name="ShipCancelMsg" xml:space="preserve">
+    <value>選択されている出荷指示データを出荷キャンセルします。よろしいですか？</value>
+  </data>
+  <data name="ShipInstructId" xml:space="preserve">
+    <value>出荷指示ID</value>
+  </data>
+  <data name="ShipInstructIdSum" xml:space="preserve">
+    <value>出荷指示ID数合計：</value>
+  </data>
+  <data name="ShipInstructSeq" xml:space="preserve">
+    <value>明細ID</value>
+  </data>
+  <data name="ShipPlanDate" xml:space="preserve">
+    <value>出荷予定日</value>
+  </data>
+  <data name="ShipPlanDateInstructIdSeq" xml:space="preserve">
+    <value>出荷予定日→出荷指示ID→明細ID</value>
+  </data>
+  <data name="ShipPlanDateInstructIdSku" xml:space="preserve">
+    <value>出荷予定日→出荷指示ID→SKU</value>
+  </data>
+  <data name="ShipPlanDateS" xml:space="preserve">
+    <value>出荷予定日：</value>
+  </data>
+  <data name="ShipStatusName" xml:space="preserve">
+    <value>出荷状況</value>
+  </data>
+  <data name="ShipToQty" xml:space="preserve">
+    <value>出荷先数</value>
+  </data>
+  <data name="ShipToStore" xml:space="preserve">
+    <value>出荷先</value>
+  </data>
+  <data name="ShipToStoreClassS" xml:space="preserve">
+    <value>出荷先区分：</value>
+  </data>
+  <data name="ShipToStoreId" xml:space="preserve">
+    <value>出荷先ID</value>
+  </data>
+  <data name="ShipToStoreInstructIdSeq" xml:space="preserve">
+    <value>出荷先→出荷指示ID→明細ID</value>
+  </data>
+  <data name="ShipToStoreName" xml:space="preserve">
+    <value>出荷先名</value>
+  </data>
+  <data name="ShipToStoreS" xml:space="preserve">
+    <value>出荷先：</value>
+  </data>
+  <data name="SKU" xml:space="preserve">
+    <value>SKU</value>
+  </data>
+  <data name="SkuInstructId" xml:space="preserve">
+    <value>SKU→出荷指示ID</value>
+  </data>
+  <data name="SkuInstructIdSeq" xml:space="preserve">
+    <value>SKU→出荷指示ID→明細ID</value>
+  </data>
+  <data name="SkuS" xml:space="preserve">
+    <value>SKU：</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="StockOutFixFlag" xml:space="preserve">
+    <value>欠品確定あり</value>
+  </data>
+  <data name="StockOutFixQty" xml:space="preserve">
+    <value>欠品確定</value>
+  </data>
+  <data name="StockOutRegFlag" xml:space="preserve">
+    <value>欠品登録あり</value>
+  </data>
+  <data name="StockOutS" xml:space="preserve">
+    <value>欠品：</value>
+  </data>
+  <data name="SUC_CONFIRM" xml:space="preserve">
+    <value>欠品確定処理が正常に終了しました。</value>
+  </data>
+  <data name="SUC_UPDATE" xml:space="preserve">
+    <value>出荷キャンセル処理が正常に終了しました。（バッチNo：{0}）</value>
+  </data>
+  <data name="TransporterName" xml:space="preserve">
+    <value>配送業者</value>
+  </data>
+  <data name="TransporterS" xml:space="preserve">
+    <value>配送業者：</value>
+  </data>
+  <data name="UnAlloc" xml:space="preserve">
+    <value>未引当</value>
+  </data>
+  <data name="StockOutRegQty" xml:space="preserve">
+    <value>欠品登録</value>
+  </data>
+  <data name="DeliNoS" xml:space="preserve">
+    <value>送り状No：</value>
+  </data>
+  <data name="ErrSorting" xml:space="preserve">
+    <value>対象の商品は仕分中です。 欠品確定はできません。</value>
+  </data>
+  <data name="CompleteDateT" xml:space="preserve">
+    <value>完了日</value>
+  </data>
+  <data name="ItemS" xml:space="preserve">
+    <value>アイテム：</value>
+  </data>
+  <data name="OffRate" xml:space="preserve">
+    <value>オフ率</value>
+  </data>
+  <data name="SalesClass" xml:space="preserve">
+    <value>売上区分</value>
+  </data>
+  <data name="SlipDate" xml:space="preserve">
+    <value>伝票日付</value>
+  </data>
+</root>

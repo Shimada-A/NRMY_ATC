@@ -1,0 +1,82 @@
+﻿@using Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.AcceptArrival.AcceptArrival01ViewModel
+@if (Model.Results.AcceptArrival01Result.Count() > 0)
+{
+    <div>
+        <div class="tb_scroll" style="height:60%;width:1000px;">
+            <table class="table table-bordered" id="listData">
+                <thead>
+                    <tr style="line-height:20px!important">
+                        <th class="bg-grey align-middle">
+                            @AcceptArrivalResource.No
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @AcceptArrivalResource.Jan
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @AcceptArrivalResource.Item
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @AcceptArrivalResource.ItemColor
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @AcceptArrivalResource.ItemSize
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @AcceptArrivalResource.ScanQty
+                        </th>
+                        <th class="bg-grey align-middle">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Results.AcceptArrival01Result.Count(); i++)
+                    {
+                        var key = String.Format("InputList[{0}].", i);
+                        <tr style="line-height:20px!important">
+                            <td class="align-middle text-right w_no">
+                                @(i + 1)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.Results.AcceptArrival01Result[i].Jan)
+                                @Html.HiddenFor(modelItem => Model.Results.AcceptArrival01Result[i].Jan)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemId)
+                                @Html.HiddenFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemId)
+                                <br>
+                                @Html.DisplayFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemName)
+                                @Html.HiddenFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemName)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemColorId)
+                                @Html.HiddenFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemColorId)
+                                <br>
+                                @Html.DisplayFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemColorName)
+                                @Html.HiddenFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemColorName)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemSizeId)
+                                @Html.HiddenFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemSizeId)
+                                <br>
+                                @Html.DisplayFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemSizeName)
+                                @Html.HiddenFor(modelItem => Model.Results.AcceptArrival01Result[i].ItemSizeName)
+                            </td>
+                            <td class="align-middle w_9_normal">
+                                @Html.EditorFor(modelItem => Model.Results.AcceptArrival01Result[i].ScanQty, new { htmlAttributes = new { @class = "w_6_short text-right"} })
+                                @Html.ValidationMessageFor(modelItem => Model.Results.AcceptArrival01Result[i].ScanQty)
+                            </td>
+                            <td class="align-middle" style="width:100px">
+                                <div class="btnarea">
+                                    <button type="button" id="btnDelete" class="btn btn-outline-danger btnsize _pm" onclick="Delete('@i')">@FormsResource.BTN_DELETE</button>
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

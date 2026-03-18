@@ -1,0 +1,1563 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Helpers;
+@using Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.PurchaseCorrection.PurchaseCorrectionViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_RET_PurchaseCorrection;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("Add", "PurchaseCorrection", FormMethod.Post, new { id = "frmSearch", @class = "show_scroll" }))
+{
+    <div id="div_search" class="head head_white collapse">
+
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td></td>
+                <td class="tdtitle">@PurchaseCorrectionResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                            model => model.SearchConditions.CenterId
+                            , Wms.Common.Profile.User.UserId
+                            , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" id="rbJan" name="rbBtn" class="radio_input" onclick="SetIsCheck(0)" checked />
+                </td>
+                <td class="tdtitle">@PurchaseCorrectionResource.JanS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @class = "w_10_normal", @id = "txtJan1", name = "txtJan", tabindex = "2" } })
+                </td>
+                <td class="tdtitle">@PurchaseCorrectionResource.InvoiceNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.InvoiceNo, new { htmlAttributes = new { @class = "w_10_normal", @id = "txtInvoiceNo1", name = "txtInvoiceNo", tabindex = "4" } })
+                    <div class="search">
+                        <button type="button" id="btnInvoiceNo1" name="btnInvoiceNo" class="search_btn" tabindex="5" />
+                    </div>
+                </td>
+                <td class="tdtitle_large">@PurchaseCorrectionResource.LocationCdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.LocationCd, new { htmlAttributes = new { @class = "w_14_long", @id = "txtLocationCd1", name = "txtLocationCd", tabindex = "6" } })
+                    <div class="search">
+                        <button type="button" id="btnLocationCd1" name="btnLocationCd" class="search_btn" tabindex="7" />
+                    </div>
+                </td>
+                <td class="tdtitle">@PurchaseCorrectionResource.BoxNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BoxNo, new { htmlAttributes = new { @class = "w_14_long", @id = "txtBoxNo1", name = "txtBoxNo", tabindex = "8" } })
+                    <div class="search">
+                        <button type="button" id="btnBoxNo1" name="btnBoxNo" class="search_btn" tabindex="9" />
+                    </div>
+                </td>
+                <td class="tdtitle">@PurchaseCorrectionResource.SaiQtyS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.SaiQty, new { htmlAttributes = new { @class = "w_5_normal", @id = "txtSaiQty1", tabindex = "10", onchange = "chgSaiQty1()", onblur = "chgSaiQty1()" } })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="11">
+                    @Html.ValidationMessageFor(model => model.SearchConditions.Jan, "", new { id = "Jan-errormessage1" })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.InvoiceNo, "", new { id = "InvoiceNo-errormessage1" })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.LocationCd, "", new { id = "LocationCd-errormessage1" })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.BoxNo, "", new { id = "BoxNo-errormessage1" })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.SaiQty, "", new { id = "SaiQty-errormessage1" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" id="rbInvoiceNo" name="rbBtn" class="radio_input" onclick="SetIsCheck(1)" />
+                </td>
+                <td class="tdtitle">@PurchaseCorrectionResource.InvoiceNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.InvoiceNo, new { htmlAttributes = new { @class = "w_10_normal", @id = "txtInvoiceNo2", name = "txtInvoiceNo", tabindex = "2" } })
+                </td>
+                <td class="tdtitle">@PurchaseCorrectionResource.JanS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @class = "w_10_normal", @id = "txtJan2", name = "txtJan", tabindex = "4" } })
+                    <div class="search">
+                        <button type="button" id="btnJan2" name="btnJan" class="search_btn" tabindex="5" />
+                    </div>
+                </td>
+                <td class="tdtitle_large">@PurchaseCorrectionResource.LocationCdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.LocationCd, new { htmlAttributes = new { @class = "w_14_long", @id = "txtLocationCd2", name = "txtLocationCd", tabindex = "6" } })
+                    <div class="search">
+                        <button type="button" id="btnLocationCd2" name="btnLocationCd" class="search_btn" tabindex="7" />
+                    </div>
+                </td>
+                <td class="tdtitle">@PurchaseCorrectionResource.BoxNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BoxNo, new { htmlAttributes = new { @class = "w_14_long", @id = "txtBoxNo2", name = "txtBoxNo", tabindex = "8" } })
+                    <div class="search">
+                        <button type="button" id="btnBoxNo2" name="btnBoxNo" class="search_btn" tabindex="9" />
+                    </div>
+                </td>
+                <td class="tdtitle">@PurchaseCorrectionResource.SaiQtyS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.SaiQty, new { htmlAttributes = new { @class = "w_5_normal", @id = "txtSaiQty2", tabindex = "10", onchange = "chgSaiQty2()", onblur = "chgSaiQty2()" } })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="11">
+                    @Html.ValidationMessageFor(model => model.SearchConditions.Jan, "", new { id = "InvoiceNo-errormessage2" })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.InvoiceNo, "", new { id = "Jan-errormessage2" })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.LocationCd, "", new { id = "LocationCd-errormessage2" })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.BoxNo, "", new { id = "BoxNo-errormessage2" })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.SaiQty, "", new { id = "SaiQty-errormessage2" })
+                    <input type="hidden" id="isConfirmed" name="isConfirmed" value="0" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="14" class="text-right">
+                    <button id="btnAddHidden" type="button" class="btn btn-outline-danger _pm" data-toggle="modal" data-target="#confirm_CheckMsg" hidden></button>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "PurchaseCorrection", new { area = "Returns" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark head-btn" id="btnAdd" onclick="Add();">@PurchaseCorrectionResource.Add</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value="@Model.SearchConditions.Seq" />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value="@Model.SearchConditions.LineNo" />
+        <input type="hidden" id="hidChk" value="@Model.SearchConditions.CheckRadio" />
+        <input type="hidden" id="hidCaseClass" value="" />
+        <input type="hidden" id="hidStockQty" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.Print, new { id = "hidPrint" })
+    </div>
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+    if (Model.Results.PurchaseCorrection != null)
+    {
+        @* Container *@
+        <div class="Container">
+            <div>
+                <div class="tb_scroll" style="height: 64vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.InvoiceNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.Vendor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.CategoryName1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.Item
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.ItemColor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.ItemSize
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.Jan
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.LocationCd
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.BoxNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.SaiQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.BuyingPrice
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.WBuyingPrice
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseCorrectionResource.SellingPrice
+                                </th>
+                                <th class="bg-grey align-middle">
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Detail", "EcReference", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                for (int i = 0; i < Model.Results.PurchaseCorrection.Count(); i++)
+                                {
+                                    var key = String.Format("EcReference01s[{0}].", Model.Results.PurchaseCorrection[i]);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].LineNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].InvoiceNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].VendorId)<br />
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].VendorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].CategoryName1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].ItemId)<br />
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].ItemSizeName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].Jan)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].LocationCd)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].BoxNo)
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle;">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].SaiQty)
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle;">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].NormalBuyingPrice)
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle;">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].PurchaseBuyingPrice)
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle;">
+                                            @Html.DisplayFor(modelItem => Model.Results.PurchaseCorrection[i].NormalSellingPriceExTax)
+                                        </td>
+                                        <td class="align-middle">
+                                            <button type="button" class="btn btn-dark btn-sm" onclick="Delete(@Model.Results.PurchaseCorrection[i].Seq,@Model.Results.PurchaseCorrection[i].LineNo)">@PurchaseCorrectionResource.BtnDelete</button>
+                                        </td>
+                                        @Html.HiddenFor(modelItem => Model.Results.PurchaseCorrection[i].Seq)
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+}
+<div id="dialogJan" name="dialog" class="i02_01">
+</div>
+<div id="dialogInvoiceNo" name="dialog" class="i02_01">
+</div>
+<div id="dialogCase" name="dialog" class="i02_01">
+</div>
+<div id="dialogLocationCd" name="dialog" class="i02_01">
+</div>
+@using (Html.BeginForm("Search", "PurchaseCorrection", FormMethod.Post, new { id = "frmPrint" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.SearchConditions.Ret)
+}
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button id="btnUpdateHidden" type="button" class="btn btn-outline-danger _pm" data-toggle="modal" data-target="#confirm_CreateMsg" hidden></button>
+        @if (Model.Results.PurchaseCorrection != null && Model.Results.PurchaseCorrection.Count() > 0)
+        {
+            <button type="button" id="btnUpdate" class="btn btn-dark btnsize" disabled="disabled">@PurchaseCorrectionResource.BTN_CREATE</button>
+        }
+    </div>
+}
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "CreateMsg", Message = @PurchaseCorrectionResource.CreateMsg })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "CheckMsg", Message = (string)ViewBag.ErrorMessage })
+
+@section LayoutScripts{
+    <script>
+        $(document).ready(function () {
+            $('#CreateMsg').prop('disabled', false);
+            if ('@ViewBag.Status' == "-103") {
+                $("#btnAddHidden").click();
+                $("#rbJan").show();
+                $("#rbInvoiceNo").show();
+                if ($("#hidChk").val() == 0) {
+                    $("#rbJan").prop('checked', true);
+                    $("#txtJan1").attr('disabled', false);
+                    $("#txtJan2").attr('disabled', true).val("");
+                    $("#btnJan2").attr('disabled', true);
+                    $("#txtInvoiceNo2").attr('disabled', true).val("");
+                    $("#txtLocationCd2").attr('disabled', true).val("");
+                    $("#btnLocationCd2").attr('disabled', true);
+                    $("#txtBoxNo2").attr('disabled', true).val("");
+                    $("#btnBoxNo2").attr('disabled', true);
+                    $("#txtSaiQty2").attr('disabled', true).val("");
+                } else {
+                    //納品書
+                    $("#rbInvoiceNo").prop('checked', true);
+                    $("#txtJan1").attr('disabled', true).val("");
+                    $("#txtInvoiceNo1").attr('disabled', true).val("");
+                    $("#txtLocationCd1").attr('disabled', true).val("");
+                    $("#btnLocationCd1").attr('disabled', true);
+                    $("#txtBoxNo1").attr('disabled', true).val("");
+                    $("#btnBoxNo1").attr('disabled', true);
+                    $("#txtSaiQty1").attr('disabled', true).val("");
+                };
+                var length = $("#listData").find("tr").length;
+                if (length > 0) {
+                    $("#btnUpdate").attr('disabled', false);
+                } else {
+                    $("#btnUpdate").attr('disabled', true);
+                }
+                return;
+            }
+
+            $("#rbJan").show();
+            $("#rbInvoiceNo").show();
+            SetIsCheck(0);
+            var length = $("#listData").find("tr").length;
+            if (length > 0) {
+                $("#btnUpdate").attr('disabled', false);
+            } else {
+                $("#btnUpdate").attr('disabled', true);
+            }
+            $("#btnAdd").attr('disabled', true);
+            $("#hidCaseClass").val("");
+            $("#hidStockQty").val(0);
+            if ($("#hidPrint").val() == "Print") {
+                $("#hidPrint").val("")
+                window.open("about:blank", "newtab");
+                var urlAction ='@Url.Action("ReportPrint", "PurchaseCorrection", new { area= "Returns" })';
+                var $form = $("#frmPrint");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.attr("target", "newtab");
+                $form.submit();
+                $form.attr("target", "_self");
+            }
+        });
+        //ヘッダエンター時処理
+        $('#txtJan1').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                if (JanCheck()) {
+                    $("#txtInvoiceNo1").attr('disabled', false);
+                    $("#btnInvoiceNo1").attr('disabled', false);
+                    $("#txtInvoiceNo1").focus();
+                }
+                return false;
+            }
+        });
+        $('#txtJan1').on("change", function () {
+            if ($('#txtJan1').val() == "" || $('#txtInvoiceNo1').val() == "" || $('#txtLocationCd1').val() == "") {
+                $("#btnAdd").attr('disabled', true);
+            }
+        });
+        $('#txtJan2').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                if (JanCheck()) {
+                    $("#txtLocationCd2").attr('disabled', false);
+                    $("#btnLocationCd2").attr('disabled', false);
+                    $("#txtLocationCd2").focus();
+                }
+                return false;
+            }
+        });
+        $('#txtJan2').on("change", function (e) {
+            if ($('#txtJan2').val() == "" || $('#txtInvoiceNo2').val() == "" || $('#txtLocationCd2').val() == "") {
+                $("#btnAdd").attr('disabled', true);
+            }
+        });
+        $('#txtInvoiceNo1').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                if (InvoiceNoCheck()) {
+                    $("#txtLocationCd1").attr('disabled', false);
+                    $("#btnLocationCd1").attr('disabled', false);
+                    $("#txtLocationCd1").focus();
+                }
+                return false;
+            }
+        });
+        $('#txtInvoiceNo1').on("change", function (e) {
+            if ($('#txtJan1').val() == "" || $('#txtInvoiceNo1').val() == "" || $('#txtLocationCd1').val() == "") {
+                $("#btnAdd").attr('disabled', true);
+            }
+        });
+        $('#txtInvoiceNo2').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                if (InvoiceNoCheck()) {
+                    $("#txtJan2").attr('disabled', false);
+                    $("#btnJan2").attr('disabled', false);
+                    $("#txtJan2").focus();
+                }
+                return false;
+            }
+        });
+        $('#txtInvoiceNo2').on("change", function (e) {
+            if ($('#txtJan2').val() == "" || $('#txtInvoiceNo2').val() == "" || $('#txtLocationCd2').val() == "") {
+                $("#btnAdd").attr('disabled', true);
+            }
+        });
+        $('#txtLocationCd1').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                LocationCdCheck();
+                return false;
+            }
+        });
+        $('#txtLocationCd1').on("change", function (e) {
+            if ($('#txtJan1').val() == "" || $('#txtInvoiceNo1').val() == "" || $('#txtLocationCd1').val() == "") {
+                $("#btnAdd").attr('disabled', true);
+            }
+        });
+        $('#txtLocationCd2').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                LocationCdCheck();
+                return false;
+            }
+        });
+        $('#txtLocationCd2').on("change", function (e) {
+            if ($('#txtJan2').val() == "" || $('#txtInvoiceNo2').val() == "" || $('#txtLocationCd2').val() == "") {
+                $("#btnAdd").attr('disabled', true);
+            }
+        });
+        $('#txtBoxNo1').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                BoxNoCheck();
+                return false;
+            }
+        });
+        $('#txtBoxNo1').on("change", function (e) {
+            if ($('#txtJan1').val() == "" || $('#txtInvoiceNo1').val() == "" || $('#txtLocationCd1').val() == "" || $('#txtBoxNo1').val() == "") {
+                $("#btnAdd").attr('disabled', true);
+            }
+        });
+        $('#txtBoxNo2').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                BoxNoCheck();
+                return false;
+            }
+        });
+        $('#txtBoxNo2').on("change", function (e) {
+            if ($('#txtJan2').val() == "" || $('#txtInvoiceNo2').val() == "" || $('#txtLocationCd2').val() == "" || $('#txtBoxNo2').val() == "") {
+                $("#btnAdd").attr('disabled', true);
+            }
+        });
+        function chgSaiQty1() {
+            if ($('#txtSaiQty1').val() != 0) {
+                if ($('#txtBoxNo1').val() == "" && $("#hidCaseClass").val() != 2) {
+                    if (BaraCheck()) {
+                        if ($('#txtJan1').val() != "" && $('#txtInvoiceNo1').val() != "" && $('#txtLocationCd1').val() != "") {
+                            if ((Number($("#hidStockQty").val()) + Number($("#txtSaiQty1").val()) < 0)) {
+                                $('#SaiQty-errormessage1').html('<span id="SaiQty-error" class="">@PurchaseCorrectionResource.ERR_ADD</span>');
+                                $('#SaiQty-errormessage1').addClass("field-validation-error");
+                                $("#txtSaiQty1").addClass("input-validation-error");
+                                $("#btnAdd").attr('disabled', true);
+                            } else {
+                                $("#btnAdd").attr('disabled', false);
+                            }
+                        }
+                    }
+                } else {
+                    if ($('#txtJan1').val() != "" && $('#txtInvoiceNo1').val() != "" && $('#txtLocationCd1').val() != "") {
+                            if ((Number($("#hidStockQty").val()) + Number($("#txtSaiQty1").val()) < 0)) {
+                                $('#SaiQty-errormessage1').html('<span id="SaiQty-error" class="">@PurchaseCorrectionResource.ERR_ADD</span>');
+                                $('#SaiQty-errormessage1').addClass("field-validation-error");
+                                $("#txtSaiQty1").addClass("input-validation-error");
+                                $("#btnAdd").attr('disabled', true);
+                            } else {
+                                $("#btnAdd").attr('disabled', false);
+                            }
+                    }
+                }
+            } else {
+                $("#btnAdd").attr('disabled', true);
+            }
+            document.activeElement.blur();
+        };
+        function chgSaiQty2() {
+            if ($('#txtSaiQty2').val() != 0) {
+                if ($('#txtBoxNo2').val() == "" && $("#hidCaseClass").val() != 2) {
+                    if (BaraCheck()) {
+                        if ($('#txtJan2').val() != "" && $('#txtInvoiceNo2').val() != "" && $('#txtLocationCd2').val() != "") {
+                            if ((Number($("#hidStockQty").val()) + Number($("#txtSaiQty2").val()) < 0)) {
+                                $('#SaiQty-errormessage2').html('<span id="SaiQty-error" class="">@PurchaseCorrectionResource.ERR_ADD</span>');
+                                $('#SaiQty-errormessage2').addClass("field-validation-error");
+                                $("#txtSaiQty2").addClass("input-validation-error");
+                                $("#btnAdd").attr('disabled', true);
+                            } else {
+                                $("#btnAdd").attr('disabled', false);
+                            }
+                        }
+                    }
+                } else {
+                    if ($('#txtJan2').val() != "" && $('#txtInvoiceNo2').val() != "" && $('#txtLocationCd2').val() != "") {
+                            if ((Number($("#hidStockQty").val()) + Number($("#txtSaiQty2").val()) < 0)) {
+                                $('#SaiQty-errormessage2').html('<span id="SaiQty-error" class="">@PurchaseCorrectionResource.ERR_ADD</span>');
+                                $('#SaiQty-errormessage2').addClass("field-validation-error");
+                                $("#txtSaiQty2").addClass("input-validation-error");
+                                $("#btnAdd").attr('disabled', true);
+                            } else {
+                                $("#btnAdd").attr('disabled', false);
+                            }
+                    }
+                }
+            } else {
+                $("#btnAdd").attr('disabled', true);
+            }
+            document.activeElement.blur();
+        };
+
+        //JAN存在チェック
+        function JanCheck() {
+            var urlAction = '@Url.Action("GetJanCheck", "PurchaseCorrection", new { area= "Returns" })';
+            var error = false;
+            if ($("#hidChk").val() == 0) {
+                if ($("#txtJan1").val() == "") {
+                    if ($('#Jan-errormessage1').text() == "") {
+                        $('#Jan-errormessage1').html('<span id="Jan-error" class="">@PurchaseCorrectionResource.JAN_NULL_ERR</span>');
+                        $('#Jan-errormessage1').addClass("field-validation-error");
+                        $('#txtJan1').addClass("input-validation-error");
+                    }
+                    return false;
+                }
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    async: false,
+                    data: {
+                        jan: $("#txtJan1").val()
+                    },
+                    success: function (data) {
+                        if ($('#Jan-errormessage1').text() == "") {
+                            if (data != null) {
+                                if (data == "0") {
+                                    $('#Jan-errormessage1').html('<span id="Jan-error" class="">@PurchaseCorrectionResource.JAN_NOT_ERR</span>');
+                                    $('#Jan-errormessage1').addClass("field-validation-error");
+                                    $('#txtJan1').addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#Jan-errormessage1').html("");
+                                    $('#Jan-errormessage1').removeClass("field-validation-error");
+                                    $("#txtJan1").removeClass("input-validation-error");
+                                }
+                            }
+                        } else {
+                            if (data == "0") {
+                                $('#Jan-errormessage1').html('<span id="Jan-error" class="">@PurchaseCorrectionResource.JAN_NOT_ERR</span>');
+                                $('#Jan-errormessage1').addClass("field-validation-error");
+                                $("#txtJan1").addClass("input-validation-error");
+                                error = true;
+                            } else {
+                                $('#Jan-errormessage1').html("");
+                                $('#Jan-errormessage1').removeClass("field-validation-error");
+                                $("#txtJan1").removeClass("input-validation-error");
+                            }
+                        }
+                    }
+                });
+                if (error) {
+                    return false;
+                } else {
+                    $('#Jan-errormessage1').html("")
+                    return true;
+                }
+            } else {
+                {
+                    if ($("#txtJan2").val() == "") {
+                        if ($('#Jan-errormessage2').text() == "") {
+                            $('#Jan-errormessage2').html('<span id="Jan-error" class="">@PurchaseCorrectionResource.JAN_NULL_ERR</span>');
+                            $('#Jan-errormessage2').addClass("field-validation-error");
+                            $('#txtJan2').addClass("input-validation-error");
+                        }
+                        return false;
+                    }
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        async: false,
+                        data: {
+                            jan: $("#txtJan2").val()
+                        },
+                        success: function (data) {
+                            if ($('#Jan-errormessage2').text() == "") {
+                                if (data != null) {
+                                    if (data == "0") {
+                                        $('#Jan-errormessage2').html('<span id="Jan-error" class="">@PurchaseCorrectionResource.JAN_NOT_ERR</span>');
+                                        $('#Jan-errormessage2').addClass("field-validation-error");
+                                        $('#txtJan2').addClass("input-validation-error");
+                                        error = true;
+                                    } else {
+                                        $('#Jan-errormessage2').html("");
+                                        $('#Jan-errormessage2').removeClass("field-validation-error");
+                                        $("#txtJan2").removeClass("input-validation-error");
+                                    }
+                                }
+                            } else {
+                                if (data == "0") {
+                                    $('#Jan-errormessage2').html('<span id="Jan-error" class="">@PurchaseCorrectionResource.JAN_NOT_ERR</span>');
+                                    $('#Jan-errormessage2').addClass("field-validation-error");
+                                    $("#txtJan2").addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#Jan-errormessage2').html("");
+                                    $('#Jan-errormessage2').removeClass("field-validation-error");
+                                    $("#txtJan2").removeClass("input-validation-error");
+                                }
+                            }
+                        }
+                    });
+                    if (error) {
+                        return false;
+                    } else {
+                        $('#Jan-errormessage2').html("")
+                        return true;
+                    }
+                }
+            }
+        }
+        //納品書番号存在チェック
+        function InvoiceNoCheck() {
+            var urlAction = '@Url.Action("GetInvoiceNoCheck", "PurchaseCorrection", new { area= "Returns" })';
+            var error = false;
+            if ($("#hidChk").val() == 0) {
+                if ($("#txtInvoiceNo1").val() == "") {
+                    if ($('#InvoiceNo-errormessage1').text() == "") {
+                        $('#InvoiceNo-errormessage1').html('<span id="InvoiceNo-error" class="">@PurchaseCorrectionResource.INVOICE_NO_NULL_ERR</span>');
+                        $('#InvoiceNo-errormessage1').addClass("field-validation-error");
+                        $('#txtInvoiceNo1').addClass("input-validation-error");
+                    }
+                    return false;
+                }
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    async: false,
+                    data: {
+                        centerId: $("#ddlCenterId").val(),
+                        jan: $("#txtJan1").val(),
+                        invoiceNo: $("#txtInvoiceNo1").val()
+                    },
+                    success: function (data) {
+                        if ($('#InvoiceNo-errormessage1').text() == "") {
+                            if (data != null) {
+                                if (data == "0") {
+                                    $('#InvoiceNo-errormessage1').html('<span id="InvoiceNo-error" class="">@PurchaseCorrectionResource.ERR_INVOICE_JAN</span>');
+                                    $('#InvoiceNo-errormessage1').addClass("field-validation-error");
+                                    $('#txtInvoiceNo1').addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#InvoiceNo-errormessage1').html("");
+                                    $('#InvoiceNo-errormessage1').removeClass("field-validation-error");
+                                    $("#txtInvoiceNo1").removeClass("input-validation-error");
+                                }
+                            }
+                        } else {
+                            if (data == "0") {
+                                $('#InvoiceNo-errormessage1').html('<span id="InvoiceNo-error" class="">@PurchaseCorrectionResource.ERR_INVOICE_JAN</span>');
+                                $('#InvoiceNo-errormessage1').addClass("field-validation-error");
+                                $("#txtInvoiceNo1").addClass("input-validation-error");
+                                error = true;
+                            } else {
+                                $('#InvoiceNo-errormessage1').html("");
+                                $('#InvoiceNo-errormessage1').removeClass("field-validation-error");
+                                $("#txtInvoiceNo1").removeClass("input-validation-error");
+                            }
+                        }
+                    }
+                });
+                if (error) {
+                    return false;
+                } else {
+                    $('#InvoiceNo-errormessage1').html("")
+                    return true;
+                }
+            } else {
+                if ($("#txtInvoiceNo2").val() == "") {
+                    if ($('#InvoiceNo-errormessage2').text() == "") {
+                        $('#InvoiceNo-errormessage2').html('<span id="InvoiceNo-error" class="">@PurchaseCorrectionResource.INVOICE_NO_NULL_ERR</span>');
+                        $('#InvoiceNo-errormessage2').addClass("field-validation-error");
+                        $('#txtInvoiceNo2').addClass("input-validation-error");
+                    }
+                    return false;
+                }
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    async: false,
+                    data: {
+                        centerId: $("#ddlCenterId").val(),
+                        jan: "",
+                        invoiceNo: $("#txtInvoiceNo2").val()
+                    },
+                    success: function (data) {
+                        if ($('#InvoiceNo-errormessage2').text() == "") {
+                            if (data != null) {
+                                if (data == "0") {
+                                    $('#InvoiceNo-errormessage2').html('<span id="InvoiceNo-error" class="">@PurchaseCorrectionResource.INVOICE_NO_NOT_ERR</span>');
+                                    $('#InvoiceNo-errormessage2').addClass("field-validation-error");
+                                    $('#txtInvoiceNo2').addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#InvoiceNo-errormessage2').html("");
+                                    $('#InvoiceNo-errormessage2').removeClass("field-validation-error");
+                                    $("#txtInvoiceNo2").removeClass("input-validation-error");
+                                }
+                            }
+                        } else {
+                            if (data == "0") {
+                                $('#InvoiceNo-errormessage2').html('<span id="InvoiceNo-error" class="">@PurchaseCorrectionResource.INVOICE_NO_NOT_ERR</span>');
+                                $('#InvoiceNo-errormessage2').addClass("field-validation-error");
+                                $("#txtInvoiceNo2").addClass("input-validation-error");
+                                error = true;
+                            } else {
+                                $('#InvoiceNo-errormessage2').html("");
+                                $('#InvoiceNo-errormessage2').removeClass("field-validation-error");
+                                $("#txtInvoiceNo2").removeClass("input-validation-error");
+                            }
+                        }
+                    }
+                });
+                if (error) {
+                    return false;
+                } else {
+                    $('#InvoiceNo-errormessage2').html("")
+                    return true;
+                }
+            }
+        }
+        //ロケーション存在チェック
+        function LocationCdCheck() {
+            var urlAction = '@Url.Action("GetLocationCdCheck", "PurchaseCorrection", new { area= "Returns" })';
+            var error = false;
+            if ($("#hidChk").val() == 0) {
+                if ($("#txtLocationCd1").val() == "") {
+                    if ($('#LocationCd-errormessage1').text() == "") {
+                        $('#LocationCd-errormessage1').html('<span id="LocationCd-error" class="">@PurchaseCorrectionResource.STOCK_NULL_ERR</span>');
+                        $('#LocationCd-errormessage1').addClass("field-validation-error");
+                        $('#txtLocationCd1').addClass("input-validation-error");
+                    }
+                    return false;
+                }
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    async: false,
+                    data: {
+                        centerId: $("#ddlCenterId").val(),
+                        jan: $("#txtJan1").val(),
+                        locationCd: $("#txtLocationCd1").val()
+                    },
+                    success: function (data) {
+                        $('#SaiQty-errormessage1').html("");
+                        $('#SaiQty-errormessage1').removeClass("field-validation-error");
+                        $("#txtSaiQty1").removeClass("input-validation-error");
+                        if ($('#LocationCd-errormessage1').text() == "") {
+                            if (data.kbn != null) {
+                                if (data.kbn == "0") {
+                                    $('#LocationCd-errormessage1').html('<span id="LocationCd-error" class="">@PurchaseCorrectionResource.STOCK_NOT_ERR</span>');
+                                    $('#LocationCd-errormessage1').addClass("field-validation-error");
+                                    $('#txtLocationCd1').addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#LocationCd-errormessage1').html("");
+                                    $('#LocationCd-errormessage1').removeClass("field-validation-error");
+                                    $("#txtLocationCd1").removeClass("input-validation-error");
+                                    $("#txtBoxNo1").attr('disabled', false);
+                                    $("#btnBoxNo1").attr('disabled', false);
+                                    $("#txtBoxNo1").focus();
+                                    $("#txtSaiQty1").attr('disabled', false);
+                                    //2:バラ 1:それ以外
+                                    $("#hidCaseClass").val(data.kbn);
+                                    $("#hidStockQty").val(data.stockQty);
+                                }
+                            }
+                        } else {
+                            if (data.kbn == "0") {
+                                $('#LocationCd-errormessage1').html('<span id="LocationCd-error" class="">@PurchaseCorrectionResource.STOCK_NOT_ERR</span>');
+                                $('#LocationCd-errormessage1').addClass("field-validation-error");
+                                $("#txtLocationCd1").addClass("input-validation-error");
+                                error = true;
+                            } else {
+                                $('#LocationCd-errormessage1').html("");
+                                $('#LocationCd-errormessage1').removeClass("field-validation-error");
+                                $("#txtLocationCd1").removeClass("input-validation-error");
+                                $("#txtBoxNo1").attr('disabled', false);
+                                $("#btnBoxNo1").attr('disabled', false);
+                                $("#txtBoxNo1").focus();
+                                $("#txtSaiQty1").attr('disabled', false);
+                                //2:バラ 1:それ以外
+                                $("#hidCaseClass").val(data.kbn);
+                                $("#hidStockQty").val(data.stockQty);
+                            }
+                        }
+                    }
+                });
+                if (error) {
+                    return false;
+                } else {
+                    $('#LocationCd-errormessage1').html("")
+                    return true;
+                }
+            } else {
+                {
+                    if ($("#txtLocationCd2").val() == "") {
+                        if ($('#LocationCd-errormessage2').text() == "") {
+                            $('#LocationCd-errormessage2').html('<span id="LocationCd-error" class="">@PurchaseCorrectionResource.STOCK_NULL_ERR</span>');
+                            $('#LocationCd-errormessage2').addClass("field-validation-error");
+                            $('#txtLocationCd2').addClass("input-validation-error");
+                        }
+                        return false;
+                    }
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        async: false,
+                        data: {
+                            centerId: $("#ddlCenterId").val(),
+                            jan: $("#txtJan2").val(),
+                            locationCd: $("#txtLocationCd2").val()
+                        },
+                        success: function (data) {
+                            $('#SaiQty-errormessage2').html("");
+                            $('#SaiQty-errormessage2').removeClass("field-validation-error");
+                            $("#txtSaiQty2").removeClass("input-validation-error");
+                            if ($('#LocationCd-errormessage2').text() == "") {
+                                if (data.kbn != null) {
+                                    if (data.kbn == "0") {
+                                        $('#LocationCd-errormessage2').html('<span id="LocationCd-error" class="">@PurchaseCorrectionResource.STOCK_NOT_ERR</span>');
+                                        $('#LocationCd-errormessage2').addClass("field-validation-error");
+                                        $('#txtLocationCd2').addClass("input-validation-error");
+                                        error = true;
+                                    } else {
+                                        $('#LocationCd-errormessage2').html("");
+                                        $('#LocationCd-errormessage2').removeClass("field-validation-error");
+                                        $("#txtLocationCd2").removeClass("input-validation-error");
+                                        $("#txtBoxNo2").attr('disabled', false);
+                                        $("#txtBoxNo2").focus();
+                                        $("#btnBoxNo2").attr('disabled', false);
+                                        $("#txtSaiQty2").attr('disabled', false);
+                                        //2:バラ 1:それ以外
+                                        $("#hidCaseClass").val(data.kbn);
+                                        $("#hidStockQty").val(data.stockQty);
+                                    }
+                                }
+                            } else {
+                                if (data.kbn == "0") {
+                                    $('#LocationCd-errormessage2').html('<span id="LocationCd-error" class="">@PurchaseCorrectionResource.STOCK_NOT_ERR</span>');
+                                    $('#LocationCd-errormessage2').addClass("field-validation-error");
+                                    $("#txtLocationCd2").addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#LocationCd-errormessage2').html("");
+                                    $('#LocationCd-errormessage2').removeClass("field-validation-error");
+                                    $("#txtLocationCd2").removeClass("input-validation-error");
+                                    $("#txtBoxNo2").attr('disabled', false);
+                                    $("#txtBoxNo2").focus();
+                                    $("#btnBoxNo2").attr('disabled', false);
+                                    $("#txtSaiQty2").attr('disabled', false);
+                                    //2:バラ 1:それ以外
+                                    $("#hidCaseClass").val(data.kbn);
+                                    $("#hidStockQty").val(data.stockQty);
+                                }
+                            }
+                        }
+                    });
+                    if (error) {
+                        return false;
+                    } else {
+                        $('#LocationCd-errormessage2').html("")
+                        return true;
+                    }
+                }
+            }
+        }
+        //ケースNo存在チェック
+        function BoxNoCheck() {
+            var urlAction = '@Url.Action("GetBoxNoCheck", "PurchaseCorrection", new { area= "Returns" })';
+            var error = false;
+            if ($("#hidChk").val() == 0) {
+                if ($("#txtBoxNo1").val() == "") {
+                    if ($('#BoxNo-errormessage1').text() == "") {
+                        $('#BoxNo-errormessage1').html('<span id="BoxNo-error" class="">@PurchaseCorrectionResource.CASE_NULL_ERR</span>');
+                        $('#BoxNo-errormessage1').addClass("field-validation-error");
+                        $('#txtBoxNo1').addClass("input-validation-error");
+                    }
+                    return false;
+                }
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    async: false,
+                    data: {
+                        centerId: $("#ddlCenterId").val(),
+                        jan: $("#txtJan1").val(),
+                        locationCd: $("#txtLocationCd1").val(),
+                        boxNo: $("#txtBoxNo1").val(),
+                        invoiceNo: $("#txtInvoiceNo1").val()
+                    },
+                    success: function (data) {
+                        $('#SaiQty-errormessage1').html("");
+                        $('#SaiQty-errormessage1').removeClass("field-validation-error");
+                        $("#txtSaiQty1").removeClass("input-validation-error");
+                        if ($('#BoxNo-errormessage1').text() == "") {
+                            if (data.kbn != null) {
+                                if (data.kbn == "0") {
+                                    $('#BoxNo-errormessage1').html('<span id="BoxNo-error" class="">@PurchaseCorrectionResource.CASE_NOT_ERR</span>');
+                                    $('#BoxNo-errormessage1').addClass("field-validation-error");
+                                    $('#txtBoxNo1').addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#BoxNo-errormessage1').html("");
+                                    $('#BoxNo-errormessage1').removeClass("field-validation-error");
+                                    $("#txtBoxNo1").removeClass("input-validation-error");
+                                    $("#hidStockQty").val(data.stockQty);
+                                }
+                            }
+                        } else {
+                            if (data.kbn == "0") {
+                                $('#BoxNo-errormessage1').html('<span id="BoxNo-error" class="">@PurchaseCorrectionResource.CASE_NOT_ERR</span>');
+                                $('#BoxNo-errormessage1').addClass("field-validation-error");
+                                $("#txtBoxNo1").addClass("input-validation-error");
+                                error = true;
+                            } else {
+                                $('#BoxNo-errormessage1').html("");
+                                $('#BoxNo-errormessage1').removeClass("field-validation-error");
+                                $("#txtBoxNo1").removeClass("input-validation-error");
+                                $("#hidStockQty").val(data.stockQty);
+                            }
+                        }
+                    }
+                });
+                if (error) {
+                    return false;
+                } else {
+                    $('#BoxNo-errormessage1').html("")
+                    return true;
+                }
+            } else {
+                {
+                    if ($("#txtBoxNo2").val() == "") {
+                        if ($('#BoxNo-errormessage2').text() == "") {
+                            $('#BoxNo-errormessage2').html('<span id="BoxNo-error" class="">@PurchaseCorrectionResource.CASE_NULL_ERR</span>');
+                            $('#BoxNo-errormessage2').addClass("field-validation-error");
+                            $('#txtBoxNo2').addClass("input-validation-error");
+                        }
+                        return false;
+                    }
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        async: false,
+                        data: {
+                            centerId: $("#ddlCenterId").val(),
+                            jan: $("#txtJan2").val(),
+                            locationCd: $("#txtLocationCd2").val(),
+                            boxNo: $("#txtBoxNo2").val(),
+                            invoiceNo: $("#txtInvoiceNo2").val()
+                        },
+                        success: function (data) {
+                            $('#SaiQty-errormessage2').html("");
+                            $('#SaiQty-errormessage2').removeClass("field-validation-error");
+                            $("#txtSaiQty2").removeClass("input-validation-error");
+                            if ($('#BoxNo-errormessage2').text() == "") {
+                                if (data.kbn != null) {
+                                    if (data.kbn == "0") {
+                                        $('#BoxNo-errormessage2').html('<span id="BoxNo-error" class="">@PurchaseCorrectionResource.CASE_NOT_ERR</span>');
+                                        $('#BoxNo-errormessage2').addClass("field-validation-error");
+                                        $('#txtBoxNo2').addClass("input-validation-error");
+                                        error = true;
+                                    } else {
+                                        $('#BoxNo-errormessage2').html("");
+                                        $('#BoxNo-errormessage2').removeClass("field-validation-error");
+                                        $("#txtBoxNo2").removeClass("input-validation-error");
+                                        $("#hidStockQty").val(data.stockQty);
+                                    }
+                                }
+                            } else {
+                                if (data.kbn == "0") {
+                                    $('#BoxNo-errormessage2').html('<span id="BoxNo-error" class="">@PurchaseCorrectionResource.CASE_NOT_ERR</span>');
+                                    $('#BoxNo-errormessage2').addClass("field-validation-error");
+                                    $("#txtBoxNo2").addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#BoxNo-errormessage2').html("");
+                                    $('#BoxNo-errormessage2').removeClass("field-validation-error");
+                                    $("#txtBoxNo2").removeClass("input-validation-error");
+                                    $("#hidStockQty").val(data.stockQty);
+                                }
+                            }
+                        }
+                    });
+                    if (error) {
+                        return false;
+                    } else {
+                       $('#BoxNo-errormessage2').html("")
+                        return true;
+                    }
+                }
+            }
+        }
+
+        //バラ在庫存在チェック
+        function BaraCheck() {
+            var urlAction = '@Url.Action("GetBaraStockCheck", "PurchaseCorrection", new { area= "Returns" })';
+            var error = false;
+            if ($("#hidChk").val() == 0) {
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    async: false,
+                    data: {
+                        centerId: $("#ddlCenterId").val(),
+                        jan: $("#txtJan1").val(),
+                        locationCd: $("#txtLocationCd1").val(),
+                        invoiceNo: $("#txtInvoiceNo1").val()
+                    },
+                    success: function (data) {
+                        if ($('#SaiQty-errormessage1').text() == "") {
+                            if (data != null) {
+                                if (data == "0") {
+                                    $('#SaiQty-errormessage1').html('<span id="SaiQty-error" class="">@PurchaseCorrectionResource.BARA_NOT_ERR</span>');
+                                    $('#SaiQty-errormessage1').addClass("field-validation-error");
+                                    $('#txtSaiQty1').addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#SaiQty-errormessage1').html("");
+                                    $('#SaiQty-errormessage1').removeClass("field-validation-error");
+                                    $("#txtSaiQty1").removeClass("input-validation-error");
+                                }
+                            }
+                        } else {
+                            if (data == "0") {
+                                $('#SaiQty-errormessage1').html('<span id="SaiQty-error" class="">@PurchaseCorrectionResource.BARA_NOT_ERR</span>');
+                                $('#SaiQty-errormessage1').addClass("field-validation-error");
+                                $("#txtSaiQty1").addClass("input-validation-error");
+                                error = true;
+                            } else {
+                                $('#SaiQty-errormessage1').html("");
+                                $('#SaiQty-errormessage1').removeClass("field-validation-error");
+                                $("#txtSaiQty1").removeClass("input-validation-error");
+                            }
+                        }
+                    }
+                });
+                if (error) {
+                    return false;
+                } else {
+                    $('#SaiQty-errormessage1').html("")
+                    return true;
+                }
+            } else {
+                {
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        async: false,
+                        data: {
+                            centerId: $("#ddlCenterId").val(),
+                            jan: $("#txtJan2").val(),
+                            locationCd: $("#txtLocationCd2").val(),
+                            invoiceNo: $("#txtInvoiceNo2").val()
+                        },
+                        success: function (data) {
+                            if ($('#SaiQty-errormessage2').text() == "") {
+                                if (data != null) {
+                                    if (data == "0") {
+                                        $('#SaiQty-errormessage2').html('<span id="SaiQty-error" class="">@PurchaseCorrectionResource.BARA_NOT_ERR</span>');
+                                        $('#SaiQty-errormessage2').addClass("field-validation-error");
+                                        $('#txtSaiQty2').addClass("input-validation-error");
+                                        error = true;
+                                    } else {
+                                        $('#SaiQty-errormessage2').html("");
+                                        $('#SaiQty-errormessage2').removeClass("field-validation-error");
+                                        $("#txtSaiQty2").removeClass("input-validation-error");
+                                    }
+                                }
+                            } else {
+                                if (data == "0") {
+                                    $('#SaiQty-errormessage2').html('<span id="SaiQty-error" class="">@PurchaseCorrectionResource.BARA_NOT_ERR</span>');
+                                    $('#SaiQty-errormessage2').addClass("field-validation-error");
+                                    $("#txtSaiQty2").addClass("input-validation-error");
+                                    error = true;
+                                } else {
+                                    $('#SaiQty-errormessage2').html("");
+                                    $('#SaiQty-errormessage2').removeClass("field-validation-error");
+                                    $("#txtSaiQty2").removeClass("input-validation-error");
+                                }
+                            }
+                        }
+                    });
+                    if (error) {
+                        return false;
+                    } else {
+                        $('#SaiQty-errormessage2').html("")
+                        return true;
+                    }
+                }
+            }
+        }
+
+        //ラジオボタン押下時設定
+        function SetIsCheck(target) {
+            $("#hidChk").val(target);
+            if (target == 0) {
+                //JAN
+                $("#txtJan1").attr('disabled', false);
+                $("#txtInvoiceNo1").attr('disabled', true);
+                $("#btnInvoiceNo1").attr('disabled', true);
+                $("#txtLocationCd1").attr('disabled', true);
+                $("#btnLocationCd1").attr('disabled', true);
+                $("#txtBoxNo1").attr('disabled', true);
+                $("#btnBoxNo1").attr('disabled', true);
+                $("#txtSaiQty1").attr('disabled', true);
+                $("#txtJan2").attr('disabled', true).val("");
+                $("#btnJan2").attr('disabled', true);
+                $("#txtInvoiceNo2").attr('disabled', true).val("");
+                $("#txtLocationCd2").attr('disabled', true).val("");
+                $("#btnLocationCd2").attr('disabled', true);
+                $("#txtBoxNo2").attr('disabled', true).val("");
+                $("#btnBoxNo2").attr('disabled', true);
+                $("#txtSaiQty2").attr('disabled', true).val("");
+
+                $('#Jan-errormessage2').html("");
+                $('#Jan-errormessage2').removeClass("field-validation-error");
+                $("#txtJan2").removeClass("input-validation-error");
+                $('#InvoiceNo-errormessage2').html("");
+                $('#InvoiceNo-errormessage2').removeClass("field-validation-error");
+                $("#txtInvoiceNo2").removeClass("input-validation-error");
+                $('#LocationCd-errormessage2').html("");
+                $('#LocationCd-errormessage2').removeClass("field-validation-error");
+                $("#txtLocationCd2").removeClass("input-validation-error");
+                $('#BoxNo-errormessage2').html("");
+                $('#BoxNo-errormessage2').removeClass("field-validation-error");
+                $("#txtBoxNo2").removeClass("input-validation-error");
+                $('#SaiQty-errormessage2').html("");
+                $('#SaiQty-errormessage2').removeClass("field-validation-error");
+                $("#txtSaiQty2").removeClass("input-validation-error");
+            } else {
+                //納品書
+                $("#txtJan1").attr('disabled', true).val("");
+                $("#txtInvoiceNo1").attr('disabled', true).val("");
+                $("#txtLocationCd1").attr('disabled', true).val("");
+                $("#btnLocationCd1").attr('disabled', true);
+                $("#txtBoxNo1").attr('disabled', true).val("");
+                $("#btnBoxNo1").attr('disabled', true);
+                $("#txtSaiQty1").attr('disabled', true).val("");
+                $("#txtJan2").attr('disabled', true);
+                $("#btnJan2").attr('disabled', true);
+                $("#txtInvoiceNo2").attr('disabled', false);
+                $("#txtLocationCd2").attr('disabled', true);
+                $("#btnLocationCd2").attr('disabled', true);
+                $("#txtBoxNo2").attr('disabled', true);
+                $("#btnBoxNo2").attr('disabled', true);
+                $("#txtSaiQty2").attr('disabled', true);
+
+                $('#Jan-errormessage1').html("");
+                $('#Jan-errormessage1').removeClass("field-validation-error");
+                $("#txtJan1").removeClass("input-validation-error");
+                $('#InvoiceNo-errormessage1').html("");
+                $('#InvoiceNo-errormessage1').removeClass("field-validation-error");
+                $("#txtInvoiceNo1").removeClass("input-validation-error");
+                $('#LocationCd-errormessage1').html("");
+                $('#LocationCd-errormessage1').removeClass("field-validation-error");
+                $("#txtLocationCd1").removeClass("input-validation-error");
+                $('#BoxNo-errormessage1').html("");
+                $('#BoxNo-errormessage1').removeClass("field-validation-error");
+                $("#txtBoxNo1").removeClass("input-validation-error");
+                $('#SaiQty-errormessage1').html("");
+                $('#SaiQty-errormessage1').removeClass("field-validation-error");
+                $("#txtSaiQty1").removeClass("input-validation-error");
+           }
+        }
+
+        //追加
+        function Add() {
+            if ($("#hidChk").val() == 0 && ($("#txtSaiQty1").val() == 0 || $("#txtSaiQty1").val() == "")) {
+                alert('@PurchaseCorrectionResource.ErrSaiQty')
+            } else if ($("#hidChk").val() == 1 && ($("#txtSaiQty2").val() == 0 || $("#txtSaiQty2").val() == "")) {
+                alert('@PurchaseCorrectionResource.ErrSaiQty')
+            } else {
+                AddSubmit();
+            }
+        }
+        function AddSubmit() {
+            var urlAction = '@Url.Action("Add", "PurchaseCorrection", new { area = "Returns" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        //引当済時減少確認メッセージ
+        $('#CheckMsg').on("click", function () {
+            $('#isConfirmed').val('1');
+            AddSubmit();
+        });
+
+        //仕入訂正確定
+        $('#btnUpdate').on("click", function () {
+            $('#btnUpdateHidden').click();
+        });
+        $('#CreateMsg').on("click", function () {
+            $('#CreateMsg').prop('disabled', true);
+            var urlAction = '@Url.Action("Update", "PurchaseCorrection", new { area = "Returns" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        function Delete(seq,lineNo) {
+                $("#hidSeq").val(seq);
+                $("#hidLineNo").val(lineNo);
+                var urlAction = '@Url.Action("Delete", "PurchaseCorrection", new { area = "Returns" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+
+        //モーダル設定箇所
+        var current_scrollY;
+        $(function () {
+            $("[name='dialog']").dialog({
+                autoOpen: false,
+                width: 1100,
+                Height: 100,
+                modal: true,
+                position: { my: 'center top+30', at: 'center top', of: "body" },
+                dialogClass: 'modalct',
+                resizable: false
+            });
+
+            $(".ui-icon-closethick").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    $("[name='dialog']").dialog("close");
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+            $(".btn_close").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+        });
+        $(document.body).on("click",
+            ".ui-widget-overlay",
+            function () {
+                $.each($(".ui-dialog"),
+                    function () {
+                        var $dialog = $(this).children(".ui-dialog-content");
+                        if ($dialog.dialog("option", "modal")) {
+                            $('.wrap').attr({ style: '' });
+                            $('html, body').prop({ scrollTop: current_scrollY });
+                            $dialog.dialog("close");
+                        }
+                    });
+            });
+
+        //モーダル表示
+        $("[name='btnJan']").on("click", function () {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialogJan").dialog("open");
+            searchDialogDataJan();
+        });
+        $("[name='btnInvoiceNo']").on("click", function () {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialogInvoiceNo").dialog("open");
+            searchDialogDataInvoiceNo();
+        });
+        $("[name='btnBoxNo']").on("click", function () {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialogCase").dialog("open");
+            searchDialogDataCase();
+        });
+        $("[name='btnLocationCd']").on("click", function () {
+            current_scrollY = $(window).scrollTop();
+            $('.wrap').css({
+                position: 'fixed',
+                width: '100%',
+                top: -1 * current_scrollY
+            });
+            $("#dialogLocationCd").dialog("open");
+            searchDialogDataLocationCd();
+        });
+
+        //表示データ取得
+        function searchDialogDataJan() {
+            var urlAction = '../PurchaseCorrection/JanModal';
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    centerId: $("#ddlCenterId").val()
+                  , invoiceNo: $("#txtInvoiceNo2").val()
+                },
+                success: function (data) {
+                    $("#dialogJan").html("");
+                    $("#dialogJan").html(data);
+                    $("#dialogJan").dialog(
+                        {
+                            width: 600,
+                            height: 800
+                        });
+                    $("#JanReturnSelect").attr('disabled', true);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                }
+            });
+        }
+
+        function searchDialogDataInvoiceNo() {
+            var urlAction = '../PurchaseCorrection/InvoiceModal';
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    centerId: $("#ddlCenterId").val()
+                  , jan: $("#txtJan1").val()
+                },
+                success: function (data) {
+                    $("#dialogInvoiceNo").html("");
+                    $("#dialogInvoiceNo").html(data);
+                    $("#dialogInvoiceNo").dialog(
+                        {
+                            width: 600,
+                            height: 800
+                        });
+                    $("#InvoiceNoReturnSelect").attr('disabled', true);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                }
+            });
+        }
+
+        function searchDialogDataCase() {
+            var urlAction = '../PurchaseCorrection/CaseModal';
+            var pInvoiceNo;
+            var pJan;
+            var pLocationCd;
+            if ($("#hidChk").val() == 0) {
+                pInvoiceNo = $("#txtInvoiceNo1").val();
+                pJan = $("#txtJan1").val();
+                pLocationCd = $("#txtLocationCd1").val();
+            } else {
+                pInvoiceNo = $("#txtInvoiceNo2").val();
+                pJan = $("#txtJan2").val();
+                pLocationCd = $("#txtLocationCd2").val();
+            }
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    centerId: $("#ddlCenterId").val()
+                    , invoiceNo: pInvoiceNo
+                    , jan: pJan
+                    , locationCd: pLocationCd
+                },
+                success: function (data) {
+                    $("#dialogCase").html("");
+                    $("#dialogCase").html(data);
+                    $("#dialogCase").dialog(
+                        {
+                            width: 600,
+                            height: 800
+                        });
+                    $("#CaseReturnSelect").attr('disabled', true);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                }
+            });
+        }
+
+        function searchDialogDataLocationCd() {
+            var urlAction = '../PurchaseCorrection/LocationModal';
+            var pInvoiceNo;
+            var pJan;
+            if ($("#hidChk").val() == 0) {
+                pInvoiceNo = $("#txtInvoiceNo1").val();
+                pJan = $("#txtJan1").val();
+            } else {
+                pInvoiceNo = $("#txtInvoiceNo2").val();
+                pJan = $("#txtJan2").val();
+            }
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    centerId: $("#ddlCenterId").val()
+                    , invoiceNo: pInvoiceNo
+                    , jan: pJan
+                },
+                success: function (data) {
+                    $("#dialogLocationCd").html("");
+                    $("#dialogLocationCd").html(data);
+                    $("#dialogLocationCd").dialog(
+                        {
+                            width: 600,
+                            height: 800
+                        });
+                    $("#LocationReturnSelect").attr('disabled', true);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                }
+            });
+        }
+        //モーダル閉じる
+        function closeDialogJan() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogJan').dialog('close');
+        }
+        function closeDialogInvoice() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogInvoiceNo').dialog('close');
+        }
+        function closeDialogCase() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogCase').dialog('close');
+        }
+        function closeDialogLocation() {
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogLocationCd').dialog('close');
+        }
+
+        //モーダルラジオボタンチェック時
+        function chkRadioJan(idx) {
+            $("#chkIndexJan").val(idx);
+            $("#JanReturnSelect").attr('disabled', false);
+        }
+        function chkRadioInvoice(idx) {
+            $("#chkIndexInvoice").val(idx);
+            $("#InvoiceNoReturnSelect").attr('disabled', false);
+        }
+        function chkRadioCase(idx) {
+            $("#chkIndexCase").val(idx);
+            $("#CaseReturnSelect").attr('disabled', false);
+        }
+        function chkRadioLocation(idx) {
+            $("#chkIndexLocation").val(idx);
+            $("#LocationReturnSelect").attr('disabled', false);
+        }
+
+        //モーダル選択時
+        function chkDialogJan() {
+            var idx = $("#chkIndexJan").val();
+            $("#txtJan2").val($("#hidJan" + idx).text().trim());
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogJan').dialog('close');
+            $("#txtLocationCd2").attr('disabled', false).focus();
+            $("#btnLocationCd2").attr('disabled', false);
+            $('#Jan-errormessage2').html("");
+        }
+        function chkDialogInvoice() {
+            var idx = $("#chkIndexInvoice").val();
+            $("#txtInvoiceNo1").val($("#hidInvoiceNo" + idx).text().trim());
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogInvoiceNo').dialog('close');
+            $('#InvoiceNo-errormessage1').html("");
+            $('#InvoiceNo-errormessage1').removeClass("field-validation-error");
+            $("#txtInvoiceNo1").removeClass("input-validation-error");
+            $("#txtLocationCd1").attr('disabled', false).focus();
+            $("#btnLocationCd1").attr('disabled', false);
+            $('#InvoiceNo-errormessage1').html("");
+        }
+        function chkDialogCase() {
+            var idx = $("#chkIndexCase").val();
+            $("#hidStockQty").val($("#hidCaseStock" + idx).text().trim().replace(',', ''));
+            if ($("#hidChk").val() == 0) {
+                $("#txtBoxNo1").val($("#hidCase" + idx).text().trim());
+                $('#BoxNo-errormessage1').html("");
+                $('#BoxNo-errormessage1').removeClass("field-validation-error");
+                $("#txtBoxNo1").removeClass("input-validation-error");
+                $('#SaiQty-errormessage1').html("");
+                $('#SaiQty-errormessage1').removeClass("field-validation-error");
+                $("#txtSaiQty1").removeClass("input-validation-error");
+            } else {
+                $("#txtBoxNo2").val($("#hidCase" + idx).text().trim());
+                $('#BoxNo-errormessage2').html("");
+                $('#BoxNo-errormessage2').removeClass("field-validation-error");
+                $("#txtBoxNo2").removeClass("input-validation-error");
+                $('#SaiQty-errormessage2').html("");
+                $('#SaiQty-errormessage2').removeClass("field-validation-error");
+                $("#txtSaiQty2").removeClass("input-validation-error");
+            }
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogCase').dialog('close');
+        }
+        function chkDialogLocation() {
+            var idx = $("#chkIndexLocation").val();
+            $("#hidCaseClass").val($("#hidClass" + idx).text().trim());
+            $("#hidStockQty").val($("#hidStock" + idx).text().trim().replace(',', ''));
+            if ($("#hidChk").val() == 0) {
+                $("#txtLocationCd1").val($("#hidLocation" + idx).text().trim());
+                $("#txtBoxNo1").attr('disabled', false).focus();
+                $("#btnBoxNo1").attr('disabled', false);
+                $("#txtSaiQty1").attr('disabled', false);
+                $('#LocationCd-errormessage1').html("");
+                $('#LocationCd-errormessage1').removeClass("field-validation-error");
+                $("#txtLocationCd1").removeClass("input-validation-error");
+                $('#SaiQty-errormessage1').html("");
+                $('#SaiQty-errormessage1').removeClass("field-validation-error");
+                $("#txtSaiQty1").removeClass("input-validation-error");
+            } else {
+                $("#txtLocationCd2").val($("#hidLocation" + idx).text().trim());
+                $("#txtBoxNo2").attr('disabled', false).focus();
+                $("#btnBoxNo2").attr('disabled', false);
+                $("#txtSaiQty2").attr('disabled', false);
+                $('#LocationCd-errormessage2').html("");
+                $('#LocationCd-errormessage2').removeClass("field-validation-error");
+                $("#txtLocationCd2").removeClass("input-validation-error");
+                $('#SaiQty-errormessage2').html("");
+                $('#SaiQty-errormessage2').removeClass("field-validation-error");
+                $("#txtSaiQty2").removeClass("input-validation-error");
+            }
+            $('.wrap').attr({ style: '' });
+            $('html, body').prop({ scrollTop: current_scrollY });
+            $('#dialogLocationCd').dialog('close');
+        }
+    </script>
+}

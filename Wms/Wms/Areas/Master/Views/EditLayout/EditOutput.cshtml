@@ -1,0 +1,266 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+@using Wms.Areas.Master.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Views.Extention;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditOutput
+@{
+    ViewBag.Title = EditLayoutResource.EditLayout_EditOutput;
+    Layout = "_EditLayoutBase.cshtml";
+
+}
+<style>
+    .detail {
+        display: flex;
+    }
+
+    .tno {
+        width: 50px;
+    }
+
+    td select {
+        background-color: white;
+        cursor: pointer;
+    }
+
+    #setAll:hover {
+        cursor: pointer;
+    }
+</style>
+@using (Html.BeginForm("EditOutput", "EditLayout", FormMethod.Post, new { @id = "dataForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Partial("_EditOutputHeader",Model)
+    <div id="detailArea">
+        @if (Model.ObjectDetails != null)
+        {
+            @Html.Partial("_EditOutputDetail", Model)
+        }
+    </div>
+
+}
+
+
+@section EditLayoutBasefooter{
+    <button type="button" id="btnBack" class="btn  btn-outline-dark btnsize">@EditLayoutResource.Back</button>
+    <div class="btnarea">
+        <button type="button" id="btnToCondition" class="btn  btn-outline-dark btnsize">@EditLayoutResource.EditCondition</button>
+        <button type="button" id="btnToEditSort" class="btn btn-outline-dark btnsize">@EditLayoutResource.EditSort</button>
+        @Html.CreateOrUpdateButtonFor(Model.IsNewLayout, "dataForm")
+    </div>
+}
+
+@section  EditLayoutScripts{
+    <script>
+        // 初期化
+        $(function () {
+            // イベント設定
+            setupDetailsEvent();
+            checkConfirmEnable();
+            // 出力ファイル設定が初期状態からある場合は、空行を追加しておく
+            if ($('#objectData').length != 0) {
+                setNewRow(getNewRowHtml(length - 1));
+            }
+        });
+
+        function getObjectDetailData(i, prop) {
+            return $('input[name$="ObjectDetails['+i + '].' + prop + '"]');
+        }
+        function getOutputFiles(i, prop) {
+            return $('input[name$="EditOutputFileDetails[' + i + '].' + prop + '"]');
+        }
+
+        function setOutputFiles(i, prop, val) {
+            getOutputFiles(i, prop).val(val);
+        }
+
+        // テーブル情報から出力ファイル設定への値のコピー
+        function fromObjectDetailToOutputFiles(from, to, propfrom, propto) {
+            if (propto == undefined) {
+                setOutputFiles(to, propfrom, getObjectDetailData(from, propfrom).val());
+            } else {
+                setOutputFiles(to, propto, getObjectDetailData(from, propfrom).val());
+            }
+        }
+
+        function copyFromObjectDetailToOutputFiles(i, propfrom, propto) {
+            fromObjectDetailToOutputFiles(i, i, propfrom, propto);
+        }
+
+        // テーブル情報から出力ファイル設定へとデータのコピー
+        function copyAllProp(from,to) {
+            fromObjectDetailToOutputFiles(from,to, 'ShipperId');
+            fromObjectDetailToOutputFiles(from,to, 'TemplateId');
+            fromObjectDetailToOutputFiles(from,to, 'ColumnId');
+            fromObjectDetailToOutputFiles(from,to, 'ObjectId');
+            fromObjectDetailToOutputFiles(from,to, 'ColumnNo');
+            fromObjectDetailToOutputFiles(from,to, 'ColumnName');
+            fromObjectDetailToOutputFiles(from,to, 'DataType');
+            fromObjectDetailToOutputFiles(from, to, 'DigitInt','Digit');
+            if ($('#FileType').val() == 'Fixed') {
+                setOutputFiles(to, 'PadClass', 1);
+            } else {
+                setOutputFiles(to, 'PadClass', 0);
+            }
+        }
+
+        // 明細側のイベントをセットアップする、
+        // 呼び出しはテーブル情報をセットしたタイミングで行われる
+        function setupDetailsEvent() {
+            addClickEvent('#setAll', function () {
+
+                var trlist = $('#objectData tr');
+
+                for (var i = 0; i < trlist.length; i++) {
+                    copyAllProp(i, i);
+                }
+                addNewRow();
+                checkConfirmEnable();
+                formUtil.resetValidation('#dataForm');
+            });
+        }
+
+        // ColumnNo入力時にテーブル情報で一致するColumnNoのデータをコピーする
+        function getIndexOfTableInfoItems(target) {
+            var trlist = $('#objectData tr');
+            for (var i = 0; i < trlist.length; i++) {
+                var val = getObjectDetailData(i, 'ColumnNo').val();
+                if (val == target) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        // columnNoに変更があった場合
+        function changedColumnNo(i) {
+            var index = getIndexOfTableInfoItems(getOutputFiles(i, 'ColumnNo').val());
+            checkConfirmEnable();
+            if (index == -1) {
+                // ColumnNo以外をクリア
+                setOutputFiles(i, 'ShipperId','');
+                setOutputFiles(i, 'TemplateId', '');
+                setOutputFiles(i, 'ColumnId', '');
+                setOutputFiles(i, 'ObjectId', '');
+                setOutputFiles(i, 'ColumnName', '');
+                setOutputFiles(i, 'DataType', '');
+                setOutputFiles(i, 'Digit', '');
+                setOutputFiles(i, 'PadClass', 0);
+                return;
+            }
+
+            // データのコピー、行追加、Validationリセット
+            copyAllProp(index, i);
+            addNewRow();
+            formUtil.resetValidation('#dataForm');
+        }
+
+        //　確定ボタン押下可能判定
+        function checkConfirmEnable() {
+            // いずれかの行にColumnNoがセットされている場合に付き、確定ボタンが使える
+            var length = $('#outputFiles tr').length;
+            var ok = false;
+            for (var i = 1; i < length - 1; i++) {
+                // ColumnNoがセットされてない行がある
+                if (getOutputFiles(i - 1, 'ColumnNo').val() !== '') {
+                    ok = true;
+                    break;
+                }
+            }
+            if (ok) {
+                itemOn('#confirmButton');
+            } else {
+                itemOff('#confirmButton');
+            }
+        }
+
+        // オブジェクト明細取得
+        function getObjectDetail() {
+            $.get('@Url.EditLayoutAction("GetEditOutputObjectDetail")',
+                { shipperId: shipperId, objectId: $('#ObjectId').val()},
+                function (data) {
+                    $('#detailArea').html(data);
+
+                    setNewRow(getNewRowHtml($('#outputFiles tr').length - 1));
+                    formUtil.resetValidation('#dataForm');
+                    setupDetailsEvent();
+                }
+            )
+        }
+
+        // ダイアログ側のクリックイベントに追加
+        addClickEvent('.confirm-update', function () {
+
+            postForm('#dataForm');
+        });
+
+        addClickEvent('#btnToCondition', function () {
+            postForm('#dataForm','@Url.EditLayoutAction("EditConditionFromOutput")');
+        });
+
+        addClickEvent('#btnToEditSort', function () {
+            postForm('#dataForm','@Url.EditLayoutAction("EditSortFromOuput")');
+        });
+
+        addChangeEvent('#FileType', ChangeFileType);
+
+        // ファイルタイプ変更時
+        function ChangeFileType() {
+            var fileType = $('#FileType').val();
+            var trlist = $('#outputFiles tr');
+
+            // ファイルタイプが固定値だった場合、明細の埋め区分を1にする
+            for (var i = 0; i < trlist.length; i++) {
+                if (getOutputFiles(i, 'ColumnNo').val() == "")
+                    continue;
+
+                if (fileType == 'Fixed') {
+                    // padClassを1にする
+                    setOutputFiles(i, 'PadClass', 1);
+                } else {
+                    setOutputFiles(i, 'PadClass', 0);
+                }
+            }
+        }
+
+        // 新しい行を追加する
+        function addNewRow() {
+            // tr:lastは消えている状態
+            // 消えてない行のcolumnNoが全て埋まっている場合は新しい行を追加する
+            var length = $('#outputFiles tr').length;
+            for (var i = 1; i < length - 1; i++) {
+                // ColumnNoがセットされてない行がある
+                if (getOutputFiles(i - 1,'ColumnNo').val() === '') {
+                    return;
+                }
+            }
+
+            setNewRow(getNewRowHtml(length - 1));
+        }
+
+        /// 出力ファイル設定の新しい行を取得
+        function getNewRowHtml(rowCount) {
+            var tr = $('#outputFiles tr:last');
+            var html = tr.html();
+            html = html.replaceAll(/_[0-9]+_/ig,'_'+rowCount+'_');
+            html = html.replaceAll(/\([0-9]+\)/ig, '(' + rowCount + ')');
+            html = html.replaceAll(/\[[0-9]+\]/ig, '[' + rowCount + ']');
+            return html;
+        }
+
+        // 新しい行を追加する
+        function setNewRow(newRow) {
+            $('#outputFiles tr:last').show();
+            $('#outputFiles tbody').append('<tr>' + newRow + '</tr>');
+            // 1行は空行として非表示にしておく(コピー元)
+            $('#outputFiles tr:last').hide();
+        }
+
+    </script>
+}

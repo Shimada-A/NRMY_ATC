@@ -1,0 +1,430 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Helpers;
+@using Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.AcceptArrival.AcceptArrival01ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_RET_AcceptArrival01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@* Head *@
+<div class="head head_white collapse show">
+    @using (Html.BeginForm("Index", "AcceptArrival", FormMethod.Post, new { id = "frmScan" }))
+    {
+
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td>@AcceptArrivalResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>
+                        <input type="radio" id="SearchConditions_ShpScanClass_1" name="IsCheck" tabindex="1" class="radio_input" onclick="ShpScanClassChange('ShpScan')" />
+                        <span class="radio_parts"></span>
+                    </label>
+                </td>
+                <td>注文番号をスキャンして入力する</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>@AcceptArrivalResource.ShpScanClassS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ShipInstructId, new { htmlAttributes = new { @id = "txtShipInstructId", tabindex = "2" } })
+                    @Html.ValidationMessageFor(Model => Model.SearchConditions.ShipInstructId, "", new { id = "ShipInstructId-errormessage" })
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <label>
+                        <input type="radio" id="SearchConditions_ShpScanClass_2" name="IsCheck" tabindex="3" class="radio_input" onclick="ShpScanClassChange('JanScan')" />
+                        <span class="radio_parts"></span>
+                    </label>
+                </td>
+                <td>JANコードをスキャンし、納品書注文番号を特定する</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>@AcceptArrivalResource.DestZipS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.DestZip, new { htmlAttributes = new { @class = "w_5_normal", @id = "txtDestZip", tabindex = "6" } })
+                    <a style="color:blue; margin-left:30px;">@AcceptArrivalResource.DispZipMsg</a>
+                </td>
+            </tr>
+            <tr>
+                <td>@AcceptArrivalResource.DestNameS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.DestName, new { htmlAttributes = new { @class = "w_14_long text-box single-line", @id = "txtDestName", tabindex = "6" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td>@AcceptArrivalResource.DestAddressS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.DestAddress, new { htmlAttributes = new { @class = "w_22_verylong text-box single-line", @id = "txtDestAddress", tabindex = "6" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td>@AcceptArrivalResource.DestTelS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.DestTel, new { htmlAttributes = new { @class = "w_14_long text-box single-line", @id = "txtDestTel", tabindex = "6" } })
+                    <a style="color:blue; margin-left:30px;">@AcceptArrivalResource.DispTelMsg</a>
+                </td>
+            </tr>
+            <tr>
+                <td>@AcceptArrivalResource.JanS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtJan", tabindex = "5" } })
+                    @Html.ValidationMessageFor(Model => Model.SearchConditions.Jan, "", new { id = "Jan-errormessage" })
+                </td>
+            </tr>
+            <tr>
+                <td>スキャン済み商品一覧</td>
+                <td></td>
+            </tr>
+            @Html.HiddenFor(model => Model.ChangeModel)
+            @Html.HiddenFor(model => Model.DelRowNo)
+            @Html.HiddenFor(model => model.SearchConditions.ShpScanClass, new { id = "hidShpScanClass" })
+        </table>
+
+        <div class="message-area">
+            @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+            @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+        </div>
+
+        <div id="ItemDetailRow" class="tb_scroll Container" style="height:70vh;">
+
+            @if (Model.Results.AcceptArrival01Result != null)
+            {
+                if (Model.Results.AcceptArrival01Result.Count() != 0)
+                {
+                    @Html.Partial("~/Areas/Returns/Views/AcceptArrival/_ResultRows.cshtml", Model)
+                }
+            }
+        </div>
+    }
+
+</div>
+
+@section Basefooter{
+    <div class="btnarea">
+        <button type="submit" id="btnDetail" class="btn btn-dark btnsize" onclick="Detail()">@AcceptArrivalResource.BTN_LIST</button>
+    </div>
+}
+
+
+
+@section LayoutScripts{
+    <script>
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            var shpScanClass = $('#hidShpScanClass').val();
+            if (shpScanClass == "ShpScan") {
+                $('#SearchConditions_ShpScanClass_1').prop('checked', true);
+                $('#SearchConditions_ShpScanClass_2').prop('checked', false);
+                $('input[name="SearchConditions.ShpScanClass"]').prop('disabled', false);
+                $('input[name="SearchConditions.ShpScanClass"]:eq(0)').prop('checked', true);
+                $('input[name="SearchConditions.DestZip"]').prop('disabled', true);
+                $('input[name="SearchConditions.DestName"]').prop('disabled', true);
+                $('input[name="SearchConditions.DestAddress"]').prop('disabled', true);
+                $('input[name="SearchConditions.DestTel"]').prop('disabled', true);
+                $('input[name="SearchConditions.Jan"]').prop('disabled', true);
+            } else if (shpScanClass == "JanScan") {
+                $('#SearchConditions_ShpScanClass_1').prop('checked', false);
+                $('#SearchConditions_ShpScanClass_2').prop('checked', true);
+                $('input[name="SearchConditions.ShpScanClass"]:eq(1)').prop('checked', true);
+                $('input[name="SearchConditions.ShipInstructId"]').prop('disabled', true);
+                $('input[name="SearchConditions.DestZip"]').prop('disabled', false);
+                $('input[name="SearchConditions.DestName"]').prop('disabled', false);
+                $('input[name="SearchConditions.DestAddress"]').prop('disabled', false);
+                $('input[name="SearchConditions.DestTel"]').prop('disabled', false);
+                $('input[name="SearchConditions.Jan"]').prop('disabled', false);
+            }
+        });
+        function Detail() {
+            @*入力チェック*@
+            var shpScanClass = $('#hidShpScanClass').val();
+            if (shpScanClass == "ShpScan") {
+                @*J出荷指示ID入力チェック*@
+                if ($('#txtShipInstructId').val() == "") {
+                    if ($('#ShipInstructId-errormessage').text() == "") {
+                        $('#ShipInstructId-errormessage').html('<span id="ShipInstructId-error" class="">注文番号を指定してください</span>');
+                        $('#ShipInstructId-errormessage').addClass("field-validation-error");
+                        $('#txtShipInstructId').addClass("input-validation-error");
+                    }
+                    return false;
+                } else {
+                    $('#ShipInstructId-errormessage').html("")
+                    $('#ShipInstructId-errormessage').removeClass("field-validation-error");
+                    $("#txtShipInstructId").removeClass("input-validation-error");
+                }
+            } else {
+                @*スキャン行数を取得*@
+                var len = $("#listData").find("tr").length - 1;
+                if (len == 0) {
+                    if ($('#Jan-errormessage').text() == "") {
+                        $('#Jan-errormessage').html('<span id="Jan-error" class="">JANを指定してください</span>');
+                        $('#Jan-errormessage').addClass("field-validation-error");
+                        $('#txtJan').addClass("input-validation-error");
+                    }
+                    return false;
+                }
+                var scanCount = 0;
+                for (var i = 0; i < len; i++) {
+                    if ($('#Results_AcceptArrival01Result_' + i + '__ScanQty').val() > 0) {
+                        scanCount = scanCount + 1;
+                    }
+                }
+                
+                if (scanCount == 0) {
+                    if ($('#Jan-errormessage').text() == "") {
+                        $('#Jan-errormessage').html('<span id="Jan-error" class="">JANを指定してください</span>');
+                        $('#Jan-errormessage').addClass("field-validation-error");
+                        $('#txtJan').addClass("input-validation-error");
+                    }
+                    return false;
+                } else {
+                    if ($('#Jan-errormessage').text() != "") {
+                        $('#Jan-errormessage').html("");
+                        $('#Jan-errormessage').removeClass("field-validation-error");
+                        $("#txtJan").removeClass("input-validation-error");
+                    }
+                }
+            }
+
+            var $form = $("#frmScan");
+            var urlAction = '@Url.Action("List", "AcceptArrival", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+        @*JAN存在チェック*@
+        function JanCheck() {
+            var urlAction = '@Url.Action("GetJanCheck", "AcceptArrival", new { area= "Returns" })';
+            var error = false;
+            if ($("#txtJan").val() == "") {
+                if ($('#Jan-errormessage').text() == "") {
+                    $('#Jan-errormessage').html('<span id="Jan-error" class="">JANを指定してください</span>');
+                    $('#Jan-errormessage').addClass("field-validation-error");
+                    $('#txtJan').addClass("input-validation-error");
+                }
+                return false;
+            }
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                async: false,
+                data: {
+                    jan: $("#txtJan").val()
+                },
+                success: function (data) {
+                    if ($('#Jan-errormessage').text() == "") {
+                        if (data != null) {
+                            if (data == "0") {
+                                $('#Jan-errormessage').html('<span id="Jan-error" class="">該当JANは存在しません</span>');
+                                $('#Jan-errormessage').addClass("field-validation-error");
+                                $('#txtJan').addClass("input-validation-error");
+                                error = true;
+                            } else {
+                                $('#Jan-errormessage').html("");
+                                $('#Jan-errormessage').removeClass("field-validation-error");
+                                $("#txtJan").removeClass("input-validation-error");
+                            }
+                        }
+                    } else {
+                        if (data == "0") {
+                            $('#Jan-errormessage').html('<span id="Jan-error" class="">該当JANは存在しません</span>');
+                            $('#Jan-errormessage').addClass("field-validation-error");
+                            $("#txtJan").addClass("input-validation-error");
+                            error = true;
+                        } else {
+                            $('#Jan-errormessage').html("");
+                            $('#Jan-errormessage').removeClass("field-validation-error");
+                            $("#txtJan").removeClass("input-validation-error");
+                        }
+                    }
+                }
+            });
+            if (error) {
+                return false;
+            } else {
+                $('#Jan-errormessage').html("")
+                return true;
+            }
+        }
+
+        @*J出荷指示ID存在チェック*@
+        function ShipIdCheck() {
+            @*J出荷指示ID入力チェック*@
+            if ($('#txtShipInstructId').val() == "") {
+                if ($('#ShipInstructId-errormessage').text() == "") {
+                    $('#ShipInstructId-errormessage').html('<span id="ShipInstructId-error" class="">注文番号を指定してください</span>');
+                    $('#ShipInstructId-errormessage').addClass("field-validation-error");
+                    $('#txtShipInstructId').addClass("input-validation-error");
+                    return false;
+                }
+            } else {
+                $('#ShipInstructId-errormessage').html("")
+                $('#ShipInstructId-errormessage').removeClass("field-validation-error");
+                $("#txtShipInstructId").removeClass("input-validation-error");
+            }
+
+            var urlAction = '@Url.Action("GetIdCheck", "AcceptArrival", new { area= "Returns" })';
+            var error = false;
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                async: false,
+                data: {
+                    shipInstructId: $("#txtShipInstructId").val(),
+                    centerId: $("#ddlCenterId").val()
+                },
+                success: function (data) {
+                    if ($('#ShipInstructId-errormessage').text() == "") {
+                        if (data != null) {
+                            if (data == "0") {
+                                $('#ShipInstructId-errormessage').html('<span id="ShipInstructId-error" class="">該当注文番号は存在しません</span>');
+                                $('#ShipInstructId-errormessage').addClass("field-validation-error");
+                                $('#txtShipInstructId').addClass("input-validation-error");
+                                error = true;
+
+                            } else {
+                                $('#ShipInstructId-errormessage').html("")
+                                $('#ShipInstructId-errormessage').removeClass("field-validation-error");
+                                $("#txtShipInstructId").removeClass("input-validation-error");
+                            }
+                        }
+                    } else {
+                        if (data == "0") {
+                            $('#ShipInstructId-errormessage').html('<span id="ShipInstructId-error" class="">該当注文番号は存在しません</span>');
+                            $('#ShipInstructId-errormessage').addClass("field-validation-error");
+                            $('#txtShipInstructId').addClass("input-validation-error");
+                            error = true;
+                        } else {
+                            $('#ShipInstructId-errormessage').html("");
+                            $('#ShipInstructId-errormessage').removeClass("field-validation-error");
+                            $("#txtShipInstructId").removeClass("input-validation-error");
+                        }
+                    }
+                }
+            });
+            if (error) {
+                return false;
+            } else {
+                $('#ShipInstructId-errormessage').html("")
+                return true;
+            }
+        }
+
+        $('#txtJan').on("keydown", function (e) {
+            $("#ChangeModel").val("Read");
+            var form = new FormData(document.getElementById("frmScan"));
+            if (e.keyCode === 13) {
+                $(".message-area").html("");
+                var checkResult = JanCheck();
+                if (checkResult == true) {
+
+                    $("#txtJan").val("");
+
+                    if ($('#Jan-errormessage').text() == "") {
+                        var urlAction = '@Url.Action("Search", "AcceptArrival", new { area= "Returns" })';
+                        $.ajax({
+                            url: urlAction,
+                            method: "POST",
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: "html",
+                            data: form,
+                            async: false,
+                            processData: false,
+                            contentType: false,
+                            success: function (data) {
+                                $("#ItemDetailRow").html(data);
+                            }
+                        });
+                    }
+                }
+
+            }
+        });
+        $('#txtShipInstructId').on("keydown", function (e) {
+            $("#ChangeModel").val("Read");
+            var $form = $("#frmScan");
+            if (e.keyCode === 13) {
+                $(".message-area").html("");
+                var checkResult = ShipIdCheck();
+                if (checkResult == true) {
+                    if ($('#ShipInstructId-errormessage').text() == "") {
+                        var urlAction = '@Url.Action("SkipInput", "AcceptArrival", new { area= "Returns" })';
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                }
+            }
+        });
+        function Delete(RowNo) {
+            $("#DelRowNo").val(RowNo);
+            var form = new FormData(document.getElementById("frmScan"));
+            var urlAction = '@Url.Action("Delete", "AcceptArrival", new { area= "Returns" })';
+            $.ajax({
+                url: urlAction,
+                method: "POST",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "html",
+                data: form,
+                async: "false",
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $("#ItemDetailRow").html(data);
+                }
+            });
+        }
+        function ShpScanClassChange(val) {
+            $('#hidShpScanClass').val(val);
+
+            if (val == "ShpScan") {
+                $('#SearchConditions_ShpScanClass_1').prop('checked', true);
+                $('#SearchConditions_ShpScanClass_2').prop('checked', false);
+                $('input[name="SearchConditions.ShipInstructId"]').prop('disabled', false);
+                $('input[name="SearchConditions.DestZip"]').prop('disabled', true);
+                $('input[name="SearchConditions.DestName"]').prop('disabled', true);
+                $('input[name="SearchConditions.DestAddress"]').prop('disabled', true);
+                $('input[name="SearchConditions.DestTel"]').prop('disabled', true);
+                $('input[name="SearchConditions.Jan"]').prop('disabled', true);
+                $('#Jan-errormessage').html("");
+                $('#Jan-errormessage').removeClass("field-validation-error");
+                $("#txtJan").removeClass("input-validation-error");
+            } else if (val == "JanScan") {
+                $('#SearchConditions_ShpScanClass_1').prop('checked', false);
+                $('#SearchConditions_ShpScanClass_2').prop('checked', true);
+                $('input[name="SearchConditions.ShipInstructId"]').prop('disabled', true);
+                $('input[name="SearchConditions.DestZip"]').prop('disabled', false);
+                $('input[name="SearchConditions.DestName"]').prop('disabled', false);
+                $('input[name="SearchConditions.DestAddress"]').prop('disabled', false);
+                $('input[name="SearchConditions.DestTel"]').prop('disabled', false);
+                $('input[name="SearchConditions.Jan"]').prop('disabled', false);
+                $('#ShipInstructId-errormessage').html("")
+                $('#ShipInstructId-errormessage').removeClass("field-validation-error");
+                $("#txtShipInstructId").removeClass("input-validation-error");
+            }
+        }
+    </script>
+}

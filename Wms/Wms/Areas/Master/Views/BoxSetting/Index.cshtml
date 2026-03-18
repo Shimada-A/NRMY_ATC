@@ -1,0 +1,656 @@
+﻿@model Wms.Areas.Master.ViewModels.BoxSetting.Index
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_BoxSetting01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "BoxSetting", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        <table>
+            <tr>
+                <td class="tdtitle">@BoxSettingResource.CategoryId</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId1,
+                                (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                CommonResource.None, new { id = "ddlCategoryId1", tabindex = "2", onchange = "CategoryChange(1)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId2,
+                                (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                CommonResource.None, new { id = "ddlCategoryId2", tabindex = "3", disabled = "disabled", onchange = "CategoryChange(2)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId3,
+                                (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                CommonResource.None, new { id = "ddlCategoryId3", tabindex = "4", disabled = "disabled", onchange = "CategoryChange(3)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId4,
+                                (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                CommonResource.None, new { id = "ddlCategoryId4", tabindex = "5", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BoxSettingResource.Item</td>
+                <td colspan="4">
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @class = "w_14_long", @id = "txtItemId", tabindex = "6" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="4"></td>
+                <td class="text-right">
+                    <button type="button" id="btnUpload" class="Upload _pm">
+                        <img src="~/Content/img/upload.png" />
+                        @FormsResource.BTN_UPLOAD
+                    </button>
+                </td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "BoxSetting", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="4">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchFlag, new { id = "hidSearchFlag" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.BoxSettingResult.BoxSettings != null)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border stock_detail_load">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    <button type="button" id="btnDownload" class="download" @(Model.BoxSettingResult.BoxSettings != null && Model.BoxSettingResult.BoxSettings.Count() > 0 ? "" : "disabled='disabled'")>
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.BoxSettingResult.BoxSettings.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.BoxSettingResult.BoxSettings.Count() > 0)
+            {
+                @Html.PagedListPager(Model.BoxSettingResult.BoxSettings, Page => Url.Action("Search", "BoxSetting", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.BoxSettingResult.BoxSettings.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div id="BoxSettingRows">
+                <div class="tb_scroll" style="height:66vh;">
+                    @using (Html.BeginForm("Edit", "BoxSetting", FormMethod.Post, new { id = "frmUpdate" }))
+                    {
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">&nbsp;</th>
+                                    <th class="bg-grey align-middle">
+                                        @BoxSettingResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BoxSettingResource.CategoryId1
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BoxSettingResource.CategoryId2
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BoxSettingResource.CategoryId3
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BoxSettingResource.CategoryId4
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BoxSettingResource.ItemId
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BoxSettingResource.ThresholdClass
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BoxSettingResource.ThresholdSku
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @BoxSettingResource.ThresholdRate
+                                    </th>
+                                    <th hidden>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @Html.AntiForgeryToken()
+                                @Html.Partial("_DeleteConfirmMessageDialog", @MessagesResource.QUE_DELETE)
+                                @foreach (var cModel in Model.BoxSettingResult.BoxSettings.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("BoxSettings[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="w_checkbox align-middle">
+                                            <label class="checkboxgroup">
+                                                @Html.CheckBox(key + "IsCheck", new { @id = (key + "CheckedValue"), @class = "check-box" })
+                                                <span class="chk_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.BoxSettingResult.BoxSettings.PageNumber - 1) * Model.BoxSettingResult.BoxSettings.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName2)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName3)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName4)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @if (cModel.v.ThresholdClass == ThresholdClasses.ThresholdRate)
+                                            {
+                                                @Html.DisplayName(BoxSettingResource.ThresholdRate)
+                                            }
+                                            else if (cModel.v.ThresholdClass == ThresholdClasses.ThresholdSku)
+                                            {
+                                                @Html.DisplayName(BoxSettingResource.ThresholdSku)
+                                            }
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ThresholdSku)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ThresholdRate)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.BoxSettingsId, new { Name = key + "BoxSettingsId", @class = "rowid" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <input id="hiddata" type="hidden" name="settingsid" />
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@Html.Partial("_FileUploadModal")
+@*Bottomnav*@
+@section Basefooter{
+    @Html.Partial("_CheckBoxCounter")
+    <div class="btnarea">
+        @if (Wms.Common.Profile.User.GetUsable_Class(Request.Url) != "1")
+        {
+            <button type="submit" id="btnCreate" class="btn btn-outline-dark btnsize _pm" form="frmSearch" formmethod="get" formaction=@Url.Action("Create", "BoxSetting", new { area = "Master", controller = "BoxSetting", action = "Create" })>@FormsResource.BTN_NEW</button>
+            @*@Html.ActionLink(FormsResource.BTN_NEW, "Create", "BoxSetting", null, new { @class = "btn btn-outline-dark btnsize _pm", @id = "lnkCreate", tabindex = "1001" })*@
+            <button type="submit" id="btnDelete" class="btn btn-outline-danger btnsize _pm">@FormsResource.BTN_DELETE</button> }
+        else
+        {
+            <button type="submit" id="lnkCreate" class="btn btn-outline-dark btnsize _pm" disabled>@FormsResource.BTN_NEW</button>
+            <button type="submit" id="btnDelete" class="btn btn-outline-danger btnsize _pm" disabled>@FormsResource.BTN_DELETE</button>
+        }
+        <button id="btnDeleteHidden" type="button" class="btn btn-outline-danger btnsize _pm" data-toggle="modal" data-target="#delconfirm" hidden>@FormsResource.BTN_DELETE</button>
+        <button type="submit" id="btnUpdate" class="btn btn-dark btnsize" form="frmUpdate" formmethod="post" formaction=@Url.Action("Edit", "BoxSetting", new { area = "Master", controller = "BoxSetting", action = "Edit" })>@FormsResource.BTN_DETAIL</button>
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+    <script>
+
+    Dropzone.autoDiscover = false;
+
+        $("#btnDownload").on("click", function () {
+            var urlAction = '@Url.Action("Download", "BoxSetting", new { area = "Master" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+
+            setTimeout(function () {
+                var count = BoxSettingsView.getCheckList().length;
+                if (count == 1) {
+                    $("#btnUpdate").prop("disabled", false);
+                }
+                if (getUsable_Class() == 3) {
+                    if (count >= 1) {
+                        $("#btnDelete").prop('disabled', false);
+                    }
+                    $("#btnCreate").prop("disabled", false);
+                }
+            }, 1000);
+        });
+        //ファイルアップロード
+        fileUploadModal.init();
+        $('#btnUpload').on('click', function () {
+            var urlAction = '@Url.Action("Upload", "BoxSetting", new { area = "Master" })';
+            var urlIndexAction = '@Url.Action("Index", "BoxSetting", new { area = "Master" })';
+            var urlErrAction = '@Url.Action("UploadErr", "BoxSetting", new { area = "Master" })';
+            fileUploadModal.setting({
+                url: urlAction,
+                title: "@BoxSettingResource.Title" + "@FormsResource.FileUplaodTitle",
+                acceptedFiles: ".xlsx",
+                successCallback: function (data) {
+                    if (data.err == 'true') {
+                        location.href = urlErrAction;
+                    } else {
+                        location.href = urlIndexAction;
+                    }
+                }
+            });
+            fileUploadModal.open();
+        });
+    /**
+     * Country class
+     */
+    var BoxSettingsView = {
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            rowSelected: '#spnCheckedCounter',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnDelete: '#btnDelete',
+            btnUpdate: '#btnUpdate',
+            btnSearch: '#btnSearch',
+        },
+
+        /**
+         * Init data
+         */
+        init: function () {
+            this.registerEvent();
+
+            this.setCheckboxs();
+
+            this.setButtonStatus();
+        },
+
+        /**
+         * Register event for control
+         */
+        registerEvent: function () {
+
+            /**
+             * Stop event fired when click to checkbox
+             */
+            $(BoxSettingsView.SELECTORS.chkLabel).click(function (evt) {
+                evt.stopPropagation();
+            });
+
+            /**
+             * Check box click
+             */
+            $(BoxSettingsView.SELECTORS.chkInTable).click(function (evt) {
+                evt.stopPropagation();
+                BoxSettingsView.setButtonStatus();
+            });
+
+            /**
+             * Button check all clicked
+             */
+            $(BoxSettingsView.SELECTORS.btnCheckAll).click(function () {
+                if ($("#listData").length) {
+                    $(BoxSettingsView.SELECTORS.chkInTable).prop('checked', true);
+                    BoxSettingsView.setRowidsFlag(true);
+                }
+            });
+
+            /**
+             * Button UnCheck all clicked
+             */
+            $(BoxSettingsView.SELECTORS.btnUnCheckAll).click(function () {
+                if ($("#listData").length) {
+                    $(BoxSettingsView.SELECTORS.chkInTable).prop('checked', false);
+                    BoxSettingsView.setRowidsFlag(false);
+                }
+            });
+
+
+            $(BoxSettingsView.SELECTORS.btnSearch).click(function () {
+                BoxSettingsView.setStorageInit();
+                $('#hidSearchFlag').val(true);
+                var urlAction = '@Url.Action("Search", "BoxSetting", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "GET");
+                $form.submit();
+            });
+
+
+            $('#btnCreate').click(function () {
+                var urlAction = '@Url.Action("Create", "BoxSetting", new { area= "Master" })';
+                $("#frmSearch").attr("action", urlAction);
+                $("#frmSearch").attr("method", "GET");
+                $("#frmSearch").submit();
+            //    BoxSettingsView.setStorageInit();
+            });
+
+
+            $(BoxSettingsView.SELECTORS.btnUpdate).click(function () {
+                var target = $("#hiddata").val();
+                if (target == "") {
+                    var list = BoxSettingsView.getCheckList();
+                    $("#hiddata").val(list[0]);
+                } else {
+                    $("#hiddata").val(JSON.parse(target)[0]);
+                }
+                var urlAction = '@Url.Action("Edit", "BoxSetting", new { area= "Master" })';
+                $("#frmUpdate").attr("action", urlAction);
+                $("#frmUpdate").attr("method", "POST");
+                $("#frmUpdate").submit();
+
+            //    BoxSettingsView.setStorageInit();
+            });
+
+
+            $(BoxSettingsView.SELECTORS.btnDelete).click(function () {
+                var list = BoxSettingsView.getCheckList();
+                //BoxSettingsView.setStorageInit();
+                $("#hiddata").val(JSON.stringify(list));
+
+                var urlAction = '@Url.Action("Delete", "BoxSetting", new { area= "Master" })';
+                $("#frmUpdate").attr("action", urlAction);
+                $('#btnDeleteHidden').click();
+            });
+        },
+
+        /**
+         * Enable/Disable button Edit
+         */
+        setButtonStatus: function () {
+            BoxSettingsView.setCheckboxs('set')
+        },
+
+        // save page
+        setRowidsFlag: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+                var jrid = JSON.parse(rowids);
+                $.each(jrid, function (key) {
+                    jrid[key] = flag;
+                });
+                storage.setItem('PKeys', JSON.stringify(jrid));
+            }
+            BoxSettingsView.setButtonStatus();
+        },
+
+        setCheckboxs: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+                var cnt = 0;
+                var jrid = JSON.parse(rowids);
+                var checkboxs = $("#listData input[type=checkbox]")
+                checkboxs.each(function () {
+                    var row = $(this).parent().parent().parent();
+                    var rowid = row.find(".rowid").val();
+                    //var idx = rowid - 1;
+                    //var Rid = $("input[name='LocTransporters[" + idx + "].Rid']").val();
+
+                    if (flag == 'set') {
+                        jrid[rowid] = $(this).is(':checked');
+                    }
+                    else {
+                        if (jrid[rowid]) {
+                            $(this).prop("checked", true);
+                        }
+                    }
+                });
+
+                if (flag == 'set') {
+                    storage.setItem('PKeys', JSON.stringify(jrid));
+                }
+
+                $.each(jrid, function (key, value) {
+                    if (value) {
+                        cnt++;
+                    }
+                });
+
+
+                $(BoxSettingsView.SELECTORS.btnDelete).attr('disabled', 'disabled');
+                $(BoxSettingsView.SELECTORS.btnUpdate).attr('disabled', 'disabled');
+
+                if ($('#frmUpdate').length > 0) {
+                    if (cnt > 0) {
+                        if (getUsable_Class() == 3) {
+                            $(BoxSettingsView.SELECTORS.btnDelete).removeAttr('disabled');
+                        }
+                        if (cnt == 1) {
+                            $(BoxSettingsView.SELECTORS.btnUpdate).removeAttr('disabled');
+                        }
+                    }
+
+                    $(BoxSettingsView.SELECTORS.rowSelected).text(cnt);
+                }
+            }
+
+        },
+
+        setStorageInit: function () {
+            if (window.localStorage) {
+
+                var storage = window.localStorage;
+                storage.removeItem('PKeys');
+                var data = {
+                    'SearchConditions.CategoryId1': $("#ddlCategoryId1").val(),
+                    'SearchConditions.CategoryId2': $("#ddlCategoryId2").val(),
+                    'SearchConditions.CategoryId3': $("#ddlCategoryId3").val(),
+                    'SearchConditions.CategoryId4': $("#ddlCategoryId4").val(),
+                    'SearchConditions.ItemId': $("#txtItemId").val()
+                };
+
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("GetPKeys", "BoxSetting")",
+                    data: data,
+                    async: false,
+                    success: function (data) {
+                        var rowids = {};
+                        var storage = window.localStorage;
+
+                        $.each(data, function (n, value) {
+                            if (typeof (value) != "undefined") {
+                                rowids[value] = false;
+                            }
+                        });
+
+                        storage.setItem('PKeys', JSON.stringify(rowids));
+
+                    }
+                });
+            }
+        },
+
+        getCheckList: function () {
+            var list = [];
+            var storage = window.localStorage;
+            rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+
+                var jrid = JSON.parse(rowids);
+                $.each(jrid, function (key) {
+                    if (jrid[key]) {
+                        list.push(key);
+                    }
+                });
+            }
+
+            return list;
+        },
+    }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+
+        if ('@TempData[AppConst.SUCCESS]' != '') {
+            BoxSettingsView.setStorageInit();
+        }
+
+        BoxSettingsView.init();
+        if ($("#ddlCategoryId1").val() != '') {
+            $("#ddlCategoryId2").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId2").val() != '') {
+                $("#ddlCategoryId3").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId3").val() != '') {
+                $("#ddlCategoryId4").removeAttr('disabled');
+        }
+            if ($("#div_search").length > 0) {
+
+                $("#btnSearch").removeClass('dp-none');
+
+                if ('@ViewBag.CurrentAction'.indexOf("Search") >= 0 || '@ViewBag.CurrentAction'.indexOf("ChangeTr") >= 0) {
+                    //$(".hidden-sm-down").click();
+                    $("#div_search").removeClass('show');
+                }
+            }
+    });
+
+
+    // Sort
+    function getSortData() {
+
+        $("#hidSort").val($("#ddlSort").val());
+        $("#hidSortKey").val($("#ddlSortKey").val());
+
+        var $form = $("#frmSearch");
+        var urlAction = '@Url.Action("Search", "BoxSetting", new { area= "Master" })';
+        $form.attr("action", urlAction);
+        $form.attr("method", "GET");
+        $form.submit();
+    }
+
+    function GetCategoryList(id) {
+        var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+        $.ajax({
+            url: urlAction,
+            type: "POST",
+            data: {
+                id: id + 1,
+                category1: $("#ddlCategoryId1").val(),
+                category2: $("#ddlCategoryId2").val(),
+                category3: $("#ddlCategoryId3").val()
+            },
+            success: function (data) {
+                $("#ddlCategoryId" + (id + 1)).html("");
+                $("#ddlCategoryId" + (id + 1)).html(data.html);
+            }
+        });
+    }
+
+    function CategoryChange(id) {
+        if ($("#ddlCategoryId" + id).val() != '') {
+            GetCategoryList(id);
+            $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+            if (id == 1) {
+                $("#ddlCategoryId3").attr('disabled', 'disabled');
+                $("#ddlCategoryId4").attr('disabled', 'disabled');
+                $("#ddlCategoryId3").val('');
+                $("#ddlCategoryId4").val('');
+            } else if (id == 2) {
+                $("#ddlCategoryId4").attr('disabled', 'disabled');
+                $("#ddlCategoryId4").val('');
+            }
+        } else {
+            if (id == 1) {
+                $("#ddlCategoryId2").attr('disabled', 'disabled');
+                $("#ddlCategoryId3").attr('disabled', 'disabled');
+                $("#ddlCategoryId4").attr('disabled', 'disabled');
+                $("#ddlCategoryId2").val('');
+                $("#ddlCategoryId3").val('');
+                $("#ddlCategoryId4").val('');
+            } else if (id == 2) {
+                $("#ddlCategoryId3").attr('disabled', 'disabled');
+                $("#ddlCategoryId4").attr('disabled', 'disabled');
+                $("#ddlCategoryId3").val('');
+                $("#ddlCategoryId4").val('');
+            } else if (id == 3) {
+                $("#ddlCategoryId4").attr('disabled', 'disabled');
+                $("#ddlCategoryId4").val('');
+            }
+        }
+    }
+
+    </script>
+}

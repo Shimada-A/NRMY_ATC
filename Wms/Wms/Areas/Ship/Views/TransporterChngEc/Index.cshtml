@@ -1,0 +1,971 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.TransporterChngEc;
+@model Wms.Areas.Ship.ViewModels.TransporterChngEc.TransporterChngEcViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_TransporterChngEc;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@Html.Partial("_WaitDialog")
+@using (Html.BeginForm("Search", "TransporterChngEc", FormMethod.Post, new { id = "frmSearch" }))
+{
+    <div id="div_search" class="head head_white collapse">
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@TransporterChngEcResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@TransporterChngEcResource.ShipInstructIdS</td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.SearchConditions.ShipInstructId, new { htmlAttributes = new { @id = "txtShipInstructId", tabindex = "19" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransporterChngEcResource.AllocStatusS</td>
+                <td>
+                    @Html.EnumRadioButtonListFor(model => model.SearchConditions.AllocStatus, new { tabindex = "1", onchange = "AllocStatusChange();" })
+                </td>
+                <td class="tdtitle">@TransporterChngEcResource.BoxNoS</td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.SearchConditions.BoxNo, new { htmlAttributes = new { @id = "txtBoxNo", tabindex = "20" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransporterChngEcResource.MakeDateS</td>
+                <td>
+                    <div class="sortarea" style="width:600px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocDateFrom, new { htmlAttributes = new { @id = "txtAllocDateFrom", tabindex = "3", @placeholder = "", @class = "flatpickr flatpickr_single flatpickr-input" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocTimeFrom, new { htmlAttributes = new { @id = "txtAllocTimeFrom", tabindex = "4", @placeholder = "", @class = "time_input", @onblur = "TimeBlur();" } })
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocDateTo, new { htmlAttributes = new { @id = "txtAllocDateTo", tabindex = "5", @placeholder = "", @class = "flatpickr flatpickr_single flatpickr-input" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.AllocTimeTo, new { htmlAttributes = new { @id = "txtAllocTimeTo", tabindex = "6", @placeholder = "", @class = "time_input", @onblur = "TimeBlur();" } })
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocDateFrom, "", new { id = "AllocDateFromMessage" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocTimeFrom, "", new { id = "AllocTimeFromMessage" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocDateTo, "", new { id = "AllocDateToMessage" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.AllocTimeTo, "", new { id = "AllocTimeToMessage" })
+                    </div>
+                </td>
+                <td class="redcolor" colspan="3">
+                    @TransporterChngEcResource.SingleMsg
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransporterChngEcResource.ShipPlanDateS</td>
+                <td>
+                    <div class="sortarea" style="width:600px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ShipPlanDateFrom, new { htmlAttributes = new { @id = "txtShipPlanDateFrom", tabindex = "7", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ShipPlanDateTo, new { htmlAttributes = new { @id = "txtShipPlanDateTo", tabindex = "8", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ShipPlanDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ShipPlanDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle"></td>
+                <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransporterChngEcResource.ArriveRequestDateS</td>
+                <td>
+                    <div class="sortarea" style="width:600px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ArriveRequestDate, new { htmlAttributes = new { @id = "txtArriveRequestDate", tabindex = "9", @placeholder = "", @class = "flatpickr flatpickr_single flatpickr-input", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArriveRequestDate, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle color-blue print" colspan="3">@TransporterChngEcResource.TransporterIdCom</td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransporterChngEcResource.TransporterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                model => model.SearchConditions.SearchTransporterId
+                                  , "DELI_EC_CHG", Model.SearchConditions.CenterId
+                                 , CommonResource.None, new { id = "ddlSearchTransporterId", tabindex = "13", onblur = "SearchTransporterBlur();" })
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.SearchTransporterId, "", new { id = "SearchTransporterIdMsg" })
+                </td>
+                <td class="tdtitle print">@TransporterChngEcResource.ChangedTransporterS</td>
+                <td colspan="2" class="print">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                model => model.SearchConditions.ChangedTransporterIdPrint
+                                  , "DELI_EC_CHG", Model.SearchConditions.CenterId
+                                 , CommonResource.None, new { id = "ddlChangedTransporterIdPrint", tabindex = "21", onblur = "TransporterBlurPrint();" })
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.ChangedTransporterIdPrint, "", new { id = "ChangedTransporterIdPrintMsg" })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td>
+
+                </td>
+                <td class="tdtitle print">@TransporterChngEcResource.SizeS</td>
+                <td colspan="2" class="print">
+                    @Html.EditorFor(model => model.SearchConditions.Size, new { htmlAttributes = new { @id = "txtSize", tabindex = "22", onblur = "SizeBlur();" } })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.Size, "", new { id = "SizeMsg" })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td></td>
+                <td class="tdtitle_large print">@TransporterChngEcResource.CaseNo</td>
+                <td colspan="2" class="print">
+                    @Html.EditorFor(model => model.SearchConditions.CaseNo, new { htmlAttributes = new { @id = "txtCaseNo", tabindex = "23" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@TransporterChngEcResource.TransporterAreaS</td>
+                <td>
+                    <button type="button" class="btn btn-outline-dark" id="btnTransporterArea" tabindex="15">@TransporterChngEcResource.BtnTransporterArea</button>
+                </td>
+              
+                <td class="color-blue print" colspan="3" rowspan="3" style="width:400px; line-height:20px; vertical-align:top; padding-top:5px;">
+                    @TransporterChngEcResource.DeliPrnMsg1
+                    <br />
+                    @TransporterChngEcResource.DeliPrnMsg2
+                    <br />
+                    @TransporterChngEcResource.DeliPrnMsg3
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.TransporterAreaName, new { htmlAttributes = new { @class = "w_50_normal overflow", @id = "txtTransporterAreaName", tabindex = "16", @readonly = "readonly" } })
+                    @Html.HiddenFor(model => model.SearchConditions.TransporterAreaName, new { id = "hideTransporterAreaName" })
+                    @Html.HiddenFor(model => model.SearchConditions.TransporterArea, new { id = "txtTransporterArea" })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "TransporterChngEc", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "35" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="36" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                    @*<button type="button" id="BtnPrint" class="btn btn-dark" tabindex="37">@TransporterChngEcResource.BtnPrint</button>*@
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        <div style="display:none">
+            @if (Model.Results.TransporterChngEcs != null && Model.Results.TransporterChngEcs.Count() > 0)
+            {
+                <table>
+                    @for (int i = 0; i < Model.Results.TransporterChngEcs.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.TransporterChngEcs[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.TransporterChngEcs[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.TransporterChngEcs[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.TransporterChngEcs[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+
+    </div>
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.Results.TransporterChngEcs != null && Model.Results.TransporterChngEcs.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.TransporterChngEcs.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.TransporterChngEcs.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.TransporterChngEcs, Page => Url.Action("Search", "TransporterChngEc", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+        if (Model.Results.TransporterChngEcs.Count() > 0)
+        {
+            <div class="sublbarea no_border stock_detail_head" style="height:50px">
+                <table>
+                    <tr>
+                        <td class="tdtitle_large">
+                            @TransporterChngEcResource.ChangedTransporterS
+                        </td>
+                        <td>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.GeneralDropDownFor(
+                                        model => model.SearchConditions.ChangedTransporterId
+                                        , "DELI_EC_CHG", Model.SearchConditions.CenterId
+                                        , CommonResource.None, new { id = "ddlTransporterId", tabindex = "1" })
+                                </div>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.SearchConditions.ChangedTransporterId, "", new { id = "ChangedTransporterIdMsg" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+    }
+}
+@if (Model.Results.TransporterChngEcs != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.TransporterChngEcs.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.ShipPlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.ShipInstructId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.OrderDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.ArriveRequestDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.Transporter
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.DestZip
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.AllocStatus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.BatchNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @TransporterChngEcResource.BoxNo
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "Ship", FormMethod.Post, new { id = "frmList" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.TransporterChngEcs.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("TransporterChngEcs[{0}].", cModel.i);
+                            <tr>
+                                <td class="w_checkbox align-middle">
+                                    <label class="checkboxgroup">
+                                        @Html.CheckBoxFor(modelItem => cModel.v.IsCheck, new { @id = (key + "CheckedValue"), @class = "check-box", onclick = "SetCheckValue(" + @cModel.i + ")" })
+                                        <span class="chk_parts"></span>
+                                    </label>
+                                </td>
+                                <td class="align-middle text-right w_no">
+                                    @((cModel.i + 1) + (Model.Results.TransporterChngEcs.PageNumber - 1) * Model.Results.TransporterChngEcs.PageSize)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.ShipPlanDate)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                </td>
+                                <td class="align-middle ">
+                                    @Html.DisplayFor(modelItem => cModel.v.OrderDate)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.ArriveRequestDate)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.TransporterName)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.DestZip)
+                                </td>
+
+                                <td class="align-middle">
+                                    @if (cModel.v.AllocFlag == 0)
+                                    {
+                                        @TransporterChngEcResource.UnAlloc
+                                    }
+                                    else
+                                    {
+                                        @TransporterChngEcResource.Alloced
+                                    }
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.BatchNo)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                    @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                </td>
+                            </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    @Html.Partial("_CheckBoxCounter")
+    <div class="btnarea">
+        <button type="button" id="BtnUpdateHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm" hidden>@TransporterChngEcResource.BtnUpdate</button>
+        <button type="button" id="BtnUpdate" class="btn btn-dark btnsize_large _pm">
+            @TransporterChngEcResource.BtnUpdate
+        </button>
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+    </div>
+}
+
+@{
+    var areaConditions = new ViewDataDictionary { { "ParameterDeliareaGroup", Model.SearchConditions.TransporterArea } };
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_DeliareaGroupSearchModal.cshtml", areaConditions)
+@Html.Partial("_CreateConfirmMessageDialog", TransporterChngEcResource.UpdateMsg)
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+    <script>
+    /**
+     * Country class
+     */
+        var curentSelectedCnt = 0;
+        var curentSelectedCntDiff = 0;
+        var TransporterChngEcView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=checkbox][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            rowSelected: '#spnCheckedCounter',
+            BtnUpdate: '#BtnUpdate',
+            chkChecked: ':checkbox:checked',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnTransporterArea: '#btnTransporterArea',
+            txtTransporterArea: '#txtTransporterArea',
+            txtTransporterAreaName: '#txtTransporterAreaName',
+            deliareaGroupSelect: '#deliareaGroupSelect'
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus(0);
+                brandSearchModal.init();
+                vendorSearchModal.init();
+                deliareaGroupSearchModal.init();
+                transporterSearchModal.init();
+                curentSelectedCnt = $(TransporterChngEcView.SELECTORS.chkCheckedInTable).length;
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Stop event fired when click to checkbox
+                 */
+                $(TransporterChngEcView.SELECTORS.chkLabel).click(function (evt) {
+                    evt.stopPropagation();
+                });
+
+                /**
+                 * Check box click
+                 */
+                $(TransporterChngEcView.SELECTORS.chkInTable).click(function (evt) {
+                    evt.stopPropagation();
+                    curentSelectedCntDiff = curentSelectedCnt - $(TransporterChngEcView.SELECTORS.chkCheckedInTable).length;
+                    TransporterChngEcView.setButtonStatus(curentSelectedCntDiff);
+                });
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(TransporterChngEcView.SELECTORS.btnTransporterArea).on("click", deliareaGroupSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(TransporterChngEcView.SELECTORS.deliareaGroupSelect).on("click", function () {
+
+                    var ids = [];
+                    var names = [];
+
+                    $('#deliareaGroupSearchResult input[type=checkbox]:checked').each(function (index, item) {
+                        var area = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        var areaName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                        ids.push(area);
+                        names.push(areaName);
+                    });
+                    ids = ids.toString().split(',');
+                    names = names.join('、').split('、');
+
+                    ids = Array.from(new Set(ids));
+                    names = Array.from(new Set(names));
+                    //$.unique(ids.sort());
+                    //$.unique(names.sort());
+
+                    $(TransporterChngEcView.SELECTORS.txtTransporterArea).val(ids.toString());
+                    $(TransporterChngEcView.SELECTORS.txtTransporterAreaName).val(names.join('、'));
+
+                });
+      
+
+                /**
+                 * Button check all clicked
+                 */
+                $(TransporterChngEcView.SELECTORS.btnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("AllSelectedSearch", "TransporterChngEc", new { area= "Ship" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+
+                /**
+                 * Button UnCheck all clicked
+                 */
+                $(TransporterChngEcView.SELECTORS.btnUnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("UnSelectedSearch", "TransporterChngEc", new { area= "Ship" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+                // Display row is selected
+                $(TransporterChngEcView.SELECTORS.rowSelected).text(@Model.SearchConditions.SelectedCnt - difCnt );
+                // Enable/Disable button Edit
+                if ($(TransporterChngEcView.SELECTORS.rowSelected).text() >= 1) {
+                    if (getUsable_Class() != 1) {
+                        $(TransporterChngEcView.SELECTORS.BtnUpdate).removeAttr('disabled');
+                    }
+                } else {
+                    $(TransporterChngEcView.SELECTORS.BtnUpdate).attr('disabled', 'disabled');
+                }
+            },
+        }
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        TransporterChngEcView.init();
+        if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+            $("#btnErrorMessage").click();
+        }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "TransporterChngEc", new { area= "Ship" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").attr("action", urlAction);
+                    $("#frmSearch").attr("method", "POST");
+                    $("#frmSearch").submit();
+                });
+            });
+        if ('@Model.SearchConditions.AllocStatus' == 'Printed') {
+            $(".print").show();
+            $("#txtAllocDateFrom").attr('disabled', 'disabled');
+            $("#txtAllocDateFrom").val("");
+            $("#txtAllocTimeFrom").attr('disabled', 'disabled');
+            $("#txtAllocTimeFrom").val("");
+            $("#txtAllocDateTo").attr('disabled', 'disabled');
+            $("#txtAllocDateTo").val("");
+            $("#txtAllocTimeTo").attr('disabled', 'disabled');
+            $("#txtAllocTimeTo").val("");
+            $("#txtShipPlanDateFrom").attr('disabled', 'disabled');
+            $("#txtShipPlanDateFrom").val("");
+            $("#txtShipPlanDateTo").attr('disabled', 'disabled');
+            $("#txtShipPlanDateTo").val("");
+            $("#txtArriveRequestDate").attr('disabled', 'disabled');
+            $("#txtArriveRequestDate").val("");
+            $("#txtShipToClass").attr('disabled', 'disabled');
+            $("#txtShipToClass").val("");
+            $("#btnShipTo").attr('disabled', 'disabled');
+            $("#btnShipTo").val("");
+            $("#txtShipToName").attr('disabled', 'disabled');
+            $("#txtShipToName").val("");
+            $("#ddlSearchTransporterId").attr('disabled', 'disabled');
+            $("#ddlSearchTransporterId").val("");
+            $("#btnTransporterArea").attr('disabled', 'disabled');
+            $("#btnTransporterArea").val("");
+            $("#txtTransporterAreaName").attr('disabled', 'disabled');
+            $("#txtTransporterAreaName").val("");
+            $("#txtShipInstructId").attr('disabled', 'disabled');
+            $("#txtShipInstructId").val("");
+            $("#txtBoxNo").attr('disabled', 'disabled');
+            $("#txtBoxNo").val("");
+            $("#btnSearch").attr('disabled', 'disabled');
+            $(".Container").hide();
+            $(".sublbarea").hide();
+        } else {
+            $(".print").hide();
+            $("#txtAllocDateFrom").removeAttr('disabled');
+            $("#txtAllocTimeFrom").removeAttr('disabled');
+            $("#txtAllocDateTo").removeAttr('disabled');
+            $("#txtAllocTimeTo").removeAttr('disabled');
+            $("#txtShipPlanDateFrom").removeAttr('disabled');
+            $("#txtShipPlanDateTo").removeAttr('disabled');
+            $("#txtArriveRequestDate").removeAttr('disabled');
+            $("#txtShipToClass").removeAttr('disabled');
+            $("#btnShipTo").removeAttr('disabled');
+            $("#txtShipToName").removeAttr('disabled');
+            $("#ddlSearchTransporterId").removeAttr('disabled');
+            $("#btnTransporterArea").removeAttr('disabled');
+            $("#txtTransporterAreaName").removeAttr('disabled');
+            $("#txtShipInstructId").removeAttr('disabled');
+            $("#txtSize").val("");
+            $("#txtCaseNo").val("");
+            $("#ddlChangedTransporterIdPrint").val("");
+            if ($('input:radio[name="SearchConditions.AllocStatus"]:checked').val() == 1) {
+                $("#txtBoxNo").attr('disabled', 'disabled');
+            } else {
+                $("#txtBoxNo").removeAttr('disabled');
+            }
+            $("#btnSearch").removeAttr('disabled');
+        }
+    });
+        function AllocStatusChange() {
+        if ($('input:radio[name="SearchConditions.AllocStatus"]:checked').val() == 3) {
+            $(".print").show();
+            $("#txtAllocDateFrom").attr('disabled', 'disabled');
+            $("#txtAllocDateFrom").val("");
+            $("#txtAllocTimeFrom").attr('disabled', 'disabled');
+            $("#txtAllocTimeFrom").val("");
+            $("#txtAllocDateTo").attr('disabled', 'disabled');
+            $("#txtAllocDateTo").val("");
+            $("#txtAllocTimeTo").attr('disabled', 'disabled');
+            $("#txtAllocTimeTo").val("");
+            $("#txtShipPlanDateFrom").attr('disabled', 'disabled');
+            $("#txtShipPlanDateFrom").val("");
+            $("#txtShipPlanDateTo").attr('disabled', 'disabled');
+            $("#txtShipPlanDateTo").val("");
+            $("#txtArriveRequestDate").attr('disabled', 'disabled');
+            $("#txtArriveRequestDate").val("");
+            $("#txtShipToClass").attr('disabled', 'disabled');
+            $("#txtShipToClass").val("");
+            $("#btnShipTo").attr('disabled', 'disabled');
+            $("#btnShipTo").val("");
+            $("#txtShipToName").attr('disabled', 'disabled');
+            $("#txtShipToName").val("");
+            $("#ddlSearchTransporterId").attr('disabled', 'disabled');
+            $("#ddlSearchTransporterId").val("");
+            $("#btnTransporterArea").attr('disabled', 'disabled');
+            $("#btnTransporterArea").val("");
+            $("#txtTransporterAreaName").attr('disabled', 'disabled');
+            $("#txtTransporterAreaName").val("");
+            $("#txtShipInstructId").attr('disabled', 'disabled');
+            $("#txtShipInstructId").val("");
+            $("#txtBoxNo").attr('disabled', 'disabled');
+            $("#txtBoxNo").val("");
+            $("#btnSearch").attr('disabled', 'disabled');
+            $(".Container").hide();
+            $(".sublbarea").hide();
+        } else {
+            $(".print").hide();
+            $("#txtAllocDateFrom").removeAttr('disabled');
+            $("#txtAllocTimeFrom").removeAttr('disabled');
+            $("#txtAllocDateTo").removeAttr('disabled');
+            $("#txtAllocTimeTo").removeAttr('disabled');
+            $("#txtShipPlanDateFrom").removeAttr('disabled');
+            if ($("#txtShipPlanDateFrom").val() == "") { var nowdate = '@DateTime.Now.Date'; $("#txtShipPlanDateFrom").val(nowdate.substring(0, 10)); };
+            $("#txtShipPlanDateTo").removeAttr('disabled');
+            if ($("#txtShipPlanDateTo").val() == "") { var nowdate = '@DateTime.Now.Date'; $("#txtShipPlanDateTo").val(nowdate.substring(0, 10)); };
+            $("#txtArriveRequestDate").removeAttr('disabled');
+            $("#txtShipToClass").removeAttr('disabled');
+            $("#btnShipTo").removeAttr('disabled');
+            $("#txtShipToName").removeAttr('disabled');
+            $("#ddlSearchTransporterId").removeAttr('disabled');
+            $("#btnTransporterArea").removeAttr('disabled');
+            $("#txtTransporterAreaName").removeAttr('disabled');
+            $("#txtShipInstructId").removeAttr('disabled');
+            $("#txtSize").val("");
+            $("#txtCaseNo").val("");
+            $("#ddlChangedTransporterIdPrint").val("");
+            if ($('input:radio[name="SearchConditions.AllocStatus"]:checked').val() == 1) {
+                $("#txtBoxNo").attr('disabled', 'disabled');
+                $("#txtBoxNo").val("");
+            } else {
+                $("#txtBoxNo").removeAttr('disabled');
+            }
+            $("#btnSearch").removeAttr('disabled');
+        }
+        }
+        function SetCheckValue(lineNo) {
+            $('input[type=checkbox][id$="SearchConditions.TransporterChngEcs[' + lineNo + '].CheckedValue"]').each(function (i, item) {
+                $(item).trigger('click');
+                });
+        }
+        function TimeBlur() {
+            var idFromtime = '#txtAllocTimeFrom';
+            var idTotime = '#txtAllocTimeTo';
+            var msgFromtime = '#AllocTimeFromMessage';
+            var msgTotime = '#AllocTimeToMessage';
+
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                if (!IsTime($(idFromtime).val().replace(":",""))) {
+                    $(msgFromtime).html('<span id="AllocTimeFromError" class="">'+'@TransporterChngEcResource.ErrTime' +'</span>');
+                    $(msgFromtime).addClass("field-validation-error");
+                    $(idFromtime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgFromtime).html("")
+                    $(msgFromtime).removeClass("field-validation-error")
+                    $(idFromtime).removeClass("input-validation-error")
+                }
+            }
+
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                if (!IsTime($(idTotime).val().replace(":",""))) {
+                    $(msgTotime).html('<span id="AllocTimeToError" class="">'+'@TransporterChngEcResource.ErrTime' +'</span>');
+                    $(msgTotime).addClass("field-validation-error");
+                    $(idTotime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgTotime).html("")
+                    $(msgTotime).removeClass("field-validation-error")
+                    $(idTotime).removeClass("input-validation-error")
+                }
+            }
+            var str = "";
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                str = $(idFromtime).val().replace(":", "").replace(":", "");
+                $(idFromtime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                str = $(idTotime).val().replace(":", "").replace(":", "");
+                $(idTotime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+        }
+        function byteLength(str) {
+            var len = 0;
+            for (var i=0; i<str.length; i++) {
+             var c = str.charCodeAt(i);
+             if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
+               len++;
+             }
+             else {
+              len+=2;
+             }
+            }
+            return len;
+        }
+        function ConditionsCheck(mod) {
+            var msgAllocationName = '#msgAllocationName';
+            var idAllocationName = '#txtAllocationName';
+            var iddateFrom = '#txtAllocDateFrom';
+            var iddateTo = '#txtAllocDateTo';
+            var idFromtime = '#txtAllocTimeFrom';
+            var idTotime = '#txtAllocTimeTo';
+            var msgdateFrom = '#AllocDateFromMessage';
+            var msgdateTo = '#AllocDateToMessage';
+            var msgFromtime = '#AllocTimeFromMessage';
+            var msgTotime = '#AllocTimeToMessage';
+
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                if (!IsTime($(idFromtime).val().replace(":",""))) {
+                    $(msgFromtime).html('<span id="AllocTimeFromError" class="">'+'@TransporterChngEcResource.ErrTime' +'</span>');
+                    $(msgFromtime).addClass("field-validation-error");
+                    $(idFromtime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgFromtime).html("")
+                    $(msgFromtime).removeClass("field-validation-error")
+                    $(idFromtime).removeClass("input-validation-error")
+                }
+            }
+
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                if (!IsTime($(idTotime).val().replace(":",""))) {
+                    $(msgTotime).html('<span id="AllocTimeToError" class="">'+'@TransporterChngEcResource.ErrTime' +'</span>');
+                    $(msgTotime).addClass("field-validation-error");
+                    $(idTotime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgTotime).html("")
+                    $(msgTotime).removeClass("field-validation-error")
+                    $(idTotime).removeClass("input-validation-error")
+                }
+            }
+            var str = "";
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                str = $(idFromtime).val().replace(":", "").replace(":", "");
+                $(idFromtime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                str = $(idTotime).val().replace(":", "").replace(":", "");
+                $(idTotime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+            if ($(iddateFrom).val()=="" && $(idFromtime).val()!="") {
+                $(msgdateFrom).html('<span id="SearchConditions_AllocDateFrom_error" class="">'+'@TransporterChngEcResource.ErrNoDate' +'</span>');
+                $(msgdateFrom).addClass("field-validation-error");
+                $(iddateFrom).addClass("input-validation-error");
+                return false;
+            } else {
+                $(msgdateFrom).html("")
+                $(msgdateFrom).removeClass("field-validation-error")
+                $(iddateFrom).removeClass("input-validation-error")
+            }
+            if ($(iddateTo).val()=="" && $(idTotime).val()!="") {
+                $(msgdateTo).html('<span id="SearchConditions_AllocDateTo_error" class="">'+'@TransporterChngEcResource.ErrNoDate' +'</span>');
+                $(msgdateTo).addClass("field-validation-error");
+                $(iddateTo).addClass("input-validation-error");
+                return false;
+            } else {
+                $(msgdateTo).html("")
+                $(msgdateTo).removeClass("field-validation-error")
+                $(iddateTo).removeClass("input-validation-error")
+            }
+                var date1 = $(iddateFrom).val().replace(/\//g, "");
+                var date2 = $(iddateTo).val().replace(/\//g, "");
+                var time1 = $(idFromtime).val().replace(/\:/g, "");
+                var time2 = $(idTotime).val().replace(/\:/g, "");
+                var msg = "@String.Format(MessagesResource.ERR_DATE_MINMAX, TransporterChngEcResource.AllocDateTimeFrom, TransporterChngEcResource.AllocDateTimeTo)";
+            if (!(validateDate.checkDate(date1, time1, date2, time2, "txtAllocDateFrom", "SearchConditions.AllocDateFrom", msg))) return false;
+            return true;
+        }
+        function Search() {
+            if (ConditionsCheck('search')) {
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "TransporterChngEc", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();}
+            }
+        function IsDate(value) {
+            value = value.replace(/\//g, "-");
+            return value.match(/^(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)$/);
+        }
+        function IsTime(value) {
+            value = value.replace(":", "");
+            return value.match(/^([01][0-9]|2[0-3])([0-5][0-9])([0-5][0-9])$/);
+        }
+        $('#ddlTransporterId').on("change", function () {
+            if ($("#ddlTransporterId").val()=="") {
+                $("#ChangedTransporterIdMsg").html('<span id="TransporterId_error" class="">'+'@string.Format(Share.Common.Resources.MessagesResource.Required, TransporterChngEcResource.ChangedTransporter)' +'</span>');
+                $("#ChangedTransporterIdMsg").addClass("field-validation-error");
+                $("#ddlTransporterId").addClass("input-validation-error");
+            } else {
+                $("#ChangedTransporterIdMsg").html("")
+                $("#ChangedTransporterIdMsg").removeClass("field-validation-error")
+                $("#ddlTransporterId").removeClass("input-validation-error")
+            }
+        });
+        $('#BtnUpdate').on("click", function () {
+            if ($("#ddlTransporterId").val()=="") {
+                $("#ChangedTransporterIdMsg").html('<span id="TransporterId_error" class="">'+'@string.Format(Share.Common.Resources.MessagesResource.Required, TransporterChngEcResource.ChangedTransporter)' +'</span>');
+                $("#ChangedTransporterIdMsg").addClass("field-validation-error");
+                $("#ddlTransporterId").addClass("input-validation-error");
+                return;
+            } else {
+                $("#ChangedTransporterIdMsg").html("")
+                $("#ChangedTransporterIdMsg").removeClass("field-validation-error")
+                $("#ddlTransporterId").removeClass("input-validation-error")
+            }
+            $('#BtnUpdateHidden').click();
+        });
+        $('#submitCreate').on("click", function () {
+            var urlAction = '@Url.Action("TransporterChangeSearch", "TransporterChngEc", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        function SearchTransporterBlur() {
+            $("#SearchTransporterIdMsg").html("")
+            $("#SearchTransporterIdMsg").removeClass("field-validation-error")
+            $("#ddlSearchTransporterId").removeClass("input-validation-error")
+        }
+
+        function TransporterBlurPrint() {
+            $("#ChangedTransporterIdPrintMsg").html("")
+            $("#ChangedTransporterIdPrintMsg").removeClass("field-validation-error")
+            $("#ddlChangedTransporterIdPrint").removeClass("input-validation-error")
+        }
+
+        function SizeBlur() {
+            $("#SizeMsg").html("");
+            $("#SizeMsg").removeClass("field-validation-error");
+            $("#txtSize").removeClass("input-validation-error");
+        }
+
+        $('#txtCaseNo').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                CaseNoBlur();
+            }
+        });
+
+        function CaseNoBlur() {
+            if ($("#ddlChangedTransporterIdPrint").val()=="") {
+                $("#ChangedTransporterIdPrintMsg").html('<span id="ChangedTransporterIdPrint_error" class="">'+'@string.Format(Share.Common.Resources.MessagesResource.Required, TransporterChngEcResource.ChangedTransporter)' +'</span>');
+                $("#ChangedTransporterIdPrintMsg").addClass("field-validation-error");
+                $("#ddlChangedTransporterIdPrint").addClass("input-validation-error");
+                return;
+            } else {
+                $("#ChangedTransporterIdPrintMsg").html("")
+                $("#ChangedTransporterIdPrintMsg").removeClass("field-validation-error")
+                $("#ddlChangedTransporterIdPrint").removeClass("input-validation-error")
+            }
+            if ($("#ddlChangedTransporterIdPrint").val()=="01" && $("#txtSize").val()=="") {
+                $("#SizeMsg").html('<span id="Size_error" class="">'+'@string.Format(Share.Common.Resources.MessagesResource.Required, TransporterChngEcResource.Size)' +'</span>');
+                $("#SizeMsg").addClass("field-validation-error");
+                $("#txtSize").addClass("input-validation-error");
+                return;
+            } else if ($("#txtSize").val() !="" ) {
+                var urlAction = '@Url.Action("CheckSize", "TransporterChngEc", new { area = "Ship"})';
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    data: {
+                        size: $("#txtSize").val()
+                    },
+                    success: function (data) {
+                        if (data.cnt == 0) {
+                            $("#SizeMsg").html('<span id="Size_error" class="">'+'@string.Format(Share.Common.Resources.MessagesResource.MasterNotExistsError, TransporterChngEcResource.Size)' +'</span>');
+                            $("#SizeMsg").addClass("field-validation-error");
+                            $("#txtSize").addClass("input-validation-error");
+                            return;
+                        } else {
+                            $("#SizeMsg").html("");
+                            $("#SizeMsg").removeClass("field-validation-error");
+                            $("#txtSize").removeClass("input-validation-error");
+                            TransporterChange2();
+                        }
+                    }
+                });
+            }else {
+                $("#SizeMsg").html("");
+                $("#SizeMsg").removeClass("field-validation-error");
+                $("#txtSize").removeClass("input-validation-error");
+                TransporterChange2();
+            }
+        }
+        function TransporterChange2() {
+            var urlAction ='@Url.Action("TransporterChange2", "TransporterChngEc", new { area= "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+    </script>
+}

@@ -1,0 +1,731 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Inventory.Resources;
+@model Wms.Areas.Inventory.ViewModels.Reference.Reference01ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_INV_Reference01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "Reference", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@ReferenceResource.CenterIdS</td>
+                <td colspan="3">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1", onchange = "InventoryNoList()" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ReferenceResource.InventoryClassS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                model => model.SearchConditions.InventoryClass
+                                , "INVENTORY_CLASS", Wms.Common.Profile.User.CenterId
+                                , CommonResource.None, new { @class = "w_10_normal", @id = "ddlInventoryClass", tabindex = "2", onchange = "InventoryNoList()" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@ReferenceResource.InventoryNameS</td>
+                <td width="400px">
+                    @Html.EditorFor(model => model.SearchConditions.InventoryName, new { htmlAttributes = new { @class = "w_30_normal", @id = "txtInventoryName", tabindex = "7", onchange = "InventoryNoList()" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+
+            </tr>
+            <tr>
+                <td class="tdtitle">@ReferenceResource.InventoryDateS</td>
+                <td>
+                    <div class="sortarea" style="width:400px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.InventoryDateFrom, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;", @id = "txtInventoryDateFrom", onchange = "InventoryNoList()" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        &nbsp;-&nbsp;
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.InventoryDateTo, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;", @id = "txtInventoryDateTo", onchange = "InventoryNoList()" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.InventoryDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.InventoryDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle">@ReferenceResource.InventoryStatusS</td>
+                <td width="400px">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                model => model.SearchConditions.InventoryStatus
+                                , "INVENTORY_STATUS", Wms.Common.Profile.User.CenterId
+                                , CommonResource.None, new { @class = "w_10_normal", @id = "ddlInventoryStatus", tabindex = "8", onchange = "InventoryNoList()" })
+                        </div>
+                    </div>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.InventoryStatusOld, new { id = "txtInventoryStatusOld", tabindex = "9", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @ReferenceResource.DifferenceInventory
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_large">@ReferenceResource.InventoryNoS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.InventoryNo,
+                                (IEnumerable<SelectListItem>)ViewBag.InventoryNo,
+                                CommonResource.None, new { id = "ddlInventoryNo", tabindex = "5" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ReferenceResource.LocationCdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.LocationCd, new { htmlAttributes = new { @id = "txtLocationCd", tabindex = "6", onchange = "InventoryNoList()" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@ReferenceResource.ItemSkuIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @id = "txtItemSkuId", tabindex = "10", onchange = "InventoryNoList()" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Reference", new { area = "Inventory" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "11" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="12" onclick="Search();">@FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        @Html.HiddenFor(model => model.SearchConditions.ResultCnt, new { id = "hidResultCnt" })
+        @Html.HiddenFor(model => model.SearchConditions.InventoryCnt, new { id = "hidInventoryCnt" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+        <div style="display:none">
+            @if (Model.Results.Reference != null && Model.Results.Reference.Count() > 0)
+            {
+                <table>
+
+                    @for (int i = 0; i < Model.Results.Reference.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.Reference01s[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.Reference[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.Reference[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.Reference[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.Reference != null && Model.Results.Reference.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border Ship_detail_load">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    <button type="button" id="btnDownload" class="download">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </li>
+                <li>
+                    <button type="button" id="btnPrint" class="download">
+                        <img src="~/Content/img/print.png" />
+                        @ReferenceResource.DifferenceList
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.Reference.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.Reference.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.Reference, Page => Url.Action("Search", "Reference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.Reference != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.Reference.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:73vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.InventoryNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.InventoryStartDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.InventoryName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.StockQtyStart
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.ResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.DifferencePlus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.DifferenceMinus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.DifferenceSum
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.InventoryStatus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                </th>
+                                <th class="bg-grey align-middle">
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Update", "Reference", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.Reference.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Reference[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="w_checkbox align-middle">
+                                            <label class="checkboxgroup">
+                                                @Html.CheckBoxFor(modelItem => cModel.v.IsCheck, new { @id = (key + "CheckedValue"), @class = "check-box", onclick = "SetCheckValue(" + @cModel.i + "," + cModel.v.ResultsDataFlag + ",'" + cModel.v.InventoryStatus + "')" })
+                                                <span class="chk_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.Reference.PageNumber - 1) * Model.Results.Reference.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryStartDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.StockQtyStart)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.DifferencePlus)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.DifferenceMinus)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.DifferenceSum)
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryStatus)
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <button type="button" class="btn btn-dark btn-sm" onclick="LocDetail(@cModel.v.Seq,@cModel.v.LineNo)">@ReferenceResource.BtnLocationDetail</button>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <button type="button" class="btn btn-dark btn-sm" onclick="SkuDetail(@cModel.v.Seq,@cModel.v.LineNo)">@ReferenceResource.BtnSkuDetail</button>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.ResultsDataFlag, new { Name = key + "ResultsDataFlag" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    @Html.Partial("_CheckBoxCounter")
+<div class="btnarea">
+    <button id="btnInventoryCancelHidden" type="button" class="btn btn-outline-danger btnsize _pm" data-toggle="modal" data-target="#confirm_Cancel" hidden>@FormsResource.BTN_INVENTORY_CANCEL</button>
+    <button type="button" id="btnInventoryCancel" class="btn btn-outline-danger btnsize _pm">@FormsResource.BTN_INVENTORY_CANCEL</button>
+    <button id="btnTemporaryConfirmHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_Update" hidden>@FormsResource.BTN_TEMPORARY_CONFIRM</button>
+    <button type="button" id="btnTemporaryConfirm" class="btn btn-dark btnsize _pm">@FormsResource.BTN_TEMPORARY_CONFIRM</button>
+    <button id="btnConfirm" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_Confirm" hidden></button>
+    <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_Error" hidden></button>
+</div>
+}
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Confirm", Message = (string)ViewBag.ErrorMessage })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Update", Message = @MessagesResource.QUE_INVENTORY_TEMPORARY_CONFIRM })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Cancel", Message = @MessagesResource.QUE_INVENTORY_CANCEL })
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "Error", Message = @ReferenceResource.OutPut })
+
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+
+        $("#btnDownload").on("click", function () {
+
+            if (!isCheckedCnt()) {
+                $("#btnErrorMessage").click();
+                return;
+            }
+        var urlAction = '@Url.Action("Download", "Reference", new { area = "Inventory" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+
+     $("#btnPrint").on("click", function () {
+         if (!isCheckedCnt()) {
+             $("#btnErrorMessage").click();
+                return;
+            }
+        var urlAction = '@Url.Action("Print", "Reference", new { area = "Inventory" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    });
+
+    function isCheckedCnt() {
+
+        var curentSelectedCnt=0
+      if ('@(Model.Results.Reference != null)' == 'True') {
+            if ('@(Model.Results.Reference != null && Model.Results.Reference.Count() > 0)' == 'True') {
+                for (var i = 0; i < @(Model.Results.Reference == null ? 0 : Model.Results.Reference.Count()); i++) {
+                    if ($("#listData input[type=checkbox][id='Reference["+i+"].CheckedValue']").is(':checked')) {
+                        curentSelectedCnt = curentSelectedCnt + 1;
+                    }
+                }
+            }
+        }
+
+        if (curentSelectedCnt == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    /**
+     * Country class
+     */
+    var curentSelectedCnt = 0;
+    var curentSelectedCntDiff = 0;
+    var resultsDataFlag = 0;
+    var inventoryStatus = "";
+    var ReferenceView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=checkbox][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            rowSelected: '#spnCheckedCounter',
+            ddlSortKey: '#ddlSortKey',
+            ddlInventoryStatus: 'ddlInventoryStatus',
+            chkChecked: ':checkbox:checked',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: '#frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnTemporaryConfirm: '#btnTemporaryConfirm',
+            btnInventoryCancel: '#btnInventoryCancel',
+        },
+
+        /**
+         * Init data
+         */
+        init: function () {
+            this.registerEvent();
+            this.setButtonStatus(0);
+            curentSelectedCnt = $(ReferenceView.SELECTORS.chkCheckedInTable).length;
+        },
+
+        /**
+         * Register event for control
+         */
+        registerEvent: function () {
+
+            /**
+             * Stop event fired when click to checkbox
+             */
+            $(ReferenceView.SELECTORS.chkLabel).click(function (evt) {
+                evt.stopPropagation();
+            });
+
+            /**
+             * Check box click
+             */
+            $(ReferenceView.SELECTORS.chkInTable).click(function (evt) {
+                evt.stopPropagation();
+                curentSelectedCntDiff = curentSelectedCnt - $(ReferenceView.SELECTORS.chkCheckedInTable).length;
+                ReferenceView.setButtonStatus(curentSelectedCntDiff);
+            });
+
+            /**
+             * Button check all clicked
+             */
+            $(ReferenceView.SELECTORS.btnCheckAll).click(function () {
+                if ($("#listData").length) {
+                    $("#hidSearchType").val("SortPage");
+                    var urlAction = '@Url.Action("AllSelectedSearch", "Reference", new { area= "Inventory" })';
+                    var $form = $("#frmSearch");
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                }
+            });
+
+            /**
+             * Button UnCheck all clicked
+             */
+            $(ReferenceView.SELECTORS.btnUnCheckAll).click(function () {
+                if ($("#listData").length) {
+                    $("#hidSearchType").val("SortPage");
+                    var urlAction = '@Url.Action("UnSelectedSearch", "Reference", new { area= "Inventory" })';
+                    var $form = $("#frmSearch");
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                }
+            });
+
+        },
+
+        /**
+         * Enable/Disable button Edit
+         */
+        setButtonStatus: function (difCnt) {
+            @*// Display row is selected
+            $(ReferenceView.SELECTORS.rowSelected).text(@Model.SearchConditions.SelectedCnt - difCnt );
+            // Enable/Disable button Update
+            if ($(ReferenceView.SELECTORS.rowSelected).text() == 1 && resultsDataFlag == 1 && inventoryStatus != '@ReferenceResource.DefiniteDecision') {
+                $(ReferenceView.SELECTORS.btnTemporaryConfirm).removeAttr('disabled');
+            } else {
+                if ($(ReferenceView.SELECTORS.rowSelected).text() == 1 && resultsDataFlag == 1 && inventoryStatus != '@ReferenceResource.DefiniteDecision') {
+                    $(ReferenceView.SELECTORS.btnTemporaryConfirm).removeAttr('disabled');
+                } else {
+                    $(ReferenceView.SELECTORS.btnTemporaryConfirm).attr('disabled', 'disabled');
+                }
+
+            }
+
+            if ($(ReferenceView.SELECTORS.rowSelected).text() == 1 && inventoryStatus != '@ReferenceResource.ProvisionalDecision' && inventoryStatus != '@ReferenceResource.DefiniteDecision') {
+                $(ReferenceView.SELECTORS.btnInventoryCancel).removeAttr('disabled');
+            } else {
+                $(ReferenceView.SELECTORS.btnInventoryCancel).attr('disabled', 'disabled');
+            }*@
+        },
+
+    }
+
+    /**
+     * Page loaded
+     */
+    $(document).ready(function () {
+        ReferenceView.init();
+        setCheckboxs(-1);
+        if ('@ViewBag.Status' == '@ProcedureStatus.NoAllocData') {
+            $("#btnConfirm").click();
+        }
+        @* Pageを変更時 *@
+        $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+            var urlAction ='@Url.Action("Search", "Reference", new { area= "Inventory" })';
+            var pageUrl = urlAction + '?Page=';
+            var page = $(item).attr("href").replace(pageUrl, "");
+            page = page.replace("&class=btn-outline-dark", "");
+            $(item).attr("href", "javascript:void(0);").click(function () {
+                $("#hidPage").val(page);
+                $("#hidSearchType").val("SortPage");
+                $("#frmSearch").attr("action", urlAction);
+                $("#frmSearch").attr("method", "POST");
+                $("#frmSearch").submit();
+            });
+        });
+    });
+
+    function SetCheckValue(lineNo,ResultsDataFlag,InventoryStatus) {
+        $('input[type=checkbox][id$="SearchConditions.Reference01s[' + lineNo + '].CheckedValue"]').each(function (i, item) {
+            $(item).trigger('click');
+        });
+
+        if ($('input[type=checkbox][id$="SearchConditions.Reference01s[' + lineNo + '].CheckedValue"]').is(':checked')) {
+            if (InventoryStatus == '@ReferenceResource.DefiniteDecision') {
+                $("#hidResultCnt").val(Number($("#hidResultCnt").val()) + 1);
+            }
+            if (InventoryStatus == '@ReferenceResource.ProvisionalDecision' || InventoryStatus == '@ReferenceResource.DefiniteDecision') {
+                $("#hidInventoryCnt").val(Number($("#hidInventoryCnt").val()) + 1);
+            }
+
+            setCheckboxs(1);
+        } else {
+            if (InventoryStatus == '@ReferenceResource.DefiniteDecision') {
+                $("#hidResultCnt").val(Number($("#hidResultCnt").val()) - 1);
+            }
+            if (InventoryStatus == '@ReferenceResource.ProvisionalDecision' || InventoryStatus == '@ReferenceResource.DefiniteDecision') {
+                $("#hidInventoryCnt").val(Number($("#hidInventoryCnt").val()) - 1);
+            }
+
+            setCheckboxs(0);
+        }
+        resultsDataFlag = ResultsDataFlag;
+        inventoryStatus = InventoryStatus;
+    }
+
+    function setCheckboxs(flag) {
+        if (flag == 1) {
+            $('#spnCheckedCounter').text(Number($('#spnCheckedCounter').text()) + 1);
+        } else if (flag == 0) {
+            $('#spnCheckedCounter').text(Number($('#spnCheckedCounter').text()) - 1);
+        } else {
+            if (@Model.SearchConditions.SelectedCnt != '0') {
+                $("#spnCheckedCounter").text(@Model.SearchConditions.SelectedCnt);
+            } else {
+                $('#spnCheckedCounter').text(0);
+            }
+        }
+        if ($('#spnCheckedCounter').text() == 0) {
+            $('#btnTemporaryConfirm').prop('disabled', true);
+            $('#btnInventoryCancel').prop('disabled', true);
+        } else {
+            if ($("#hidResultCnt").val() == 0 && $('#spnCheckedCounter').text() == 1) {
+                $('#btnTemporaryConfirm').prop('disabled', false);
+            } else {
+                $('#btnTemporaryConfirm').prop('disabled', true);
+            }
+            if ($("#hidInventoryCnt").val() == 0 && $('#spnCheckedCounter').text() == 1) {
+                $('#btnInventoryCancel').prop('disabled', false);
+            } else {
+                $('#btnInventoryCancel').prop('disabled', true);
+            }
+        }
+    };
+    // Sort
+    function getSortData() {
+
+        $("#hidSort").val($("#ddlSort").val());
+        $("#hidSortKey").val($("#ddlSortKey").val());
+        $("#hidSearchType").val("SortPage");
+
+        var $form = $("#frmSearch");
+        var urlAction ='@Url.Action("Search", "Reference", new { area= "Inventory" })';
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    }
+
+    function Search() {
+        $("#hidSearchType").val("Search");
+        var urlAction = '@Url.Action("Search", "Reference", new { area = "Inventory" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    }
+
+    function LocDetail(seq,lineNo) {
+            $("#hidSeq").val(seq);
+            $("#hidLineNo").val(lineNo);
+            $("#hidSearchType").val("SortPage");
+            var urlAction = '@Url.Action("LocDetailSearch", "Reference", new { area = "Inventory" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+    }
+
+    function SkuDetail(seq,lineNo) {
+            $("#hidSeq").val(seq);
+            $("#hidLineNo").val(lineNo);
+            $("#hidSearchType").val("SortPage");
+            var urlAction = '@Url.Action("SkuDetailSearch", "Reference", new { area = "Inventory" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+    }
+
+    $('#btnTemporaryConfirm').on("click", function () {
+        if (!validateForm($('#frmSearch'))) {
+            return;
+        }
+        $('#btnTemporaryConfirmHidden').click();
+    });
+
+    $('#Update').on("click", function () {
+        var urlAction ='@Url.Action("InvConfirm", "Reference", new { area= "Inventory" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+
+    $('#btnInventoryCancel').on("click", function () {
+        if (!validateForm($('#frmSearch'))) {
+            return;
+        }
+        $('#btnInventoryCancelHidden').click();
+    });
+
+    $('#Cancel').on("click", function () {
+        var urlAction ='@Url.Action("InvCancel", "Reference", new { area= "Inventory" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+
+    $('#Confirm').on("click", function () {
+        var urlAction ='@Url.Action("InvAgainConfirm", "Reference", new { area= "Inventory" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+
+    function InventoryNoList() {
+        var urlAction = '@Url.Action("GetInventoryNoList","Reference",new { area = "Inventory"})';
+        $.ajax({
+            url: urlAction,
+            type: "POST",
+            data: {
+                InventoryClass: $("#ddlInventoryClass").val(),
+                InventoryName: $("#txtInventoryName").val(),
+                InventoryDateFrom: $("#txtInventoryDateFrom").val(),
+                InventoryDateTo: $("#txtInventoryDateTo").val(),
+                InventoryStatus: $("#ddlInventoryStatus").val(),
+                Location: $("#txtLocationCd").val(),
+                Sku: $("#txtItemSkuId").val(),
+                CenterId: $("#ddlCenterId").val(),
+            },
+            success: function (data) {
+                $("#ddlInventoryNo").html("");
+                $("#ddlInventoryNo").html(data.html);
+            }
+        });
+        }
+        function Remove(e) {
+            $("#" + e.id).val('');
+            $("#" + e.id).flatpickr(single_flatpickr_opts);
+            $("#" + e.id).attr('readonly', true);
+            $("#" + e.id).change();
+        }
+
+    </script>
+}

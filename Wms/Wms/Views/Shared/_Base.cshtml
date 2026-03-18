@@ -1,0 +1,124 @@
+﻿@*
+    headタグの定義
+    共通のCSS・JSの読み込み
+*@
+<!DOCTYPE html>
+
+@* TODO:多言語対応 *@
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1366" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="none" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>@ViewBag.Title - CLOWS</title>
+    <link rel="icon" href="~/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP" rel="stylesheet">
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet">
+    @* Styles *@
+    @Styles.Render("~/bundles/css")
+
+    @* Scripts *@
+    @Scripts.Render("~/bundles/jQuery")
+    @Scripts.Render("~/bundles/BootstrapJs")
+    @Scripts.Render("~/bundles/jQueryAddon")
+    @Scripts.Render("~/bundles/foolproof")
+    @Scripts.Render("~/bundles/mvcfoolproof")
+    @Scripts.Render("~/bundles/SiteJs")
+
+    <script src="~/signalr/hubs"></script>
+    <script type="text/javascript">
+        $(function () {
+            // Reference the auto-generated proxy for the hub.
+            var progress = $.connection.progressHub;
+            console.log(progress);
+
+            // Create a function that the hub can call back to display messages.
+            progress.client.AddProgress = function (message, progressCurrent, progressTotal, progressColor) {
+                //var myDate = new Date();
+                //$("#endTime").val(myDate.toLocaleString());
+                var value = parseInt(progressCurrent * 100 / progressTotal);
+                changeProgUI(value, progressCurrent, progressTotal, message, progressColor);
+
+            };
+
+            $.connection.hub.start().done(function () {
+                var connectionId = $.connection.hub.id;
+                console.log(connectionId);
+            });
+
+        });
+
+        function changeProgUI(value, progressCurrent, progressTotal, progressText, progressColor) {
+            $("#progtxt").text(progressText);
+            if (progressColor == "red") {
+                $("#prog").css("background-color", progressColor)
+                $("#prog").css("width", value + "%").text("");
+            } else {
+                $("#prog").css("width", value + "%").text(value + "%");
+            }
+
+            if (value >= 0 && value <= 30) {
+                $("#prog").addClass("progress-bar-danger");
+            }
+            else if (value >= 30 && value <= 60) {
+                $("#prog").removeClass("progress-bar-danger");
+                $("#prog").addClass("progress-bar-warning");
+            }
+            else if (value >= 60 && value <= 90) {
+                $("#prog").removeClass("progress-bar-warning");
+                $("#prog").addClass("progress-bar-info");
+            }
+            else if (value >= 90 && value < 100) {
+                $("#prog").removeClass("progress-bar-info");
+                $("#prog").addClass("progress-bar-success");
+            }
+        }
+    </script>
+</head>
+<body>
+
+    @RenderBody()
+    <script>
+        /**
+         * form要素を検証する。
+         * @@param {object} form form要素
+         */
+        function validateForm(form) {
+            if (!$(form).valid()) {
+                $(form).validate().focusInvalid();
+                return false;
+            }
+            return true;
+        };
+
+        var submitButton = $('button[type="submit"]');
+        $('form').on('submit', function () {
+            if ($(this).validate().errorList.length > 0) {
+                return;
+            }
+            submitButton.prop('disabled', true);
+        });
+
+        function enableSubmit() {
+            submitButton.prop('disabled', false);
+        };
+
+
+        var waiting = false;
+        function wait() {
+            waiting = true;
+            document.body.style.cursor = 'wait';
+        }
+
+        function activate() {
+            waiting = false;
+            document.body.style.cursor = 'auto';
+        }
+                //disableBrowserBack();
+    </script>
+    @RenderSection("BaseChildScripts", required: true)
+</body>
+</html>

@@ -1,0 +1,105 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Resources;
+@model Wms.ViewModels.Notice.NoticeViewModel
+@{
+    ViewBag.Title = Wms.Resources.HomeResource.ReceptionNoticeBtnText;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@* 共通ヘッダー *@
+@Html.Partial("_DetailHeader", Model)
+
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.DetailHeader != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.DetailHeader == null)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfRunId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfRunUnit
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfRunState
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.StartTime
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.EndTime
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("frmDetailReceive", "Notice", FormMethod.Post, new { id = "frmDetailReceive" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <tr>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => modelItem.DetailHeader.RowNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.DetailHeader.IfRunId)
+                                    </td>
+                                    <td class="align-middl">
+                                        @Html.DisplayFor(modelItem => modelItem.DetailHeader.Name)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.DetailHeader.IfRunStateNm)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.DetailHeader.StartTime)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.DetailHeader.EndTime)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Notice", new { rowId = Model.DetailHeader.RowId }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+
+    </script>
+}

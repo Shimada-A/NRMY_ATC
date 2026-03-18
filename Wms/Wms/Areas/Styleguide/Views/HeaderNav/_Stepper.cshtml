@@ -1,0 +1,14 @@
+﻿@model int
+@using Share.Helpers;
+
+@{
+    var m = new List<Share.Helpers.StepperModel>
+{
+new Share.Helpers.StepperModel{Index=1,Description="ステップ1"},
+new Share.Helpers.StepperModel{Index=2,Description="ステップ2"},
+new Share.Helpers.StepperModel{Index=3,Description="ステップ3"}
+};
+    m[Model].IsActive = true;
+}
+
+@Html.Stepper(m)

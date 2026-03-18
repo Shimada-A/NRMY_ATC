@@ -1,0 +1,84 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditLayoutBase
+
+<div id="div_search" class="head head_white">
+
+    <table>
+        <tr>
+            <td class="tdtitle_15">@EditLayoutResource.LayoutName :</td>
+            <td colspan="2">
+                @Html.HiddenFor(model => model.TemplateId)
+                @Html.DisplayAndHiddenFor(model => model.LayoutName)
+            </td>
+            <td style="width:60px"/>
+            <td class="tdtitle_15">@EditLayoutResource.IoClass :</td>
+            <td>
+                @Html.HiddenFor(model => model.IoClass)
+                @Html.DisplayAndHiddenFor(model => model.IoClassName)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6">
+                <hr />
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle_15">@EditLayoutResource.Table :</td>
+            <td colspan="2">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @if (Model.IsNewLayout)
+                        {
+                            @Html.DropDownListFor(model => model.ObjectId, Model.ObjectList, string.Empty)
+                            @Html.ValidationMessageFor(model => model.ObjectId)
+                        }
+                        else
+                        {
+                            @Html.HiddenFor(model => model.ObjectId)
+                            @Html.DropDownListFor(model => model.ObjectId, Model.ObjectList, string.Empty, new { @disabled = true })
+                        }
+                    </div>
+                </div>
+            </td>
+            <td colspan="6">
+                <button type="button" id="btnGetInfo" onclick="getObjectDetail()" class="btn btn-outline-dark">@EditLayoutResource.GetInfomation</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle_15">@EditLayoutResource.EncodeType :</td>
+            <td colspan="2">
+                @Html.EnumDropDownInSortArea(model => model.EncodeType)
+            </td>
+            <td />
+            <td class="tdtitle_15">@EditLayoutResource.FileType :</td>
+            <td>
+                @Html.EnumDropDownInSortArea(model => model.FileType)
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle_15">@EditLayoutResource.HeadingRow :</td>
+            <td colspan="2">
+                @Html.EnumDropDownInSortArea(model => model.HeadingRow)
+            </td>
+            <td />
+            <td class="tdtitle_15">@EditLayoutResource.EncloseType :</td>
+            <td>
+                @Html.EnumDropDownInSortArea(model => model.EncloseType)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6">
+                <hr />
+            </td>
+        </tr>
+
+    </table>
+</div>
+

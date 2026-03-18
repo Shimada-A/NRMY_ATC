@@ -1,0 +1,30 @@
+﻿@*
+    仕入先検索のモーダルダイアログ
+    VendorSearchModal.js が必要
+*@
+<div id="vendorSearchModalDialog" style="display:none;">
+    <div class="d_continer main">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        @using (Ajax.BeginForm(
+                            "Index",
+                            "VendorSearchModal",
+                            new { area = "Master" },
+                            new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "vendorSearchResult", OnComplete = "vendorSearchModal.adjust();enableSubmit();" },
+                new { id = "frmVendorSearch" }))
+        {
+        <div id="vendorSearchResult">
+            @Html.Action("Index", "VendorSearchModal", new { area = "Master" })
+        </div>
+        }
+        <div class="bottomnav">
+            <div class="btnarea">
+                <button id="vendorClose" type="button" class="btn btn-outline-dark">@FormsResource.Close</button>
+                <button id="vendorSelect" type="button" class="btn btn-dark">@FormsResource.BTN_SELECT</button>
+            </div>
+        </div>
+        @* 検索条件を変えてもチェックした値を保持するためhiddenで保持する *@
+        <div id="checked"></div>
+        @* 確定した店舗を保持する(確定せずに閉じたときに変わらないように) *@
+        <div id="selectedVendor"></div>
+    </div>
+</div>

@@ -1,0 +1,298 @@
+﻿@{
+    const string TitleDashboad = "ダッシュボード";
+    const string ActionSearch = "Search";
+    Layout = "~/Views/Shared/_Base.cshtml";
+}
+
+@RenderSection("LayoutStyles", required: false)
+<div class="layout-web">
+    @* Left Menu Begin *@
+    @Html.Action("Menu", "Home", new { area = "" })
+
+    @* Herd *@
+    <header class="layout-header">
+        <nav class="navbar navbar-default">
+            <div class="topbar-left">
+                <div class="aside-toggler">
+                    <span class="toggler-bar"></span>
+                    <span class="toggler-bar"></span>
+                    <span class="toggler-bar"></span>
+                </div>
+                <div class="navbar-page-title">
+                    <span class="mr-5"> @ViewBag.Title </span>
+
+                    @RenderSection("TitleButton", required: false)
+                </div>
+            </div>
+            <div class="navbar-custom-menu">
+
+                <ul class="nav navbar-nav">
+
+                    @*@RenderSection("LoginInfoLi", required: false)*@
+                    <li class="login-info">
+                        @Html.Action("GetSubTitle", "Home", new { area = "" })
+
+                    </li>
+                    <!-- User Account -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="user">
+                            <i class="mdi mdi-account-circle imgleft"></i>
+                            <span style="font-size:0.8rem;" class="spanright">@HomeResource.AccountBtnText</span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+                            <!-- Menu Body -->
+                            <li role="presentation" class="menuout">
+                                <ul role="menuitem" class="menu">
+                                    <li>
+                                        <i class="mdi mdi-account" role="menuitem">@Wms.Common.Profile.User.ShipperId</i> @Html.ActionLink("ログアウト", "Logout", "Login", new { area = "" }, null)
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Notifications  -->
+                    <li class="dropdown notifications-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="notifications">
+                            <i class="mdi mdi-bell imgleft"></i>
+                            <span style="font-size:0.8rem;" class="spanright">@HomeResource.ReceptionNoticeBtnText</span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="notifications">
+                            <li role="presentation" class="menuout">
+                                <ul role="menuitem" class="menu" id="il_info">
+                                </ul>
+                            </li>
+                            <li role="presentation" class="footer"><a href="~/Notice/">View all</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+    </header>
+
+    @*  *@
+    <main class="layout-content">
+        <!-- search-box -->
+        @if (ViewBag.Title != TitleDashboad && ViewBag.CurrentAction.Contains(ActionSearch))
+        {
+            <div id="btnSearchMagnifier" class="search-box" data-toggle="collapse" data-target="#div_search" style="height:28px;position:relative">
+                <button class="hidden-sm-down search_btn _pm" href="javascript:void(0)" style="float:right;margin-right:20px;margin-top:8px" type="button"></button>
+            </div>
+        }
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+    </main>
+    <footer class="layout-footer">
+        <nav class="navbar navbar-default bottomnav">
+            @RenderSection("Basefooter", required: false)
+        </nav>
+    </footer>
+</div>
+@section BaseChildScripts{
+    <script type="text/javascript">
+        const isTitleDashboard = '@ViewBag.Title' === '@TitleDashboad';
+        const hasDivSearch = $("#div_search").length > 0;
+        const actionSearch = '@ViewBag.CurrentAction'.indexOf('@ActionSearch') >= 0;
+
+        class FormUtility {
+            constructor() {
+
+            }
+            getForm(formname, url) {
+                var form = $(formname);
+                form.attr('action', url);
+                form.attr('method', 'get');
+                form.submit();
+            }
+
+            postForm(formname, url) {
+                var form = $(formname);
+                form.attr('action', url);
+                form.attr('method', 'post');
+                form.submit();
+            }
+
+            resetValidation(formName) {
+                $(formName).removeData("validator").removeData("unobtrusiveValidatioin");
+                $.validator.unobtrusive.parse(formName);
+            }
+        }
+
+        $(function () {
+            if (isTitleDashboard) {
+                $('.layout-sidebar').show();
+                $('.layout-sidebar').removeClass('aside-open');
+                $("body").removeClass('layout-sidebar-close');
+            }
+
+            if (hasDivSearch) {
+                if (actionSearch) {
+                    $("#div_search").removeClass('show');
+                } else {
+                    $("#div_search").addClass('show');
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            //setMenu('@ViewBag.T1', '@ViewBag.T2');
+
+            function setMenu(i,j) {
+                var obj = $('.nav-drawer>li:eq(' + i + ')');
+                obj.toggleClass('open');
+                var obj2 = obj.find('ul li:eq(' + j + ')');
+                obj2.toggleClass('active');
+            }
+
+            $("#btnSearchMagnifier").click(function () {
+                $("#btnSearchMagnifier").addClass('dp-none');
+            });
+
+            // ------------------------------------
+            $(".aside-toggler").bind('click', function () {
+                $('.layout-sidebar').show();
+                $('.layout-sidebar').toggleClass('aside-open');
+                $("body").toggleClass('layout-sidebar-close');
+
+                if ($('.mask-modal').length == 0) {
+                    $('<div class="mask-modal"></div>').prependTo('body');
+                } else {
+                    $('.mask-modal').remove();
+                }
+                $('.mask-modal').on('click', function () {
+                    $(this).remove();
+                    $('.layout-sidebar').toggleClass('aside-open');
+                    $('body').toggleClass('layout-sidebar-close');
+                });
+            });
+            // --------------------------------------------
+
+            $('.nav-item-has-subnav > a').on('click', function () {
+                $subnavToggle = jQuery(this);
+                $navHasSubnav = $subnavToggle.parent();
+                $topHasSubNav = $subnavToggle.parents('.nav-item-has-subnav').last();
+                $subnav = $navHasSubnav.find('.nav-subnav').first();
+                $viSubHeight = $navHasSubnav.siblings().find('.nav-subnav:visible').outerHeight();
+                $scrollBox = $('.layout-sidebar-scroll');
+                $navHasSubnav.siblings().find('.nav-subnav:visible').slideUp(500).parent().removeClass('open');
+                $subnav.slideToggle(300, function () {
+                    $navHasSubnav.toggleClass('open');
+
+                    var scrollHeight = 0;
+                    pervTotal = $topHasSubNav.prevAll().length,
+                        boxHeight = $scrollBox.outerHeight(),
+                        innerHeight = $('.sidebar-main').outerHeight(),
+                        thisScroll = $scrollBox.scrollTop(),
+                        thisSubHeight = $(this).outerHeight(),
+                        footHeight = 121;
+
+                    if (footHeight + innerHeight - boxHeight >= (pervTotal * 48)) {
+                        scrollHeight = pervTotal * 48;
+                    }
+                    if ($subnavToggle.parents('.nav-item-has-subnav').length == 1) {
+                        $scrollBox.animate({ scrollTop: scrollHeight }, 300);
+                    } else {
+
+                        if (typeof ($viSubHeight) != 'undefined' && $viSubHeight != null) {
+                            scrollHeight = thisScroll + thisSubHeight - $viSubHeight;
+                            $scrollBox.animate({ scrollTop: scrollHeight }, 300);
+                        } else {
+                            if ((thisScroll + boxHeight - $scrollBox[0].scrollHeight) == 0) {
+                                scrollHeight = thisScroll - thisSubHeight;
+                                $scrollBox.animate({ scrollTop: scrollHeight }, 300);
+                            }
+                        }
+                    }
+                });
+            });
+            $(".flatpickr").flatpickr(
+                {
+                    "locale": "ja",
+                    dateFormat: "Y/m/d",
+                    onReady: function (_, __, fp) {
+                        const clearDiv = document.createElement("div");
+                        clearDiv.className = "flatpickr-rClear";
+                        const clearBtn = document.createElement("button");
+                        clearBtn.className = "flatpickr-sClear";
+                        clearBtn.textContent = "Clear";
+                        clearBtn.addEventListener("click", () => { fp.clear(); fp.close(); });
+                        clearDiv.appendChild(clearBtn);
+                        fp.calendarContainer.appendChild(clearDiv);
+                    }
+                });
+        });
+
+        @* _pmクラスのあるオブジェクトをreadonlyにする *@
+        var usable_class = getUsable_Class();
+        console.log("GetUsable_Class:" + usable_class);
+
+        //if (usable_class == 0) { alert(@Wms.Resources.CommonResource.AlertNonPermission);  }//権限がない
+        if (usable_class == 0) { alert("機能に対しての権限が無いためログアウトします。");  }//権限がない
+        else if (usable_class == 1) {
+            alert("参照権限のみの権限で起動されています。");
+            $('._pm').prop('disabled', true);
+            $('a._pm').addClass('adisabled');
+            $("a._pm").removeAttr("href");
+        }//参照権限
+        //else if (usable_class == 9) {  alert(@Wms.Resources.CommonResource.AlertNotExistsPermission); }//登録がないね
+        else if (usable_class == 2) { alert("一部項目のみ更新可・閲覧の権限で起動されています。");$('._part').prop('disabled', true);$('a._part').addClass('adisabled');$("a._part").removeAttr("href"); }//一部項目のみ更新可・閲覧
+        else if (usable_class == 9) { alert("権限情報が取得できませんでした。M_USER_PROGRAMSのデータを作成してください。"); }//登録がないね
+
+        function getUsable_Class(){
+            return @Wms.Common.Profile.User.GetUsable_Class(Request.Url)
+        }
+
+        $(function(){
+	        $('a._pm').click(function(){
+                if (getUsable_Class() == 1) { alert("権限がない状態でaリンクが押下されました"); return false;}
+	        })
+        });
+
+        $(function(){
+	        $('#btnReturn').click(function(){
+                history.back(-1);
+	        })
+        });
+
+        //おしらせ情報取得
+        function callAjaxGetPopUpList() {
+            //ポップアップデータ取得
+            $.ajax({
+                url: "@Url.Action("GetPopUpList", "Notice", new { area = ""})",
+                type: "GET",
+                data: {}
+            })
+                .done(function (data) {
+                    $("#il_info").html(data);
+                });
+        }
+
+        //お知らせ情報押下時処理
+        $("#notifications").click(function () {
+            callAjaxGetPopUpList();
+        });
+
+
+        const formUtil = new FormUtility();
+
+        const addClickEvent = function (id, func) {
+            $(id).off('click').on('click', func);
+        };
+        const addChangeEvent = function (id, func) {
+            $(id).off('change').on('change', func);
+        };
+        const itemOn = function (id) {
+            $(id).prop('disabled', false);
+        };
+        const itemOff = function (id) {
+            $(id).prop('disabled', true);
+        };
+
+        const changeConfirmMessage = function (message) {
+            $('.confirm-message').html(message);
+        }
+    </script>
+    @RenderSection("LayoutScripts", required: false)
+}

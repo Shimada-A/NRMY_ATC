@@ -1,0 +1,632 @@
+﻿@using Share.Common;
+@using Share.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Stock.Resources;
+@using Wms.Helpers;
+@model Wms.Areas.Stock.ViewModels.AdjustReference.AdjustReferenceViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_AdjustReference;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("ReSearch", "AdjustReference", FormMethod.Post, new { id = "frmReSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(vm => vm.Condition.PageNumber, new { @id = "hiddenPageNumber1", @class = "hiddenPageNumber" })
+        @Html.HiddenFor(vm => vm.Condition.SortOrder, new { @id = "hiddenSortOrder1", @class = "hiddenSortOrder" })
+        @Html.HiddenFor(vm => vm.Condition.AscDescSort, new { @id = "hiddenAscDesc1", @class = "hiddenAscDesc" })
+    }
+
+    @using (Html.BeginForm("Search", "AdjustReference", FormMethod.Post, new { id = "frmSearch", @class = "show_scroll" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelCenter
+                </td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.Condition.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelDivision
+                </td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.Condition.DivisionId,
+                                (IEnumerable<SelectListItem>)ViewBag.DivisionList,
+                                CommonResource.None, new { id = "ddlDivisionId", tabindex = "15" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelAdjustReason
+                </td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.Condition.AdjustReasonCd,
+                                (IEnumerable<SelectListItem>)ViewBag.AdjustReasonList,
+                                CommonResource.None, new { id = "ddlAdjustReasonCd", tabindex = "2" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelBrand
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.BrandId,
+                        new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "16" } })
+                    @Html.EditorFor(model => model.Condition.BrandName,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "17" } })
+                    <div class="search">
+                        <button type="button" id="btnBrand" class="search_btn" tabindex="18" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelStockAdjustDate
+                </td>
+                <td colspan="4">
+                    <div>
+                        <span class="date_input">
+                            @Html.EditorFor(
+                                model => model.Condition.StockAdjustDateFrom,
+                                new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "startDate flatpickr" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        @AdjustReferenceResource.LabelHypen
+                        <span class="date_input">
+                            @Html.EditorFor(
+                                model => model.Condition.StockAdjustDateTo,
+                                new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "endDate flatpickr" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                </td>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelVendor
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.VendorId,
+                        new { htmlAttributes = new { @class = "w_6_short", @id = "txtVendorIdx", tabindex = "19" } })
+                    @Html.EditorFor(
+                        model => model.Condition.VendorName,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtVendorNamex", tabindex = "20" } })
+                    <div class="search">
+                        <button type="button" id="btnVendor" class="search_btn" tabindex="21" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelStockAdjustNumber
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.StockAdjustNumberFrom,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtStockAdjustNumberFrom", tabindex = "5" } })
+                    @AdjustReferenceResource.LabelTilde
+                    @Html.EditorFor(
+                        model => model.Condition.StockAdjustNumberTo,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtStockAdjustNumberTo", tabindex = "6" } })
+                </td>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelCategory
+                </td>
+                <td colspan="4">
+                    <div class="sort cat">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.Condition.CategoryId1,
+                                (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                CommonResource.None, new { @id = "ddlCategoryId1", tabindex = "22" })
+                        </div>
+                    </div>
+                    <div class="sort cat">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.Condition.CategoryId2,
+                                (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                CommonResource.None, new { @id = "ddlCategoryId2", @class = "cat1", tabindex = "23" })
+                        </div>
+                    </div>
+                    <div class="sort cat">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.Condition.CategoryId3,
+                                (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                CommonResource.None, new { @id = "ddlCategoryId3", @class = "cat1 cat2", tabindex = "24" })
+                        </div>
+                    </div>
+                    <div class="sort cat">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.Condition.CategoryId4,
+                                (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                CommonResource.None, new { @id = "ddlCategoryId4", @class = "cat1 cat2 cat3", tabindex = "25" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelJan
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                                  model => model.Condition.Jan,
+                                  new { htmlAttributes = new { @class = "w_18_normal", @id = "txtJan", tabindex = "7" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.ItemCodeS
+                </td>
+                <td colspan="4">
+                    <div class="sort cat">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                     model => model.Condition.ItemCode,
+                                     (IEnumerable<SelectListItem>)ViewBag.ItemList,
+                                     CommonResource.None, new { @id = "ddlItemCode", tabindex = "26" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelItem
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                             model => model.Condition.ItemId,
+                             new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemId", tabindex = "8" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelLocationFrom
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                                  model => model.Condition.LocationCdFrom,
+                                  new { htmlAttributes = new { @class = "w_18_normal", @id = "txtLocationCdFrom", tabindex = "27" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelColor
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                             model => model.Condition.ColorId,
+                             new { htmlAttributes = new { @class = "w_6_short", @id = "txtColorId", tabindex = "9" } })
+                    @Html.EditorFor(
+                             model => model.Condition.ColorName,
+                             new { htmlAttributes = new { @class = "w_18_normal", @id = "txtColorName", tabindex = "10" } })
+                    <div class="search">
+                        <button type="button" id="btnColor" class="search_btn" tabindex="11" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle" style="width: 160px;">
+                    @AdjustReferenceResource.LabelLocationTo
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                                  model => model.Condition.LocationCdTo,
+                                  new { htmlAttributes = new { @class = "w_18_normal", @id = "txtLocationCdTo", tabindex = "28" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelSize
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.SizeId,
+                        new { htmlAttributes = new { @class = "w_6_short", @id = "txtSizeId", tabindex = "12" } })
+                    @Html.EditorFor(
+                        model => model.Condition.SizeName,
+                        new { htmlAttributes = new { @class = "w_18_normal", @id = "txtSizeName", tabindex = "13" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @AdjustReferenceResource.LabelSku
+                </td>
+                <td colspan="4">
+                    @Html.EditorFor(
+                        model => model.Condition.Sku,
+                        new { htmlAttributes = new { @class = "w_40_normal", @id = "txtSku", tabindex = "14" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                </td>
+                <td colspan="2">
+                    @Html.ActionLink(
+                        FormsResource.BTN_CLEAR,
+                        "Index",
+                        "AdjustReference",
+                        new { area = "Stock" },
+                        new { tabindex = "29", type = "button", @class = "btn btn-outline-dark" })
+                    <button type="button" class="btn btn-outline-dark" id="btnSearch" tabindex="30">
+                        @FormsResource.BTN_SEARCH
+                    </button>
+                </td>
+            </tr>
+        </table>
+        @Html.HiddenFor(vm => vm.Condition.PageNumber, new { @id = "hiddenPageNumber2", @class = "hiddenPageNumber" })
+        @Html.HiddenFor(vm => vm.Condition.SortOrder, new { @id = "hiddenSortOrder2", @class = "hiddenSortOrder" })
+        @Html.HiddenFor(vm => vm.Condition.AscDescSort, new { @id = "hiddenAscDesc2", @class = "hiddenAscDesc" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.IsShowResultList && !Model.Result.IsEmpty())
+{
+    <div class="sublbarea no_border stock_detail_load">
+        @using (Html.BeginForm("DownloadExcel", "AdjustReference", FormMethod.Post, new { id = "frmDownloadExcel" }))
+        {
+            @Html.AntiForgeryToken()
+        }
+        @using (Html.BeginForm("Print", "AdjustReference", FormMethod.Post, new { id = "frmPrint" }))
+        {
+            @Html.AntiForgeryToken()
+        }
+        <div class="sortarea">
+            <ul>
+                <li>
+                    <button type="button" id="btnDownload" class="download">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </li>
+                <li>
+                    <button type="button" id="btnPrint" class="download download-large">
+                        <img src="~/Content/img/print.png" />
+                        @AdjustReferenceResource.ButtonPrint
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.Condition.SortOrder, new { Name = "AdjustReferenceSortOrder", @id = "ddlSortOrder" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.Condition.AscDescSort, new { Name = "AdjustReferenceAscDescSort", @id = "ddlAscDesc" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Result.ResultRowList.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @Html.PagedListPager(Model.Result.ResultRowList, pageNumber => Url.Action("ReSearch", "AdjustReference", new { pageNumber }), PagerHelper.Default)
+        </div>
+    </div>
+}
+
+@if (Model.IsShowResultList)
+{
+    <div class="Container">
+        @if (Model.Result.IsEmpty())
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div class="tb_scroll" style="height: 70vh;">
+                <table class="table table-bordered" id="resultRowList">
+                    <thead>
+                        <tr>
+                            <th class="bg-grey  align-middle">
+                                @AdjustReferenceResource.ThNumber
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThStockAdjustDate
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThStockAdjustNumber
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThCategory1
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThItem
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThColor
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThSize
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThJan
+                            </th>
+                            <th class="bg-grey align-middle min-width-72">
+                                @AdjustReferenceResource.ThFrom
+                                <br />
+                                @AdjustReferenceResource.ThGrade
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThFrom
+                                <br />
+                                @AdjustReferenceResource.ThLocation
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThFrom
+                                <br />
+                                @AdjustReferenceResource.ThCaseNo
+                            </th>
+                            <th class="bg-grey align-middle min-width-72">
+                                @AdjustReferenceResource.ThTo
+                                <br />
+                                @AdjustReferenceResource.ThGrade
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThTo
+                                <br />
+                                @AdjustReferenceResource.ThLocation
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThTo
+                                <br />
+                                @AdjustReferenceResource.ThCaseNo
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThAdjustQuantity
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThReason
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThNote
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @AdjustReferenceResource.ThUserName
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @Html.AntiForgeryToken()
+                        @foreach (var row in Model.Result.ResultRowList)
+                        {
+                            <tr>
+                                <td>
+                                    @row.RowNumber
+                                </td>
+                                <td>
+                                    @row.GetAdjustDateString()
+                                </td>
+                                <td>
+                                    @row.AdjustNumber
+                                </td>
+                                <td>
+                                    @row.CategoryName1
+                                </td>
+                                <td>
+                                    @row.ItemId
+                                    <br />
+                                    @row.ItemName
+                                </td>
+                                <td>
+                                    @row.ColorId
+                                    <br />
+                                    @row.ColorName
+                                </td>
+                                <td>
+                                    @row.SizeId
+                                    <br />
+                                    @row.SizeName
+                                </td>
+                                <td>
+                                    @row.Jan
+                                </td>
+                                <td>
+                                    @row.GradeNameFrom
+                                </td>
+                                <td>
+                                    @row.LocationCdFrom
+                                </td>
+                                <td>
+                                    @row.BoxNoFrom
+                                </td>
+                                <td>
+                                    @row.GradeNameTo
+                                </td>
+                                <td>
+                                    @row.LocationCdTo
+                                </td>
+                                <td>
+                                    @row.BoxNoTo
+                                </td>
+                                <td class="alignright">
+                                    @row.AdjustQuantityTo
+                                </td>
+                                <td>
+                                    @row.AdjustReasonName
+                                </td>
+                                <td>
+                                    @row.Note
+                                </td>
+                                <td>
+                                    @row.UpdateUserId<br />
+                                    @row.UserName
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+}
+
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_VendorSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_ColorSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_SizeSearchModal.cshtml")
+
+@section LayoutScripts{
+    <script>
+        const CategoryId = '#ddlCategoryId';
+        const IndexFrom = 1;
+        const IndexTo = 4;
+        const addChangeCagegoryEvent = function (index) {
+            if (!$(CategoryId + index).val()) {
+                changeCategoryDisabled(index);
+            }
+
+            $(CategoryId + index).off('change').on('change', () => changeCategory(index));
+        };
+        const changeCategory = function (index) {
+            const val = $(CategoryId + index).val();
+
+            changeCategoryDisabled(index);
+
+            if (index === IndexFrom && !val) {
+                return;
+            }
+
+            if (val) {
+                changeCategory(index + 1);
+            } else {
+                setCategoryList(index, () => changeCategoryDisabled(index));
+            }
+        };
+        const changeCategoryDisabled = function (index) {
+            $('.cat1, .cat2, .cat3').removeAttr('disabled');
+            $('.cat' + index).attr('disabled', 'disabled');
+            $('.cat' + index).val('');
+        };
+        const setCategoryList = function (index, callBack) {
+            const urlAction = '@Url.Action("GetCategoryList", "ItemSku", new { area = "Master"})';
+
+            $.ajax({
+            url: urlAction,
+                type: "POST",
+                data: {
+                id: index,
+                    category1: $(CategoryId + 1).val(),
+                    category2: $(CategoryId + 2).val(),
+                    category3: $(CategoryId + 3).val(),
+                },
+                success: function (data) {
+                    $(CategoryId + index).empty();
+                    $(CategoryId + index).html(data.html);
+                    callBack();
+                },
+            });
+        };
+      //  const addClickEvent = function (id, func) {
+      //      $(id).off('click').on('click', func);
+      //  };
+      //  const addChangeEvent = function (id, func) {
+      //      $(id).off('change').on('change', func);
+      //  };
+        const addModalEvent = function (button, result, id, name, isVendor) {
+            $(button).on("click", function () {
+                const colId = isVendor ? 4 : 2;
+                const colName = isVendor ? 5 : 3;
+
+                $(result + ' input[type=radio]:checked').each(function (i, val) {
+                    const valId = $(val).parents('tr').find('td:eq(' + colId + ')').text().trim();
+                    const valName = $(val).parents('tr').find('td:eq(' + colName + ')').text().trim();
+
+                    $(id).val(valId);
+                    $(name).val(valName);
+                });
+            });
+        };
+        const setPageInformation = function () {
+            const sortOrder = $('#ddlSortOrder option:selected').val();
+            const ascDesc = $('#ddlAscDesc option:selected').val();
+
+            if (sortOrder) {
+                $('.hiddenSortOrder').val(sortOrder);
+            }
+
+            if (ascDesc) {
+                $('.hiddenAscDesc').val(ascDesc);
+            }
+        };
+
+        $(document).ready(function () {
+            colorSearchModal.init();
+            sizeSearchModal.init();
+            brandSearchModal.init();
+            vendorSearchModal.init();
+
+            if ('@Model.CanChangeCenter'.toLowerCase() === 'true') {
+                $('#ddlCenterId').removeAttr('disabled');
+            }
+
+            for (let i = IndexTo; i >= IndexFrom; i--) {
+                addChangeCagegoryEvent(i);
+            }
+
+            addClickEvent('#btnSearch', function () {
+                setPageInformation();
+                $('#frmSearch').submit();
+            });
+            addChangeEvent('#ddlSortOrder, #ddlAscDesc', function () {
+                setPageInformation();
+                $('#frmReSearch').submit();
+            });
+            addClickEvent('#btnDownload', function () {
+                $('#frmDownloadExcel').submit();
+            });
+            addClickEvent('#btnPrint', function () {
+                $('#frmPrint').submit();
+            });
+
+            addClickEvent('#btnColor', () => colorSearchModal.open());
+            addModalEvent('#colorSelect', '#colorSearchResult', '#txtColorId', '#txtColorName');
+            addClickEvent('#btnSize', () => sizeSearchModal.open());
+            addModalEvent('#sizeSelect', '#sizeSearchResult', '#txtSizeId', '#txtSizeName');
+            addClickEvent('#btnBrand', () => brandSearchModal.open());
+            addModalEvent('#brandSelect', '#brandSearchResult', '#txtBrandId', '#txtBrandName');
+            addClickEvent('#btnVendor', () => vendorSearchModal.open());
+            addModalEvent('#vendorSelect', '#vendorSearchResult', '#txtVendorIdx', '#txtVendorNamex', true);
+        });
+    </script>
+}
+

@@ -1,0 +1,270 @@
+﻿@using Share.Common;
+@using Wms.Resources;
+@model Wms.ViewModels.Notice.NoticeViewModel
+@{
+    ViewBag.Title = Wms.Resources.HomeResource.ReceptionNoticeBtnText;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+
+@* 共通ヘッダー *@
+@Html.Partial("_DetailHeader", Model)
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Details.NoticeDetailRows != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Details.NoticeDetailRows.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.No
+                                </th>
+                                @switch (Model.DetailHeader.NoticeIfMessageId)
+                                {
+                                    case "102":
+                                    case "103":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.InvoiceNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.VendorId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ArrivePlanDate
+                                        </th>
+                                        break;
+                                    case "9":
+                                    case "10":
+                                    case "11":
+                                    case "12":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.InvoiceNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSkuID
+                                        </th>
+                                        break;
+                                    case "14":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.Location
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSkuID
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.StockStockQty
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.PackStockQty
+                                        </th>
+                                        break;
+                                    case "104":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.CenterId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.Location
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.InvoiceBatchNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSkuID
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.StockQty
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.AllocQty
+                                        </th>
+                                        break;
+                                    case "110":
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ShipInstructId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemSkuID
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ItemName
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ShipToStoreId
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.Qty
+                                        </th>
+                                        break;
+                                    default:
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.ShipFromLoc
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.OrderNo
+                                        </th>
+                                        <th class="bg-grey align-middle">
+                                            @NoticeResource.EcClass
+                                        </th>
+                                        break;
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("IndexSearch", "Notice", FormMethod.Post, new { id = "frmDetail" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Details.NoticeDetailRows.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("NoticeDetailRows[{0}].", cModel.i);
+                            <tr>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.RowNo)
+                                </td>
+                                @switch (Model.DetailHeader.NoticeIfMessageId)
+                                {
+                                    case "102":
+                                    case "103":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ShipArriveInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ArriveToLocId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ShipFromLocId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.PlanDate)
+                                        </td>
+                                        break;
+                                    case "9":
+                                    case "10":
+                                    case "11":
+                                    case "12":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ShipArriveInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ArriveToLocId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ItemSkuId)
+                                        </td>
+                                        break;
+                                    case "14":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ShipFromLocId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.OrderNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ItemSkuId)
+                                        </td>
+                                        <td class="align-middle  text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.PlanQty)
+                                        </td>
+                                        <td class="align-middle  text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.JetStockQty)
+                                        </td>
+                                        break;
+                                    case "104":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ShipFromLocId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.OrderNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ShipArriveInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ItemSkuId)
+                                        </td>
+                                        <td class="align-middle  text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.PlanQty)
+                                        </td>
+                                        <td class="align-middle  text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.AllocQty)
+                                        </td>
+                                        break;
+                                    case "110":
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ShipArriveInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ItemSkuId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ArriveToLocId)
+                                        </td>
+                                        <td class="align-middle  text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.PlanQty)
+                                        </td>
+                                        break;
+                                    default:
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.ShipFromLocId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeDetail.OrderNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.EcClassNm)
+                                        </td>
+                                        break;
+                                }
+                            </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Notice", new { rowId = Model.DetailHeader.RowId }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+
+    </script>
+}

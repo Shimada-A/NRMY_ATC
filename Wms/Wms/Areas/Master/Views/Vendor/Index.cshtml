@@ -1,0 +1,294 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.Vendor.Index
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Vendor01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "Vendor", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        <table>
+            <tr>
+                <td class="tdtitle_10">@VendorResource.VendorIdSearch</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.VendorId, new { htmlAttributes = new { @class = "w_14_long", @id = "txtVendorId", tabindex = "1" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="tdtitle_10">@VendorResource.VendorNameSearch</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.VendorName, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtVendorName", tabindex = "2" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="tdtitle_10">@VendorResource.DeleteFlagSearch</td>
+                <td class="w_checkbox" colspan="2">
+                    <label class="checkboxgroup">
+                        @Html.CheckBoxFor(model => model.SearchConditions.DeleteFlag, new { @id = "chkIsNewDate", @class = "check-box" })
+                        <span class="chk_parts"></span>
+                    </label>
+                    <span>@StoreResource.DeleteFlagSearch2</span>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Vendor", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="4" onclick="$('#frmSearch').submit()">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.VendorResult.Vendors != null)
+{
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.VendorResult.Vendors.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.VendorResult.Vendors.Count() > 0)
+            {
+                @Html.PagedListPager(Model.VendorResult.Vendors, Page => Url.Action("Search", "Vendor", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.VendorResult.Vendors.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:71vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey">&nbsp;</th>
+                                <th class="bg-grey">
+                                    @VendorResource.No
+                                </th>
+                                <th class="bg-grey">
+                                    @VendorResource.VendorId
+                                </th>
+                                <th class="bg-grey">
+                                    @VendorResource.VendorName
+                                </th>
+                                <th class="bg-grey">
+                                    @VendorResource.DeleteFlag
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "Vendor", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.VendorResult.Vendors.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Vendors[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            <label>
+                                                <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetIsCheck('@(key + "IsCheck")')" />
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                            @Html.CheckBox(key + "IsCheck", new { @id = (key + "IsCheck"), @class = "check-box", hidden = true })
+                                        </td>
+                                        <td class="text-right w_no">
+                                            @((cModel.i + 1) + (Model.VendorResult.Vendors.PageNumber - 1) * Model.VendorResult.Vendors.PageSize)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => cModel.v.VendorId)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => cModel.v.VendorName1)
+                                        </td>
+                                        <td>
+                                            <label class="chklist">
+                                                @Html.CheckBoxFor(model => cModel.v.DeleteFlag, new { @class = "check-box _pm", onclick = "return false;" })
+                                                <span class="chk_parts">
+                                                </span>
+                                            </label>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.VendorId, new { Name = key + "VendorId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="submit" id="btnUpdate" class="btn btn-dark btnsize_large" form="frmUpdate" formmethod="post" formaction=@Url.Action("Edit", "Vendor", new { area = "Master", controller = "Vendor", action = "Edit" })>@FormsResource.BTN_DETAIL</button>
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+     * Country class
+     */
+    var VendorsView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=radio][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=radio][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=radio][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnEdit: '#btnUpdate',
+            ddlSortKey: '#ddlSortKey',
+            chkChecked: ':radio:checked',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]'
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Check box click
+                 */
+                $(VendorsView.SELECTORS.chkInTable).click(function (evt) {
+                    $(this).prop("checked", true);
+                    evt.stopPropagation();
+                    VendorsView.setButtonStatus();
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(VendorsView.SELECTORS.ddlSort).change(function (val) {
+                    $(VendorsView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(VendorsView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(VendorsView.SELECTORS.btnSearch).click();
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function () {
+                // Enable/Disable button Edit
+                if ($(VendorsView.SELECTORS.chkCheckedInTable).length === 1) {
+                    $(VendorsView.SELECTORS.btnEdit).removeAttr('disabled');
+                } else {
+                    $(VendorsView.SELECTORS.btnEdit).attr('disabled', 'disabled');
+                }
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        VendorsView.init();
+    });
+    function ClearConditons() {
+        $("#txtVendorId").val("");
+        $("#txtVendorName").val("");
+    }
+    // Sort
+    function getSortData() {
+
+        $("#hidSort").val($("#ddlSort").val());
+        $("#hidSortKey").val($("#ddlSortKey").val());
+
+        var $form = $("#frmSearch");
+        var urlAction ='@Url.Action("Search", "Vendor", new { area= "Master" })';
+        $form.attr("action", urlAction);
+        $form.attr("method", "GET");
+        $form.submit();
+    }
+        function SetIsCheck(id) {
+                    $('#listData input[type=checkbox][id$=".IsCheck"]').prop("checked", false);
+                    $('#listData input[type=checkbox][id="'+id+'"]').prop("checked", true);
+        }
+    </script>
+}

@@ -1,0 +1,53 @@
+﻿@* ブランド検索の検索結果(Ajax.BeginFormで検索結果だけ差し替えるため部分ビューにする) *@
+@model IList<Wms.Areas.Master.ViewModels.SizeSearchModal.SizeViewModel>
+
+<h1>@Wms.Areas.Master.Resources.SharedResource.SizeTitle</h1>
+<div class="searcharea">
+</div>
+<div class="Container">
+    <div>
+        <div class="tb_scroll">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="bg-grey w_checkbox"></th>
+                        <th class="bg-grey">
+                            No
+                        </th>
+                        <th class="bg-grey">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Size.ItemSizeId)
+                        </th>
+                        <th class="bg-grey">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Size.ItemSizeName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count(); i++)
+                        {
+                    <tr>
+                        <td class="chk_cell">
+                            <label>
+                                @Html.RadioButton("SelectIndex", i.ToString(), new { @id = "SizeSelectIndex" + i.ToString(), @class = "radio_input" })
+                                <span class="radio_parts"></span>
+                            </label>
+                        </td>
+                        <td class="text-right w_no">
+                            @((i + 1).ToString())
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model[i].Size.ItemSizeId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model[i].Size.ItemSizeName)
+                        </td>
+                        @Html.HiddenFor(model => model[i].Size.ItemSizeId)
+                        @Html.HiddenFor(model => model[i].Size.ItemSizeName)
+                    </tr>
+                        }
+                    <tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

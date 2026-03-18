@@ -1,0 +1,130 @@
+﻿@using Wms.Areas.Ship.Resources;
+<!-- 表示データ用のモデルを定義 -->
+@model Wms.Areas.Ship.ViewModels.PrintInvoice.ZanShipStore
+@{
+    Layout = null;
+}
+<div id="ShipToStoreListModalDialog" style="display:none;">
+    <div class="d_continer main " style="min-width: 550px; min-height: 550px">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        <p>@PrintInvoiceResource.StoreListTitle</p>
+        <!-- モダールの中身 -->
+        <div id="ShipToStoreDetail">
+            @Html.Partial("~/Areas/Ship/Views/PrintInvoice/_ShipToStoreListViewDetail.cshtml", Model)
+        </div>
+        <div class="bottomnav">
+            <div class="btnarea">
+                <button id="btnclose" type="button" class="btn btn-outline-dark btn_close">@FormsResource.Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ui-dialog {
+        margin: 0;
+        padding: 0;
+        background-color: #FFF;
+        border-radius: 5px;
+        min-width: 600px;
+        min-height: 600px;
+    }
+
+        .ui-dialog .d_continer {
+            padding: 0 0 50px;
+            text-align: left;
+            position: relative;
+            height: 100%;
+        }
+
+            .ui-dialog .d_continer .tb_scroll {
+                height: 50VH;
+                overflow: auto;
+            }
+</style>
+
+<script>
+    var ShipToStoreListModal = (function () {
+        var current_scrollY;
+        var id = '#ShipToStoreListModalDialog';
+
+        return {
+            /**
+             * モーダルダイアログの初期設定
+             */
+            defaultSetting: function () {
+                var w = $(window).width();
+                var h = $(window).height();
+                $(id).dialog({
+                    autoOpen: false,
+                    width: w / 10,
+                    height: h - 350,
+                    modal: true,
+                    dialogClass: 'modalct',
+                    close: function () {
+                        $('.wrap').attr({ style: '' });
+                        $('html, body').prop({ scrollTop: current_scrollY });
+                    }
+                });
+            },
+            adjust: function () {
+                var w = $(window).width();
+                var h = $(window).height();
+                $('.modalct').css('width', w / 10);
+                $('.modalct .tb_scroll').css('height', h - 350);
+            },
+            resize: function () {
+                var timer = false;
+                if (timer !== false) {
+                    clearTimeout(timer);
+                }
+                timer = setTimeout(function () { ShipToStoreListModal.adjust(); }, 200);
+            },
+            /**
+             * ウィンドウを閉じる(キャンセル)
+             */
+            close: function () {
+                $('.wrap').attr({ style: '' });
+                $('html, body').prop({ scrollTop: current_scrollY });
+                $(id).dialog("close");
+                document.activeElement.blur(); /* フォーカス解除 IE11 */
+            },
+            /**
+             * ウィンドウの外をクリックしたときにウィンドウを閉じる
+             */
+            setCloseEvent: function () {
+                //Attach cancel button.
+                $(id).find("button.btn_close").on("click", function () {
+                    $(id).dialog("close");
+                });
+
+                //Attach outside of dialog area.
+                $(document).on("click", ".ui-widget-overlay", function () {
+                    $(".ui-dialog-content").dialog("close");
+                });
+            },
+            /**
+             * モーダルダイアログを開く
+             */
+            open: function () {
+                current_scrollY = $(window).scrollTop();
+                $('.wrap').css({
+                    position: 'fixed',
+                    width: '10%',
+                    top: -1 * current_scrollY
+                });
+
+                $(id).dialog("open");
+            },
+            /**
+             * 初期化
+             */
+            init: function () {
+                this.defaultSetting();
+                this.adjust();
+                this.setCloseEvent();
+                $(window).on('resize', this.resize);
+            }
+        };
+    })();
+</script>

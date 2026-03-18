@@ -1,0 +1,386 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.TransferReference;
+@model Wms.Areas.Ship.ViewModels.TransferReference.PickResultViewModel
+
+@* Sublbarea *@
+<div class="sublbarea" style="height: 60px; margin: 0; border-bottom: none;">
+    @if (Model.Head != null)
+    {
+        @* Sublbarea *@
+        <div class="color-blue">
+            @TransferReferenceResource.TitlePickResult
+            <table>
+                <tr>
+                    <td class="color-blue">
+                        @TransferReferenceResource.BatchNoD
+                        @Html.DisplayFor(model => model.Head.BatchNo)
+                        @Html.DisplayFor(model => model.Head.BatchName)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="color-blue">
+                        @TransferReferenceResource.PicKindD
+                        @if (Model.Head.PicKind == 1)
+                        {
+                            @TransferReferenceResource.TotalPic
+                        }
+                        else if (Model.Head.PicKind == 2)
+                        {
+                            @TransferReferenceResource.Ec1BatchPic
+                        }
+                        else if (Model.Head.PicKind == 3)
+                        {
+                            @TransferReferenceResource.CaseShip
+                        }
+                        else if (Model.Head.PicKind == 4)
+                        {
+                            @TransferReferenceResource.JanNuki
+                        }
+                        else if (Model.Head.PicKind == 5)
+                        {
+                            @TransferReferenceResource.StorePic
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+
+    <div class="sortarea" style="margin-top: 25px;">
+        <ul>
+            <li class="totalcount">
+                @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.PickResult.PickResult.TotalItemCount.ToString("N0"))
+            </li>
+        </ul>
+        @if (Model.PickResult.PickResult.Count() > 0)
+        {
+            @Html.PagedListPager(Model.PickResult.PickResult, Page => Url.Action("GetPickResultDetails", "TransferReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.GetOptions("dialogPicResult", "enableSubmit();"))
+        }
+    </div>
+</div>
+
+@* Container *@
+<div class="dialog_scroll" style="margin-top:10px;height:95%;">
+    @* Content *@
+    <div class="tb_scroll" style="height:100%;">
+        <table class="table table-bordered" id="listData">
+            @if (Model.Head.PicKind != 5)
+            {
+                <thead>
+                    <tr>
+                        @if (Model.Head.ShipKind == Wms.Common.ShipKinds.Dc)
+                        {
+                            <th class="bg-grey align-middle">
+                                @TransferReferenceResource.PickingGroupNo1<br />
+                                @TransferReferenceResource.PickingGroupNo2
+                            </th>
+                        }
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.Locsec1<br />
+                            @TransferReferenceResource.LocationCd
+                        </th>
+                        @if (Model.Head.ShipKind == Wms.Common.ShipKinds.Case)
+                        {
+                            <th class="bg-grey align-middle">
+                                <br />
+                                @TransferReferenceResource.BoxNo
+                            </th>
+                        }
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.ItemName
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.ItemColorId
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.ItemSizeId
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.JAN
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.PicStatus
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.AllocQty2
+                            <br />
+                            @TransferReferenceResource.PickQty2
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.PicDate
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.PicUser
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutRegQtyResult
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutRegDate
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutRegUser
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutFixQtyResult
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutFixDate
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutFixUser
+                        </th>
+
+                    </tr>
+
+                </thead>
+                if (Model.PickResult != null && Model.PickResult.PickResult.Any())
+                {
+                    <tbody>
+                        @foreach (var cModel in Model.PickResult.PickResult.Select((v, i) => new { v, i }))
+                        {
+                            var key = String.Format("PickResults[{0}].", cModel.i);
+                            <tr>
+                                @if (Model.Head.ShipKind == Wms.Common.ShipKinds.Dc)
+                                {
+                                    <td class="align-middle text-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.PickingGroupNo)
+                                    </td>
+                                }
+
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.Locsec1)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                </td>
+                                @if (Model.Head.ShipKind == Wms.Common.ShipKinds.Case)
+                                {
+                                    <td class="align-middle text-left">
+                                        @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                    </td>
+                                }
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @if (cModel.v.PicStatus == 0)
+                                    {
+                                        @TransferReferenceResource.Misagyo
+                                    }
+                                    else if (cModel.v.PicStatus == 1)
+                                    {
+                                        @TransferReferenceResource.Picchu
+                                    }
+                                    else if (cModel.v.PicStatus == 2)
+                                    {
+                                        @TransferReferenceResource.Pickan
+                                    }
+
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.AllocQty)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.PicQty)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.PicDate)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.PicUserId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.PicUserName)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutRegQty)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutRegDate)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutRegUserId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutRegUserName)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutFixQty)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutFixDate)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutFixUserId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutFixUserName)
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                }
+            }
+            @if (Model.Head.PicKind == 5)
+            {
+                <thead>
+                    <tr>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.ShipToStore<br />
+                            @TransferReferenceResource.ShipToStoreName
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.LocationCd
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.ItemName
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.ItemColorId
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.ItemSizeId
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.JAN
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.PicStatus
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.AllocQty2
+                            <br />
+                            @TransferReferenceResource.PickQty2
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.PicDate
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.PicUser
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutRegQtyResult
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutRegDate
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutRegUser
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutFixQtyResult
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutFixDate
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.StockOutFixUser
+                        </th>
+                    </tr>
+
+                </thead>
+                if (Model.PickResult != null && Model.PickResult.PickResult.Any())
+                {
+                    <tbody>
+                        @foreach (var cModel in Model.PickResult.PickResult.Select((v, i) => new { v, i }))
+                        {
+                            var key = String.Format("PickResults[{0}].", cModel.i);
+                            <tr>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ShipToStoreName)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @if (cModel.v.PicStatus == 0)
+                                    {
+                                        @TransferReferenceResource.Misagyo
+                                    }
+                                    else if (cModel.v.PicStatus == 1)
+                                    {
+                                        @TransferReferenceResource.Picchu
+                                    }
+                                    else if (cModel.v.PicStatus == 2)
+                                    {
+                                        @TransferReferenceResource.Pickan
+                                    }
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.AllocQty)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.PicQty)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.PicDate)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.PicUserId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.PicUserName)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutRegQty)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutRegDate)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutRegUserId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutRegUserName)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutFixQty)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutFixDate)
+                                </td>
+                                <td class="align-middle text-left">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutFixUserId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutFixUserName)
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                }
+            }
+        </table>
+    </div>
+
+</div>
+@*Bottomnav*@
+<div class="bottomnav">
+    <div class="btnarea">
+        <button id="btnDetailsClose" type="button" class="btn btn-outline-dark btn_close" onclick="closeDialog()">@FormsResource.Close</button>
+    </div>
+</div>

@@ -1,0 +1,203 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Arrival.Resources;
+@model Wms.Areas.Arrival.ViewModels.PrintCaseLabel.PrintCaseLabelConditions
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_ARR_PrintCaseLabel;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div class="head head_white collapse show">
+    @using (Html.BeginForm("Search", "PrintCaseLabel", FormMethod.Post, new { id = "frmSearch" }))
+    {
+
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td>@PrintCaseLabelResource.ReleaseClassS</td>
+                <td>
+                    @Html.EnumRadioButtonListFor(model => model.ReleaseClass, new { htmlAttributes = new { tabindex = "1" } })
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>@PrintCaseLabelResource.NumberofSheetsS</td>
+                <td>
+                    @Html.EditorFor(model => model.NumberofSheets, new { htmlAttributes = new { @class = "w_14_long", @id = "txtNumberofSheets", tabindex = "2" } })
+                    @Html.ValidationMessageFor(model => model.NumberofSheets)
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>@PrintCaseLabelResource.ReleaseBoxNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.ReleaseBoxNo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtReleaseBoxNo", tabindex = "3" } })
+                    @Html.ValidationMessageFor(model => model.ReleaseBoxNo)
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+<div class="message-area" id="divMsgArea">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="button" id="btnRelease" class="btn btn-dark btnsize _pm">@PrintCaseLabelResource.RELEASES</button>
+    </div>
+}
+
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+     * Country class
+     */
+    var PrintCaseLabelView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable1: 'input[type=radio][id$="ReleaseClass-1"]',
+            chkInTable2: 'input[type=radio][id$="ReleaseClass-2"]',
+            form: 'form',
+            searchForm: '#frmSearch',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                $(PrintCaseLabelView.SELECTORS.chkInTable1).click(function (evt) {
+                    $("#txtNumberofSheets").removeAttr('disabled');
+                    $("#txtNumberofSheets").val("0");
+                    $("#txtReleaseBoxNo").attr('disabled', 'disabled');
+                    $("#txtReleaseBoxNo").val("");
+                    $("#divMsgArea").hide();
+                });
+                $(PrintCaseLabelView.SELECTORS.chkInTable2).click(function (evt) {
+                    $("#txtReleaseBoxNo").removeAttr('disabled');
+                    $("#txtNumberofSheets").attr('disabled', 'disabled');
+                    $("#txtNumberofSheets").val("");
+                });
+
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        PrintCaseLabelView.init();
+        if ($('input[type=radio][id$="ReleaseClass-1"]').attr('checked')) {
+            $("#txtNumberofSheets").removeAttr('disabled');
+            $("#txtNumberofSheets").val("0");
+            $("#txtReleaseBoxNo").attr('disabled', 'disabled');
+            $("#txtReleaseBoxNo").val("");
+        } else if ($('input[type=radio][id$="ReleaseClass-2"]').attr('checked')) {
+            $("#txtReleaseBoxNo").removeAttr('disabled');
+            $("#txtNumberofSheets").attr('disabled', 'disabled');
+            $("#txtNumberofSheets").val("");
+        }
+    });
+
+        $("#txtReleaseBoxNo").change(function () {
+            $("#divMsgArea").hide();
+        })
+
+
+        $('#btnRelease').on("click", function () {
+            if (!validateForm($('#frmSearch'))) {
+                return;
+            }
+            if ($("#txtNumberofSheets").prop("disabled") && $("#txtReleaseBoxNo").val() == "") {
+                alert("再発行ケースNo必須入力");
+                return false;
+            }
+            if ($("#txtReleaseBoxNo").prop("disabled") && $("#txtNumberofSheets").val() == "") {
+                alert("枚数必須入力");
+                return false;
+            }
+
+            if ($('input[type=radio][id$="ReleaseClass-1"]').prop('checked')) {
+                //新規発行
+                //window.open("about:blank", "newtab");
+                var urlAction = '@Url.Action("Print", "PrintCaseLabel", new { area= "Arrival" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                //$form.attr("target", "newtab");
+                $form.submit();
+                //$form.attr("target", "_self");
+            } else {
+                //再発行
+                $.ajax({
+                    url: '@Url.Action("PrintRe", "PrintCaseLabel", new { area= "Arrival" })',
+                    type: "POST",
+                    data: {
+                        boxNo: $("#txtReleaseBoxNo").val()
+                    },
+                    success: function (data) {
+                        if (data.status == 0) {
+                            //window.open("about:blank", "newtab");
+                            var urlAction = '@Url.Action("PrintReRun", "PrintCaseLabel", new { area= "Arrival" })';
+                            var $form = $("#frmSearch");
+                            $form.attr("action", urlAction);
+                            $form.attr("method", "POST");
+                            //$form.attr("target", "newtab");
+                            $form.submit();
+                            //$form.attr("target", "_self");
+                        } else {
+                            var urlAction = '@Url.Action("IndexSearch", "PrintCaseLabel", new { area= "Arrival" })';
+                            var $form = $("#frmSearch");
+                            $form.attr("action", urlAction);
+                            $form.attr("method", "POST");
+                            $form.submit();
+                        }
+                    }
+                })
+            }
+
+        });
+
+    </script>
+}
+
+

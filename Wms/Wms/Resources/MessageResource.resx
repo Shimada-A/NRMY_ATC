@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ERR_LOGIN_MENU" xml:space="preserve">
+    <value>センターコード、担当者コード、またはパスワードが違います。</value>
+  </data>
+  <data name="ERR_PASSWORD_DEFAULT" xml:space="preserve">
+    <value>初期パスワードです。パスワードの変更を行ってください。</value>
+  </data>
+  <data name="ERR_PASSWORD_EXPIRED" xml:space="preserve">
+    <value>パスワードの有効期限が切れています。</value>
+  </data>
+  <data name="ERR_PASSWORD_MIN_LENTH" xml:space="preserve">
+    <value>パスワードは8文字以上で入力してください</value>
+  </data>
+  <data name="ERR_PASSWORD_MISTYPE" xml:space="preserve">
+    <value>規定回数以上、パスワード入力に失敗したため、アカウントが停止されました。</value>
+  </data>
+  <data name="ERR_PASSWORD_REPEAT" xml:space="preserve">
+    <value>過去3回に使用されたパスワードです。新しいパスワードを変更してください。</value>
+  </data>
+  <data name="ERR_USERID_PASSWORD_SAME" xml:space="preserve">
+    <value>ユーザーIDと同一のパスワードは指定できません。</value>
+  </data>
+  <data name="MaxLength" xml:space="preserve">
+    <value>{0}は{1}文字以内で入力してください。</value>
+  </data>
+  <data name="PasswordMinByte" xml:space="preserve">
+    <value>{0}文字以上にしてください。</value>
+  </data>
+  <data name="PasswordPolicyAlphanumeric" xml:space="preserve">
+    <value>含められる文字は半角英数字です。</value>
+  </data>
+  <data name="PasswordPolicyUserId" xml:space="preserve">
+    <value>ユーザーIDと同一のパスワードは使用できません。</value>
+  </data>
+  <data name="ERR_ACCOUNT_EXPIRATION" xml:space="preserve">
+    <value>アカウントが失効しています。</value>
+  </data>
+  <data name="ERR_PASSWORD" xml:space="preserve">
+    <value>パスワードが違います。</value>
+  </data>
+  <data name="ERR_PASSWORD_POLICY" xml:space="preserve">
+    <value>入力したパスワードは、パスワードポリシーを満たしていません。ポリシーを確認し、再度入力してください。</value>
+  </data>
+  <data name="ERR_PROC_NUM_LIMIT" xml:space="preserve">
+    <value>処理可能件数（設定値:{0}件）を超過しています。条件の指定を行い再度実行してください。</value>
+  </data>
+  <data name="ERR_NOT_PREFS" xml:space="preserve">
+    <value>正しい都道府県を入力してください。</value>
+  </data>
+  <data name="ErrMsg" xml:space="preserve">
+    <value>エラー情報</value>
+  </data>
+  <data name="ERR_STOCK_UPDATE" xml:space="preserve">
+    <value>「在庫更新処理」で異常終了しました。</value>
+  </data>
+  <data name="ERR_STOCK_RESEARCH_UPDATE" xml:space="preserve">
+    <value>「在庫調査更新処理」で異常終了しました。</value>
+  </data>
+  <data name="ERR_ASORTCASE_UPDATE" xml:space="preserve">
+    <value>引当されているアソートケースの商品です</value>
+  </data>
+  <data name="MinLength" xml:space="preserve">
+    <value>{0}は{1}文字以上で入力してください。</value>
+  </data>
+  <data name="ALLOC_DOING" xml:space="preserve">
+    <value>引当中です・・・</value>
+  </data>
+  <data name="ERROR_END" xml:space="preserve">
+    <value>エラーが発生しました。</value>
+  </data>
+  <data name="NORMAL_END" xml:space="preserve">
+    <value>処理が正常に終了しました。</value>
+  </data>
+  <data name="ERR_GRADE_NOT_EXIST" xml:space="preserve">
+    <value>選択したロケーション区分と格付の組み合わせが、ロケ区分別格付マスタに存在しません。</value>
+  </data>
+  <data name="ERR_STOCK_EXIST" xml:space="preserve">
+    <value>ロケーションコード：{0}が、在庫テーブルに登録されているので、変更できません。</value>
+  </data>
+  <data name="CategoryItemRequird" xml:space="preserve">
+    <value>分類1または品番は必須項目です。</value>
+  </data>
+  <data name="ThresholdClassError" xml:space="preserve">
+    <value>閾値区分は1または2で入力してください。</value>
+  </data>
+  <data name="Range" xml:space="preserve">
+    <value>{0}は{1}～{2}の間で入力してください。</value>
+  </data>
+  <data name="ThresholdRateRange" xml:space="preserve">
+    <value>割合は0～100の間で入力してください。</value>
+  </data>
+  <data name="BOX_NO_ERROR" xml:space="preserve">
+    <value>正しいケースNoを入力してください</value>
+  </data>
+  <data name="BOX_NO_NOT_EXIST_ERROR" xml:space="preserve">
+    <value>実績がありません。再発行できません。</value>
+  </data>
+  <data name="ERR_LOC_TRANSPORTER_DELETE" xml:space="preserve">
+    <value>現在有効なデータは削除できません。</value>
+  </data>
+  <data name="ERR_DEFECT" xml:space="preserve">
+    <value>データ不具合が発生しています。管理者に連絡してください。</value>
+  </data>
+  <data name="ERR_PRINT" xml:space="preserve">
+    <value>印刷処理に失敗しました</value>
+  </data>
+  <data name="ERR_DUPLICATE_ROW" xml:space="preserve">
+    <value>行No{0},行No{1}：一つの出荷先に同じ適用開始日は登録できません。</value>
+  </data>
+  <data name="ERR_ZIP_HYPHEN" xml:space="preserve">
+    <value>郵便番号はハイフンなしで入力してください。</value>
+  </data>
+  <data name="ERR_ALLOC_DOING" xml:space="preserve">
+    <value>引当中です。</value>
+  </data>
+  <data name="ERR_LOCATION_CD_MENET_DISABLE" xml:space="preserve">
+    <value>ロケーションコードがロケマスタメンテ不可のロケーション区分でマスタに登録済みです</value>
+  </data>
+  <data name="ERR_LOC_CLASS_MENTE_DISABLE" xml:space="preserve">
+    <value>ロケーション区分がロケマスタメンテ不可でマスタに登録されています</value>
+  </data>
+  <data name="ERR_STOCK_EXIST_UPLOAD" xml:space="preserve">
+    <value>ロケーションコードが在庫テーブルに登録されているため、ロケーション区分と格付は変更できません</value>
+  </data>
+  <data name="UploadCenterId" xml:space="preserve">
+    <value>アップロードしたデータは、ログインしたセンターIDで登録されます。</value>
+  </data>
+  <data name="GenCdNotExistsError" xml:space="preserve">
+    <value>入力された{0}が汎用コードマスタに存在しません。
+汎用コードマスタ画面から登録してください。
+（汎用分類コード：{1}）</value>
+    <comment>{0}=項目名、{1}=汎用分類コード</comment>
+  </data>
+  <data name="ErrorUploadUniqueConstraintViolated" xml:space="preserve">
+    <value>{0}がファイル内で重複しています。</value>
+  </data>
+  <data name="ERR_LOC_TRANSPORTER_NANIWA" xml:space="preserve">
+    <value>浪速仕分コードマスタに設定されていない店舗です。浪速運送に設定できません。</value>
+  </data>
+</root>

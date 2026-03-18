@@ -1,0 +1,30 @@
+﻿@model Wms.Areas.Styleguide.Models.RangeSlider
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>Range Slider</h1>
+        <p class="pg_caption">Range Sliderの使い方</p>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+<div class="container">
+    <div class="content of">
+        <h3>RangeSlider(@@Html.RangeSliderFor)</h3>
+        <div class="head head_white">
+            <div class="sortarea">
+                販売価格：
+                @* 引数dialogIdは一意にする。 *@
+                @Html.RangeSliderFor(m => m.SellingPriceStart, m => m.SellingPriceEnd, 0, 100, "sellingPriceDialog")
+                @Html.ValidationMessageFor(m => m.SellingPriceStart)
+                @Html.ValidationMessageFor(m => m.SellingPriceEnd)
+            </div>
+        </div>
+    </div>
+</div>
+}

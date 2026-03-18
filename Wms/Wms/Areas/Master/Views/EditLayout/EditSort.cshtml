@@ -1,0 +1,85 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+@using Wms.Areas.Master.Views.Extention;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditCondition
+@{
+    ViewBag.Title = EditLayoutResource.EditLayout_EditSort;
+    Layout = "_EditLayoutBase.cshtml";
+
+}
+
+<style>
+    .detail {
+        display: flex;
+    }
+
+    .tno {
+        width: 50px;
+    }
+
+    td select {
+        background-color: white;
+        cursor: pointer;
+    }
+    .sort-order{
+        width:80px;
+    }
+</style>
+@using (Html.BeginForm("EditSort", "EditLayout", FormMethod.Post, new { @id = "dataForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.Partial("_EditOutputHeader", Model)
+    <div id="detailArea">
+        @if (Model.Details != null)
+        {
+            @Html.Partial("_EditSortDetail", Model)
+        }
+    </div>
+
+}
+
+
+@section EditLayoutBasefooter{
+    <button type="button" id="btnBack" class="btn  btn-outline-dark btnsize">@EditLayoutResource.Back</button>
+    <div class="btnarea">
+        <button type="button" id="btnToOutput" class="btn  btn-outline-dark btnsize">@EditLayoutResource.EditOutput</button>
+        <button type="button" id="btnToCondition" class="btn btn-outline-dark btnsize">@EditLayoutResource.EditCondition</button>
+        @Html.CreateOrUpdateButtonFor(Model.IsNewLayout, "dataForm")
+    </div>
+}
+
+@section EditLayoutScripts{
+
+    <script>
+
+        function getObjectDetail() {
+            $.get('@Url.EditLayoutAction("GetEditSortDetail")',
+                { shipperId: shipperId, objectId: $('#ObjectId').val()},
+                function (data) {
+                    $('#detailArea').html(data);
+                    formUtil.resetValidation('#dataForm');
+                }
+            )
+        }
+
+        addClickEvent('.confirm-update', function () {
+
+            postForm('#dataForm','@Url.EditLayoutAction("EditSort")');
+        });
+
+        addClickEvent('#btnToOutput', function () {
+            postForm('#dataForm', '@Url.EditLayoutAction("EditOutputFromSort")');
+        });
+
+        addClickEvent('#btnToCondition', function () {
+            postForm('#dataForm', '@Url.EditLayoutAction("EditConditionFromSort")');
+        });
+    </script>
+}

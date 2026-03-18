@@ -1,0 +1,412 @@
+﻿@using Wms.Helpers;
+@model Wms.Areas.Master.ViewModels.ItemSku.Detail
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Item02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "ItemSku", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @* Container *@
+<div class="Container">
+    @if (Model != null)
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.ShipperId)
+        @Html.HiddenFor(model => model.ItemId)
+        @Html.HiddenFor(model => model.ItemSkuId)
+        @Html.HiddenFor(model => model.ItemName)
+        @Html.HiddenFor(model => model.ItemShortName)
+        @Html.HiddenFor(model => model.BrandId)
+        @Html.HiddenFor(model => model.BrandName)
+        @Html.HiddenFor(model => model.CategoryId1)
+        @Html.HiddenFor(model => model.CategoryName1)
+        @Html.HiddenFor(model => model.CategoryId2)
+        @Html.HiddenFor(model => model.CategoryName2)
+        @Html.HiddenFor(model => model.CategoryId3)
+        @Html.HiddenFor(model => model.CategoryName3)
+        @Html.HiddenFor(model => model.CategoryId4)
+        @Html.HiddenFor(model => model.CategoryName4)
+        @Html.HiddenFor(model => model.NormalSellingPriceExTax)
+        @Html.HiddenFor(model => model.NormalBuyingPrice)
+        @Html.HiddenFor(model => model.PurchaseBuyingPrice)
+        @Html.HiddenFor(model => model.ProperPriceExTax)
+        @Html.HiddenFor(model => model.SeasonYear)
+        @Html.HiddenFor(model => model.ItemSeasonId)
+        @Html.HiddenFor(model => model.ItemSeasonName)
+        @Html.HiddenFor(model => model.SaleStartDate)
+        @Html.HiddenFor(model => model.SaleEndDate)
+        @Html.HiddenFor(model => model.OriginCountry)
+        @Html.HiddenFor(model => model.ItemCustomerTypeId)
+        @Html.HiddenFor(model => model.ItemCustomerTypeName)
+        @Html.HiddenFor(model => model.ItemRankName)
+        @Html.HiddenFor(model => model.MainVendorId)
+        @Html.HiddenFor(model => model.MainVendorName)
+        @Html.HiddenFor(model => model.ItemColorId)
+        @Html.HiddenFor(model => model.ItemColorName)
+        @Html.HiddenFor(model => model.ItemSizeId)
+        @Html.HiddenFor(model => model.ItemSizeName)
+        @Html.HiddenFor(model => model.Jan)
+        @Html.HiddenFor(model => model.DivisionId)
+        @Html.HiddenFor(model => model.DivisionName)
+        @Html.HiddenFor(model => model.ItemCode)
+        @Html.HiddenFor(model => model.ItemCodeName)
+        @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+    <div class="form_content">
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ItemSkuIdDetail)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.ItemSkuId)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ItemName)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.ItemName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ItemShortName)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.ItemShortName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.BrandDetail)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.BrandId)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.BrandName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.CategoryId1)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.CategoryId1)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.CategoryName1)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.CategoryId2)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.CategoryId2)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.CategoryName2)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.CategoryId3)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.CategoryId3)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.CategoryName3)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.CategoryId4)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.CategoryId4)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.CategoryName4)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.NormalSellingPriceExTax)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.NormalSellingPriceExTax)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.NormalBuyingPrice)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.NormalBuyingPrice)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.PurchaseBuyingPrice)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.PurchaseBuyingPrice)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ProperPriceExTax)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.ProperPriceExTax)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.SeasonYear)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.SeasonYear)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ItemSeason)</dt>
+            <dd>
+                @((int)Model.ItemSeasonId)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.ItemSeasonName)
+
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.SaleStartDate)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.SaleStartDate)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.SaleEndDate)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.SaleEndDate)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.OriginCountry)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.OriginCountry)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ItemCustomerType)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.ItemCustomerTypeId)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.ItemCustomerTypeName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ItemRank)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.ItemRankName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.MainVendorName)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.MainVendorId)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.MainVendorName)
+            </dd>
+        </dl>
+        @*<dl>
+            <dt>@Html.DisplayName(ItemSkuResource.CaseIrisu)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.CaseIrisu)
+            </dd>
+        </dl>*@
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ItemColor)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.ItemColorId)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.ItemColorName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ItemSize)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.ItemSizeId)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.ItemSizeName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>JAN</dt>
+            <dd>
+                @Html.DisplayFor(m => m.Jan)
+            </dd>
+        </dl>
+        @*<dl>
+            <dt>@Html.DisplayName(ItemSkuResource.PieceVol)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.PieceVol)
+            </dd>
+        </dl>*@
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.Division)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.DivisionId)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.DivisionName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.NoveltyName)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.NoveltyName, new { htmlAttributes = new { tabindex = "1", @placeholder = "", @class = "_pm" } })
+                @Html.ValidationMessageFor(model => model.NoveltyName, "", new { })
+            </dd>
+        </dl>
+        <dl>
+            <dt>@Html.DisplayName(ItemSkuResource.ItemCode)</dt>
+            <dd>
+                @Html.DisplayFor(m => m.ItemCode)
+                &nbsp;&nbsp;
+                @Html.DisplayFor(m => m.ItemCodeName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.DeleteFlag)
+            </dt>
+            <dd>
+                <label class="chklist">
+                    @Html.CheckBoxFor(model => model.DeleteFlag, new { tabindex = "11", @class = "check-box _pm", onclick = "return false;" })
+                    <span class="chk_parts">
+                    </span>
+                </label>
+            </dd>
+        </dl>
+    </div>
+
+        @* Hidden Fields *@
+
+        <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+        <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+    }
+</div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @*@Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "ItemSku", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })*@
+            <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+            <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+            <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+        </div>
+    }
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //ItemSkuMasterEdit
+        var ItemSkuMasterEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(ItemSkuMasterEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(ItemSkuMasterEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(ItemSkuMasterEdit.SELECTORS.hdUpdateError).val() === ItemSkuMasterEdit.CONST.STR_TRUE) {
+                    if ($(ItemSkuMasterEdit.SELECTORS.hdUpdateError).attr(ItemSkuMasterEdit.CONST.ATTR_ERROR_CODE) === ItemSkuMasterEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(ItemSkuMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(ItemSkuMasterEdit.SELECTORS.exclusiveUpdateDialog, ItemSkuMasterEdit.GLOBAL.titleInformation, ItemSkuMasterEdit.GLOBAL.msgExclusiveUpdate);
+                        $(ItemSkuMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(ItemSkuMasterEdit.SELECTORS.hdUpdateError).attr(ItemSkuMasterEdit.CONST.ATTR_ERROR_CODE) === ItemSkuMasterEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(ItemSkuMasterEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(ItemSkuMasterEdit.SELECTORS.overWriteRecordDialog, ItemSkuMasterEdit.GLOBAL.titleInformation, (ItemSkuMasterEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(ItemSkuMasterEdit.SELECTORS.AreaId).val())));
+                        $(ItemSkuMasterEdit.SELECTORS.btnSubmitOverWriteDialog).attr(ItemSkuMasterEdit.SELECTORS.form, ItemSkuMasterEdit.SELECTORS.frmUpdate).attr(ItemSkuMasterEdit.CONST.FORM_METHOD, ItemSkuMasterEdit.CONST.POST).attr(ItemSkuMasterEdit.CONST.FORM_ACTION, '@Url.Action("Update", "ItemSku", new { area = "Master" })').attr(ItemSkuMasterEdit.SELECTORS.form, ItemSkuMasterEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        /**
+         * Register event click for buttons
+         */
+        $(document).ready(function () {
+            ItemSkuMasterEdit.init();
+            $(".flatpickr").flatpickr(
+                {
+                    "locale": "ja",
+                    dateFormat: "Y/m/d"
+                });
+        });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

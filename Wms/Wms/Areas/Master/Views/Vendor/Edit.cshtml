@@ -1,0 +1,295 @@
+﻿@model Wms.Areas.Master.Models.Vendor
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Vendor02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Vendor", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ShipperId)
+            @Html.HiddenFor(model => model.VendorId)
+            @Html.HiddenFor(model => model.VendorName1)
+            @Html.HiddenFor(model => model.VendorShortName)
+            @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+            <div class="form_content">
+                <dl>
+                    <dt>@Html.DisplayNameFor(model => model.VendorId)</dt>
+                    <dd>
+                        @Html.Raw(Model.VendorId)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@VendorResource.VendorName</dt>
+                    <dd>
+                        @Html.Raw(Model.VendorName1)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.VendorZip)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.VendorZip, new { htmlAttributes = new { tabindex = "1", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.VendorZip, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.VendorPrefName)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.VendorPrefName, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.VendorPrefName, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.VendorCityName)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.VendorCityName, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "w_40_normal _pm" } })
+                        @Html.ValidationMessageFor(model => model.VendorCityName, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.VendorAddress1)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.VendorAddress1, new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "w_40_normal _pm" } })
+                        @Html.ValidationMessageFor(model => model.VendorAddress1, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.VendorAddress2)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.VendorAddress2, new { htmlAttributes = new { tabindex = "7", @placeholder = "", @class = "w_40_normal _pm" } })
+                        @Html.ValidationMessageFor(model => model.VendorAddress2, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.VendorAddress3)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.VendorAddress3, new { htmlAttributes = new { tabindex = "6", @placeholder = "", @class = "w_40_normal _pm" } })
+                        @Html.ValidationMessageFor(model => model.VendorAddress3, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.VendorTel)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.VendorTel, new { htmlAttributes = new { tabindex = "7", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.VendorTel, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.VendorFax)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.VendorFax, new { htmlAttributes = new { tabindex = "7", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.VendorFax, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayNameFor(model => model.VendorMail1)</dt>
+                    <dd>
+                        @Html.Raw(Model.VendorMail1)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayNameFor(model => model.VendorStaffName)</dt>
+                    <dd>
+                        @Html.Raw(Model.VendorStaffName)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@VendorResource.Supplier</dt>
+                    <dd>
+                        @if (Model.SupplierClass == "01")
+                        {
+                            @Html.Raw(CommonResource.SUPPLIER_CLASS_01)
+                        }
+                        @if (Model.SupplierClass == "02")
+                        {
+                            @Html.Raw(CommonResource.SUPPLIER_CLASS_02)
+                        }
+                        @if (Model.SupplierClass == "03")
+                        {
+                            @Html.Raw(CommonResource.SUPPLIER_CLASS_03)
+                        }
+                        @if (Model.SupplierClass == "04")
+                        {
+                            @Html.Raw(CommonResource.SUPPLIER_CLASS_04)
+                        }
+                        @if (Model.SupplierClass == "99")
+                        {
+                            @Html.Raw(CommonResource.SUPPLIER_CLASS_99)
+                        }
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayNameFor(model => model.DeleteFlag)</dt>
+                    <dd>
+                        <label class="chklist">
+                            @Html.CheckBoxFor(model => model.DeleteFlag, new { tabindex = "11", @class = "check-box _pm", onclick = "return false;" })
+                            <span class="chk_parts">
+                            </span>
+                        </label>
+                    </dd>
+                </dl>
+            </div>
+
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @*@Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Vendor", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })*@
+            <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+            <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+            <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+        </div>
+    }
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //VendorMasterEdit
+        var VendorMasterEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(VendorMasterEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(VendorMasterEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(VendorMasterEdit.SELECTORS.hdUpdateError).val() === VendorMasterEdit.CONST.STR_TRUE) {
+                    if ($(VendorMasterEdit.SELECTORS.hdUpdateError).attr(VendorMasterEdit.CONST.ATTR_ERROR_CODE) === VendorMasterEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(VendorMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(VendorMasterEdit.SELECTORS.exclusiveUpdateDialog, VendorMasterEdit.GLOBAL.titleInformation, VendorMasterEdit.GLOBAL.msgExclusiveUpdate);
+                        $(VendorMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(VendorMasterEdit.SELECTORS.hdUpdateError).attr(VendorMasterEdit.CONST.ATTR_ERROR_CODE) === VendorMasterEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(VendorMasterEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(VendorMasterEdit.SELECTORS.overWriteRecordDialog, VendorMasterEdit.GLOBAL.titleInformation, (VendorMasterEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(VendorMasterEdit.SELECTORS.AreaId).val())));
+                        $(VendorMasterEdit.SELECTORS.btnSubmitOverWriteDialog).attr(VendorMasterEdit.SELECTORS.form, VendorMasterEdit.SELECTORS.frmUpdate).attr(VendorMasterEdit.CONST.FORM_METHOD, VendorMasterEdit.CONST.POST).attr(VendorMasterEdit.CONST.FORM_ACTION, '@Url.Action("Update", "Vendor", new { area = "Master" })').attr(VendorMasterEdit.SELECTORS.form, VendorMasterEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        /**
+         * Register event click for buttons
+         */
+        $(document).ready(function () {
+            VendorMasterEdit.init();
+        });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,145 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.DataEx.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.DataEx.Controllers;
+@using Wms.Common;
+@using Wms.Areas.DataEx.Views.Extionsions;
+
+
+@model Wms.Areas.DataEx.ViewModels.GeneralData.GeneralDataViewModel
+@{
+    Layout = "~/Areas/DataEx/Views/GeneralData/_GeneralDataBase.cshtml";
+
+}
+
+@using (Html.BeginForm("Export", "OutputGeneralData", FormMethod.Post, new { @id = "dataForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="layout-info head head_white">
+        <table>
+            <tr>
+                <td class="tdtitle_10">@EditLayoutResource.LayoutName : </td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+
+                            @Html.DropDownListFor(model => model.GeneralDataTemplateId, Model.LayoutList,string.Empty)
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <button type="button" id="btnGetInfo" onclick="getLayoutInfo()" class="btn btn-outline-dark">@EditLayoutResource.GetInfomation</button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <hr />
+                </td>
+            </tr>
+
+        </table>
+        <div id="div_detail">
+            @if (Model.GeneralDataTemplateId.HasValue)
+            {
+                @Html.Partial("~/Areas/DataEx/Views/GeneralData/_OutputGeneralDataHeader.cshtml", Model)
+            }
+        </div>
+    </div>
+    @RenderBody()
+}
+
+@section GeneralDataBaseFooter{
+    @*<button type="button" id="btnBack" class="btn  btn-outline-dark btnsize">@EditLayoutResource.Back</button>*@
+    <div class="btnarea">
+        @RenderSection("BottomRightButtons",required:false)
+        @Html.ExportCsvButtonFor("dataForm")
+    </div>
+}
+
+@section GeneralDataScripts{
+    <script>
+
+        var isGettingLayoutInfo = false;
+        var isGettingLayoutDetail = false;
+        // 初期化
+        $(function () {
+
+            // レイアウト名初期化
+            checkLayouts();
+            addChangeEvent('#GeneralDataTemplateId', function () {
+                //テンプレート名の変更が行われたタイミングで出力ボタンを使えなくする
+                itemOff('#confirmButton');
+
+                checkLayouts();
+            });
+        });
+
+        // レイアウト名チェック処理
+        function checkLayouts() {
+
+            // レイアウト名が入っていたら情報取得ボタンを使えるようにする
+            var val = $('#GeneralDataTemplateId').val();
+            if (val == "") {
+                itemOff("#btnGetInfo");
+                // 出力ボタンも使用不可
+                itemOff('#confirmButton');
+            } else {
+                itemOn("#btnGetInfo");
+            }
+        }
+
+        // データ取得中かどうかをチェック
+        function checkIsGetting() {
+            if (!isGettingLayoutInfo && !isGettingLayoutDetail) {
+                activate();
+                // データの取得が完了したタイミングで出力ボタンを使えるようにする
+                itemOn('#confirmButton');
+            }
+        }
+
+        // レイアウト情報取得処理
+        function getLayoutInfo() {
+            isGettingLayoutInfo = true;
+            isGettingLayoutDetail = true;
+            wait();
+            $.get('@Url.OutputGeneralDataAction("GetLayoutInfo")',
+                { templateId: $('#GeneralDataTemplateId').val()},
+                function (data) {
+                    $('#div_detail').html(data);
+                    formUtil.resetValidation('#dataForm');
+                    isGettingLayoutInfo = false;
+                    checkIsGetting();
+
+                    checkFileType();
+                }
+            )
+
+            // レイアウト条件/並び順データ取得処理
+            getLayoutDetails();
+        }
+
+        // ファイル区分をチェックして出力用のメッセージ切り替え
+        function checkFileType() {
+            var fileType = $('#FileType').val();
+            if (fileType == 'CSV') {
+                changeConfirmMessage('@(Wms.Resources.CommonResource.ConfirmToExportCsv)');
+            } else {
+                changeConfirmMessage('@(Wms.Resources.CommonResource.ConfirmToExportTsv)');
+            }
+        }
+
+        // 出力ダイアログイベント
+        addClickEvent('.confirm-csv', function () {
+            if (waiting)
+                return;
+            postForm('#dataForm', '@Url.OutputGeneralDataAction("ExportCsv")');
+            $('#confirm_csv').modal("hide");
+        });
+
+    </script>
+
+    @RenderSection("OutputGeneralDataScripts", required: false)
+
+}

@@ -1,0 +1,109 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.DataEx.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.DataEx.Controllers;
+@using Wms.Common;
+
+@model  Wms.Areas.DataEx.ViewModels.ImportGeneralData.ImportGeneralDataViewModel
+@{
+    ViewBag.Title = "汎用データ取込";
+    Layout = "_ImportGeneralDataBase.cshtml";
+}
+
+
+<div class="Container file-area" style="display:none;">
+    <p>@EditLayoutResource.UploadFile</p>
+
+    <div class="d_continer main">
+
+        <span class="ui-helper-hidden-accessible">
+            <input type="image" />
+        </span>
+
+        <div class="pgtitlearea">
+            <h1 id="fileUploadTitle"></h1>
+        </div>
+
+        <div id="myDropzone" class="dropzone dz-clickable">
+            <div class="dz-default dz-message" data-dz-message="">
+                <span>@FormsResource.FileUploadMessage</span>
+            </div>
+        </div>
+        @Html.TextBoxFor(model => model.Files, "", new { @type = "file", @multiple = "multiple"})
+
+        <div>
+            <ul id="myDropzone-list"></ul>
+        </div>
+    </div>
+
+</div>
+@Styles.Render("~/bundles/FileUploadCss")
+@Scripts.Render("~/bundles/FileUpload")
+
+@Html.Partial("~/Views/Shared/_ConfirmMessageDialog.cshtml", new Wms.Models.MessageDialog { Id ="import",Message = Wms.Resources.CommonResource.ConfirmToImportFile })
+
+@section BottomRightButtons{
+    @Html.ConfirmButtonFor(DialogType.Other,"dataForm", EditLayoutResource.Import , htmlAttributes: new { @id= "confirmButton", @class = "btn btn-outline-dark btnsize" }, target:"#confirm_import")
+    }
+
+@section ImportGeneralDataScripts{
+
+    <script>
+
+        $(function () {
+            changeDropzoneUrl();
+        })
+
+        var files = $("#Files");
+        var dt = new DataTransfer();
+        // Dropzone class:
+        var myDropzone = new Dropzone("div#myDropzone", {url:"@Url.Action("FileDrop", "EditLayout", new { area = "Master" })"});
+        myDropzone.on("complete", function (file) {
+
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            files.prop('files', dt.files);
+            myDropzone.removeAllFiles();
+            
+        });
+
+        addClickEvent('.confirm-import',
+            function () {
+                postForm('#dataForm','@Url.ImportGeneralDataAction("Import")');
+            }
+        )
+
+        addChangeEvent('#ObjectId', changeObjectId);
+
+        function changeObjectId() {
+            var val = $('#ObjectId').val();
+            if (val == "") {
+                itemOff('#btnGetInfo');
+            } else {
+                itemOn('#btnGetInfo');
+            }
+            // オブジェクトIDが変更されたタイミングでは確定不可能とする
+            // 表示されているテーブル情報と、オブジェクトIDが一致しないまま登録される為。
+            itemOff('#confirmButton');
+        }
+
+        function changeConfirmButton() {
+            var val = $('#ObjectId').val();
+            if (val == "") {
+                itemOff('#confirmButton');
+            } else {
+                itemOn('#confirmButton');
+            }
+        }
+
+        function changeDropzoneUrl() {
+            myDropzone.options.url = "@Url.ImportGeneralDataAction("FileDrop")";
+        }
+
+        function afterGetInformation() {
+            $('.file-area').show();
+        }
+    </script>
+}

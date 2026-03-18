@@ -1,0 +1,68 @@
+﻿@using Wms.Resources;
+@model Wms.ViewModels.Notice.NoticeViewModel
+
+<div class="headarea sortheadareaheight" style="height:70px;">
+    <table class="headtable">
+        <tr>
+            <td>@NoticeResource.MessageClassS</td>
+            <td>
+                @Html.DisplayFor(model => model.DetailHeader.MessageClassNm)
+            </td>
+            <td>@NoticeResource.NoticeHeaderIdH</td>
+            <td>
+                @Html.DisplayFor(model => model.DetailHeader.NoticeHeaderId)
+            </td>
+            <td>@NoticeResource.OccurrenceDateS</td>
+            <td>
+                @Html.DisplayFor(model => model.DetailHeader.OccurrenceDate)
+            </td>
+            @if (Model.DetailHeader.Name != null)
+            {
+                <td>@NoticeResource.IfRunUnitH</td>
+                <td>
+                    @Html.DisplayFor(model => model.DetailHeader.Name)
+                </td>
+            }
+            @if (Model.DetailHeader.IfDataName != null)
+            {
+                <td>@NoticeResource.IfDataH</td>
+                <td>
+                    @Html.DisplayFor(model => model.DetailHeader.IfDataName)
+                </td>
+            }
+            else
+            {
+                <td></td>
+                <td></td>
+            }
+            @if (Model.DetailHeader.IfSystemName != null)
+            {
+                <td>@NoticeResource.IfSystemH</td>
+                <td>
+                    @Html.DisplayFor(model => model.DetailHeader.IfSystemName)
+                </td>
+            }
+            else
+            {
+                <td></td>
+                <td></td>
+            }
+        </tr>
+    </table>
+    <table class="headtable" style="margin-top:10px;">
+        <tr>
+            <td>@NoticeResource.SubjectH</td>
+            <td >
+                @Html.DisplayFor(model => model.DetailHeader.Subject)
+            </td>
+            @if (Model.DetailHeader.Content != null)
+            {
+                <td>@NoticeResource.MessageH</td>
+                <td>
+                    @Html.DisplayFor(model => model.DetailHeader.Content)
+                </td>
+            }
+        </tr>
+    </table>
+</div>
+

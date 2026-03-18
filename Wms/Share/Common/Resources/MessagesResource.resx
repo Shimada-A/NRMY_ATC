@@ -1,0 +1,361 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Alphanumeric" xml:space="preserve">
+    <value>{0}は半角英数字で入力してください。</value>
+  </data>
+  <data name="BadRequest" xml:space="preserve">
+    <value>不正な入力を検知したためサーバーとの接続を中断しました。</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="CodeNumberInValid" xml:space="preserve">
+    <value>コードに数値以外の文字が含まれています。</value>
+  </data>
+  <data name="DateGreaterThanOrEqual" xml:space="preserve">
+    <value>{0}が{1}より小さくならないように入力してください。</value>
+  </data>
+  <data name="ErrNotInput" xml:space="preserve">
+    <value>{0}が入力されていません</value>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>ErrorMessage</value>
+  </data>
+  <data name="ERR_ALREADY_SAVED" xml:space="preserve">
+    <value>既に登録されています。</value>
+  </data>
+  <data name="ERR_ALREADY_SAVED_ROW" xml:space="preserve">
+    <value>行No{0}：既に登録されています。</value>
+  </data>
+  <data name="ERR_CONFIRM_PASSWORD" xml:space="preserve">
+    <value>入力されたパスワードは一致しません。新しいパスワードを両方のボックスに入力してください。</value>
+  </data>
+  <data name="ERR_DATE_MINMAX" xml:space="preserve">
+    <value>{0}&lt;{1}となるように入力してください。</value>
+  </data>
+  <data name="ERR_EXCLUSIVE_DELETE" xml:space="preserve">
+    <value>他のユーザーに削除されたため削除できませんでした。</value>
+  </data>
+  <data name="ERR_EXCLUSIVE_INSERT" xml:space="preserve">
+    <value>他のユーザーに登録されたため登録できませんでした。</value>
+  </data>
+  <data name="ERR_EXCLUSIVE_UPDATE" xml:space="preserve">
+    <value>他のユーザーに変更されたため更新できませんでした。</value>
+  </data>
+  <data name="ERR_EXCLUSIVE_UPLOAD" xml:space="preserve">
+    <value>他のユーザーに変更されたためアップロードできませんでした。</value>
+  </data>
+  <data name="ERR_LENGTH" xml:space="preserve">
+    <value>行No{0}：{1}は{2}桁以内で入力してください。</value>
+  </data>
+  <data name="ERR_NO_DEFINITION" xml:space="preserve">
+    <value>事前定義されていないエラーです。</value>
+  </data>
+  <data name="ERR_NUMBER" xml:space="preserve">
+    <value>行No{0}：{1}に数値以外の文字が含まれています。</value>
+  </data>
+  <data name="ERR_OEVER_DELETE" xml:space="preserve">
+    <value>基幹システムで登録されたIDは削除できません(ID：{0}）</value>
+  </data>
+  <data name="ERR_OVER_DECIMAL" xml:space="preserve">
+    <value>{0}～{1}の間で入力してください。(整数:{2}桁、小数:{3}桁)</value>
+  </data>
+  <data name="ERR_OVER_INT" xml:space="preserve">
+    <value>{0}～{1}の間で入力してください。</value>
+  </data>
+  <data name="ERR_PASSWORD_REPEAT" xml:space="preserve">
+    <value>過去3回に使用されたパスワードです。新しいパスワードを変更してください。</value>
+  </data>
+  <data name="ERR_REQUIRED" xml:space="preserve">
+    <value>行No{0}：{1}は必須項目です。</value>
+  </data>
+  <data name="ERR_REQUIRED_INPUT" xml:space="preserve">
+    <value>{0}が未入力の行があります。{0}は必須です。</value>
+  </data>
+  <data name="ERR_USERID_PASSWORD_SAME" xml:space="preserve">
+    <value>ユーザーIDと同一のパスワードは指定できません。</value>
+  </data>
+  <data name="EventID" xml:space="preserve">
+    <value>EventID</value>
+  </data>
+  <data name="FieldMustBeNumeric" xml:space="preserve">
+    <value>{0}は半角数字で入力してください。</value>
+  </data>
+  <data name="Forbidden" xml:space="preserve">
+    <value>不正なアクセスが検知されたためサーバーとの接続を中断しました。</value>
+  </data>
+  <data name="GoToHome" xml:space="preserve">
+    <value>ダッシュボードへ移動する</value>
+  </data>
+  <data name="Id" xml:space="preserve">
+    <value>{0}は半角英数字記号で入力してください。</value>
+  </data>
+  <data name="InternalServerError" xml:space="preserve">
+    <value>システムエラーを検知したためサーバーとの接続を中断しました。</value>
+  </data>
+  <data name="IS_ALLOC_PROCESSING" xml:space="preserve">
+    <value>引当処理中です　引当処理終了後に再度実行してください。</value>
+  </data>
+  <data name="IS_DAILY_PROCESSING" xml:space="preserve">
+    <value>日次処理中です　日次処理終了後に再度実行してください。</value>
+  </data>
+  <data name="IS_TANA_LOC_PROCESSING" xml:space="preserve">
+    <value>棚卸中です　棚卸処理終了後に再度実行してください。</value>
+  </data>
+  <data name="JanRegex12" xml:space="preserve">
+    <value>JANコードは12桁です。</value>
+  </data>
+  <data name="LeargeSizeCookie" xml:space="preserve">
+    <value>cookieのサイズが{1}byteを超えています。</value>
+  </data>
+  <data name="LengthError" xml:space="preserve">
+    <value>{0}は{1}桁で入力してください。</value>
+  </data>
+  <data name="MasterNotExistsError" xml:space="preserve">
+    <value>{0}の値がマスタに存在していません。</value>
+  </data>
+  <data name="MaxLength" xml:space="preserve">
+    <value>{0}は{1}文字以内で入力してください。</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="MinLength" xml:space="preserve">
+    <value>{0}は{1}文字以上で入力してください。</value>
+  </data>
+  <data name="MinValueMessage" xml:space="preserve">
+    <value>{0}以上の値を入力してください</value>
+  </data>
+  <data name="MSG_ERR_EXCLUSIVE_DELETE" xml:space="preserve">
+    <value>他のユーザーに変更されたため削除できませんでした。</value>
+  </data>
+  <data name="MSG_NOT_FOUND" xml:space="preserve">
+    <value>該当データが存在しません。</value>
+  </data>
+  <data name="NotDateError" xml:space="preserve">
+    <value>{0}が日付ではありません。</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>ご指定のページが見つかりませんでした。</value>
+  </data>
+  <data name="NotIntError" xml:space="preserve">
+    <value>{0}は整数で入力してください。</value>
+  </data>
+  <data name="NotSameError" xml:space="preserve">
+    <value>{0}と{1}が一致しません</value>
+  </data>
+  <data name="OnlyAllowHalfSize" xml:space="preserve">
+    <value>半角英数字で入力してください。</value>
+  </data>
+  <data name="OnlyAllowInteger" xml:space="preserve">
+    <value>整数で入力してください。</value>
+  </data>
+  <data name="QUE_ALLOCATION" xml:space="preserve">
+    <value>選択されている出荷指示データを引当します。よろしいですか？</value>
+  </data>
+  <data name="QUE_ALLOCATION_CANCEL" xml:space="preserve">
+    <value>選択されているバッチNoを引当解除します。よろしいですか？</value>
+  </data>
+  <data name="QUE_CONFIRM_ACTUAL" xml:space="preserve">
+    <value>実績確定しますか？</value>
+  </data>
+  <data name="QUE_CONFIRM_DELETE" xml:space="preserve">
+    <value>確定解除しますか？</value>
+  </data>
+  <data name="QUE_CREATE" xml:space="preserve">
+    <value>登録しますか？</value>
+  </data>
+  <data name="QUE_DELETE" xml:space="preserve">
+    <value>削除しますか？</value>
+  </data>
+  <data name="QUE_INVENTORY_CANCEL" xml:space="preserve">
+    <value>棚卸取消しますか？</value>
+  </data>
+  <data name="QUE_INVENTORY_FORMAL_CONFIRM" xml:space="preserve">
+    <value>本確定しますか？</value>
+  </data>
+  <data name="QUE_INVENTORY_TEMPORARY_CONFIRM" xml:space="preserve">
+    <value>仮確定しますか？</value>
+  </data>
+  <data name="QUE_UPDATE" xml:space="preserve">
+    <value>更新しますか？</value>
+  </data>
+  <data name="QUE_UPDATE_OVERWRITE" xml:space="preserve">
+    <value>この{0}は過去に使用されていましたが現在は削除されています。同一の{0}で登録しますか？</value>
+  </data>
+  <data name="QUE_UPDATE_WORKING" xml:space="preserve">
+    <value>移動入荷検品作業中のデータがあります。更新処理を行いますか？</value>
+  </data>
+  <data name="Range" xml:space="preserve">
+    <value>{0}は{1}～{2}の間で入力してください。</value>
+  </data>
+  <data name="ReplacementStrings" xml:space="preserve">
+    <value>ReplacementStrings</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>{0}は必須項目です。</value>
+  </data>
+  <data name="SELECT_LESS_ONE_RECORD" xml:space="preserve">
+    <value>少なくとも1件選択してください。</value>
+  </data>
+  <data name="SELECT_ONE_RECORD" xml:space="preserve">
+    <value>1件選択してください。</value>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="SUC_DELETE" xml:space="preserve">
+    <value>削除しました。</value>
+  </data>
+  <data name="SUC_INSERT" xml:space="preserve">
+    <value>登録しました。</value>
+  </data>
+  <data name="SUC_UPDATE" xml:space="preserve">
+    <value>更新しました。</value>
+  </data>
+  <data name="SUC_UPLOAD" xml:space="preserve">
+    <value>アップロードしました。</value>
+  </data>
+  <data name="TextEscalation" xml:space="preserve">
+    <value>同じ問題が繰り返される場合はシステム管理者に連絡してください。</value>
+  </data>
+  <data name="TextReprocessing" xml:space="preserve">
+    <value>画面の処理中にこのページに遷移した場合はもう一度画面に戻って再度処理を行ってください。</value>
+  </data>
+  <data name="TimeWritten" xml:space="preserve">
+    <value>TimeWritten</value>
+  </data>
+  <data name="TITLE_CONFIRM" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="TITLE_ERROR" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="TITLE_INFORMATION" xml:space="preserve">
+    <value>情報</value>
+  </data>
+  <data name="QUE_CREATE_WORKING1" xml:space="preserve">
+    <value>移動入荷検品作業中のデータがあります。登録処理を行いますか？</value>
+  </data>
+  <data name="QUE_LOCATION_MOVE" xml:space="preserve">
+    <value>選択されているロケーションの在庫を移動します。
+よろしいですか？</value>
+  </data>
+</root>

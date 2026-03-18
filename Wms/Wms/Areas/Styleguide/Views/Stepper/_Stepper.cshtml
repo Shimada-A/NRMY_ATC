@@ -1,0 +1,14 @@
+﻿@model int
+@using Share.Helpers;
+
+@{
+    var m = new List<Share.Helpers.StepperModel>
+{
+new Share.Helpers.StepperModel{Index=1,Description="発注する商品を選ぶ"},
+new Share.Helpers.StepperModel{Index=2,Description="発注する数量を選ぶ"},
+new Share.Helpers.StepperModel{Index=3,Description="確認"}
+};
+    m[Model].IsActive = true;
+}
+
+@Html.Stepper(m)

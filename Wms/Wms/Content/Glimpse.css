@@ -1,0 +1,22 @@
+﻿/*GlimpseのHUDが隠れないようにする*/
+.main .bottomnav {
+    z-index: 0;
+}
+.glimpse, .glimpse *, .glimpse a, .glimpse td, .glimpse th, .glimpse table {
+    z-index: 9999;
+}
+.glimpse-open .glimpse-hud {
+    display: none;
+}
+.glimpse-nowrap .glimpse-icon {
+    width: 0rem;
+    bottom: 0px;
+    border-radius: 50rem;
+    background: url(/Wms/Glimpse.axd?n=glimpse_sprite&hash=def30090) no-repeat -94.7px 12px;
+}
+.glimpse-open {
+   
+}
+.glimpse-nowrap {
+    display: contents;
+}

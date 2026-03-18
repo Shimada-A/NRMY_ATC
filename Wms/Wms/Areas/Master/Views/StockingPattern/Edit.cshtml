@@ -1,0 +1,246 @@
+﻿@using Wms.Areas.Master.Controllers;
+@model Wms.Areas.Master.ViewModels.StockingPattern.Detail
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_StockingPattern02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "StockingPattern", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ShipperId)
+            @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+            <div class=" form_content">
+                <dl>
+                    @if (Model.PatternId == null)
+                    {
+                        <dt>
+                            @Html.DisplayNameFor(model => model.PatternId)
+                        </dt>
+                        <dd>
+                            @Html.EditorFor(model => model.PatternId, new { htmlAttributes = new { @class = "w_6_short _pm", @id = "txtPatternId", tabindex = "1" } })
+                            @Html.ValidationMessageFor(model => model.PatternId, "", new { })
+                        </dd>
+                    }
+                    else
+                    {
+                        <dt>
+                            @Html.DisplayNameFor(model => model.PatternId)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.PatternId)
+                            @Html.HiddenFor(model => model.PatternId)
+                        </dd>
+                    }
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.PatternName)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.PatternName, new { htmlAttributes = new { @class = "w_80_normal _pm", @id = "txtPatternName", tabindex = "2" } })
+                        @Html.ValidationMessageFor(model => model.PatternName)
+                    </dd>
+                </dl>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="stockingClassList">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey">
+                                    @StockingPatternResource.CategoryId
+                                </th>
+                                <th class="bg-grey">
+                                    @StockingPatternResource.StockingClass
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.PatternId == null)
+                            {
+                                foreach (var category in Model.Categories.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("categoryTable[{0}].", category.i);
+                                    int count = 0;
+                                    <tr>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => category.v.CategoryName1)
+                                        </td>
+                                        <td>
+                                            <label>
+                                                @foreach (var stockingClass in (IEnumerable<SelectListItem>)ViewBag.StockingClassRadio)
+                                                {
+                                                    string id = stockingClass.Value;
+                                                    <label>
+                                                        @if (count == 0)
+                                                        {
+                                                            @Html.RadioButton((key + "StockingClass"), id, new { @id = (key + "StockingClass"), @class = "radio_input", @checked = true })
+                                                            count += 1;
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.RadioButton((key + "StockingClass"), id, new { @id = (key + "StockingClass"), @class = "radio_input" })
+                                                        }
+                                                        <span class="radio_parts">@stockingClass.Text</span>
+                                                    </label>
+                                                }
+                                            </label>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => category.v.CategoryName1, new { Name = key + "CategoryName1" })
+                                            @Html.HiddenFor(modelItem => category.v.CategoryId1, new { Name = key + "CategoryId1" })
+                                            @Html.HiddenFor(modelItem => category.v.StockingClass, new { Name = key + "StockingClass" })
+                                            @Html.HiddenFor(modelItem => category.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                        </td>
+                                    </tr>
+
+                                }
+                            }
+                            else
+                            {
+                                foreach (var category in Model.Categories.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("categoryTable[{0}].", category.i);
+                                    <tr>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => category.v.CategoryName1)
+                                        </td>
+                                        <td>
+                                            <label>
+                                                @foreach (var stockingClass in (IEnumerable<SelectListItem>)ViewBag.StockingClassRadio)
+                                                {
+                                                    string id = stockingClass.Value;
+                                                    int value = int.Parse(stockingClass.Value);
+                                                    <label>
+                                                        @if (value == category.v.StockingClass)
+                                                        {
+                                                            @Html.RadioButton((key + "StockingClass"), id, new { @id = (key + "StockingClass"), @class = "radio_input", @checked = true })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.RadioButton((key + "StockingClass"), id, new { @id = (key + "StockingClass"), @class = "radio_input" })
+                                                        }
+
+                                                        <span class="radio_parts">@stockingClass.Text</span>
+                                                    </label>
+                                                }
+                                            </label>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => category.v.CategoryName1, new { Name = key + "CategoryName1" })
+                                            @Html.HiddenFor(modelItem => category.v.CategoryId1, new { Name = key + "CategoryId1" })
+                                            @Html.HiddenFor(modelItem => category.v.StockingClass, new { Name = key + "StockingClass" })
+                                            @Html.HiddenFor(model => model.ShipperId, new { Name = key + "ShipperId" })
+                                            @Html.HiddenFor(modelItem => category.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @if (Model.SearchFlag)
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "StockingPattern", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            else
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "StockingPattern", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            @*<button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>*@
+            @if (Model.PatternId == null)
+            {
+                <button id="btnCreateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm" hidden>@FormsResource.BTN_CREATE</button>
+                <button id="btnCreate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_CREATE</button>
+            }
+            else
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+            }
+            @*確認メッセージ用*@
+            <button id="btnConfirm" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_ConfirmMessage" hidden></button>
+        </div>
+    }
+    if (Model.PatternId == null)
+    {
+        @Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+    }
+    else
+    {
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+    }
+}
+@* スクリプト *@
+@section LayoutScripts{
+
+
+    <script>
+        /* 新規登録 確認メッセージの設定 */
+        $('#btnCreate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnCreateHidden').click();
+        });
+
+        /* 更新 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        $('#submitCreate').on("click", function () {
+            var urlAction = '@Url.Action("Create", "StockingPattern", new { area = "Master" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        // 確認メッセージで「はい」を押下
+        $('#ConfirmMessage').on("click", function () {
+            if ($("[name='InsertFlag']").val() == 'True') {
+                var urlAction = '@Url.Action("Create", "StockingPattern", new { area = "Master" })';
+            } else {
+                var urlAction = '@Url.Action("Update", "StockingPattern", new { area = "Master" })';
+            };
+
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

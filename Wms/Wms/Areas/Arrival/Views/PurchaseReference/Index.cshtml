@@ -1,0 +1,571 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Arrival.Resources;
+@model Wms.Areas.Arrival.ViewModels.PurchaseReference.PurchaseReference01ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_ARR_PurchaseReference01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "PurchaseReference", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+    <table>
+        <tr>
+            <td class="tdtitle">@PurchaseReferenceResource.CenterS</td>
+            <td>
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.CenterDropDownFor(
+                            model => model.SearchConditions.CenterId
+                            , Wms.Common.Profile.User.UserId
+                            , "", new { @id = "ddlCenterId", tabindex = "1", @onblur = "CenterIdBlur()" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.CenterId, "", new { id = "msgCenterId" })
+                </div>
+            </td>
+            <td class="tdtitle">@PurchaseReferenceResource.DivisionS</td>
+            <td colspan="2">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+                            model => model.SearchConditions.DivisionId,
+                            (IEnumerable<SelectListItem>)ViewBag.DivisionList,
+                            CommonResource.None, new { id = "ddlDivisionId", tabindex = "8" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@PurchaseReferenceResource.ArrivePlanDateS</td>
+            <td>
+                <div class="sortarea" style="width:600px;">
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.ArrivePlanDateFrom, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.ArrivePlanDateTo, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.ArrivePlanDateFrom, "", new { })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.ArrivePlanDateTo, "", new { })
+                </div>
+            </td>
+            <td class="tdtitle">@PurchaseReferenceResource.BrandS</td>
+            <td colspan="2">
+                @Html.ListBoxFor(
+                    model => model.SearchConditions.BrandId,
+                    (IEnumerable<SelectListItem>)ViewBag.BrandList, new { tabindex = "9" })
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@PurchaseReferenceResource.ConfirmDateS</td>
+            <td>
+                <div class="sortarea" style="width:600px;">
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.ConfirmDateFrom, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>        
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.ConfirmDateTo, new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.ConfirmDateFrom, "", new { })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.ConfirmDateTo, "", new { })
+                </div>
+            </td>
+            <td class="tdtitle">@PurchaseReferenceResource.VendorS</td>
+            <td colspan="2">
+                @Html.EditorFor(model => model.SearchConditions.VendorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtVendorId", tabindex = "10" } })
+                @Html.EditorFor(model => model.SearchConditions.VendorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtVendorName", tabindex = "11" } })
+                <div class="search">
+                    <button type="button" id="btnVendor" class="search_btn" tabindex="12" />
+                </div>
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle"></td>
+            <td colspan="4">
+                <label class="chklist">
+                    @Html.CheckBoxFor(model => model.SearchConditions.ContainsArchive, new { tabindex = "6", @placeholder = "", @class = "check-box" })
+                    <span class="chk_parts">
+                    </span>
+                </label>
+                @PurchaseReferenceResource.ContainsArchive
+            </td>
+        </tr>
+        <tr>
+            <td class="tdtitle">@PurchaseReferenceResource.InvoiceNoS</td>
+            <td colspan="4">
+                @Html.EditorFor(model => model.SearchConditions.InvoiceNo, new { htmlAttributes = new { @id = "txtInvoiceNo", tabindex = "7" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="text-right">
+                @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "PurchaseReference", new { area = "Arrival" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "14" })
+                <button class="btn btn-outline-dark head-btn" id="btnSearch" onclick="Search();" tabindex="14">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+            </td>
+        </tr>
+    </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.PurchaseReference01s != null)
+{
+    if (Model.Results.PurchaseReference01s.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border stock_detail_load">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnReportJan" class="download">
+                            <img src="~/Content/img/print.png" />
+                            @PurchaseReferenceResource.BtnPlanPrintJan
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" id="btnReportPacking" class="download">
+                            <img src="~/Content/img/print.png" />
+                            @PurchaseReferenceResource.BtnPlanPrintPacking
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" id="btnDownload" class="download">
+                            <img src="~/Content/img/download.png" />
+                            @FormsResource.BTN_DOWNLOAD
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" id="btnReport" class="download">
+                            <img src="~/Content/img/print.png" />
+                            @PurchaseReferenceResource.BtnPlanPrint
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.PurchaseReference01s.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.PurchaseReference01s.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.PurchaseReference01s, Page => Url.Action("Search", "PurchaseReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @PurchaseReferenceResource.ItemSkuQtySum @Html.DisplayFor(model => model.SearchConditions.ItemSkuQtySum)
+                    </li>
+                    <li>
+                        @PurchaseReferenceResource.ArrivePlanQtySum @Html.DisplayFor(model => model.SearchConditions.ArrivePlanQtySum)
+                    </li>
+                    <li>
+                        @PurchaseReferenceResource.ResultQtySum @Html.DisplayFor(model => model.SearchConditions.ResultQtySum)
+                    </li>
+                    <li>
+                        @PurchaseReferenceResource.PlanSlipNoSum @Html.DisplayFor(model => model.SearchConditions.PlanSlipNoSum)
+                    </li>
+                    <li>
+                        @PurchaseReferenceResource.ResultSlipNoSum @Html.DisplayFor(model => model.SearchConditions.ResultSlipNoSum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.PurchaseReference01s.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.ArrivePlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.BrandName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.Vendor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.ItemQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.ItemSkuQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.CasePlanQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.CaseResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.ArrivePlanQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.ResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.DifferencePlus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReferenceResource.DifferenceMinus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "PurchaseReference", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.PurchaseReference01s.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("PurchaseReference01s[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.PurchaseReference01s.PageNumber - 1) * Model.Results.PurchaseReference01s.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivePlanDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BrandId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.BrandShortName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.VendorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.VendorName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSkuQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.CasePlanQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.CaseResultQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArrivePlanQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.DifferencePlus)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.DifferenceMinus)
+                                        </td>
+                                        <td class="align-middle">
+                                            <button type="button" class="btn btn-dark btn-sm" onclick="Detail(@cModel.v.Seq,@cModel.v.LineNo)">@PurchaseReferenceResource.BtnDetail</button>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @if (Model.Results.PurchaseReference01s != null && Model.Results.PurchaseReference01s.Count() > 0)
+        {
+            <button type="button" id="btnDetail" class="btn btn-dark btnsize" onclick="Detail(@Model.SearchConditions.Seq,'0')">@PurchaseReferenceResource.BtnDetailList</button>
+        }
+        else
+        {
+            <button type="button" id="btnDetail" class="btn btn-dark btnsize" disabled>@PurchaseReferenceResource.BtnDetailList</button>
+        }
+    </div>
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_VendorSearchModal.cshtml")
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        $("#SearchConditions_BrandId").select2({
+            multiple: true,
+            width: "500px",
+            placeholder: "",
+            allowClear: true,
+            closeOnSelect: false
+        });
+        $("#btnDownload").on("click", function () {
+            var urlAction = '@Url.Action("PurchaseReference01Download", "PurchaseReference", new { area = "Arrival" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        });
+        $("#btnReport").on("click", function () {
+            //window.open("about:blank", "newtab");
+            var urlAction = '@Url.Action("Report", "PurchaseReference", new { area = "Arrival" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            //$form.attr("target", "newtab");
+            $form.submit();
+            //$form.attr("target", "_self");
+        });
+        $("#btnReportJan").on("click", function () {
+            //window.open("about:blank", "newtab");
+            var urlAction = '@Url.Action("ReportJan", "PurchaseReference", new { area = "Arrival" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+           // $form.attr("target", "newtab");
+            $form.submit();
+            //$form.attr("target", "_self");
+        });
+        $("#btnReportPacking").on("click", function () {
+            var urlAction = '@Url.Action("ReportPacking", "PurchaseReference", new { area = "Arrival" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        //$(".BrandSelect2").select2();
+        //$(document).ready(function(){
+        //    $("#BrandSelect2").select2({
+        //        multiple = true,
+        //        closeOnSelect = false,
+        //        placeholder: " "
+        //    });
+        //});
+
+    /**
+     * Country class
+     */
+        var PurchaseReferenceView = {
+
+            /**
+             * CONST Object
+             */
+            CONST: {
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                FORM: 'form',
+                METHOD: 'method',
+                ACTION: 'action'
+            },
+
+            /**
+             * SELECTORS Object
+             */
+            SELECTORS: {
+                chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+                chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+                chkInRow: 'input[type=checkbox][class=check-box]',
+                tblRow: '#listData tbody tr',
+                btnDetail: '#btnDetail',
+                ddlSortKey: '#ddlSortKey',
+                form: 'form',
+                searchForm: '#frmSearch',
+                frmUpdate: 'frmUpdate',
+                btnBrand: '#btnBrand',
+                brandId: '#txtBrandId',
+                brandName: '#txtBrandName',
+                brandSelect: '#brandSelect',
+                btnVendor: '#btnVendor',
+                vendorId: '#txtVendorId',
+                vendorName: '#txtVendorName',
+                vendorSelect: '#vendorSelect',
+            },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus(0);
+                brandSearchModal.init();
+                vendorSearchModal.init();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                * 仕入先検索ダイアログの設定
+                */
+                $(PurchaseReferenceView.SELECTORS.btnVendor).on("click", vendorSearchModal.open);
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(PurchaseReferenceView.SELECTORS.vendorSelect).on("click", function () {
+                    $('#vendorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var vendorId = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        var vendorName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                        $(PurchaseReferenceView.SELECTORS.vendorId).val(vendorId);
+                        $(PurchaseReferenceView.SELECTORS.vendorName).val(vendorName);
+                    })
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+            },
+        }
+
+        function CenterIdBlur() {
+            if ($("#ddlCenterId").val() == null) {
+                $("#msgCenterId").html('<span id="centerIdError" class="">'+'@PurchaseReferenceResource.ERR_NULL_CENTER_ID' +'</span>');
+                $("#msgCenterId").addClass("field-validation-error");
+                $("#ddlCenterId").addClass("input-validation-error");
+                $("#ddlCenterId").focus();
+            } else {
+                $("#msgCenterId").html("")
+                $("#msgCenterId").removeClass("field-validation-error")
+                $("#ddlCenterId").removeClass("input-validation-error")
+            }
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        PurchaseReferenceView.init();
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "PurchaseReference", new { area= "Arrival" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").attr("action", urlAction);
+                    $("#frmSearch").attr("method", "POST");
+                    $("#frmSearch").submit();
+                });
+            });
+    });
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "PurchaseReference", new { area= "Arrival" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Search() {
+            if ($("#ddlCenterId").val() == null) {
+                $("#msgCenterId").html('<span id="CenterIdError" class="">' + '@PurchaseReferenceResource.ERR_NULL_CENTER_ID' + '</span>');
+                $("#msgCenterId").addClass("field-validation-error");
+                $("#ddlCenterId").addClass("input-validation-error");
+                $("#ddlCenterId").focus();
+                return;
+            } else {
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "PurchaseReference", new { area = "Arrival" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+        }
+        $('#btnDetail').on("click", function () {
+                $("#hidLineNo").val(0);
+                var urlAction ='@Url.Action("DetailIndexSearch", "PurchaseReference", new { area= "Arrival" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            });
+        function Detail(seq,lineNo) {
+                $("#hidSeq").val(seq);
+                $("#hidLineNo").val(lineNo);
+                var urlAction = '@Url.Action("DetailIndexSearch", "PurchaseReference", new { area = "Arrival" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+    </script>
+}

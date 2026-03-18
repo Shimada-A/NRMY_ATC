@@ -1,0 +1,480 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.PurchaseReturnReference.PurchaseReturnReference01ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_RET_PurchaseReference01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "PurchaseReturnReference", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table class="w-search">
+            <tr>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.DivisionCdS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.DivisionCd,
+                                (IEnumerable<SelectListItem>)ViewBag.DivisionList,
+                                 CommonResource.None, new { id = "ddlDivisionCd", tabindex = "2" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.RetuenClassS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.RetuenClass, new { @id = "ddlRetuenClass", tabindex = "3" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.BrandIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "4" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "5" } })
+                    <div class="search">
+                        <button type="button" id="btnBrandId" class="search_btn" tabindex="6" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.ArriveDateS</td>
+                <td>
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.ArriveDateFrom, new { htmlAttributes = new { tabindex = "7", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                    &nbsp;-&nbsp;
+                    <span class="date_input">
+                        @Html.EditorFor(model => model.SearchConditions.ArriveDateTo, new { htmlAttributes = new { tabindex = "8", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                    <span>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArriveDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ArriveDateTo, "", new { })
+                    </span>
+                </td>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.CategoryIdS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId1,
+                                (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                CommonResource.None, new { id = "ddlCategoryId1", tabindex = "9", onchange = "CategoryChange(1)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId2,
+                                (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                CommonResource.None, new { id = "ddlCategoryId2", tabindex = "10", disabled = "disabled", onchange = "CategoryChange(2)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId3,
+                                (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                CommonResource.None, new { id = "ddlCategoryId3", tabindex = "11", disabled = "disabled", onchange = "CategoryChange(3)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId4,
+                                (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                CommonResource.None, new { id = "ddlCategoryId4", tabindex = "12", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.VendorIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.VendorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtVendorId", tabindex = "13" } })
+                    @Html.EditorFor(model => model.SearchConditions.VendorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtVendorName", tabindex = "14" } })
+                    <div class="search">
+                        <button type="button" id="btnVendor" class="search_btn" tabindex="15" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.ItemIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @id = "txtItemId", tabindex = "16" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.ReturnIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ReturnId, new { htmlAttributes = new { @id = "txtReturnId", tabindex = "17" } })
+                </td>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.JanS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @id = "txtJan", tabindex = "18" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.InvoiceNo</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.InvoiceNo, new { htmlAttributes = new { @id = "txtInvoiceNo", tabindex = "19" } })
+                </td>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.ItemSkuIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @id = "txtItemSkuId", tabindex = "20" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PurchaseReturnReferenceResource.InputUserIdS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.InputUserId, new { htmlAttributes = new { @id = "txtInputUserId", tabindex = "21" } })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "PurchaseReturnReference", new { area = "Returns" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark head-btn" id="btnSearch" tabindex="22" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.HidReturnId" id="hidReturnId" value='@Model.SearchConditions.HidReturnId' />
+        <input type="hidden" name="SearchConditions.HidReturnClass" id="hidReturnClass" value='@Model.SearchConditions.HidReturnClass' />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.PurchaseReturnReference01s != null)
+{
+    if (Model.Results.PurchaseReturnReference01s.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border stock_detail_load">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnDownload" class="download">
+                            <img src="~/Content/img/download.png" />
+                            @FormsResource.BTN_DOWNLOAD
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.PurchaseReturnReference01s.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.PurchaseReturnReference01s.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.PurchaseReturnReference01s, Page => Url.Action("Search", "PurchaseReturnReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.PurchaseReturnReference01s.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.ArriveDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.DenpyoId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.RetuenClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.Vendor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.InvoiceNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @PurchaseReturnReferenceResource.InputUserId
+                                </th>
+                                <th class="bg-grey">
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Update", "PurchaseReturnReference", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.PurchaseReturnReference01s.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("PurchaseReturnReference01s[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.PurchaseReturnReference01s.PageNumber - 1) * Model.Results.PurchaseReturnReference01s.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArriveDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ReturnId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ReturnClassName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.VendorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.VendorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InvoiceNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InputUserId)
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <button type="button" class="btn btn-dark btn-sm" onclick="Detail(@cModel.v.Seq,'@cModel.v.ReturnId','@cModel.v.ReturnClass')">@PurchaseReturnReferenceResource.BtnDetail</button>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ReturnId, new { Name = key + "ReturnId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@*Bottomnav*@
+@section Basefooter{
+}
+
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_VendorSearchModal.cshtml")
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        vendorSearchModal.init();
+        brandSearchModal.init();
+
+        $("#btnDownload").on("click", function () {
+            var urlAction = '@Url.Action("PurchaseReturnReference01Download", "PurchaseReturnReference", new { area = "Returns" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        });
+
+        //ブランド検索ダイアログの設定
+        $("#btnBrandId").on("click", brandSearchModal.open);
+        $("#brandSelect").on("click", function () {
+            $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                $("#txtBrandId").val(brandId);
+                $("#txtBrandName").val(brandName);
+            })
+        });
+
+        // 仕入先検索ダイアログの設定
+        $("#btnVendor").on("click", vendorSearchModal.open);
+        $("#vendorSelect").on("click", function () {
+            $('#vendorSearchResult input[type=radio]:checked').each(function (index, item) {
+                var vendorId = $(item).parents("tr").find("td:eq(4)").text().trim();
+                var vendorName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                $("#txtVendorId").val(vendorId);
+                $("#txtVendorName").val(vendorName);
+            })
+        });
+        //明細へ
+        function Detail(seq, returnId, returnClass) {
+            $("#hidSeq").val(seq);
+            $("#hidReturnId").val(returnId);
+            $("#hidReturnClass").val(returnClass);
+            var urlAction = '@Url.Action("DetailIndexSearch", "PurchaseReturnReference", new { area = "Returns" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        $("#ddlSortKey").removeClass("input-validation-error");
+        if ($("#ddlCategoryId1").val() != '') {
+            $("#ddlCategoryId2").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId2").val() != '') {
+                $("#ddlCategoryId3").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId3").val() != '') {
+                $("#ddlCategoryId4").removeAttr('disabled');
+        }
+
+        @* Pageを変更時 *@
+        $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+            var urlAction = '@Url.Action("Search", "PurchaseReturnReference", new { area = "Returns" })';
+            var pageUrl = urlAction + '?Page=';
+            var page = $(item).attr("href").replace(pageUrl, "");
+            page = page.replace("&class=btn-outline-dark", "");
+            $(item).attr("href", "javascript:void(0);").click(function () {
+                $("#hidPage").val(page);
+                $("#hidSearchType").val("SortPage");
+                $("#frmSearch").attr("action", urlAction);
+                $("#frmSearch").attr("method", "POST");
+                $("#frmSearch").submit();
+            });
+        });
+
+    });
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "PurchaseReturnReference", new { area = "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Search() {
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "PurchaseReturnReference", new { area = "Returns" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        function GetCategoryList(id) {
+                    var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            id: id + 1,
+                            category1: $("#ddlCategoryId1").val(),
+                            category2: $("#ddlCategoryId2").val(),
+                            category3: $("#ddlCategoryId3").val()
+                        },
+                        success: function (data) {
+                            $("#ddlCategoryId" + (id + 1)).html("");
+                            $("#ddlCategoryId" + (id + 1)).html(data.html);
+                        }
+                    });
+        }
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+
+    </script>
+}
+
+

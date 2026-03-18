@@ -1,0 +1,546 @@
+﻿@model Wms.Areas.Master.ViewModels.ItemSku.Index
+@{
+    /**/
+
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Item01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "ItemSku", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        <table>
+            <tr>
+                <td class="tdtitle">@ItemSkuResource.CategoryIdSearch</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId1,
+                                (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                CommonResource.None, new { id = "ddlCategoryId1", tabindex = "1", onchange = "CategoryChange(1)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId2,
+                                (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                CommonResource.None, new { id = "ddlCategoryId2", tabindex = "2", disabled = "disabled", onchange = "CategoryChange(2)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId3,
+                                (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                CommonResource.None, new { id = "ddlCategoryId3", tabindex = "3", disabled = "disabled", onchange = "CategoryChange(3)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId4,
+                                (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                CommonResource.None, new { id = "ddlCategoryId4", tabindex = "4", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@ItemSkuResource.ItemNameSearch</td>
+                <td class="w-25">
+                    @Html.EditorFor(model => model.SearchConditions.ItemName, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtItemName", tabindex = "5" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ItemSkuResource.BrandIdSearch</td>
+                <td colspan="4">
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "6" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "7" } })
+                    <div class="search">
+                        <button type="button" id="btnBrandId" class="search_btn" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@ItemSkuResource.ItemIdSearch</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @class = "w_10_normal", @id = "txtItemId", tabindex = "8" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ItemSkuResource.MainVendorIdSearch</td>
+                <td colspan="4">
+                    @Html.EditorFor(model => model.SearchConditions.MainVendorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtMainVendorId", tabindex = "9" } })
+                    @Html.EditorFor(model => model.SearchConditions.MainVendorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtMainVendorName", tabindex = "10" } })
+                    <div class="search">
+                        <button type="button" id="btnMainVendor" class="search_btn" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@ItemSkuResource.JanSearch</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @class = "w_10_normal", @id = "txtJan", tabindex = "11" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ItemSkuResource.DivisionSearch</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.DivisionId,
+                                (IEnumerable<SelectListItem>)ViewBag.DivisionList,
+                                CommonResource.None, new { id = "ddlDivisionId", tabindex = "12" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@ItemSkuResource.ItemSkuIdSearch</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtItemSkuId", tabindex = "13" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ItemSkuResource.ItemRankIdSearch</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.ItemRankId,
+                                (IEnumerable<SelectListItem>)ViewBag.ItemRankList,
+                                CommonResource.None, new { id = "ddlItemRankId", tabindex = "14" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@StoreResource.DeleteFlagSearch</td>
+                <td class="w_checkbox">
+                    <label class="checkboxgroup">
+                        @Html.CheckBoxFor(model => model.SearchConditions.DeleteFlag, new { @id = "chkIsNewDate", @class = "check-box" })
+                        <span class="chk_parts"></span>
+                    </label>
+                    <span>@StoreResource.DeleteFlagSearch2</span>
+                </td>
+
+            </tr>
+            <tr>
+                <td class="alignright" colspan="7">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "ItemSku", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="4" onclick="$('#frmSearch').submit()">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.ItemSkuResult.ItemSkus != null)
+{
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.ItemSkuResult.ItemSkus.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.ItemSkuResult.ItemSkus.Count() > 0)
+            {
+                @Html.PagedListPager(Model.ItemSkuResult.ItemSkus, Page => Url.Action("Search", "ItemSku", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.ItemSkuResult.ItemSkus.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:71vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.CategoryId1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.ItemIdName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.ItemColor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.ItemSize
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.Jan
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.SaleStartDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.SaleEndDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.NormalSellingPriceExTax
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.NormalBuyingPrice
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.PurchaseBuyingPrice
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ItemSkuResource.DeleteFlag
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "ItemSku", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.ItemSkuResult.ItemSkus.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("ItemSkus[{0}].", cModel.i);
+                            <tr>
+                                <td class="align-middle chk_cell">
+                                    <label>
+                                        <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetIsCheck('@(key + "IsCheck")')" />
+                                        <span class="radio_parts"></span>
+                                    </label>
+                                    @Html.CheckBox(key + "IsCheck", new { @id = (key + "IsCheck"), @class = "check-box", hidden = true })
+                                </td>
+                                <td class="align-middle text-right w_no">
+                                    @((cModel.i + 1) + (Model.ItemSkuResult.ItemSkus.PageNumber - 1) * Model.ItemSkuResult.ItemSkus.PageSize)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.CategoryName1)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.SaleStartDate)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.SaleEndDate)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.NormalSellingPriceExTax)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.NormalBuyingPrice)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.PurchaseBuyingPrice)
+                                </td>
+                                <td class="align-middle">
+                                    <label class="chklist">
+                                        @Html.CheckBoxFor(model => cModel.v.DeleteFlag, new { @class = "check-box _pm", onclick = "return false;" })
+                                        <span class="chk_parts">
+                                        </span>
+                                    </label>
+                                </td>
+                                <td class="template" hidden>
+                                    @Html.HiddenFor(modelItem => cModel.v.ItemSkuId, new { Name = key + "ItemSkuId" })
+                                    @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                    @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                </td>
+                            </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="submit" id="btnUpdate" class="btn btn-dark btnsize" form="frmUpdate" formmethod="post" formaction=@Url.Action("Edit", "ItemSku", new { area = "Master", controller = "ItemSku", action = "Edit" })>@FormsResource.BTN_DETAIL</button>
+    </div>
+}
+@Html.Partial("_BrandSearchModal", "dialog")
+@Html.Partial("_VendorSearchModal")
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+     * Country class
+     */
+    var ItemSkusView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=radio][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=radio][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=radio][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnEdit: '#btnUpdate',
+            ddlSortKey: '#ddlSortKey',
+            chkChecked: ':radio:checked',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnBrandId: '#btnBrandId',
+            brandId:'#txtBrandId',
+            brandName:'#txtBrandName',
+            brandSelect: '#brandSelect',
+            btnMainVendor:'#btnMainVendor',
+            mainVendorId:'#txtMainVendorId',
+            mainVendorName:'#txtMainVendorName',
+            vendorSelect: '#vendorSelect',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+                brandSearchModal.init();
+                vendorSearchModal.init();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Check box click
+                 */
+                $(ItemSkusView.SELECTORS.chkInTable).click(function (evt) {
+                    $(this).prop("checked", true);
+                    evt.stopPropagation();
+                    ItemSkusView.setButtonStatus();
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(ItemSkusView.SELECTORS.ddlSort).change(function (val) {
+                    $(ItemSkusView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(ItemSkusView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(ItemSkusView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(ItemSkusView.SELECTORS.btnBrandId).on("click", brandSearchModal.open);
+
+                /**
+                * 仕入先検索ダイアログの設定
+                */
+                $(ItemSkusView.SELECTORS.btnMainVendor).on("click", vendorSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(ItemSkusView.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(ItemSkusView.SELECTORS.brandId).val(brandId);
+                        $(ItemSkusView.SELECTORS.brandName).val(brandName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(ItemSkusView.SELECTORS.vendorSelect).on("click", function () {
+                    $('#vendorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var vendorId = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        var vendorName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                        $(ItemSkusView.SELECTORS.mainVendorId).val(vendorId);
+                        $(ItemSkusView.SELECTORS.mainVendorName).val(vendorName);
+                    })
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function () {
+                // Enable/Disable button Edit
+                if ($(ItemSkusView.SELECTORS.chkCheckedInTable).length === 1) {
+                    $(ItemSkusView.SELECTORS.btnEdit).removeAttr('disabled');
+                } else {
+                    $(ItemSkusView.SELECTORS.btnEdit).attr('disabled', 'disabled');
+                }
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        ItemSkusView.init();
+        if ($("#ddlCategoryId1").val() != '') {
+            $("#ddlCategoryId2").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId2").val() != '') {
+                $("#ddlCategoryId3").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId3").val() != '') {
+                $("#ddlCategoryId4").removeAttr('disabled');
+        }
+    });
+    function ClearConditons() {
+        $("#ddlCategoryId1").val("");
+        $("#ddlCategoryId2").val("");
+        $("#ddlCategoryId3").val("");
+        $("#ddlCategoryId4").val("");
+        $("#txtItemName").val("");
+        $("#ddlBrandId").val("");
+        $("#txtItemId").val("");
+        $("#txtMainVendorId").val("");
+        $("#txtMainVendorName").val("");
+        $("#txtJan").val("");
+        $("#txtDivisionId").val("");
+        $("#txtDivisionName").val("");
+        $("#txtItemSkuId").val("");
+        $("#ddlItemRankId").val("");
+
+    }
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "ItemSku", new { area= "Master" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        }
+        function GetCategoryList(id) {
+                    var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            id: id + 1,
+                            category1: $("#ddlCategoryId1").val(),
+                            category2: $("#ddlCategoryId2").val(),
+                            category3: $("#ddlCategoryId3").val()
+                        },
+                        success: function (data) {
+                            $("#ddlCategoryId" + (id + 1)).html("");
+                            $("#ddlCategoryId" + (id + 1)).html(data.html);
+                        }
+                    });
+        }
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+        function SetIsCheck(id) {
+                    $('#listData input[type=checkbox][id$=".IsCheck"]').prop("checked", false);
+                    $('#listData input[type=checkbox][id="'+id+'"]').prop("checked", true);
+        }
+    </script>
+}

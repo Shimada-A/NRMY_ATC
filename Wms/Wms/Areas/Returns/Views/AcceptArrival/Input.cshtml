@@ -1,0 +1,257 @@
+﻿@using Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.AcceptArrival.AcceptArrival03ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_RET_AcceptArrival01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@* Content *@
+@using (Html.BeginForm("Input", "AcceptArrival", FormMethod.Post, new { id = "frmInput" }))
+{
+    @Html.AntiForgeryToken()
+    if (Model.InputResults == null || Model.InputResults.AcceptArrival03Result.Count == 0)
+    {
+        <div class="Container">
+            <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.CenterId)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestZip)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestName)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestAddress)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestTel)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.JanCombine)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.ScanQtyCombine)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.ShpScanClass)
+        </div>
+    }
+    else
+    {
+        <div class="headareawithborder">
+            <table class="headtable">
+                <tr>
+                    <td>@AcceptArrivalResource.ShipInstructIdS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[0].ShipInstructId)
+                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[0].ShipInstructId)
+                    </td>
+                    <td>@AcceptArrivalResource.ArrivalDateS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[0].ArriveDate)
+                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[0].ArriveDate)
+                    </td>
+                    <td>@AcceptArrivalResource.RelatedOrderNoS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[0].RelatedOrderNo)
+                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[0].RelatedOrderNo)
+                    </td>
+                </tr>
+                <tr>
+                    <td>@AcceptArrivalResource.KakuDateS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[0].KakuDate)
+                    </td>
+                    <td>@AcceptArrivalResource.DestPrefNameS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[0].DestPrefName)
+                    </td>
+                    <td>@AcceptArrivalResource.DestNameS2</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[0].DestName)
+                    </td>
+                </tr>
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.CenterId)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestZip)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestName)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestAddress)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestTel)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.JanCombine)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.ScanQtyCombine)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.ShpScanClass)
+            </table>
+        </div>
+        @* Container *@
+        <div class="Container">
+            <div>
+                <div class="tb_scroll" style="height: 64vh; width:1000px;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.Jan
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.Item
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.ItemColor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.ItemSize
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.ResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.ReturnQtyBefore
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.ReturnQtyNow
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < Model.InputResults.AcceptArrival03Result.Count(); i++)
+                            {
+                                <tr>
+                                    <td class="align-middle chk_cell">
+                                        @(i + 1)
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].Jan)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].Jan)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ShipInstructId)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].RelatedOrderNo)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ShipInstructSeq)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].EcClass)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemId)<br>
+                                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemName)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemId)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemSkuId)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemColorId)<br>
+                                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemColorName)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemColorId)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemColorName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemSizeId)<br>
+                                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemSizeName)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemSizeId)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ItemSizeName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ResultQty)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ResultQty, new { id = "ResultQty_" + i })
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ReturnQtyBefore)
+                                        @Html.HiddenFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ReturnQtyBefore, new { id = "ReturnQtyBefore_" + i })
+                                    </td>
+                                    <td class="align-middle w_9_normal">
+                                        @Html.EditorFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ReturnQtyNow, new { htmlAttributes = new { @class = "w_6_short text-right", @id = "ReturnQtyNow_" + i } })
+                                        @Html.ValidationMessageFor(modelItem => modelItem.InputResults.AcceptArrival03Result[i].ReturnQtyNow, "", new { id = "ReturnQtyNowMessage" + i })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @if ((string)TempData["ReturnFlg"] == "1")
+        {
+            <button type="button" id="btnSkipReturn" class="btn btn-outline-dark btnsize" onclick="SkipReturn()">@FormsResource.BTN_RETURN</button>
+        }
+        else
+        {
+            <button type="button" id="btnNormalReturn" class="btn btn-outline-dark btnsize" onclick="Return()">@FormsResource.BTN_RETURN</button>
+        }
+
+        <button type="submit" id="btnConfirmMessageDialogHidden" class="btn btn-dark btnsize" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_CREATE</button>
+        <button type="button" id="btnCreate" class="btn btn-dark btnsize" disabled="disabled">@FormsResource.BTN_CREATE</button>
+    </div>
+}
+@Html.Partial("_UpdateConfirmMessageDialog", AcceptArrivalResource.UpdateMsg)
+@section LayoutScripts{
+    <script>
+
+        // ボタン活性化処理
+        $('input[type="number"]').change(function () {
+            var length = $("#listData").find("tr").length;
+            var btnCnt = 0;
+            for (var i = 0; i < length; i++) {
+                if (Number($("#ReturnQtyNow_" + i).val()) > 0) {
+                    btnCnt = btnCnt + 1;
+                }
+                else {
+                    $("#btnCreate").attr('disabled', true)
+                }
+            }
+            if (btnCnt > 0) {
+                $("#btnCreate").attr('disabled', false)
+            }
+        });
+
+        function SkipReturn() {
+            var $form = $("#frmInput");
+            var urlAction = '@Url.Action("Index", "AcceptArrival", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Return() {
+            var $form = $("#frmInput");
+            var urlAction = '@Url.Action("ListReturn", "AcceptArrival", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+        $('#btnCreate').on("click", function () {
+                //モーダル表示
+            $('#btnConfirmMessageDialogHidden').click();
+        });
+
+        $('#updconfirm').find('[type="submit"]').on("click", function () {
+            // チェック処理
+            var len = $("#listData").find("tr").length;
+            var errCnt = 0;
+            for (var i = 0; i < len; i++) {
+                var returnSum = Number($("#ReturnQtyNow_" + i).val()) + Number($("#ReturnQtyBefore_" + i).val());//返品数 + 過去返品数
+                var result = Number($("#ResultQty_" + i).val());
+                if (returnSum > result) {
+                    $('#ReturnQtyNowMessage' + i).html('<span id="JReturnQtyNowMessage" class="">出荷実績数を超える返品はできません</span>');
+                    $('#ReturnQtyNowMessage' + i).addClass("field-validation-error");
+                    $("#ReturnQtyNow_" + i).addClass("input-validation-error");
+                    $('.modal').fadeOut();
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    $('#icesword').modal('hide');
+                    errCnt = errCnt + 1;
+                }
+                else {
+                    $('#ReturnQtyNowMessage' + i).html("");
+                    $('#ReturnQtyNowMessage' + i).removeClass("field-validation-error");
+                    $("#ReturnQtyNow_" + i).removeClass("input-validation-error");
+                }
+            }
+
+            if (errCnt > 0) {
+                return;
+            }
+            else {
+                var $form = $("#frmInput");
+                var urlAction = '@Url.Action("Create", "AcceptArrival", new { area= "Returns" })';
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+        });
+
+
+
+    </script>
+}

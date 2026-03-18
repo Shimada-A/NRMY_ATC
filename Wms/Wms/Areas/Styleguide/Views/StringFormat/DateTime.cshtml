@@ -1,0 +1,119 @@
+﻿@{
+    ViewBag.Title = "StringFormat";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>日付の書式指定文字列</h1>
+        <p class="pg_caption">セッションのテスト：@TempData["DateTime"].ToString()</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content of">
+        <h3>短い形式の日付パターン</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("d")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("d")</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>長い形式の日付パターン</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("D")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("D")</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>完全な日付と時刻のパターン (短い形式の時刻)</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("f")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("f")</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>完全な日付と時刻のパターン (長い形式の時刻)</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("F")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("F")</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>一般の日付と時刻のパターン (短い形式の時刻)</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("g")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("g")</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>一般の日付と時刻のパターン (長い形式の時刻)</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("G")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("G")</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>月日パターン</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("M")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("M")</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>短い形式の時刻パターン</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("t")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("t")</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>長い形式の時刻パターン</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("T")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("T")</p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>年月パターン</h3>
+        <div class="mtop20">
+            <h3>@DateTime.Now.ToString("Y")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("Y")</p>
+        </div>
+    </div>
+
+    @*<h3>@DateTime.Now.ToString("O")</h3>*@
+    @*<h3>@DateTime.Now.ToString("s")</h3>*@
+    @*<h3>@DateTime.Now.ToString("u")</h3>*@
+    @*<h3>@DateTime.Now.ToString("U")</h3>*@
+    @*<h3>@DateTime.Now.ToString("r")</h3>*@
+</div>

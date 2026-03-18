@@ -1,0 +1,282 @@
+﻿@model Wms.Areas.Master.ViewModels.BrandStore.Index
+@{
+    /**/
+
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_BrandStore01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "BrandStore", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        <table>
+            <tr>
+                <td class="tdtitle">@BrandStoreResource.StoreIdSearch</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.StoreId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtStoreId", tabindex = "1" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BrandStoreResource.StoreNameSearch</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.StoreName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtStoreName", tabindex = "2" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ShipFrontageResource.BrandSearch</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "3" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "4" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                    <div class="search">
+                        <button type="button" id="btnBrand" class="search_btn" tabindex="160" />
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5.3rem;"></td>
+                <td style="width: 12rem;"></td>
+                <td class="alignright">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "BrandStore", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="5" onclick="$('#frmSearch').submit()">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+    }
+</div>
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.BrandStoreResult.BrandStores != null)
+{
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.BrandStoreResult.BrandStores.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.BrandStoreResult.BrandStores.Count() > 0)
+            {
+                @Html.PagedListPager(Model.BrandStoreResult.BrandStores, Page => Url.Action("Search", "BrandStore", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.BrandStoreResult.BrandStores.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:71vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @BrandStoreResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BrandStoreResource.StoreId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BrandStoreResource.StoreName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BrandStoreResource.BrandId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BrandStoreResource.BrandName
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "BrandStore", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.BrandStoreResult.BrandStores.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("BrandStores[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.BrandStoreResult.BrandStores.PageNumber - 1) * Model.BrandStoreResult.BrandStores.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StoreId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StoreName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BrandId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BrandName)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.BrandId, new { Name = key + "BrandId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>  }
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+
+@*Bottomnav*@
+@section Basefooter{
+
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+     * Country class
+     */
+    var BrandStoresView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=radio][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=radio][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=radio][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnEdit: '#btnUpdate',
+            ddlSortKey: '#ddlSortKey',
+            chkChecked: ':radio:checked',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnBrand: '#btnBrand',
+            brandSelect: '#brandSelect',
+            brandId: '#txtBrandId',
+            brandName:'#txtBrandName'
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                brandSearchModal.init();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(BrandStoresView.SELECTORS.btnBrand).on("click", brandSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(BrandStoresView.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(BrandStoresView.SELECTORS.brandId).val(brandId);
+                        $(BrandStoresView.SELECTORS.brandName).val(brandName);
+                    })
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(BrandStoresView.SELECTORS.ddlSort).change(function (val) {
+                    $(BrandStoresView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(BrandStoresView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(BrandStoresView.SELECTORS.btnSearch).click();
+                });
+            },
+
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        BrandStoresView.init();
+    });
+        function ClearConditons() {
+            $("#txtStoreId").val("");
+            $("#txtStoreName").val("");
+            $(BrandStoresView.SELECTORS.brandId).val("");
+            $(BrandStoresView.SELECTORS.brandName).val("");
+    }
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "BrandStore", new { area= "Master" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        }
+    </script>
+}

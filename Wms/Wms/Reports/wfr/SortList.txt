@@ -1,0 +1,5 @@
+﻿Key,Mode,Printer
+DeliverySlip,PRN,納品書
+InvoiceSagawa,PRN,佐川送り状
+InvoiceNaniwa,PRN,浪速送り状
+*,PRN

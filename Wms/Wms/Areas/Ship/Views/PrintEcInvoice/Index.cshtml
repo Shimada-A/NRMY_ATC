@@ -1,0 +1,934 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.PrintEcInvoice.PrintEcInvoiceConditions
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_PrintEcInvoice;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div class="head head_white collapse show">
+    @using (Html.BeginForm("Search", "PrintEcInvoice", FormMethod.Post, new { id = "frmPrint" }))
+    {
+
+        @Html.AntiForgeryToken()
+    <table>
+        <tr>
+            <td class="tdtitle">@PrintEcInvoiceResource.CenterIdS</td>
+            <td colspan="11">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.CenterDropDownFor(
+                            model => model.CenterId
+                            , Wms.Common.Profile.User.UserId
+                            , "", new { @id = "ddlCenterId", tabindex = "1" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>@PrintEcInvoiceResource.PrnClassS</td>
+            <td colspan="11">
+                @Html.EnumRadioButtonListFor(model => model.PrnClass, new { htmlAttributes = new { tabindex = "2" } })
+                <label class="chklist">
+                    @Html.CheckBoxFor(model => model.ChkOldData, new { id = "chkChkOldData", tabindex = "2", @placeholder = "", @class = "check-box" })
+                    <span class="chk_parts">
+                    </span>
+                </label>
+                @PrintInvoiceResource.ChkOldData
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>@PrintEcInvoiceResource.EcShipClassS</td>
+            <td colspan="11">
+                @Html.EnumRadioButtonListFor(model => model.EcShipClass, new { htmlAttributes = new { tabindex = "3" } })
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>@PrintEcInvoiceResource.UnitCntS</td>
+            <td colspan="11">
+                @Html.EditorFor(model => model.UnitCnt, new { htmlAttributes = new { @class = "w_5_normal", @id = "txtUnitCnt", tabindex = "4" } })
+                <a style="color:blue; margin-left:30px;margin-top:-200px;">@PrintEcInvoiceResource.DispMsg</a>
+            </td>
+        </tr>
+        <tr>
+            <td>@PrintEcInvoiceResource.ItemSizeIdS</td>
+            <td>
+                1.@Html.EditorFor(model => model.BoxSize1, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize1", tabindex = "5" } })
+            </td>
+            <td>
+                2.@Html.EditorFor(model => model.BoxSize2, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize2", tabindex = "5" } })
+            </td>
+            <td>
+                3.@Html.EditorFor(model => model.BoxSize3, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize3", tabindex = "5" } })
+            </td>
+            <td>
+                4.@Html.EditorFor(model => model.BoxSize4, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize4", tabindex = "5" } })
+            </td>
+            <td>
+                5.@Html.EditorFor(model => model.BoxSize5, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize5", tabindex = "5" } })
+            </td>
+            <td>
+                6.@Html.EditorFor(model => model.BoxSize6, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize6", tabindex = "5" } })
+            </td>
+            <td>
+                7.@Html.EditorFor(model => model.BoxSize7, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize7", tabindex = "5" } })
+            </td>
+            <td>
+                8.@Html.EditorFor(model => model.BoxSize8, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize8", tabindex = "5" } })
+            </td>
+            <td>
+                9.@Html.EditorFor(model => model.BoxSize9, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize9", tabindex = "5" } })
+            </td>
+            <td>
+                10.@Html.EditorFor(model => model.BoxSize10, new { htmlAttributes = new { @class = "w_3_veryshort", @id = "txtBoxSize10", tabindex = "5" } })
+            </td>
+            <td>
+                <a style="color:blue; margin-left:5px;">@PrintEcInvoiceResource.YamatoMsg</a>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="11">
+                <a style="color:blue; margin-left:0px;">@PrintEcInvoiceResource.YamatoMsg2</a>
+            </td>
+        <tr>
+            <td>@PrintEcInvoiceResource.BatchNoS</td>
+            <td colspan="11">
+                @Html.EditorFor(model => model.BatchNo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtBatchNo", tabindex = "6" } })
+                @Html.EditorFor(model => model.BatchName, new { htmlAttributes = new { @class = "w_30_normal", @id = "txtBatchName", tabindex = "-1", @readonly = "readonly", @style = "outline:none;" } })
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>@PrintEcInvoiceResource.JanS</td>
+            <td colspan="11">
+                @Html.EditorFor(model => model.Jan, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtJan", tabindex = "7" } })
+                @Html.EditorFor(model => model.ErrMassage1, new { htmlAttributes = new { @style = "border:0; color:red;width:500px;outline:none;", @readonly = "readonly", @id = "lblErrMassage1" } })
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>@PrintEcInvoiceResource.BoxNoS</td>
+            <td colspan="11">
+                @Html.EditorFor(model => model.BoxNo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtBoxNo", tabindex = "8", onfocus = "this.select();" } })
+                @Html.EditorFor(model => model.ErrMassage2, new { htmlAttributes = new { @style = "border:0; color:red;width:500px;outline:none;", @readonly = "readonly", @id = "lblErrMassage2" } })
+            </td>
+        </tr>
+        <tr>
+            <td>@PrintEcInvoiceResource.ShipInstructIdS</td>
+            <td colspan="11">
+                @Html.EditorFor(model => model.ShipInstructId, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtShipInstructId", tabindex = "9" } })
+                @Html.EditorFor(model => model.ErrMassage3, new { htmlAttributes = new { @style = "border:0; color:red;width:500px;outline:none;", @readonly = "readonly", @id = "lblErrMassage3" } })
+            </td>
+        </tr>
+        <tr>
+            <td>@PrintEcInvoiceResource.DeliNoS</td>
+            <td colspan="11">
+                @Html.EditorFor(model => model.DeliNo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtDeliNo", tabindex = "10" } })
+                @Html.EditorFor(model => model.ErrMassage4, new { htmlAttributes = new { @style = "border:0; color:blue;width:500px;outline:none;margin-left:50px;", @readonly = "readonly", @id = "lblErrMassage4" } })
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="11" style="text-align:center;margin-top:30px;">
+                <button type="button" id="btnRelease" class="btn btn-dark btnsize _pm">@PrintEcInvoiceResource.RELEASES</button>
+                @Html.EditorFor(model => model.ErrMassagePop, new { htmlAttributes = new { @style = "border:0; color:red;width:500px;outline:none;display: none;", @readonly = "readonly", @id = "lblErrMassagePop" } })
+                @Html.HiddenFor(model => model.ErrShipInstructId, new { @id = "hidErrShipInstructId" })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="12">
+                <button class="btn btn-outline-dark" id="btnSet" type="button" tabindex="-1" onclick="KickChangePrintInfo();">@PrintInvoiceResource.SettingOkaiage</button>
+                <button class="btn btn-outline-dark" id="btnSetRakuten" type="button" tabindex="-1" onclick="KickChangePrintInfoRakuten();">@PrintInvoiceResource.SettingRakuten</button>
+                <button class="btn btn-outline-dark" id="btnSetWaKsnap" type="button" tabindex="-1" onclick="KickChangePrintInfoWaKsnap();">@PrintInvoiceResource.SettingWaKsnap</button>
+                <button class="btn btn-outline-dark" id="btnSetDeliSagawa" type="button" tabindex="-1" onclick="KickChangeDeliSagawa();">@PrintInvoiceResource.SettingSagawa</button>
+                <button class="btn btn-outline-dark" id="btnSetDeliYamato" type="button" tabindex="-1" onclick="KickChangeDeliYamato();">@PrintInvoiceResource.SettingYamato</button>
+                <button class="btn btn-outline-dark" id="btnSetDeliNekoposu" type="button" tabindex="-1" onclick="KickChangeDeliNekoposu();">@PrintInvoiceResource.SettingNekoposu</button>
+
+                @Html.HiddenFor(model => model.PermissonLavel, new { @id = "hidPermission" })
+                @Html.HiddenFor(model => model.Ret, new { @id = "hidRet" })
+            </td>
+        </tr>
+    </table>
+    }
+</div>
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+    </div>
+}
+
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg",
+    Message = Model.ErrMassagePop + @Environment.NewLine + @PrintEcInvoiceResource.ShipInstructIdS + Model.ErrShipInstructId + @Environment.NewLine + @PrintEcInvoiceResource.ErrMsgKanri })
+
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+     * Country class
+     */
+    var PrintCaseLabelView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTablePrn1: 'input[type=radio][id$="PrnClass-1"]',  //新規
+            chkInTablePrn2: 'input[type=radio][id$="PrnClass-2"]',  //納品書発行
+            chkInTablePrn3: 'input[type=radio][id$="PrnClass-3"]',  //送り状発行
+            chkInTableEcShip1: 'input[type=radio][id$="EcShipClass-1"]',    //シングル
+            chkInTableEcShip2: 'input[type=radio][id$="EcShipClass-2"]',    //オーダー
+            chkInTableEcShip3: 'input[type=radio][id$="EcShipClass-3"]',    //GAS
+            form: 'form',
+            searchForm: '#frmPrint',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+                //シングル選択
+                $(PrintCaseLabelView.SELECTORS.chkInTableEcShip1).click(function (evt) {
+                    $('#lblErrMassage1').val("");
+                    $('#lblErrMassage2').val("");
+                    $('#lblErrMassage3').val("");
+                    $('#lblErrMassage4').val("");
+                    $("#txtUnitCnt").val("");
+                    $("#txtBoxNo").val("");
+                    $("#txtUnitCnt").attr('disabled', 'disabled');
+                    $("#txtBoxNo").attr('disabled', 'disabled');
+
+                    //新規
+                    if ($(PrintCaseLabelView.SELECTORS.chkInTablePrn1).prop('checked')) {
+                        $("#txtBatchNo").removeAttr('disabled');
+                        $("#txtJan").removeAttr('disabled');
+                        $("#txtShipInstructId").attr('disabled', 'disabled');
+                        $("#txtDeliNo").attr('disabled', 'disabled');
+                        $("#btnRelease").hide();
+                        $("#chkChkOldData").prop("checked", false);
+                        $('#chkChkOldData').attr('disabled', 'disabled');
+
+                    } else {
+                        $("#txtBatchName").val("");
+                        $("#txtBatchNo").val("");
+                        $("#txtJan").val("");
+                        $("#txtBatchNo").attr('disabled', 'disabled');
+                        $("#txtJan").attr('disabled', 'disabled');
+                        $("#txtShipInstructId").removeAttr('disabled');
+                        $("#txtDeliNo").removeAttr('disabled');
+                        $("#btnRelease").show();
+                        $('#chkChkOldData').removeAttr('disabled');
+                    }
+
+                });
+                //オーダー選択
+                $(PrintCaseLabelView.SELECTORS.chkInTableEcShip2).click(function (evt) {
+                    $('#lblErrMassage1').val("");
+                    $('#lblErrMassage2').val("");
+                    $('#lblErrMassage3').val("");
+                    $('#lblErrMassage4').val("");
+                    $("#txtBatchNo").val("");
+                    $("#txtBatchName").val("");
+                    $("#txtJan").val("");
+                    $("#txtBatchNo").attr('disabled', 'disabled');
+                    $("#txtJan").attr('disabled', 'disabled');
+                    $("#txtBoxNo").removeAttr('disabled');
+
+                    //新規
+                    if ($(PrintCaseLabelView.SELECTORS.chkInTablePrn1).prop('checked')) {
+                        $("#txtShipInstructId").val("");
+                        $("#txtShipInstructId").attr('disabled', 'disabled');
+                        $("#txtDeliNo").val("");
+                        $("#txtDeliNo").attr('disabled', 'disabled');
+                        $("#btnRelease").hide();
+                        $("#chkChkOldData").prop("checked", false);
+                        $('#chkChkOldData').attr('disabled', 'disabled');
+                        $("#txtUnitCnt").removeAttr('disabled');
+                    } else {
+                        $("#btnRelease").show();
+                        $('#chkChkOldData').removeAttr('disabled');
+                        $("#txtShipInstructId").removeAttr('disabled');
+                        $("#txtDeliNo").removeAttr('disabled');
+                    }
+                    //納品書再発行
+                    if ($(PrintCaseLabelView.SELECTORS.chkInTablePrn2).prop('checked')) {
+                        $("#txtUnitCnt").val("");
+                        $("#txtUnitCnt").attr('disabled', 'disabled');
+                    } else {
+                        $("#txtUnitCnt").removeAttr('disabled');
+                    }
+                });
+                //GAS選択
+                $(PrintCaseLabelView.SELECTORS.chkInTableEcShip3).click(function (evt) {
+                    $('#lblErrMassage1').val("");
+                    $('#lblErrMassage2').val("");
+                    $('#lblErrMassage3').val("");
+                    $('#lblErrMassage4').val("");
+                    $("#txtBatchNo").val("");
+                    $("#txtBatchName").val("");
+                    $("#txtJan").val("");
+                    $("#txtBatchNo").attr('disabled', 'disabled');
+                    $("#txtJan").attr('disabled', 'disabled');
+                    $("#txtBoxNo").removeAttr('disabled');
+                    //新規
+                    if ($(PrintCaseLabelView.SELECTORS.chkInTablePrn1).prop('checked')) {
+                        $("#txtShipInstructId").val("");
+                        $("#txtShipInstructId").attr('disabled', 'disabled');
+                        $("#txtDeliNo").val("");
+                        $("#txtDeliNo").attr('disabled', 'disabled');
+                        $("#btnRelease").hide();
+                        $("#chkChkOldData").prop("checked", false);
+                        $('#chkChkOldData').attr('disabled', 'disabled');
+                        $("#txtUnitCnt").removeAttr('disabled');
+                    } else {
+                        $("#txtShipInstructId").removeAttr('disabled');
+                        $("#txtDeliNo").removeAttr('disabled');
+                        $("#btnRelease").show();
+                        $('#chkChkOldData').removeAttr('disabled');
+                    }
+                    //納品書再発行
+                    if ($(PrintCaseLabelView.SELECTORS.chkInTablePrn2).prop('checked')) {
+                        $("#txtUnitCnt").val("");
+                        $("#txtUnitCnt").attr('disabled', 'disabled');
+                    } else {
+                        $("#txtUnitCnt").removeAttr('disabled');
+                    }
+                });
+                //新規発行選択
+                $(PrintCaseLabelView.SELECTORS.chkInTablePrn1).click(function (evt) {
+                    $('#lblErrMassage1').val("");
+                    $('#lblErrMassage2').val("");
+                    $('#lblErrMassage3').val("");
+                    $('#lblErrMassage4').val("");
+                    $("#txtShipInstructId").val("");
+                    $("#txtShipInstructId").attr('disabled', 'disabled');
+                    $("#txtDeliNo").val("");
+                    $("#txtDeliNo").attr('disabled', 'disabled');
+                    $("#btnRelease").hide();
+                    $("#chkChkOldData").prop("checked", false);
+                    $('#chkChkOldData').attr('disabled', 'disabled');
+                    $("#txtBoxSize1").removeAttr('disabled');
+                    $("#txtBoxSize2").removeAttr('disabled');
+                    $("#txtBoxSize3").removeAttr('disabled');
+                    $("#txtBoxSize4").removeAttr('disabled');
+                    $("#txtBoxSize5").removeAttr('disabled');
+                    $("#txtBoxSize6").removeAttr('disabled');
+                    $("#txtBoxSize7").removeAttr('disabled');
+                    $("#txtBoxSize8").removeAttr('disabled');
+                    $("#txtBoxSize9").removeAttr('disabled');
+                    $("#txtBoxSize10").removeAttr('disabled');
+
+                    //シングル
+                    if ($(PrintCaseLabelView.SELECTORS.chkInTableEcShip1).prop('checked')) {
+                        $("#txtUnitCnt").val("");
+                        $("#txtBoxNo").val("");
+                        $("#txtBatchNo").removeAttr('disabled');
+                        $("#txtJan").removeAttr('disabled');
+                        $("#txtUnitCnt").attr('disabled', 'disabled');
+                        $("#txtBoxNo").attr('disabled', 'disabled');
+                    } else {
+                        $("#txtBatchName").val("");
+                        $("#txtBatchNo").val("");
+                        $("#txtJan").val("");
+                        $("#txtBatchNo").attr('disabled', 'disabled');
+                        $("#txtJan").attr('disabled', 'disabled');
+                        $("#txtUnitCnt").removeAttr('disabled');
+                        $("#txtBoxNo").removeAttr('disabled');
+                    }
+                });
+                //納品書再発行選択
+                $(PrintCaseLabelView.SELECTORS.chkInTablePrn2).click(function (evt) {
+                    $('#lblErrMassage1').val("");
+                    $('#lblErrMassage2').val("");
+                    $('#lblErrMassage3').val("");
+                    $('#lblErrMassage4').val("");
+                    $("#txtShipInstructId").removeAttr('disabled');
+                    $("#txtDeliNo").removeAttr('disabled');
+                    $("#btnRelease").show();
+                    $('#chkChkOldData').removeAttr('disabled');
+                    $("#txtBatchNo").val("");
+                    $("#txtBatchName").val("");
+                    $("#txtJan").val("");
+                    $("#txtUnitCnt").val("");
+                    $("#txtBoxSize1").val("");
+                    $("#txtBoxSize2").val("");
+                    $("#txtBoxSize3").val("");
+                    $("#txtBoxSize4").val("");
+                    $("#txtBoxSize5").val("");
+                    $("#txtBoxSize6").val("");
+                    $("#txtBoxSize7").val("");
+                    $("#txtBoxSize8").val("");
+                    $("#txtBoxSize9").val("");
+                    $("#txtBoxSize10").val("");
+                    $("#txtBoxSize1").attr('disabled', 'disabled');
+                    $("#txtBoxSize2").attr('disabled', 'disabled');
+                    $("#txtBoxSize3").attr('disabled', 'disabled');
+                    $("#txtBoxSize4").attr('disabled', 'disabled');
+                    $("#txtBoxSize5").attr('disabled', 'disabled');
+                    $("#txtBoxSize6").attr('disabled', 'disabled');
+                    $("#txtBoxSize7").attr('disabled', 'disabled');
+                    $("#txtBoxSize8").attr('disabled', 'disabled');
+                    $("#txtBoxSize9").attr('disabled', 'disabled');
+                    $("#txtBoxSize10").attr('disabled', 'disabled');
+                    $("#txtBatchNo").attr('disabled', 'disabled');
+                    $("#txtJan").attr('disabled', 'disabled');
+                    $("#txtUnitCnt").attr('disabled', 'disabled');
+                    if ($(PrintCaseLabelView.SELECTORS.chkInTableEcShip1).prop('checked')) {
+                        $("#txtBoxNo").val("");
+                        $("#txtBoxNo").attr('disabled', 'disabled');
+                    } else {
+                        $("#txtBoxNo").removeAttr('disabled');
+
+                    }
+                });
+                //送り状再発行選択
+                $(PrintCaseLabelView.SELECTORS.chkInTablePrn3).click(function (evt) {
+                    $('#lblErrMassage1').val("");
+                    $('#lblErrMassage2').val("");
+                    $('#lblErrMassage3').val("");
+                    $('#lblErrMassage4').val("");
+                    $("#txtShipInstructId").removeAttr('disabled');
+                    $("#txtDeliNo").removeAttr('disabled');
+                    $("#btnRelease").show();
+                    $('#chkChkOldData').removeAttr('disabled');
+                    $("#txtBatchNo").val("");
+                    $("#txtBatchName").val("");
+                    $("#txtJan").val("");
+                    $("#txtBatchNo").attr('disabled', 'disabled');
+                    $("#txtJan").attr('disabled', 'disabled');
+                    $("#txtBoxNo").removeAttr('disabled');
+                    $("#txtBoxSize1").removeAttr('disabled');
+                    $("#txtBoxSize2").removeAttr('disabled');
+                    $("#txtBoxSize3").removeAttr('disabled');
+                    $("#txtBoxSize4").removeAttr('disabled');
+                    $("#txtBoxSize5").removeAttr('disabled');
+                    $("#txtBoxSize6").removeAttr('disabled');
+                    $("#txtBoxSize7").removeAttr('disabled');
+                    $("#txtBoxSize8").removeAttr('disabled');
+                    $("#txtBoxSize9").removeAttr('disabled');
+                    $("#txtBoxSize10").removeAttr('disabled');
+                    if ($(PrintCaseLabelView.SELECTORS.chkInTableEcShip1).prop('checked')) {
+                        $("#txtUnitCnt").val("");
+                        $("#txtUnitCnt").attr('disabled', 'disabled');
+                    } else {
+                        $("#txtUnitCnt").removeAttr('disabled');
+                     
+                    }
+                });
+
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+
+            },
+        }
+
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            PrintCaseLabelView.init();
+            //シングル選択
+            if ($('input[type=radio][id$="EcShipClass-1"]').prop('checked')) {
+                $("#txtUnitCnt").val("");
+                $("#txtBoxNo").val("");
+                $("#txtUnitCnt").attr('disabled', 'disabled');
+                $("#txtBoxNo").attr('disabled', 'disabled');
+                //新規
+                if ($('input[type=radio][id$="PrnClass-1"]').prop('checked')) {
+                    $("#txtBatchNo").removeAttr('disabled');
+                    $("#txtJan").removeAttr('disabled');
+                    $("#txtShipInstructId").val("");
+                    $("#txtShipInstructId").attr('disabled', 'disabled');
+                    $("#txtDeliNo").val("");
+                    $("#txtDeliNo").attr('disabled', 'disabled');
+                    $("#btnRelease").hide();
+                    $("#chkChkOldData").prop("checked", false);
+                    $('#chkChkOldData').attr('disabled', 'disabled');
+
+               } else {
+                    $("#txtBatchName").val("");
+                    $("#txtBatchNo").val("");
+                    $("#txtBatchNo").attr('disabled', 'disabled');
+                    $("#txtJan").val("");
+                    $("#txtJan").attr('disabled', 'disabled');
+                    $("#txtShipInstructId").removeAttr('disabled');
+                    $("#txtDeliNo").removeAttr('disabled');
+                    $("#btnRelease").show();
+                    $('#chkChkOldData').removeAttr('disabled');
+                }
+            };
+
+            //オーダー/GAS選択
+            if ($('input[type=radio][id$="EcShipClass-2"]').prop('checked') == 'check' || $('input[type=radio][id$="PrnClass-3"]').prop('checked') == 'check') {
+                $("#txtBatchNo").val("");
+                $("#txtBatchName").val("");
+                $("#txtJan").val("");
+                $("#txtBatchNo").attr('disabled', 'disabled');
+                $("#txtJan").attr('disabled', 'disabled');
+                $("#txtBoxNo").removeAttr('disabled');
+                //新規
+                if ($('input[type=radio][id$="PrnClass-1"]').prop('checked')) {
+                    $("#txtShipInstructId").val("");
+                    $("#txtShipInstructId").attr('disabled', 'disabled');
+                    $("#btnRelease").hide();
+                    $("#txtDeliNo").val("");
+                    $("#txtDeliNo").attr('disabled', 'disabled');
+                    $("#txtUnitCnt").removeAttr('disabled');
+                    $("#chkChkOldData").prop("checked", false);
+                    $('#chkChkOldData').attr('disabled', 'disabled');
+                } else {
+                    $("#txtShipInstructId").removeAttr('disabled');
+                    $("#txtDeliNo").removeAttr('disabled');
+                    $("#btnRelease").show();
+                    $('#chkChkOldData').removeAttr('disabled');
+
+                }
+                //納品書再発行
+                if ($('input[type=radio][id$="PrnClass-2"]').prop('checked')) {
+                    $("#txtUnitCnt").val("");
+                    $("#txtUnitCnt").attr('disabled', 'disabled');
+                } else {
+                    $("#txtUnitCnt").removeAttr('disabled');
+                }
+            };
+            //新規発行選択
+            if ($('input[type=radio][id$="PrnClass-1"]').prop('checked')) {
+                $("#txtShipInstructId").val("");
+                $("#txtShipInstructId").attr('disabled', 'disabled');
+                $("#txtDeliNo").val("");
+                $("#txtDeliNo").attr('disabled', 'disabled');
+                $("#btnRelease").hide();
+                $("#chkChkOldData").prop("checked", false);
+                $('#chkChkOldData').attr('disabled', 'disabled');
+                //シングル
+                if ($('input[type=radio][id$="EcShipClass-1"]').prop('checked')) {
+                    $("#txtBatchNo").removeAttr('disabled');
+                    $("#txtJan").removeAttr('disabled');
+                    $("#txtUnitCnt").val("");
+                    $("#txtBoxNo").val("");
+                    $("#txtUnitCnt").attr('disabled', 'disabled');
+                    $("#txtBoxNo").attr('disabled', 'disabled');
+                } else {
+                    $("#txtBatchName").val("");
+                    $("#txtBatchNo").val("");
+                    $("#txtJan").val("");
+                    $("#txtBatchNo").attr('disabled', 'disabled');
+                    $("#txtJan").attr('disabled', 'disabled');
+                    $("#txtUnitCnt").removeAttr('disabled');
+                    $("#txtBoxNo").removeAttr('disabled');
+                }
+            };
+            //納品書再発行選択
+            if ($('input[type=radio][id$="PrnClass-2"]').prop('checked')) {
+                $("#txtShipInstructId").removeAttr('disabled');
+                $("#btnRelease").show();
+                $("#txtBatchNo").val("");
+                $("#txtBatchName").val("");
+                $("#txtJan").val("");
+                $("#txtUnitCnt").val("");
+                $("#txtBatchNo").attr('disabled', 'disabled');
+                $("#txtJan").attr('disabled', 'disabled');
+                $("#txtUnitCnt").attr('disabled', 'disabled');
+                $("#txtDeliNo").removeAttr('disabled');
+                $('#chkChkOldData').removeAttr('disabled');
+                if ($('input[type=radio][id$="EcShipClass-1"]').prop('checked')) {
+                    $("#txtBoxNo").val("");
+                    $("#txtBoxNo").attr('disabled', 'disabled');
+                } else {
+                    $("#txtBoxNo").removeAttr('disabled');
+                }
+            };
+            //送り状再発行選択
+            if ($('input[type=radio][id$="PrnClass-3"]').prop('checked')) {
+                $("#txtShipInstructId").removeAttr('disabled');
+                $("#btnRelease").show();
+                $("#txtBatchNo").val("");
+                $("#txtBatchName").val("");
+                $("#txtJan").val("");
+                $("#txtBatchNo").attr('disabled', 'disabled');
+                $("#txtJan").attr('disabled', 'disabled');
+                $("#txtDeliNo").removeAttr('disabled');
+                $('#chkChkOldData').removeAttr('disabled');
+                $("#txtBoxNo").removeAttr('disabled');
+
+                if ($('input[type=radio][id$="EcShipClass-1"]').prop('checked')) {
+                    $("#txtUnitCnt").val("");
+                    $("#txtUnitCnt").attr('disabled', 'disabled');
+                } else {
+                    $("#txtUnitCnt").removeAttr('disabled');
+                   
+                }
+            };
+
+            if ('@Model.ErrMassagePop' != '') {
+                $("#btnErrorMessage").click();
+            }
+        });
+
+        $('#txtBatchNo').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                var urlAction = '@Url.Action("GetBatchName", "PrintEcInvoice", new { area= "Ship" })';
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    data: {
+                        centerId: $("#ddlCenterId").val(),
+                        batchId: $("#txtBatchNo").val()
+                    },
+                    success: function (data) {
+                        if (data.batchName == '') {
+                            $('#lblErrMassage1').val("存在しないバッチNoです");
+                        } else {
+                            $("#txtBatchName").val(data.batchName);
+                            $('#txtJan').focus();
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#txtBatchNo').change(function () {
+            if ($(this).val() == "") {
+                $('#txtBatchName').val("");
+            }
+            $('#lblErrMassage1').val("");
+        })
+
+        $('#txtJan').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                if ($(this).val() == "") {
+                    $('#lblErrMassage1').val("JANは必須項目です");
+                    return false;
+                }
+                if ($('#txtBatchNo').val() == "") {
+                    $('#lblErrMassage1').val("バッチNoを指定してください");
+                    return false;
+                }
+
+                $('#txtJan').attr('disabled', 'disabled');
+                $('#lblErrMassage1').val("");
+                $('#lblErrMassage4').val("");
+
+                $.ajax({
+                    url: '@Url.Action("PrintSigle", "PrintEcInvoice", new { area= "Ship" })',
+                    type: "POST",
+                    data: {
+                        centerId: $("#ddlCenterId").val(),
+                        batchId: $("#txtBatchNo").val(),
+                        jan: $("#txtJan").val(),
+                        boxSize: $("#txtBoxSize1").val(),
+                        boxSize2: $("#txtBoxSize2").val(),
+                        boxSize3: $("#txtBoxSize3").val(),
+                        boxSize4: $("#txtBoxSize4").val(),
+                        boxSize5: $("#txtBoxSize5").val(),
+                        boxSize6: $("#txtBoxSize6").val(),
+                        boxSize7: $("#txtBoxSize7").val(),
+                        boxSize8: $("#txtBoxSize8").val(),
+                        boxSize9: $("#txtBoxSize9").val(),
+                        boxSize10: $("#txtBoxSize10").val()
+                    },
+                    success: function (data) {
+                        if (data.status == 0) {
+                            //納品書
+                            cwebclient.CreatePrintingDataScriptUrl = data.printCcdUrlNouhin;
+                            cwebclient.DataSendMethod = "GET";
+                            cwebclient.MinimizedProgressDlg = 0;
+                            cwebclient.SetClosedFinishing(data.fileNameNouhin);
+                            cwebclient.PrintExecuteEx(data.fileNameNouhin);
+                            //送り状
+                            cwebclient.CreatePrintingDataScriptUrl = data.printCcdUrlDeli;
+                            cwebclient.DataSendMethod = "GET";
+                            cwebclient.MinimizedProgressDlg = 0;
+                            cwebclient.SetClosedFinishing(data.fileNameDeli);
+                            cwebclient.PrintExecuteEx(data.fileNameDeli);
+                            $("#txtJan").removeAttr('disabled');
+                            $("#txtJan").val("");
+                            $("#txtJan").focus();
+                            $('#lblErrMassage4').val("直近発行済注文番号：" + data.shipInstructId);
+                            $("#lblErrMassage4").show();
+                        } else {
+                            if (data.status == 50 || data.status == 51) {
+                                //キャンセルの場合
+                                $("#lblErrMassagePop").val(data.errmessage);
+                                $("#hidErrShipInstructId").val(data.errShipInstructId);
+                                var urlAction ='@Url.Action("Search", "PrintEcInvoice", new { area= "Ship" })';
+                                var $form = $("#frmPrint");
+                                $form.attr("action", urlAction);
+                                $form.attr("method", "POST");
+                                $form.submit();
+                            } else {
+                                $("#lblErrMassage1").val(data.errmessage);
+                                $("#lblErrMassage1").show();
+                                $('#txtJan').removeAttr('disabled');
+                                $('#txtJan').select();
+                            }
+                        }
+                    }
+                })
+            }
+        });
+
+        $('#txtJan').change(function () {
+            $('#lblErrMassage1').val("");
+            $('#lblErrMassage4').val("");
+        })
+
+        $('#txtBoxNo').on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                $('#lblErrMassage2').val("");
+                $('#lblErrMassage4').val("");
+                if ($(this).val() == "") {
+                    $('#lblErrMassage2').val("ケースNoは必須項目です");
+                    $('#txtBoxNo').focus();
+                    return false;
+                }
+                if ($('input[type=radio][id$="PrnClass-2"]').prop('checked') == true || $('input[type=radio][id$="PrnClass-3"]').prop('checked') == true) {
+                    $('#txtBoxNo').focus();
+                    return false;
+                }
+                var radios = document.getElementsByName("EcShipClass");
+                var ecShipClass;
+                for (var i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        ecShipClass = radios[i].value;
+                        break;
+                    }
+                }
+          
+                $.ajax({
+                    url: '@Url.Action("PrintGasOrder", "PrintEcInvoice", new { area= "Ship" })',
+                    type: "POST",
+                    data: {
+                        centerId: $("#ddlCenterId").val(),
+                        unitCnt: $("#txtUnitCnt").val(),
+                        boxNo: $("#txtBoxNo").val(),
+                        ecShipClass: ecShipClass,
+                        boxSize: $("#txtBoxSize1").val(),
+                        boxSize2: $("#txtBoxSize2").val(),
+                        boxSize3: $("#txtBoxSize3").val(),
+                        boxSize4: $("#txtBoxSize4").val(),
+                        boxSize5: $("#txtBoxSize5").val(),
+                        boxSize6: $("#txtBoxSize6").val(),
+                        boxSize7: $("#txtBoxSize7").val(),
+                        boxSize8: $("#txtBoxSize8").val(),
+                        boxSize9: $("#txtBoxSize9").val(),
+                        boxSize10: $("#txtBoxSize10").val()
+
+                    },
+                    success: function (data) {
+                        if (data.status == 0) {
+                            //納品書
+                            cwebclient.CreatePrintingDataScriptUrl = data.printCcdUrlNouhin;
+                            cwebclient.DataSendMethod = "GET";
+                            cwebclient.MinimizedProgressDlg = 0;
+                            cwebclient.SetClosedFinishing(data.fileNameNouhin);
+                            cwebclient.PrintExecuteEx(data.fileNameNouhin);
+                            //送り状
+                            cwebclient.CreatePrintingDataScriptUrl = data.printCcdUrlDeli;
+                            cwebclient.DataSendMethod = "GET";
+                            cwebclient.MinimizedProgressDlg = 0;
+                            cwebclient.SetClosedFinishing(data.fileNameDeli);
+                            cwebclient.PrintExecuteEx(data.fileNameDeli);
+                            $("#txtBoxNo").val("");
+                            $('#lblErrMassage4').val("直近発行済注文番号：" + data.shipInstructId);
+                            $("#lblErrMassage4").show();
+                        } else {
+                            if (data.status == 100 || data.status == 101) {
+                                //キャンセルの場合
+                                $("#lblErrMassagePop").val(data.errmessage);
+                                $("#hidErrShipInstructId").val(data.errShipInstructId);
+                                var urlAction ='@Url.Action("Search", "PrintEcInvoice", new { area= "Ship" })';
+                                var $form = $("#frmPrint");
+                                $form.attr("action", urlAction);
+                                $form.attr("method", "POST");
+                                $form.submit();
+                            } else {
+                                $("#lblErrMassage2").val(data.errmessage);
+                                $("#lblErrMassage2").show();
+                                $('#txtBoxNo').focus();
+                            }
+                        }
+                    }
+                })
+            }
+        });
+
+        $('#ErrMsg').click(function () {
+            if ($('#txtBoxNo').val() != "") {
+                $('#txtBoxNo').focus();
+            }
+        });
+
+        $('#txtBoxNo').change(function () {
+            $('#lblErrMassage2').val("");
+            $('#lblErrMassage3').val("");
+            $('#lblErrMassage4').val("");
+        })
+
+
+        $('#txtShipInstructId').change(function () {
+            $('#lblErrMassage3').val("");
+        })
+
+        $('#txtDeliNo').change(function () {
+            $('#lblErrMassage3').val("");
+        })
+
+        $('#btnRelease').on("click", function () {
+            $('#lblErrMassage2').val("");
+            $('#lblErrMassage3').val("");
+            $('#lblErrMassage4').val("");
+
+        if (!validateForm($('#frmPrint'))) {
+            return false;
+        }
+        var radios = document.getElementsByName("PrnClass");
+        var prnClass;
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                prnClass = radios[i].value;
+                break;
+            }
+        }
+        if ($('#txtBoxNo').val() == "" && $('#txtShipInstructId').val() == "" && $('#txtDeliNo').val() == "") {
+            $('#lblErrMassage3').val("発行対象を指定してください");
+            return false;
+        };
+
+        if ($("#chkChkOldData").prop('checked')) {
+            chkOldData = 1;
+        } else {
+            chkOldData = 0;
+        };
+
+        $.ajax({
+             url: '@Url.Action("PrintReissue", "PrintEcInvoice", new { area= "Ship" })',
+             type: "POST",
+             data: {
+                 centerId: $("#ddlCenterId").val(),
+                 unitCnt: $("#txtUnitCnt").val(),
+                 boxNo: $("#txtBoxNo").val(),
+                 shipInstructId: $("#txtShipInstructId").val(),
+                 prnClass: prnClass,
+                 deliNo: $("#txtDeliNo").val(),
+                 chkOldData: chkOldData,
+                 boxSize: $("#txtBoxSize1").val(),
+                 boxSize2: $("#txtBoxSize2").val(),
+                 boxSize3: $("#txtBoxSize3").val(),
+                 boxSize4: $("#txtBoxSize4").val(),
+                 boxSize5: $("#txtBoxSize5").val(),
+                 boxSize6: $("#txtBoxSize6").val(),
+                 boxSize7: $("#txtBoxSize7").val(),
+                 boxSize8: $("#txtBoxSize8").val(),
+                 boxSize9: $("#txtBoxSize9").val(),
+                 boxSize10: $("#txtBoxSize10").val()
+             },
+             success: function (data) {
+                 if (data.status == 0) {
+                     if (data.prnClass == "1") {
+                         //納品書再発行
+                         window.open("about:blank", "newtab");
+                         $("#hidRet").val(data.retPath);
+                         urlAction = '@Url.Action("PrintReRun", "PrintEcInvoice", new { area= "Ship" })';
+                         var $form = $("#frmPrint");
+                         $form.attr("action", urlAction);
+                         $form.attr("method", "POST");
+                         $form.attr("target", "newtab");
+                         $form.submit();
+                         $form.attr("target", "_self");
+                         $("#txtBoxNo").val("");
+                         $("#txtDeliNo").val("");
+                     } else {
+                         //送り状再発行
+                         cwebclient.CreatePrintingDataScriptUrl = data.retPath;
+                         cwebclient.DataSendMethod = "GET";
+                         cwebclient.MinimizedProgressDlg = 0;
+                         cwebclient.SetClosedFinishing(data.fileNameDeli);
+                         cwebclient.PrintExecuteEx(data.fileNameDeli);
+                         $("#txtBoxNo").val("");
+                         $("#txtDeliNo").val("");
+                     }
+
+                 } else {
+                     if (data.status == 160 || data.status == 161) {
+                         //キャンセルの場合
+                         $("#lblErrMassagePop").val(data.errmessage);
+                         $("#hidErrShipInstructId").val(data.errShipInstructId);
+                         var urlAction ='@Url.Action("Search", "PrintEcInvoice", new { area= "Ship" })';
+                         var $form = $("#frmPrint"); 
+                         $form.attr("action", urlAction);
+                         $form.attr("method", "POST");
+                         $form.submit();
+                     } else {
+                         $("#lblErrMassage3").val(data.errmessage);
+                          $("#lblErrMassage3").show();
+                     }
+                 }
+             }
+         })
+        });
+
+        //印刷定義設定
+        function KickChangePrintInfo() {
+            // 引数に帳票名（Job ファイル名）を指定します
+            cwebclient.ChangePrintInfo("PrintEcInvoice");
+        }
+
+        function KickChangePrintInfoRakuten() {
+            // 引数に帳票名（Job ファイル名）を指定します
+            cwebclient.ChangePrintInfo("PrintEcRakutenInvoice");
+        }
+
+        function KickChangePrintInfoWaKsnap() {
+            // 引数に帳票名（Job ファイル名）を指定します
+            cwebclient.ChangePrintInfo("PrintEcWaKsnapInvoice");
+        }
+
+        function KickChangeDeliSagawa() {
+            cwebclient.ChangePrintInfo("invoice_sagawa");
+        }
+
+        function KickChangeDeliYamato() {
+            cwebclient.ChangePrintInfo("invoice_yamato");
+        }
+
+        function KickChangeDeliNekoposu() {
+            cwebclient.ChangePrintInfo("invoice_nekoposu");
+        }
+        
+
+    </script>
+}
+
+

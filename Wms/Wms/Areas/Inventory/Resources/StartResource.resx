@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllUpdateSuc" xml:space="preserve">
+    <value>全件棚卸を開始しました。</value>
+  </data>
+  <data name="AllUploadSuc" xml:space="preserve">
+    <value>ファイルを取込して棚卸を開始しました。（ロケーション数：{0}）</value>
+  </data>
+  <data name="BoxNo" xml:space="preserve">
+    <value>ケースNo</value>
+  </data>
+  <data name="BtnStart" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="CaseClass" xml:space="preserve">
+    <value>荷姿コード</value>
+  </data>
+  <data name="CaseClassName" xml:space="preserve">
+    <value>荷姿名</value>
+  </data>
+  <data name="CategoryId1" xml:space="preserve">
+    <value>カテゴリ1</value>
+  </data>
+  <data name="CategoryId2" xml:space="preserve">
+    <value>カテゴリ2</value>
+  </data>
+  <data name="CategoryId3" xml:space="preserve">
+    <value>カテゴリ3</value>
+  </data>
+  <data name="CategoryId4" xml:space="preserve">
+    <value>カテゴリ4</value>
+  </data>
+  <data name="CategoryName1" xml:space="preserve">
+    <value>カテゴリ1名</value>
+  </data>
+  <data name="CategoryName2" xml:space="preserve">
+    <value>カテゴリ2名</value>
+  </data>
+  <data name="CategoryName3" xml:space="preserve">
+    <value>カテゴリ3名</value>
+  </data>
+  <data name="CategoryName4" xml:space="preserve">
+    <value>カテゴリ4名</value>
+  </data>
+  <data name="CenterId" xml:space="preserve">
+    <value>センター</value>
+  </data>
+  <data name="CountSeq" xml:space="preserve">
+    <value>カウント回数</value>
+  </data>
+  <data name="DifferenceQty" xml:space="preserve">
+    <value>差異数</value>
+  </data>
+  <data name="DivisionId" xml:space="preserve">
+    <value>事業部コード</value>
+  </data>
+  <data name="DivisionName" xml:space="preserve">
+    <value>事業部名</value>
+  </data>
+  <data name="ErrNoData" xml:space="preserve">
+    <value>棚卸対象データがありません</value>
+  </data>
+  <data name="ERR_NOT_MATCH" xml:space="preserve">
+    <value>アップロードファイルの項目数に一致しない</value>
+  </data>
+  <data name="GradeId" xml:space="preserve">
+    <value>格付</value>
+  </data>
+  <data name="InventoryClass" xml:space="preserve">
+    <value>棚卸区分：</value>
+  </data>
+  <data name="InventoryClassName" xml:space="preserve">
+    <value>棚卸区分</value>
+  </data>
+  <data name="InventoryLocation" xml:space="preserve">
+    <value>棚卸ロケーション</value>
+  </data>
+  <data name="InventoryName" xml:space="preserve">
+    <value>棚卸名称</value>
+  </data>
+  <data name="InventoryNameNo" xml:space="preserve">
+    <value>棚卸名称→棚卸No</value>
+  </data>
+  <data name="InventoryNo" xml:space="preserve">
+    <value>棚卸No</value>
+  </data>
+  <data name="InventorySeq" xml:space="preserve">
+    <value>棚卸行No</value>
+  </data>
+  <data name="InventoryStartDate" xml:space="preserve">
+    <value>棚卸開始日時</value>
+  </data>
+  <data name="InventoryStartDateNo" xml:space="preserve">
+    <value>棚卸開始日時→棚卸No</value>
+  </data>
+  <data name="ItemColorId" xml:space="preserve">
+    <value>カラーコード</value>
+  </data>
+  <data name="ItemColorName" xml:space="preserve">
+    <value>カラー名</value>
+  </data>
+  <data name="ItemId" xml:space="preserve">
+    <value>品番</value>
+  </data>
+  <data name="ItemName" xml:space="preserve">
+    <value>品名</value>
+  </data>
+  <data name="ItemSizeId" xml:space="preserve">
+    <value>サイズコード</value>
+  </data>
+  <data name="ItemSizeName" xml:space="preserve">
+    <value>サイズ名</value>
+  </data>
+  <data name="Jan" xml:space="preserve">
+    <value>JAN</value>
+  </data>
+  <data name="LastCountFlag" xml:space="preserve">
+    <value>最終カウントフラグ</value>
+  </data>
+  <data name="LocationCd" xml:space="preserve">
+    <value>ロケーション</value>
+  </data>
+  <data name="Locsec_1" xml:space="preserve">
+    <value>エリア</value>
+  </data>
+  <data name="Locsec_2" xml:space="preserve">
+    <value>棚列</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ResultQty" xml:space="preserve">
+    <value>実棚数</value>
+  </data>
+  <data name="SimpleIInventoryFlag" xml:space="preserve">
+    <value>外装棚卸許可モード　(ケースを外装ベースでカウントする)</value>
+  </data>
+  <data name="SimpleIInventoryFlag0" xml:space="preserve">
+    <value>禁止</value>
+  </data>
+  <data name="SimpleIInventoryFlag1" xml:space="preserve">
+    <value>許可</value>
+  </data>
+  <data name="SimpleIInventoryFlagName" xml:space="preserve">
+    <value>外装棚卸</value>
+  </data>
+  <data name="StockQty" xml:space="preserve">
+    <value>帳簿在庫数</value>
+  </data>
+  <data name="SUC_MSG" xml:space="preserve">
+    <value>ファイル取込が正常に完了しました。（データ件数：{0}件）</value>
+  </data>
+  <data name="Template" xml:space="preserve">
+    <value>テンプレート</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>棚卸開始処理</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>担当者コード</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>担当者名</value>
+  </data>
+</root>

@@ -1,0 +1,53 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditImport
+
+
+<div class="Container">
+    <div>
+        @EditLayoutResource.UploadFileInfo
+    </div>
+
+    <div class="tb_scroll" style="height:65vh;">
+        <table class="table table-bordered" id="objectData">
+            <thead>
+                <tr>
+                    <th class="bg-grey">
+                        @EditLayoutResource.No
+                    </th>
+                    <th class="bg-grey">
+                        @EditLayoutResource.Title
+                    </th>
+                    <th class="bg-grey">
+                        @EditLayoutResource.DataDetail
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cModel in Model.FileInfos.Select((v, i) => new { v, i = i + 1 }))
+                {
+                    var key = String.Format("FileInfos[{0}].", cModel.i);
+                    <tr>
+                        <td class="text-right w_no  tno">
+                            @Html.DisplayFor(modelItem => cModel.i)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => cModel.v.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => cModel.v.DataDetail)
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+

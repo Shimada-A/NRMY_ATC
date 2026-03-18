@@ -1,0 +1,229 @@
+﻿@using Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.AcceptArrival.AcceptArrival02ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_RET_AcceptArrival01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@* Content *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Input", "AcceptArrival", FormMethod.Post, new { id = "frmList" }))
+    {
+        @Html.AntiForgeryToken()
+        if (Model.Results == null)
+        {
+            <div class="Container">
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.CenterId)            
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestZip)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestName)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestAddress)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestTel)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.JanCombine)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.ShipInstructId)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.ScanQtyCombine)
+                @Html.HiddenFor(modelItem => modelItem.SearchConditions.ShpScanClass, new { id = "hidShpScanClass" })
+            </div>
+        }
+        else
+        {
+            <div>
+                <table style="width:1000px;text-align:right">
+                    <tr>
+                        <td>
+                            @FormsResource.DISPLAY_SHORT
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                                </div>
+                            </div>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.CenterId)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestZip)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestName)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestAddress)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.DestTel)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.ShipInstructId)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.SortKey, new { id = "hidSortKey" })
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.Sort, new { id = "hidSort" })
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.ShpScanClass, new { id = "hidShpScanClass" })
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.JanCombine)
+            @Html.HiddenFor(modelItem => modelItem.SearchConditions.ScanQtyCombine)
+            <div>
+                <div class="tb_scroll" style="height: 64vh; width:1000px;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.ShipInstructId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.KakuDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.DestPrefName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.DestZip
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AcceptArrivalResource.DestName
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < Model.Results.AcceptArrival02Result.Count(); i++)
+                            {
+                                var key = String.Format("AccceptArrival02s[{0}].", i);
+                                <tr>
+                                    <td class="align-middle chk_cell">
+                                        <label>
+                                            <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetIsCheck('@(key + "IsCheck")')" />
+                                            <span class="radio_parts"></span>
+                                        </label>
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.AcceptArrival02Result[i].ShipInstructId)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.AcceptArrival02Result[i].KakuDate)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.AcceptArrival02Result[i].DestPrefName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.AcceptArrival02Result[i].DestZip)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.Results.AcceptArrival02Result[i].DestName)
+                                    </td>
+                                    <td class="template" hidden>
+                                        @Html.HiddenFor(modelItem => modelItem.Results.AcceptArrival02Result[i].ShipInstructId)
+                                        @Html.HiddenFor(modelItem => modelItem.Results.AcceptArrival02Result[i].IsCheck, new { id = key + "IsCheck" })
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+</div>
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="button" id="btnReturn" class="btn btn-outline-dark btnsize" onclick="Return()">@FormsResource.BTN_RETURN</button>
+        <button type="button" id="btnInput" class="btn btn-dark btnsize _pm" onclick="Input()">@AcceptArrivalResource.BTN_INPUT</button>
+    </div>
+}
+@section LayoutScripts{
+    <script>
+        var ListView = {
+             /**
+             * CONST Object
+             */
+            CONST: {
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                FORM: 'form',
+                METHOD: 'method',
+                ACTION: 'action'
+            },
+
+            /**
+             * SELECTORS Object
+             */
+            SELECTORS: {
+                chkInTable: '#listData input[type=radio][id$=".CheckedValue"]',
+                chkCheckedInTable: '#listData input[type=radio][id$=".CheckedValue"]:checked',
+                btnInput: '#btnInput',
+                form: 'form',
+            },
+
+             /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+            },
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Check box click
+                 */
+                $(ListView.SELECTORS.chkInTable).click(function (evt) {
+                    $(this).prop("checked", true);
+                    evt.stopPropagation();
+                    ListView.setButtonStatus();
+                });
+            },
+             /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function () {
+                // Enable/Disable button Edit
+                if ($(ListView.SELECTORS.chkCheckedInTable).length >= 1) {
+                    if (getUsable_Class() != 1) {
+                        $(ListView.SELECTORS.btnInput).removeAttr('disabled');
+                    }
+                } else {
+                    $(ListView.SELECTORS.btnInput).attr('disabled', 'disabled');
+                }
+            },
+        }
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            ListView.init();
+        });
+
+        function Return() {
+            var $form = $("#frmList");
+            var urlAction = '@Url.Action("IndexReturn", "AcceptArrival", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Input() {
+            var $form = $("#frmList");
+            var urlAction = '@Url.Action("Input", "AcceptArrival", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+
+            var $form = $("#frmList");
+            var urlAction ='@Url.Action("SortList", "AcceptArrival", new { area= "Returns" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function SetIsCheck(id) {
+            $('#listData input[type=hidden][id$=".IsCheck"]').val("false");
+            $('#listData input[type=hidden][id="' + id + '"]').val("true");
+        }
+    </script>
+}

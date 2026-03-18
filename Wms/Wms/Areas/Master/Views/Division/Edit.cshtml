@@ -1,0 +1,62 @@
+﻿@model Wms.Areas.Master.ViewModels.Division.Detail
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Division02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Division", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            <div class="form_content">
+                <dl>
+                    <dt>@Html.DisplayName(DivisionResource.DivisionId)</dt>
+                    <dd>
+                        @Html.Raw(Model.DivisionId)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayName(DivisionResource.DivisionName)</dt>
+                    <dd>
+                        @Html.Raw(Model.DivisionName)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayName(DivisionResource.DivisionMark)</dt>
+                    <dd>
+                        @Html.Raw(Model.DivisionMark)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.DeleteFlag)
+                    </dt>
+                    <dd>
+                        <label class="chklist">
+                            @Html.CheckBoxFor(model => model.DeleteFlag, new { tabindex = "11", @class = "check-box _pm", onclick = "return false;" })
+                            <span class="chk_parts">
+                            </span>
+                        </label>
+                    </dd>
+                </dl>
+            </div>
+
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+        </div>
+    }
+}

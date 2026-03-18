@@ -1,0 +1,30 @@
+﻿@*
+    仕入先検索のモーダルダイアログ
+    TransporterSearchModal.js が必要
+*@
+<div id="transporterSearchModalDialog" style="display:none;">
+    <div class="d_continer main">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        @using (Ajax.BeginForm(
+                            "Index",
+                            "TransporterSearchModal",
+                            new { area = "Master" },
+                            new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "transporterSearchResult", OnComplete = "transporterSearchModal.adjust();enableSubmit();" },
+                new { id = "frmTransporterSearch" }))
+        {
+    <div id="transporterSearchResult">
+        @Html.Action("Index", "TransporterSearchModal", new { area = "Master", ParameterTransporterId = ViewData["ParameterTransporterId"] })
+    </div>
+        }
+        <div class="bottomnav">
+            <div class="btnarea">
+                <button id="transporterClose" type="button" class="btn btn-outline-dark">@FormsResource.Close</button>
+                <button id="transporterSelect" type="button" class="btn btn-dark">@FormsResource.BTN_SELECT</button>
+            </div>
+        </div>
+        @* 検索条件を変えてもチェックした値を保持するためhiddenで保持する *@
+        <div id="checked"></div>
+        @* 確定した店舗を保持する(確定せずに閉じたときに変わらないように) *@
+        <div id="selectedTransporter"></div>
+    </div>
+</div>

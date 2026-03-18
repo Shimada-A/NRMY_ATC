@@ -1,0 +1,30 @@
+﻿@*
+    ブランド検索のモーダルダイアログ
+    SizeSearchModal.js が必要
+*@
+<div id="sizeSearchModalDialog" style="display:none;">
+    <div class="d_continer main">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        @using (Ajax.BeginForm(
+                "Index",
+                "SizeSearchModal",
+                new { area = "Master" },
+                new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "sizeSearchResult", OnComplete = "sizeSearchModal.setCheckBoxCounter();vendorSearchModal.adjust();enableSubmit();" },
+                new { id = "frmSizeSearch" }))
+        {
+        <div id="sizeSearchResult">
+            @Html.Action("Index", "SizeSearchModal", new { area = "Master" })
+        </div>
+        }
+        <div class="bottomnav">
+            <div class="btnarea">
+                <button id="sizeClose" type="button" class="btn btn-outline-dark">@FormsResource.Close</button>
+                <button id="sizeSelect" type="button" class="btn btn-dark">@FormsResource.BTN_SELECT</button>
+            </div>
+        </div>
+        @* 検索条件を変えてもチェックした値を保持するためhiddenで保持する *@
+        <div id="checked"></div>
+        @* 確定した店舗を保持する(確定せずに閉じたときに変わらないように) *@
+        <div id="selectedSize"></div>
+    </div>
+</div>

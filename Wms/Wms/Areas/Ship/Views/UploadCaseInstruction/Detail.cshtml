@@ -1,0 +1,437 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.UploadCaseInstruction;
+@model Wms.Areas.Ship.ViewModels.UploadCaseInstruction.UploadCaseInstructionViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_UploadCaseInstruction;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+@* Head *@
+@using (Html.BeginForm("SearchDetail", "UploadCaseInstruction", FormMethod.Post, new { id = "frmSearch" }))
+{
+    <div id="div_search" class="head">
+        <table class="headtable">
+            <tr>
+                <td class="tdtitle ltWidthS">
+                    @UploadCaseInstructionResource.BatchNo :
+                </td>
+                <td class="ltWidthS">
+                    @Model.SearchConditions.HidBatchNo
+                </td>
+                <td class="ltWidthS">
+                    @Model.SearchConditions.HidShipInstructName
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @UploadCaseInstructionResource.ShipKind :
+                </td>
+                <td>
+                    @Model.SearchConditions.HidShipKindName
+                </td>
+            </tr>
+        </table>
+    </div>
+    <input type="hidden" name="SearchConditions.HidPage" id="hidPage" value="@Model.SearchConditions.HidPage" />
+    @Html.HiddenFor(model => model.SearchConditions.HidCenterId, new { id = "hidCenterId" })
+    @Html.HiddenFor(model => model.SearchConditions.HidShipKind, new { id = "hidShipKind" })
+    @Html.HiddenFor(model => model.SearchConditions.HidBatchNo, new { id = "hidBatchNo" })
+    @Html.HiddenFor(model => model.SearchConditions.HidShipInstructName, new { id = "hidShipInstructName" })
+    @Html.HiddenFor(model => model.SearchConditions.HidStoreQty, new { id = "hidStoreQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidCaseQty, new { id = "hidCaseQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidDetailRowQty, new { id = "hidDetailRowQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidPicJanQty, new { id = "hidPicJanQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidPicInsQty, new { id = "hidPicInsQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidHikiErrQty, new { id = "hidHikiErrQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidShipKindName, new { id = "hidShipKindName" })
+    @Html.HiddenFor(model => model.SearchConditions.Seq, new { id = "hidSeq" })
+    @Html.HiddenFor(model => model.SearchConditions.HidIndexPage, new { id = "hidIndexPage" })
+    @Html.HiddenFor(model => model.SearchConditions.PageSize, new { id = "hidIndexPageSize" })
+    @Html.HiddenFor(model => model.SearchConditions.DetailCaseKey, new { id = "hidDetailCaseKey" })
+    @Html.HiddenFor(model => model.SearchConditions.DetailJanKey, new { id = "hidDetailJanKey" })
+    @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+    @Html.HiddenFor(model => model.SearchConditions.HidSort, new { id = "hidSortPage" })
+    @Html.HiddenFor(model => model.SearchConditions.HidKey, new { id = "hidKeyPage" })
+}
+@if (Model.Results.CaseDetails != null && Model.Results.CaseDetails.Count() > 0 && Model.SearchConditions.HidShipKindName == UploadCaseInstructionResource.KindCase)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.DetailCaseKey, new { Name = "SearchConditions.DetailCaseKey", @id = "ddlDetailCaseKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.CaseDetails.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.CaseDetails.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.CaseDetails, Page => Url.Action("SearchDetail", "UploadCaseInstruction", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.JanDetails != null && Model.Results.JanDetails.Count() > 0 && Model.SearchConditions.HidShipKindName == UploadCaseInstructionResource.KindJan)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.DetailJanKey, new { Name = "SearchConditions.DetailJanKey", @id = "ddlDetailJanKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.JanDetails.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.JanDetails.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.JanDetails, Page => Url.Action("SearchDetail", "UploadCaseInstruction", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.CaseDetails != null && Model.SearchConditions.HidShipKindName == UploadCaseInstructionResource.KindCase)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.CaseDetails.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div class="head">
+                <table class="headtable">
+                    <tr>
+                        <td class="tdtitle ltWidthS">
+                            @UploadCaseInstructionResource.StoreQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidStoreQty
+                        </td>
+                        <td class="tdtitle ltWidthS">
+                            @UploadCaseInstructionResource.CaseQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidCaseQty
+                        </td>
+                        <td class="tdtitle ltWidthS">
+                            @UploadCaseInstructionResource.DetailRowQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidDetailRowQty
+                        </td>
+                        <td class="tdtitle ltWidthS">
+                            @UploadCaseInstructionResource.SkuQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidPicJanQty
+                        </td>
+                        <td class="tdtitle ltWidthS">
+                            @UploadCaseInstructionResource.PlanQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidPicInsQty
+                        </td>
+                        <td class="tdtitle ltWidthS">
+                            @UploadCaseInstructionResource.HikiErrQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidHikiErrQty
+                        </td>
+                </table>
+            </div>
+            <div>
+                <div class="tb_scroll" style="height:59vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.ShipPlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.CaseNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.ShipToStoreName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.PrioritOrder
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.SkuQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.InstructQtyDetail
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cModel in Model.Results.CaseDetails.Select((v, i) => new { v, i }))
+                            {
+                                var key = String.Format("CaseDetails[{0}].", cModel.i);
+                                <tr>
+                                    <td class="align-middle  w_no">
+                                        @Html.DisplayFor(modelItem => cModel.v.LineNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipPlanDate)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.StoreName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.PriorityOrder)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.SkuQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.InstructQty)
+                                    </td>
+                                    <td class="template" hidden>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+@if (Model.Results.JanDetails != null && Model.SearchConditions.HidShipKindName == UploadCaseInstructionResource.KindJan)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.JanDetails.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div class="head">
+                <table class="headtable">
+                    <tr>
+                        <td class="tdtitle ltWidthS">
+                            @UploadCaseInstructionResource.StoreQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidStoreQty
+                        </td>
+                        <td class="tdtitle ltWidthS">
+                            @UploadCaseInstructionResource.DetailRowQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidDetailRowQty
+                        </td>
+                        <td class="tdtitle ltWidthM">
+                            @UploadCaseInstructionResource.NukiJanQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidPicJanQty
+                        </td>
+                        <td class="tdtitle ltWidthM">
+                            @UploadCaseInstructionResource.NukiInstructQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidPicInsQty
+                        </td>
+                        <td class="tdtitle ltWidthS">
+                            @UploadCaseInstructionResource.HikiErrQty :
+                        </td>
+                        <td class="ltWidthS">
+                            @Model.SearchConditions.HidHikiErrQty
+                        </td>
+                </table>
+            </div>
+            <div>
+                <div class="tb_scroll" style="height:59vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.ShipPlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.ItemIdName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.Color
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.Size
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.JanDetail
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.ShipToStoreName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.PrioritOrder
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.PlanQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.HikiQty
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cModel in Model.Results.JanDetails.Select((v, i) => new { v, i }))
+                            {
+                                var key = String.Format("JanDetails[{0}].", cModel.i);
+                                <tr>
+                                    <td class="align-middle  w_no">
+                                        @Html.DisplayFor(modelItem => cModel.v.LineNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipPlanDate)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.StoreName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.PriorityOrder)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.InstructQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="button" id="btnReturn" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+    </div>
+}
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@Html.Partial("_FileUploadModal")
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+    <script>
+    Dropzone.autoDiscover = false;
+        $(document).ready(function () {
+            $("#btnSearchMagnifier").addClass('dp-none');
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var $form = $("#frmSearch");
+                var urlAction ='@Url.Action("SearchDetail", "UploadCaseInstruction", new { area= "Ship" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                });
+            });
+        });
+
+        // Sort
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            if ($("#hidShipKindName").val() == "@UploadCaseInstructionResource.KindCase") {
+                $("#hidDetailCaseKey").val($("#ddlDetailCaseKey").val());
+            }else {
+                $("#hidDetailJanKey").val($("#ddlDetailJanKey").val());
+            }
+            $("#hidSearchType").val("SortPage");
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("SearchDetail", "UploadCaseInstruction", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+        $('#btnReturn').on("click", function () {
+            var urlAction = '@Url.Action("Return", "UploadCaseInstruction", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $("#hidSearchType").val("Search");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+    </script>
+}

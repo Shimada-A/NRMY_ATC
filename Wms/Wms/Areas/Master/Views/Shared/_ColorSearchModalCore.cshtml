@@ -1,0 +1,53 @@
+﻿@* ブランド検索の検索結果(Ajax.BeginFormで検索結果だけ差し替えるため部分ビューにする) *@
+@model IList<Wms.Areas.Master.ViewModels.ColorSearchModal.ColorViewModel>
+
+<h1>@Wms.Areas.Master.Resources.SharedResource.ColorTitle</h1>
+<div class="searcharea">
+</div>
+<div class="Container">
+    <div>
+        <div class="tb_scroll">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="bg-grey w_checkbox"></th>
+                        <th class="bg-grey">
+                            No
+                        </th>
+                        <th class="bg-grey">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Color.ItemColorId)
+                        </th>
+                        <th class="bg-grey">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Color.ItemColorName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count(); i++)
+                        {
+                    <tr>
+                        <td class="chk_cell">
+                            <label>
+                                @Html.RadioButton("SelectIndex", i.ToString(), new { @id = "ColorSelectIndex" + i.ToString(), @class = "radio_input" })
+                                <span class="radio_parts"></span>
+                            </label>
+                        </td>
+                        <td class="text-right w_no">
+                            @((i + 1).ToString())
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model[i].Color.ItemColorId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model[i].Color.ItemColorName)
+                        </td>
+                        @Html.HiddenFor(model => model[i].Color.ItemColorId)
+                        @Html.HiddenFor(model => model[i].Color.ItemColorName)
+                    </tr>
+                        }
+                    <tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

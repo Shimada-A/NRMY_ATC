@@ -1,0 +1,24 @@
+﻿@model Wms.Areas.Styleguide.Models.RadioButton
+@{
+    ViewBag.Title = "RadioButton";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>RadioButton</h1>
+        <p class="pg_caption">RadioButtonの使い方</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content of">
+        <h3>EnumからRadioButtonListを作る(@@Html.EnumRadioButtonListFor)</h3>
+        <div class="mtop20">
+            @Html.EnumRadioButtonListFor(m => m.SampleRadio2)
+        </div>
+        <div class="codearea">
+            <p>RadioButtonを使用するときは必ずEnumを作成する</p>
+        </div>
+    </div>
+</div>

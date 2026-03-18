@@ -1,0 +1,666 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BoxNo" xml:space="preserve">
+    <value>ケースNo</value>
+  </data>
+  <data name="BoxNoS" xml:space="preserve">
+    <value>ケースNo：</value>
+  </data>
+  <data name="CenterIdS" xml:space="preserve">
+    <value>センター：</value>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>検品が必要な出荷先です。検品されていません。</value>
+  </data>
+  <data name="ItemSizeId" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="ItemSizeIdS" xml:space="preserve">
+    <value>サイズ：</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>新規　　　　　</value>
+  </data>
+  <data name="PrnClassS" xml:space="preserve">
+    <value>発行区分：</value>
+  </data>
+  <data name="ReDeliPrn" xml:space="preserve">
+    <value>送り状再発行</value>
+  </data>
+  <data name="RELEASES" xml:space="preserve">
+    <value>発行</value>
+  </data>
+  <data name="ReNouhinPrn" xml:space="preserve">
+    <value>納品書再発行　　</value>
+  </data>
+  <data name="AllUnit" xml:space="preserve">
+    <value>個口総数</value>
+  </data>
+  <data name="ArriveRequestDate" xml:space="preserve">
+    <value>配達指定日</value>
+  </data>
+  <data name="ArriveRequestDateDesp" xml:space="preserve">
+    <value>指定日配達表示</value>
+  </data>
+  <data name="ArriveRequestTime" xml:space="preserve">
+    <value>時間帯指定コード</value>
+  </data>
+  <data name="ArriveRequestTimeName" xml:space="preserve">
+    <value>時間帯指定</value>
+  </data>
+  <data name="Article" xml:space="preserve">
+    <value>記事</value>
+  </data>
+  <data name="BinType" xml:space="preserve">
+    <value>便種</value>
+  </data>
+  <data name="Center" xml:space="preserve">
+    <value>センター</value>
+  </data>
+  <data name="ClaimAmount" xml:space="preserve">
+    <value>代引金額</value>
+  </data>
+  <data name="ClassCd" xml:space="preserve">
+    <value>区分コード</value>
+  </data>
+  <data name="ClientCd" xml:space="preserve">
+    <value>お客様コード</value>
+  </data>
+  <data name="ColorId" xml:space="preserve">
+    <value>カラーID</value>
+  </data>
+  <data name="ColorName" xml:space="preserve">
+    <value>カラー名称</value>
+  </data>
+  <data name="ConsignorAddress1" xml:space="preserve">
+    <value>依頼主住所１</value>
+  </data>
+  <data name="ConsignorAddress2" xml:space="preserve">
+    <value>依頼主住所２</value>
+  </data>
+  <data name="ConsignorFax" xml:space="preserve">
+    <value>荷送人Fax</value>
+  </data>
+  <data name="ConsignorName" xml:space="preserve">
+    <value>ご依頼主名1</value>
+  </data>
+  <data name="ConsignorTel" xml:space="preserve">
+    <value>ご依頼主電話番号</value>
+  </data>
+  <data name="ConsignorZip" xml:space="preserve">
+    <value>荷送人郵便番号</value>
+  </data>
+  <data name="DaibikiFlag" xml:space="preserve">
+    <value>送り状種類(印刷判定用)</value>
+  </data>
+  <data name="DaikoDesp" xml:space="preserve">
+    <value>集金代行表示</value>
+  </data>
+  <data name="DeliNo" xml:space="preserve">
+    <value>お問い合せ送り状NO</value>
+  </data>
+  <data name="DeliNo2" xml:space="preserve">
+    <value>送り状番号2</value>
+  </data>
+  <data name="DeliShiwakeCd" xml:space="preserve">
+    <value>仕分コード</value>
+  </data>
+  <data name="DeliUseDate" xml:space="preserve">
+    <value>送り状使用期限</value>
+  </data>
+  <data name="DeliVeryCompanyTel" xml:space="preserve">
+    <value>問合せ先電話番号</value>
+  </data>
+  <data name="DespFlag" xml:space="preserve">
+    <value>印字制御フラグ</value>
+  </data>
+  <data name="DestZip" xml:space="preserve">
+    <value>お届け先郵便番号</value>
+  </data>
+  <data name="DestAddress1" xml:space="preserve">
+    <value>お届け先住所１</value>
+  </data>
+  <data name="DestAddress2" xml:space="preserve">
+    <value>お届け先住所２</value>
+  </data>
+  <data name="DestAddress3" xml:space="preserve">
+    <value>お届け先住所３</value>
+  </data>
+  <data name="DestBumon1" xml:space="preserve">
+    <value>お届け先会社</value>
+  </data>
+  <data name="DestBumon2" xml:space="preserve">
+    <value>お届け先部署</value>
+  </data>
+  <data name="DestDirectName" xml:space="preserve">
+    <value>行先方面名称</value>
+  </data>
+  <data name="DestName" xml:space="preserve">
+    <value>お届け先名</value>
+  </data>
+  <data name="DestName2" xml:space="preserve">
+    <value>届先名称2</value>
+  </data>
+  <data name="DestName3" xml:space="preserve">
+    <value>届先名称3</value>
+  </data>
+  <data name="DestTel" xml:space="preserve">
+    <value>お届け先電話番号</value>
+  </data>
+  <data name="Handling1" xml:space="preserve">
+    <value>荷扱い1</value>
+  </data>
+  <data name="Handling2" xml:space="preserve">
+    <value>荷扱い2</value>
+  </data>
+  <data name="HandlingPrecautionsDesp" xml:space="preserve">
+    <value>取扱注意表示</value>
+  </data>
+  <data name="ItemId" xml:space="preserve">
+    <value>品番</value>
+  </data>
+  <data name="ItemName" xml:space="preserve">
+    <value>品名</value>
+  </data>
+  <data name="ItemName2" xml:space="preserve">
+    <value>品名2</value>
+  </data>
+  <data name="JAN" xml:space="preserve">
+    <value>JAN</value>
+  </data>
+  <data name="LocalCd" xml:space="preserve">
+    <value>ローカルコード</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NouhinDate" xml:space="preserve">
+    <value>納品日(日)</value>
+  </data>
+  <data name="NouhinMonth" xml:space="preserve">
+    <value>納品日(月)</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>枚数</value>
+  </data>
+  <data name="OfficeCd" xml:space="preserve">
+    <value>着営業所コード</value>
+  </data>
+  <data name="PrintDate" xml:space="preserve">
+    <value>発送日</value>
+  </data>
+  <data name="QueryNo" xml:space="preserve">
+    <value>お問い合わせ</value>
+  </data>
+  <data name="ResultQty" xml:space="preserve">
+    <value>実績数</value>
+  </data>
+  <data name="SaleOfficeFax" xml:space="preserve">
+    <value>集荷FAX番号</value>
+  </data>
+  <data name="SaleOfficeName" xml:space="preserve">
+    <value>集荷店名</value>
+  </data>
+  <data name="SaleOfficeTel" xml:space="preserve">
+    <value>集荷電話番号</value>
+  </data>
+  <data name="ShipDate" xml:space="preserve">
+    <value>出荷日</value>
+  </data>
+  <data name="ShipStoreCd" xml:space="preserve">
+    <value>発店コード</value>
+  </data>
+  <data name="ShipToStoreId" xml:space="preserve">
+    <value>出荷先店舗ID</value>
+  </data>
+  <data name="SizeId" xml:space="preserve">
+    <value>サイズID</value>
+  </data>
+  <data name="SizeName" xml:space="preserve">
+    <value>サイズ名称</value>
+  </data>
+  <data name="SpecifyDesp" xml:space="preserve">
+    <value>決算指定表示</value>
+  </data>
+  <data name="StoreName" xml:space="preserve">
+    <value>店舗名称</value>
+  </data>
+  <data name="Tanka" xml:space="preserve">
+    <value>単価</value>
+  </data>
+  <data name="TaxAmount" xml:space="preserve">
+    <value>消費税等</value>
+  </data>
+  <data name="TaxAmountDesp" xml:space="preserve">
+    <value>印字税表示</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>個数</value>
+  </data>
+  <data name="UnitBarcode" xml:space="preserve">
+    <value>個口バーコード</value>
+  </data>
+  <data name="Setting" xml:space="preserve">
+    <value>納品書設定</value>
+  </data>
+  <data name="YamatoMsg" xml:space="preserve">
+    <value>※ヤマトの場合はサイズをスキャンしてください</value>
+  </data>
+  <data name="ErrorAllCancel" xml:space="preserve">
+    <value>スキャンされたケースは全数キャンセル指示されています</value>
+  </data>
+  <data name="ErrorBoxSize" xml:space="preserve">
+    <value>ヤマト箱サイズが不正です</value>
+  </data>
+  <data name="ErrorCancel" xml:space="preserve">
+    <value>スキャンされたケースにはキャンセル指示が含まれています</value>
+  </data>
+  <data name="ErrorNotPic" xml:space="preserve">
+    <value>検品が必要な出荷先です。未検品もしくは検品中です。</value>
+  </data>
+  <data name="ErrorOutPut" xml:space="preserve">
+    <value>納品書・送り状はすでに発行されています</value>
+  </data>
+  <data name="ErrorReDeli" xml:space="preserve">
+    <value>送り状は一度も発行されていません</value>
+  </data>
+  <data name="ErrorReNouhin" xml:space="preserve">
+    <value>納品書は一度も発行されていません</value>
+  </data>
+  <data name="ErrorTransporter" xml:space="preserve">
+    <value>送り状発行不要の配送業者です</value>
+  </data>
+  <data name="SettingNaniwa" xml:space="preserve">
+    <value>浪速設定</value>
+  </data>
+  <data name="SettingSagawa" xml:space="preserve">
+    <value>佐川設定</value>
+  </data>
+  <data name="SettingTounou" xml:space="preserve">
+    <value>東納印刷</value>
+  </data>
+  <data name="SettingYamato" xml:space="preserve">
+    <value>ヤマト設定</value>
+  </data>
+  <data name="SettingNekoposu" xml:space="preserve">
+    <value>ネコポス設定</value>
+  </data>
+  <data name="ErrNotDeliNo" xml:space="preserve">
+    <value>PC画面で実績入力されています。発行できません。</value>
+  </data>
+  <data name="ErrorNotExist" xml:space="preserve">
+    <value>該当ケースNoもしくは送り状番号は存在しません</value>
+  </data>
+  <data name="ErrorPicComfirm" xml:space="preserve">
+    <value>検品不足確認中です</value>
+  </data>
+  <data name="YamatoMsg2" xml:space="preserve">
+    <value>60ｻｲｽﾞ:0101、80ｻｲｽﾞ:0102、100ｻｲｽﾞ:0103、120ｻｲｽﾞ:0104、140ｻｲｽﾞ:0105、160ｻｲｽﾞ:0106</value>
+  </data>
+  <data name="DeliNoBarcodeNihuda" xml:space="preserve">
+    <value>荷札送り状バーコード</value>
+  </data>
+  <data name="DeliNoS" xml:space="preserve">
+    <value>送り状番号：</value>
+  </data>
+  <data name="ErrNotPrnNouhin" xml:space="preserve">
+    <value>納品書発行不要の出荷先です</value>
+  </data>
+  <data name="ErrNotPrnNouhinCom" xml:space="preserve">
+    <value>納品書発行不要の出荷先です。新規発行アクションしてください。</value>
+  </data>
+  <data name="PrintMassage" xml:space="preserve">
+    <value>納品書、送り状はどちらも発行しない出荷先です</value>
+  </data>
+  <data name="ChkOldData" xml:space="preserve">
+    <value>過去分含む</value>
+  </data>
+  <data name="ErrorStoreInv" xml:space="preserve">
+    <value>該当店舗は棚卸中です。</value>
+  </data>
+  <data name="SettingOkaiage" xml:space="preserve">
+    <value>ecb納品書設定</value>
+  </data>
+  <data name="SettingRakuten" xml:space="preserve">
+    <value>楽天納品書設定</value>
+  </data>
+  <data name="SettingWaKsnap" xml:space="preserve">
+    <value>WaKsnap納品書設定</value>
+  </data>
+  <data name="BatchName" xml:space="preserve">
+    <value>バッチ名</value>
+  </data>
+  <data name="CenterName" xml:space="preserve">
+    <value>出荷場所</value>
+  </data>
+  <data name="ColorAmount" xml:space="preserve">
+    <value>金額</value>
+  </data>
+  <data name="ColorResultQty" xml:space="preserve">
+    <value>数量計</value>
+  </data>
+  <data name="CompanyAddress" xml:space="preserve">
+    <value>会社住所</value>
+  </data>
+  <data name="CompanyCheckingAccount" xml:space="preserve">
+    <value>会社口座番号</value>
+  </data>
+  <data name="CompanyDivisionName" xml:space="preserve">
+    <value>会社部署名</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>会社名</value>
+  </data>
+  <data name="CompanyTelFax" xml:space="preserve">
+    <value>会社連絡先</value>
+  </data>
+  <data name="DeliDate" xml:space="preserve">
+    <value>伝票日付</value>
+  </data>
+  <data name="DeliveryNote" xml:space="preserve">
+    <value>備考</value>
+  </data>
+  <data name="ItemColorId" xml:space="preserve">
+    <value>カラー</value>
+  </data>
+  <data name="ItemColorName" xml:space="preserve">
+    <value>カラー名</value>
+  </data>
+  <data name="ItemSizeName" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="KakuDate" xml:space="preserve">
+    <value>出荷日付</value>
+  </data>
+  <data name="KakuUserName" xml:space="preserve">
+    <value>担当者</value>
+  </data>
+  <data name="NormalSellingPrice" xml:space="preserve">
+    <value>上代</value>
+  </data>
+  <data name="NouhinNo" xml:space="preserve">
+    <value>伝票番号</value>
+  </data>
+  <data name="OffRate" xml:space="preserve">
+    <value>オフ率</value>
+  </data>
+  <data name="SaleBaseClassName" xml:space="preserve">
+    <value>出荷種別</value>
+  </data>
+  <data name="SalesClassName" xml:space="preserve">
+    <value>売上区分</value>
+  </data>
+  <data name="ShipToAddress1" xml:space="preserve">
+    <value>出荷先住所１</value>
+  </data>
+  <data name="ShipToAddress2" xml:space="preserve">
+    <value>出荷先住所２</value>
+  </data>
+  <data name="ShipToAddress3" xml:space="preserve">
+    <value>出荷先住所３</value>
+  </data>
+  <data name="ShipToStoreName" xml:space="preserve">
+    <value>出荷先名</value>
+  </data>
+  <data name="ShipToZip" xml:space="preserve">
+    <value>出荷先郵便番号</value>
+  </data>
+  <data name="SizeResultQty" xml:space="preserve">
+    <value>数量</value>
+  </data>
+  <data name="TotalAmount" xml:space="preserve">
+    <value>金額合計</value>
+  </data>
+  <data name="TotalResultQty" xml:space="preserve">
+    <value>数量合計</value>
+  </data>
+  <data name="ConsignorAddress3" xml:space="preserve">
+    <value>依頼主住所３</value>
+  </data>
+  <data name="ConsignorAddress4" xml:space="preserve">
+    <value>依頼主住所４</value>
+  </data>
+  <data name="ConsignorCityName" xml:space="preserve">
+    <value>依頼主市区町村</value>
+  </data>
+  <data name="ConsignorPrefName" xml:space="preserve">
+    <value>依頼主都道府県</value>
+  </data>
+  <data name="DestAddress4" xml:space="preserve">
+    <value>お届け先住所４</value>
+  </data>
+  <data name="DestCityName" xml:space="preserve">
+    <value>お届け先市区町村</value>
+  </data>
+  <data name="DestPrefName" xml:space="preserve">
+    <value>お届け先都道府県</value>
+  </data>
+  <data name="GoodsName1" xml:space="preserve">
+    <value>品名１</value>
+  </data>
+  <data name="GoodsName2" xml:space="preserve">
+    <value>品名２</value>
+  </data>
+  <data name="GoodsName3" xml:space="preserve">
+    <value>品名３</value>
+  </data>
+  <data name="GoodsName4" xml:space="preserve">
+    <value>品名４</value>
+  </data>
+  <data name="GoodsName5" xml:space="preserve">
+    <value>品名５</value>
+  </data>
+  <data name="InsuranceAmount" xml:space="preserve">
+    <value>保険金額</value>
+  </data>
+  <data name="PackingType" xml:space="preserve">
+    <value>荷姿</value>
+  </data>
+  <data name="PriintCopies" xml:space="preserve">
+    <value>印刷枚数</value>
+  </data>
+  <data name="SystemName" xml:space="preserve">
+    <value>システム名</value>
+  </data>
+  <data name="PrintInvoiceMessage" xml:space="preserve">
+    <value>続いて送り状を印刷します</value>
+  </data>
+  <data name="ConsignorName2" xml:space="preserve">
+    <value>ご依頼主名2</value>
+  </data>
+  <data name="ErrorClientCdSagawa" xml:space="preserve">
+    <value>配送業者顧客コードが未設定です。センター別店舗別配送業者マスタから設定してください。</value>
+  </data>
+  <data name="PrintCenterIdS" xml:space="preserve">
+    <value>発送元センター：</value>
+  </data>
+  <data name="SagawaComment" xml:space="preserve">
+    <value>※各配送業者の送り状の出荷元には「発送元センター」の情報が印字されます</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>タイトル</value>
+  </data>
+  <data name="AltSagawaDoneEdi" xml:space="preserve">
+    <value>配送業者実績データ連携済みです。発行時のユーザーの拠点情報で再発行します。よろしいですか？</value>
+  </data>
+  <data name="AltSagawaNotYetEdi" xml:space="preserve">
+    <value>発行時のユーザーの拠点情報と違うため、送り状NO・配送業者顧客コードが変更されます。よろしいですか？</value>
+  </data>
+  <data name="TransactionForm" xml:space="preserve">
+    <value>取引形態</value>
+  </data>
+  <data name="SlipCount" xml:space="preserve">
+    <value>伝票枚数</value>
+  </data>
+  <data name="TagClass" xml:space="preserve">
+    <value>値付区分</value>
+  </data>
+  <data name="AssortMessage1" xml:space="preserve">
+    <value>店舗出荷分（残{0} / 総{1}）[ITEM納品伝票No：{2} （{3}）]</value>
+  </data>
+  <data name="AssortMessage2" xml:space="preserve">
+    <value>店舗出荷分はすべてスキャンしました [ITEM納品伝票No：{0} （{1}）]</value>
+  </data>
+  <data name="AssortMessage3" xml:space="preserve">
+    <value>　※出荷保留の店舗です。納品書、送り状は発行されません。</value>
+  </data>
+  <data name="ChkOtherListScan" xml:space="preserve">
+    <value>他のITEM納品書番号のスキャンを許可する(海外アソートのみ)</value>
+  </data>
+  <data name="ScanAssortViewTitle" xml:space="preserve">
+    <value>＜海外アソートスキャン中＞</value>
+  </data>
+  <data name="ComfirmDialogTitle" xml:space="preserve">
+    <value>入荷伝票日付を確認してください</value>
+  </data>
+  <data name="ComfirmDialogInvoiceNoS" xml:space="preserve">
+    <value>ITEM納品伝票番号：</value>
+  </data>
+  <data name="ComfirmDialogSlipDateS" xml:space="preserve">
+    <value>入荷伝票日付：</value>
+  </data>
+  <data name="ComfirmDialogMessage1" xml:space="preserve">
+    <value>※即出荷時は本日が出荷伝票日付となります</value>
+  </data>
+  <data name="ComfirmDialogMessage2" xml:space="preserve">
+    <value>※未来日を指定した場合は出荷保留となり、納品書送り状は発行されません</value>
+  </data>
+  <data name="StoreListTitle" xml:space="preserve">
+    <value>＜出荷店舗残一覧＞</value>
+  </data>
+  <data name="ErrorNotShipStore" xml:space="preserve">
+    <value>店舗出荷分のケースではありません</value>
+  </data>
+  <data name="ErrorOtherInvoiceNo" xml:space="preserve">
+    <value>他のITEM納品書番号のケースです</value>
+  </data>
+  <data name="SlipDateRequired" xml:space="preserve">
+    <value>伝票日付は必須項目です</value>
+  </data>
+  <data name="SlipDateMessage" xml:space="preserve">
+    <value>伝票日付は最終月次締め年月以前の日付は指定できません</value>
+  </data>
+  <data name="ErrorNoArrivePlan" xml:space="preserve">
+    <value>入荷予定データが紐づいていません</value>
+  </data>
+  <data name="ErrorExistsArriveResult" xml:space="preserve">
+    <value>既に入荷実績が登録済みです</value>
+  </data>
+</root>

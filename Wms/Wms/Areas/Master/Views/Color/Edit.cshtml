@@ -1,0 +1,68 @@
+﻿@model Wms.Areas.Master.ViewModels.Color.Detail
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Colors02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Color", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            <div class="form_content">
+                <dl>
+                    <dt>@Html.DisplayName(ColorResource.ItemColorId)</dt>
+                    <dd>
+                        @Html.Raw(Model.ItemColorId)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayName(ColorResource.ItemColorName)</dt>
+                    <dd>
+                        @Html.Raw(Model.ItemColorName)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayName(ColorResource.ItemColorCode)</dt>
+                    <dd>
+                        @Html.Raw(Model.ItemColorCode)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayName(ColorResource.ItemColorShortName)</dt>
+                    <dd>
+                        @Html.Raw(Model.ItemColorShortName)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.DeleteFlag)
+                    </dt>
+                    <dd>
+                        <label class="chklist">
+                            @Html.CheckBoxFor(model => model.DeleteFlag, new { tabindex = "11", @class = "check-box _pm", onclick = "return false;" })
+                            <span class="chk_parts">
+                            </span>
+                        </label>
+                    </dd>
+                </dl>
+            </div>
+
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+        </div>
+    }
+}

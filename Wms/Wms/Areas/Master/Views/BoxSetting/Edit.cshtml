@@ -1,0 +1,437 @@
+﻿@model Wms.Areas.Master.ViewModels.BoxSetting.BoxSettingList
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_BoxSetting02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "BoxSetting", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ShipperId)
+            @Html.HiddenFor(model => model.BoxSettingsId)
+            @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+            <div class="form_content">
+                @if (Model.BoxSettingsId == 0)
+                {
+                    <dl class="bluecolor">
+                        @BoxSettingResource.Comment
+                    </dl>
+                    <dl>
+                        <dt>@Html.DisplayName(BoxSettingResource.Category)</dt>
+                        <dd>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.DropDownListFor(
+                                        model => model.CategoryId1,
+                                        (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                        CommonResource.None, new { id = "ddlCategoryId1", tabindex = "2", onchange = "CategoryChange(1);", @class = "_pm" })
+                                </div>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CategoryId1, "", new { id = "ddlCategoryId1Msg" })
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.DropDownListFor(
+                                        model => model.CategoryId2,
+                                        (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                        CommonResource.None, new { id = "ddlCategoryId2", tabindex = "3", disabled = "disabled", onchange = "CategoryChange(2)", @class = "_pm" })
+                                </div>
+                            </div>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.DropDownListFor(
+                                        model => model.CategoryId3,
+                                        (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                        CommonResource.None, new { id = "ddlCategoryId3", tabindex = "4", disabled = "disabled", onchange = "CategoryChange(3)", @class = "_pm" })
+                                </div>
+                            </div>
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.DropDownListFor(
+                                        model => model.CategoryId4,
+                                        (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                        CommonResource.None, new { id = "ddlCategoryId4", tabindex = "5", disabled = "disabled", @class = "_pm" })
+                                </div>
+                            </div>
+                        </dd>
+                    </dl>
+                }
+                else
+                {
+                    <dl>
+                        <dt>@Html.DisplayName(BoxSettingResource.CategoryId1)</dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.CategoryName1)
+                            @Html.HiddenFor(model => model.CategoryId1)
+                            @Html.HiddenFor(model => model.CategoryName1)
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>@Html.DisplayName(BoxSettingResource.CategoryId2)</dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.CategoryName2)
+                            @Html.HiddenFor(model => model.CategoryId2)
+                            @Html.HiddenFor(model => model.CategoryName2)
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>@Html.DisplayName(BoxSettingResource.CategoryId3)</dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.CategoryName3)
+                            @Html.HiddenFor(model => model.CategoryId3)
+                            @Html.HiddenFor(model => model.CategoryName3)
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>@Html.DisplayName(BoxSettingResource.CategoryId4)</dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.CategoryName4)
+                            @Html.HiddenFor(model => model.CategoryId4)
+                            @Html.HiddenFor(model => model.CategoryName4)
+                        </dd>
+                    </dl>
+                }
+                <dl>
+                    <dt>@Html.DisplayName(BoxSettingResource.ItemId)</dt>
+                    <dd>
+                        @if (Model.BoxSettingsId == 0)
+                        {
+                            @Html.EditorFor(model => model.ItemId, new { htmlAttributes = new { id = "ItemId", tabindex = "6", @placeholder = "", @class = "_pm" } })
+                            @Html.ValidationMessageFor(model => model.ItemId, "", new { id = "ItemIdMsg" })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.ItemName)
+                            @Html.HiddenFor(model => model.ItemId)
+                            @Html.HiddenFor(model => model.ItemName)
+                        }
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayNameFor(model => model.ThresholdClass)</dt>
+                    <dd>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.ThresholdClass, new { @id = "ThresholdClass", tabindex = "7", onchange = "ThresholdClassChange()", @class = "_pm" })
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ThresholdClass, "", new { id = "ThresholdClassMsg", })
+                    </dd>
+                </dl>
+                <dl id="dlThresholdSku">
+                    <dt>
+                        @Html.DisplayName(BoxSettingResource.ThresholdSku)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.ThresholdSku, new { htmlAttributes = new { @class = "w_10_normal _pm", id = "ThresholdSku", tabindex = "8", @placeholder = "" } })
+                        @Html.ValidationMessageFor(model => model.ThresholdSku, "", new { id = "ThresholdSkuMsg", })
+                    </dd>
+                </dl>
+                <dl id="dlThresholdRate">
+                    <dt>
+                        @Html.DisplayName(BoxSettingResource.ThresholdRate)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.ThresholdRate, new { htmlAttributes = new { @class = "w_10_normal _pm", id = "ThresholdRate", tabindex = "9", @placeholder = "" } })
+                        @Html.ValidationMessageFor(model => model.ThresholdRate, "", new { id = "ThresholdRateMsg", })
+                    </dd>
+                </dl>
+            </div>
+
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @if (Model.SearchFlag)
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "BoxSetting", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            else
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "BoxSetting", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+
+            @*@Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "BoxSetting", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })*@
+            @*<button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>*@
+            @if (Model.BoxSettingsId == 0)
+            {
+                <button id="btnCreateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm" hidden>@FormsResource.BTN_CREATE</button>
+                <button id="btnCreate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_CREATE</button>
+            }
+            else
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+            }
+        </div>
+    }
+    if (Model.BoxSettingsId == 0)
+    {
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+    }
+    else
+    {
+        @Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+    }
+
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //BoxSettingMasterEdit
+        var BoxSettingMasterEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(BoxSettingMasterEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(BoxSettingMasterEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(BoxSettingMasterEdit.SELECTORS.hdUpdateError).val() === BoxSettingMasterEdit.CONST.STR_TRUE) {
+                    if ($(BoxSettingMasterEdit.SELECTORS.hdUpdateError).attr(BoxSettingMasterEdit.CONST.ATTR_ERROR_CODE) === BoxSettingMasterEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(BoxSettingMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(BoxSettingMasterEdit.SELECTORS.exclusiveUpdateDialog, BoxSettingMasterEdit.GLOBAL.titleInformation, BoxSettingMasterEdit.GLOBAL.msgExclusiveUpdate);
+                        $(BoxSettingMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(BoxSettingMasterEdit.SELECTORS.hdUpdateError).attr(BoxSettingMasterEdit.CONST.ATTR_ERROR_CODE) === BoxSettingMasterEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(BoxSettingMasterEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(BoxSettingMasterEdit.SELECTORS.overWriteRecordDialog, BoxSettingMasterEdit.GLOBAL.titleInformation, (BoxSettingMasterEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(BoxSettingMasterEdit.SELECTORS.AreaId).val())));
+                        $(BoxSettingMasterEdit.SELECTORS.btnSubmitOverWriteDialog).attr(BoxSettingMasterEdit.SELECTORS.form, BoxSettingMasterEdit.SELECTORS.frmUpdate).attr(BoxSettingMasterEdit.CONST.FORM_METHOD, BoxSettingMasterEdit.CONST.POST).attr(BoxSettingMasterEdit.CONST.FORM_ACTION, '@Url.Action("Update", "BoxSetting", new { area = "Master" })').attr(BoxSettingMasterEdit.SELECTORS.form, BoxSettingMasterEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+        function CheckModel() {
+            var errCnt = 0;
+            if (@Model.BoxSettingsId == 0) {
+                if ($("#ddlCategoryId1").val() == '' && $("#ItemId").val() == '') {
+                    $("#ddlCategoryId1Msg").html('<span class="">' + '@MessageResource.CategoryItemRequird' + '</span>');
+                    $("#ddlCategoryId1Msg").addClass("field-validation-error");
+                    $("#ddlCategoryId1").addClass("input-validation-error");
+                    $("#ItemIdMsg").html('<span class="">' + '@MessageResource.CategoryItemRequird' + '</span>');
+                    $("#ItemIdMsg").addClass("field-validation-error");
+                    $("#ItemId").addClass("input-validation-error");
+                    errCnt = errCnt + 1;
+                } else {
+                    $("#ddlCategoryId1Msg").html('');
+                    $("#ddlCategoryId1Msg").removeClass("field-validation-error");
+                    $("#ddlCategoryId1").removeClass("input-validation-error");
+                    $("#ItemIdMsg").html('');
+                    $("#ItemIdMsg").removeClass("field-validation-error");
+                    $("#ItemId").removeClass("input-validation-error");
+                }
+            }
+                if ($("#ThresholdClass").val() == '1') {
+                    if ($("#Threshold").val() < 0 || $("#Threshold").val() > 100) {
+                        $("#ThresholdMsg").html('<span class="">'+'@MessageResource.ThresholdRateRange'+'</span>');
+                        $("#ThresholdMsg").addClass("field-validation-error");
+                        $("#Threshold").addClass("input-validation-error");
+                        errCnt = errCnt + 1;
+                    } else {
+                        $("#ThresholdMsg").html('');
+                        $("#ThresholdMsg").removeClass("field-validation-error");
+                        $("#Threshold").removeClass("input-validation-error");
+                    }
+                }
+                return errCnt > 0 ? false : true;
+            };
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate')) || !CheckModel()) {
+                return;
+            }
+
+            $('#btnUpdateHidden').click();
+        });
+        /* 確認メッセージの設定 */
+        $('#btnCreate').on("click", function () {
+            if (!validateForm($('#frmUpdate')) || !CheckModel()) {
+                return;
+            }
+
+            $('#btnCreateHidden').click();
+        });
+        $('#submitCreate').on("click", function () {
+            var urlAction = '@Url.Action("Create", "BoxSetting", new { area = "Master" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        /**
+         * Register event click for buttons
+         */
+        $(document).ready(function () {
+            BoxSettingMasterEdit.init();
+            $("#ThresholdRate").val('@decimal.Round(decimal.Parse((Model.ThresholdRate==null?0:Model.ThresholdRate).ToString()),1)');
+            if (@Model.BoxSettingsId == 0) {
+                            if ($("#ddlCategoryId1").val() != '') {
+                    $("#ddlCategoryId2").removeAttr('disabled');
+                    }
+                    if ($("#ddlCategoryId2").val() != '') {
+                    $("#ddlCategoryId3").removeAttr('disabled');
+                    }
+                    if ($("#ddlCategoryId3").val() != '') {
+                    $("#ddlCategoryId4").removeAttr('disabled');
+                    }
+                }
+                ThresholdClassChange();
+            });
+        function ThresholdClassChange() {
+            if ($("#ThresholdClass").val() == '1') {
+                $("#dlThresholdSku").hide();
+                $("#dlThresholdRate").show();
+            } else if ($("#ThresholdClass").val() == '2') {
+                $("#dlThresholdSku").show();
+                $("#dlThresholdRate").hide();
+            } else {
+                $("#dlThresholdSku").hide();
+                $("#dlThresholdRate").hide();
+            }
+        }
+        function GetCategoryList(id) {
+                    var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            id: id + 1,
+                            category1: $("#ddlCategoryId1").val(),
+                            category2: $("#ddlCategoryId2").val(),
+                            category3: $("#ddlCategoryId3").val()
+                        },
+                        success: function (data) {
+                            $("#ddlCategoryId" + (id + 1)).html("");
+                            $("#ddlCategoryId" + (id + 1)).html(data.html);
+                        }
+                    });
+        }
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>Stepper</h1>
+        <p class="pg_caption">StepperのStyleguide</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content of">
+        <h3>Stepper</h3>
+        <div class="mtop20">
+            @Html.Partial("_Stepper", 0)
+        </div>
+        <div class="mtop20">
+            @Html.Partial("_Stepper", 1)
+        </div>
+        <div class="mtop20">
+            @Html.Partial("_Stepper", 2)
+        </div>
+        <div class="codearea">
+            <p>
+                1機能で複数画面を遷移する場合にどのステップにいるのか分かりやすくする。<br />
+                機能毎に部分ビューにすること。<br />
+                Require partial view.<br />
+                命名規則<br />
+                _Stepper.cshtml<br />
+                (ex)User master<br />
+                ~/Areas/Master/Views/User/_Stepper.cshtml
+            </p>
+        </div>
+    </div>
+</div>

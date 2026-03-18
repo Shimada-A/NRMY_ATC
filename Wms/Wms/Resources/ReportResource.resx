@@ -1,0 +1,463 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="FILE_NAME_DATE_FORMAT" xml:space="preserve">
+    <value>yyyyMMdd-HHmmssfff</value>
+  </data>
+  <data name="RPT_ADJUST_REFERENCE" xml:space="preserve">
+    <value>在庫調整履歴照会-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_ADJUST_REFERENCE_LIST" xml:space="preserve">
+    <value>在庫調整履歴照会リスト-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_ARRIVAL_CASE_LABEL" xml:space="preserve">
+    <value>入荷ケースラベル-{0}-{1}</value>
+  </data>
+  <data name="RPT_ARRIVAL_UNSHELVED" xml:space="preserve">
+    <value>未棚付照会_明細_{0}_{1}_{2}</value>
+    <comment>{0}=センターコード、{1}=担当者ID、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_BATCH_BOARD" xml:space="preserve">
+    <value>バッチカンバン-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_BOX_SETTING" xml:space="preserve">
+    <value>ケース閾値設定マスタ-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_BTO_B_INSTRUCTION_INPUT" xml:space="preserve">
+    <value>BtoB出荷実績入力-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_BTO_B_INSTRUCTION_INPUT2" xml:space="preserve">
+    <value>BtoB出荷実績入力(明細別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_BTO_B_INSTRUCTION_REFERENCE" xml:space="preserve">
+    <value>BtoB出荷進捗照会-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_BTO_B_INSTRUCTION_REFERENCE2" xml:space="preserve">
+    <value>BtoB出荷進捗照会(明細別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_BTO_B_REFERENCE" xml:space="preserve">
+    <value>BtoB出荷梱包進捗照会(明細)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_CASE_JAN_PICKING" xml:space="preserve">
+    <value>JAN抜き取りピッキングリスト-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_CASE_SHIP_LIST" xml:space="preserve">
+    <value>ケース出荷バッチ一覧-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_CASE_SHIP_PICKING" xml:space="preserve">
+    <value>ケース出荷ピッキングリスト-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_DC_ALLOCATION_INSTRUCT_ID" xml:space="preserve">
+    <value>引当エラー(出荷指示ID別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_DC_ALLOCATION_ITEM" xml:space="preserve">
+    <value>引当エラー(商品別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_DC_BATCH_LIST" xml:space="preserve">
+    <value>DCバッチ一覧-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_DC_REFERENCE" xml:space="preserve">
+    <value>EC出荷進捗照会-{0}-{1}</value>
+  </data>
+  <data name="RPT_EC_ALLOCATION_ITEM" xml:space="preserve">
+    <value>引当エラー(商品別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_EC_ALLOCATION_ORDER" xml:space="preserve">
+    <value>引当エラー(注文別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_EC_BATCH_LIST" xml:space="preserve">
+    <value>ECバッチ一覧-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_EC_BATCH_PICKING" xml:space="preserve">
+    <value>ECバッチ単位ピッキングリスト-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_EC_GAS_BOARD" xml:space="preserve">
+    <value>ECGASカンバン-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_EC_REFERENCE1" xml:space="preserve">
+    <value>EC返品照会-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_EC_UNIT_BOARD" xml:space="preserve">
+    <value>ECユニット仕分カンバン（シングル／ｵｰﾀﾞｰ／GAS）-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_INVOICE_NANIWA" xml:space="preserve">
+    <value>PrintInvoiceNaniwa-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_INVOICE_SAGAWA" xml:space="preserve">
+    <value>PrintInvoiceSagawa-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_INVOICE_TOUNOU" xml:space="preserve">
+    <value>PrintInvoiceTounou-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_INVOICE_YAMATO" xml:space="preserve">
+    <value>PrintInvoiceYamato-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_INVOICE_NEKOPOSU" xml:space="preserve">
+    <value>PrintInvoiceNekoposu-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_INV_REFERENCE" xml:space="preserve">
+    <value>棚卸進捗照会-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_INV_START" xml:space="preserve">
+    <value>棚卸開始処理-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_LOCATION" xml:space="preserve">
+    <value>ロケーションマスタ-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_LOCATION_LABEL" xml:space="preserve">
+    <value>ロケーションラベル-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_LOC_TRANSPORTERS" xml:space="preserve">
+    <value>センター別店舗別配送業者マスタ-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_NOUHIN_BTOB" xml:space="preserve">
+    <value>PrintNouhinBtoB_{0}_{1}_{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_NOUHIN_EC" xml:space="preserve">
+    <value>PrintNouhinEc-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_PACKAGE_ARRIVAL_UNSHELVED" xml:space="preserve">
+    <value>未棚付照会_ケース別_{0}_{1}_{2}</value>
+    <comment>{0}=センターコード、{1}=担当者ID、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_PACKAGE_STOCK" xml:space="preserve">
+    <value>在庫照会_ケース明細-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_PACKAGE_STOCK_LIST" xml:space="preserve">
+    <value>在庫照会リスト（ケース明細）-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_PICK_BOARD" xml:space="preserve">
+    <value>摘み取り用カンバン-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_PURCHASE_REFERENCE" xml:space="preserve">
+    <value>入荷仕分リスト-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_PURCHASE_REFERENCE01" xml:space="preserve">
+    <value>仕入入荷進捗照会(仕入先別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_PURCHASE_REFERENCE02" xml:space="preserve">
+    <value>仕入入荷進捗照会(明細別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_PURCHASE_REFERENCE03" xml:space="preserve">
+    <value>仕入入荷進捗照会(ケース別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_PURCHASE_REFERENCE_JAN" xml:space="preserve">
+    <value>入荷仕分リスト(JAN入り)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_PURCHASE_REFERENCE_PACKING" xml:space="preserve">
+    <value>仕入梱包リスト(JAN入り)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_RESEARCH_REFERENCE" xml:space="preserve">
+    <value>在庫調査確認状況照会-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_RESEARCH_REFERENCE_LIST" xml:space="preserve">
+    <value>在庫調査確認チェックリスト-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_SHIP_CASE_LABEL" xml:space="preserve">
+    <value>ShipCaseLabel-{0}-{1}</value>
+  </data>
+  <data name="RPT_SHIP_FRONTAGE" xml:space="preserve">
+    <value>ブランド別レーン間口マスタ-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_STOCK" xml:space="preserve">
+    <value>在庫照会-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_STOCK_UPLOAD_CASE_INSTRUCTION_CASE" xml:space="preserve">
+    <value>ケース出荷取込(ケース出荷)テンプレート-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_STOCK_UPLOAD_CASE_INSTRUCTION_JAN" xml:space="preserve">
+    <value>ケース出荷取込(JAN抜き取り)テンプレート-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_STOCK_IMPORTINSTRUCTION" xml:space="preserve">
+    <value>在庫仕分指示取込テンプレート-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_STOCK_LIST" xml:space="preserve">
+    <value>在庫照会リスト-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_STOCK_SORT_KANBAN" xml:space="preserve">
+    <value>在庫仕分カンバン-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_TOTAL_PICKING" xml:space="preserve">
+    <value>トータルピッキングリスト-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_TRANSFER_REFERENCE01" xml:space="preserve">
+    <value>移動入荷進捗照会(移動元別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_TRANSFER_REFERENCE02" xml:space="preserve">
+    <value>移動入荷進捗照会(明細別)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_USER_GAS" xml:space="preserve">
+    <value>GAS用作業者マスタ_{0}_{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_USER_LABEL" xml:space="preserve">
+    <value>ユーザーラベル-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="TRANSFER_REFERENCE" xml:space="preserve">
+    <value>移動入荷進捗リスト-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_STOCK_ERR_CASE_INSTRUCTION_CASE" xml:space="preserve">
+    <value>直近取込エラーデータ(ケース出荷)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_STOCK_ERR_CASE_INSTRUCTION_JAN" xml:space="preserve">
+    <value>直近取込エラーデータ(JAN抜き取り)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_BTO_B_REFERENCE_JAN" xml:space="preserve">
+    <value>BtoB出荷梱包明細(JAN)-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_PURCHASE_RETURN" xml:space="preserve">
+    <value>仕入先返品伝票-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_USER" xml:space="preserve">
+    <value>利用者マスタ_{0}_{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_DC_REFERENCE_DETAIL" xml:space="preserve">
+    <value>EC出荷進捗照会(明細)-{0}-{1}</value>
+  </data>
+  <data name="RPT_PURCHASE_CORRECTION" xml:space="preserve">
+    <value>仕入訂正伝票-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_STORE" xml:space="preserve">
+    <value>店舗マスタ-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_RET_PURCHASE_REFERENCE01" xml:space="preserve">
+    <value>仕入先返品訂正照会-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_INOUTREFERENCE_PACKAGESTOCK" xml:space="preserve">
+    <value>在庫受払照会(ケース明細)-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_INOUTREFERENCE_STOCK" xml:space="preserve">
+    <value>在庫受払照会(在庫明細)-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_EC_CONFIRMPROGRESS" xml:space="preserve">
+    <value>EC出荷進捗明細リスト-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_LOCATION_TEMP" xml:space="preserve">
+    <value>ロケーションマスタテンプレート-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_SHIP_FRONTAGE_TEMP" xml:space="preserve">
+    <value>ブランドレーン別間口マスタテンプレート-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_NANIWA_SORTING" xml:space="preserve">
+    <value>浪速用仕分コードマスタ_{0}_{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_TRANSFER_REFERENCE03" xml:space="preserve">
+    <value>ピック情報-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_NOUHIN_EC_RAKUTEN" xml:space="preserve">
+    <value>PrintNouhinEcRakuten-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_NOUHIN_EC_WAKSNAP" xml:space="preserve">
+    <value>PrintNouhinEcWaKsnap-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_IMPORTINSTRUCTION" xml:space="preserve">
+    <value>仕分カンバン-{0}-{1}-{2}</value>
+    <comment>{0}=yyyyMMdd-HHmmss、{1}=センターコード、{2}=ユーザーID</comment>
+  </data>
+  <data name="RPT_WORK_REFERENCE" xml:space="preserve">
+    <value>作業実績照会-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_WAREHOUSES" xml:space="preserve">
+    <value>倉庫マスタ-{0}-{1}</value>
+    <comment>{0}=ユーザーID、{1}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_BTO_B_REFERENCE_CASE" xml:space="preserve">
+    <value>BtoB出荷梱包進捗照会(ケース)-{0}-{1}-{2}</value>
+    <comment>{0}=センターコード、{1}=担当者ID、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+  <data name="RPT_INVOICE_WORLDSUPPLY" xml:space="preserve">
+    <value>PrintInvoiceWorldSupply-{0}-{1}-{2}</value>
+    <comment>{0}=ユーザーID、{1}=センターコード、{2}=yyyyMMdd-HHmmss</comment>
+  </data>
+</root>

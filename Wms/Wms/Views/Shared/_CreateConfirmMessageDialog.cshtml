@@ -1,0 +1,25 @@
+﻿@* 確認メッセージを表示します。(ex:注文完了時に注文番号を表示する。) *@
+@* MessageDialog.jsが必要 *@
+
+@* ModalDialogのid *@
+@model string
+
+    <div class="modal fade" id="newconfirm" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">@MessagesResource.TITLE_CONFIRM</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>@Model</p>
+                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" data-dismiss="modal">キャンセル</button>
+                    <button type="button" class="confirm-update btn btn-dark" id="submitCreate">はい</button>
+                </div>
+            </div>
+        </div>
+    </div>

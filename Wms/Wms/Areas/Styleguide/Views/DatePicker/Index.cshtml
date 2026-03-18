@@ -1,0 +1,88 @@
+﻿@model Wms.Areas.Styleguide.Models.DatePicker
+
+@{
+    ViewBag.Title = "DatePicker";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>DatePicker</h1>
+        <p class="pg_caption">DatePickerの使い方</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content of">
+        <h3>1つの日付を選択するDatePicker</h3>
+        @*
+        *@
+        <div class="mtop20">
+            <span class="date_input">
+                @Html.EditorFor(m => m.DateTime1, new { htmlAttributes = new { @class = "flatpickr_single" } })
+                <span class="arrow">&nbsp;</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>1つの日付を選択するDatePicker</h3>
+        <div class="mtop20">
+            <div class="head head_white">
+                <div class="sortarea">
+                    <span class="date_input">
+                        @Html.EditorFor(m => m.DateTime2, new { htmlAttributes = new { @class = "flatpickr_single", placeholder = "未指定" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="codearea">
+            <p>
+                検索条件などで使う場合のデザイン
+            </p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>日付の範囲を選択するDatePicker</h3>
+        <div class="mtop20">
+            <span class="date_input">
+                @Html.EditorFor(m => m.DateTime1, new { htmlAttributes = new { @class = "startDate" } })
+                <span class="arrow">&nbsp;</span>
+            </span>
+            -
+            <span class="date_input">
+                @Html.EditorFor(m => m.DateTime3, new { htmlAttributes = new { @class = "endDate" } })
+
+                <span class="arrow">&nbsp;</span>
+            </span>
+            @Html.ValidationMessageFor(m => m.DateTime1)
+            @Html.ValidationMessageFor(m => m.DateTime3)
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>日付の範囲を選択するDatePicker</h3>
+        <div class="mtop20">
+            <div class="head head_white">
+                <div class="sortarea">
+                    <span class="date_input">
+                        @Html.EditorFor(m => m.DateTime2, new { htmlAttributes = new { @class = "startDate", placeholder = "開始日付を選択" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                    -
+                    <span class="date_input">
+                        @Html.EditorFor(m => m.DateTime2, new { htmlAttributes = new { @class = "endDate", placeholder = "終了日付を選択" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="codearea">
+            <p>
+                検索条件などで使う場合のデザイン
+            </p>
+        </div>
+    </div>
+</div>

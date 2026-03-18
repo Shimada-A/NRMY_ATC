@@ -1,0 +1,315 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Resources;
+@model Wms.ViewModels.Notice.NoticeViewModel
+@{
+    ViewBag.Title = Wms.Resources.HomeResource.ReceptionNoticeBtnText;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "Notice", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table class="w-search">
+            <tr>
+                <td class="tdtitle">@NoticeResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@NoticeResource.MessageClassS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                model => model.SearchConditions.MessageClassValue
+                                , "MESSAGE_CLASS", Model.SearchConditions.CenterId
+                                , CommonResource.None, new { @id = "ddlMessageClass", tabindex = "2" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@NoticeResource.OccurrenceDateS</td>
+                <td>
+                    <div>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.OccurrenceDateFrom, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.OccurrenceDateTo, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.OccurrenceDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.OccurrenceDateTo, "", new { })
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Notice", "", new { type = "button", @class = "btn btn-outline-dark", tabindex = "26" })
+                    <button class="btn btn-outline-dark head-btn" id="btnSearch" onclick="Search();" tabindex="27">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.NoticeResultRows != null)
+{
+    if (Model.Results.NoticeResultRows.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey"})
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.NoticeResultRows.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.NoticeResultRows.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.NoticeResultRows, Page => Url.Action("Search", "Notice", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.NoticeResultRows.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    &nbsp;
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.MessageClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.NoticeHeaderId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.Subject
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.OccurrenceDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfRunUnit
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfData
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @NoticeResource.IfSystem
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            @using (Html.BeginForm("Next", "Notice", FormMethod.Post, new { id = "frmNext" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.NoticeResultRows.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("NoticeResultRows[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell" >
+                                            <label>
+                                                @if (cModel.v.NoticeIfMessage.ViewFlag == false)
+                                                {
+                                                    <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" disabled="disabled" />
+                                                }
+                                                else
+                                                {
+                                                    if (cModel.v.IsCheck == true)
+                                                    {
+                                                        <input type="radio" id=@(key + "CheckedValue") name=IsCheck class="radio_input" onclick="SetIsCheck('@(key)')" checked autofocus />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="radio" id=@(key + "CheckedValue") name=IsCheck class="radio_input" onclick="SetIsCheck('@(key)')" />
+                                                    }
+                                                }
+                                                <span class="radio_parts" ></span>
+                                            </label>
+                                            @Html.CheckBox(key + "IsCheck", cModel.v.IsCheck, new { @id = (key + "IsCheck"), @class = "check-box", hidden = true })
+                                            @Html.TextBox(key + "RowId", cModel.i, new { @id = (key + "RowId"), hidden = true })
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.MessageClassNm)
+                                            @Html.HiddenFor(modelItem => cModel.v.MessageClassNm, new { Name = key + "MessageClassNm", @id = key + "MessageClassNm" })
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeHeader.NoticeHeaderId)
+                                            @Html.HiddenFor(modelItem => cModel.v.NoticeHeader.NoticeHeaderId, new { Name = key + "NoticeHeaderId", @id = key + "NoticeHeaderId" })
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeHeader.Subject)
+                                            @Html.HiddenFor(modelItem => cModel.v.NoticeHeader.Subject, new { Name = key + "Subject", @id = key + "Subject" })
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NoticeHeader.OccurrenceDate)
+                                            @Html.HiddenFor(modelItem => cModel.v.NoticeHeader.OccurrenceDate, new { Name = key + "OccurrenceDate", @id = key + "OccurrenceDate" })
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.IfRunUnitName.Name)
+                                            @Html.HiddenFor(modelItem => cModel.v.IfRunUnitName.Name, new { Name = key + "Name", @id = key + "Name" })
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.IfData.IfDataName)
+                                            @Html.HiddenFor(modelItem => cModel.v.IfData.IfDataName, new { Name = key + "IfDataName", @id = key + "IfDataName" })
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.IfSystem.IfSystemName)
+                                            @Html.HiddenFor(modelItem => cModel.v.IfSystem.IfSystemName, new { Name = key + "IfSystemName", @id = key + "IfSystemName" })
+                                        </td>
+                                        @Html.HiddenFor(modelItem => cModel.v.NoticeIfMessage.Message, new { Name = key + "Message", @id = key + "Message" })
+                                        @Html.HiddenFor(modelItem => cModel.v.NoticeHeader.MessageParameter, new { Name = key + "MessageParameter", @id = key + "MessageParameter" })
+                                        @Html.HiddenFor(modelItem => cModel.v.NoticeHeader.NoticeIfMessageId, new { Name = key + "NoticeIfMessageId", @id = key + "NoticeIfMessageId" })
+                                        @Html.HiddenFor(modelItem => cModel.v.IfData.TableName, new { Name = key + "TableName", @id = key + "TableName" })
+                                        @Html.HiddenFor(modelItem => cModel.v.NoticeHeader.IfRunId, new { Name = key + "IfRunId", @id = key + "IfRunId" })
+                                        @Html.HiddenFor(modelItem => cModel.v.IfRun.IfRunState, new { Name = key + "IfRunState", @id = key + "IfRunState" })
+                                        @Html.HiddenFor(modelItem => cModel.v.IfRun.StartTime, new { Name = key + "StartTime", @id = key + "StartTime" })
+                                        @Html.HiddenFor(modelItem => cModel.v.IfRun.EndTime, new { Name = key + "EndTime", @id = key + "EndTime" })
+                                        @Html.HiddenFor(modelItem => cModel.v.NoticeIfMessage.ViewFlag, new { Name = key + "ViewFlag", @id = key + "ViewFlag" })
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @if (Model.Results.NoticeResultRows != null && Model.Results.NoticeResultRows.Count() > 0)
+        {
+            <button type="button" id="btnDetail" class="btn btn-dark btnsize" onclick="Detail()">@NoticeResource.BtnDetail</button>
+        }
+        else
+        {
+            <button type="button" id="btnDetail" class="btn btn-dark btnsize" disabled>@NoticeResource.BtnDetail</button>
+        }
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        /**
+        * 検索処理
+        */
+        function Search() {
+            var urlAction = '@Url.Action("Search", "Notice")';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        /**
+        * ソート順の変更
+        */
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+            var $form = $("#frmSearch");
+            var urlAction = '@Url.Action("Search", "Notice")';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+                @* Pageを変更時 *@
+                $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                    var urlAction ='@Url.Action("Search", "Notice")';
+                    var pageUrl = urlAction + '?Page=';
+                    var page = $(item).attr("href").replace(pageUrl, "");
+                    page = page.replace("&class=btn-outline-dark", "");
+                    $(item).attr("href", "javascript:void(0);").click(function () {
+                        $("#hidPage").val(page);
+                        $("#hidSearchType").val("SortPage");
+                        $("#frmSearch").submit();
+                    });
+                });
+        });
+
+        function ClearConditons() {
+            $("#ddlMessageClass").val(0);
+        }
+
+        function Detail() {
+            var urlAction = '@Url.Action("Next", "Notice")';
+            var $form = $("#frmNext");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        /**
+        * チェックボックス設定
+        */
+        function SetIsCheck(id) {
+            $('#listData input[type=checkbox][id$=".IsCheck"]').prop("checked", false);
+            $('#listData input[type=checkbox][id="' + id + "IsCheck" + '"]').prop("checked", true);
+            $('#listData input[type=radio][id$=".CheckedValue"]').prop("checked", false);
+            $('#listData input[type=radio][id="' + id + "CheckedValue" + '"]').prop("checked", true);
+        }
+
+    </script>
+}

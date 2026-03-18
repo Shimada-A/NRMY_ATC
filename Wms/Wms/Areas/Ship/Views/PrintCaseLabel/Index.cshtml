@@ -1,0 +1,678 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.PrintCaseLabel.PrintCaseLabelConditions
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_PrintCaseLabel;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@* Head *@
+<div class="head head_white collapse show">
+    @using (Html.BeginForm("Search", "PrintCaseLabel", FormMethod.Post, new { id = "frmSearch" }))
+    {
+
+    @Html.AntiForgeryToken()
+    <table>
+        <tr>
+            <td class="col-2 pl-0">@PrintCaseLabelResource.CenterTitle</td>
+            <td colspan="2">
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.CenterDropDownFor(
+                            model => model.CenterId
+                            , Wms.Common.Profile.User.UserId
+                            , "", new { @id = "ddlCenterId", tabindex = "1", @onchange = "chgCenterId();" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="col-2 pl-0">@PrintCaseLabelResource.ReleaseClassS</td>
+            <td>
+                @Html.EnumRadioButtonListFor(model => model.ReleaseClass, new { htmlAttributes = new { tabindex = "2" } })
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="col-2 pl-0">@PrintCaseLabelResource.StoreClassS</td>
+            <td>
+                @Html.EnumRadioButtonListFor(model => model.StoreClass, new { htmlAttributes = new { tabindex = "3" } })
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="col-2 pl-0">@PrintCaseLabelResource.BrandS</td>
+            <td>
+                @Html.EditorFor(model => model.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "4" } })
+                @Html.EditorFor(model => model.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", disabled = "disabled" } })
+                <div class="search">
+                    <button type="button" id="btnBrandId" class="search_btn" tabindex="5" />
+                </div>
+                @Html.ValidationMessageFor(model => model.BrandId, "", new { @id = "msgBrandId" })
+            </td>
+        </tr>
+        <tr>
+            <td class="col-2 pl-0">@PrintCaseLabelResource.ShipToTransporterS</td>
+            <td>
+                <button type="button" class="btn btn-outline-dark" id="btnSyukkasakiTransporter" tabindex="3">@PrintCaseLabelResource.BtnShipToTransporter</button>
+                <a style="color:blue">@PrintCaseLabelResource.AllStoreMsg</a>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                @Html.TextAreaFor(model => model.ShipToTransporterName, new { @class = "shipToTransporter_textarea overflow", @id = "txtSyukkasakiTransporterName", tabindex = "6", disabled = "disabled" })
+                @Html.HiddenFor(model => model.ShipToStoreId, new { id = "txtShipToStoreIds" })
+                @Html.HiddenFor(model => model.ShipToStoreName, new { id = "txtShipToStoreNames" })
+                @Html.HiddenFor(model => model.TransporterId, new { id = "txtTransporterId" })
+                @Html.HiddenFor(model => model.TransporterName, new { id = "txtTransporterName" })
+                @Html.HiddenFor(model => model.ShipToStoreClass, new { id = "txtShipToStoreClass" })
+                @Html.HiddenFor(model => model.DayClass, new { id = "txtDayClass" })
+                <input type="hidden" id="hdBrandWorkClass" value="">
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="col-2 pl-0">@PrintCaseLabelResource.StoreOutletsClassS</td>
+            <td>
+                @Html.EnumRadioButtonListFor(model => model.StoreOutletsClass, new { htmlAttributes = new { tabindex = "6" } })
+                @PrintCaseLabelResource.StoreOutletMsg
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="col-2 pl-0">@PrintCaseLabelResource.NumberofSheetsS</td>
+            <td>
+                @Html.EditorFor(model => model.NumberofSheets, new { htmlAttributes = new { @class = "w_2_twice", @id = "txtNumberofSheets", tabindex = "7" } })
+                <span id="msgNumberofSheets"></span>
+            </td>
+            <td></td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td class="col-2 pl-0"></td>
+            <td>
+                <label class="chklist">
+                    @Html.CheckBoxFor(model => model.ShipInstructFlag, new { id = "chkShipInstructFlag", tabindex = "8", @placeholder = "", @class = "check-box" })
+                    <span class="chk_parts">
+                    </span>
+                </label>
+                @PrintCaseLabelResource.ShipInstructMsg
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="col-2 pl-0">@PrintCaseLabelResource.BatchNoS</td>
+            <td>
+                @Html.EditorFor(model => model.BatchNo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtBatchNo", tabindex = "9" } })
+            </td>
+            <td></td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td class="col-2 pl-0">@PrintCaseLabelResource.ReleaseBoxNoS</td>
+            <td>
+                @Html.EditorFor(model => model.ReleaseBoxNo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtReleaseBoxNo", tabindex = "10" } })
+                @Html.ValidationMessageFor(model => model.ReleaseBoxNo, "", new { id = "msgReleaseBoxNo" })
+            </td>
+            <td></td>
+        </tr>
+    </table>
+    }
+</div>
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    <div class="alert alert-danger" role="alert" id="txtErrMassage" style="display: none;"></div>
+</div>
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @*<button class="btn btn-outline-dark" id="btnSet" type="button" tabindex="-1" onclick="KickChangeSet();">@PrintCaseLabelResource.SettingLabeler</button>*@
+        <button type="button" id="btnRelease" class="btn btn-dark btnsize _pm">@PrintCaseLabelResource.RELEASES</button>
+    </div>
+}
+<button id="btnPrintMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_Print" hidden></button>
+<button id="btnAllStoreMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_AllStore" hidden></button>
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiTransporterSearchModal.cshtml", "dialog")
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "AllStore", Message = (string)ViewBag.Message })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Print", Message = PrintCaseLabelResource.PrintMsg })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+     * Country class
+     */
+    var PrintCaseLabelView = {
+        syukkasakiTransporterSearchModal_Search: false,
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            ddlCenter: '#ddlCenterId',
+            chkInTable1: 'input[type=radio][id$="ReleaseClass-1"]',
+            chkInTable2: 'input[type=radio][id$="ReleaseClass-2"]',
+            chkStore1: 'input[type=radio][id$="StoreClass-1"]',
+            chkStore2: 'input[type=radio][id$="StoreClass-2"]',
+            form: 'form',
+            searchForm: '#frmSearch',
+            btnBrandId: '#btnBrandId',
+            brandId: '#txtBrandId',
+            brandName: '#txtBrandName',
+            brandSelect: '#brandSelect',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnSyukkasakiTransporter: '#btnSyukkasakiTransporter',
+            txtShipToStoreId: '#txtShipToStoreIds',
+            txtShipToStoreName: '#txtShipToStoreNames',
+            txtTransporterName: '#txtTransporterName',
+            txtTransporterId: '#txtTransporterId',
+            txtShipToStoreClass: '#txtShipToStoreClass',
+            txtSyukkasakiTransporterName: '#txtSyukkasakiTransporterName',
+            txtDayClass: '#txtDayClass',
+            syukkasakiTransporterSelect: '#syukkasakiTransporterSelect',
+            chkStore: 'input[type=radio][name="StoreClass"]',
+            chkStoreOutletsClass: 'input[type=radio][name="StoreOutletsClass"]'
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+                brandSearchModal.init();
+                syukkasakiTransporterSearchModal.init();
+            },
+
+            /**
+             * Register event for control
+             */
+        registerEvent: function () {
+
+            $(PrintCaseLabelView.SELECTORS.ddlCenter).change(function () {
+                claerSyukkasakiTransporterSelect();
+                PrintCaseLabelView.syukkasakiTransporterSearchModal_Search = true;
+            });
+
+            /**
+            * ブランド検索ダイアログの設定
+            */
+            $(PrintCaseLabelView.SELECTORS.btnBrandId).on("click", brandSearchModal.open);
+
+            /**
+            * 配送業者検索ダイアログの設定
+            */
+            $(PrintCaseLabelView.SELECTORS.btnSyukkasakiTransporter).on("click", () => {
+                if ($("#hdBrandWorkClass").val() == "1"){
+                if (!checkRequiredBrandId()) return false;
+            }
+
+                syukkasakiTransporterSearchModal.open({
+                    centerId: $('#ddlCenterId option:selected').val(),
+                    centerName: $('#ddlCenterId option:selected').text(),
+                    brandId: $('#txtBrandId').val(),
+                    brandName: $('#txtBrandName').val(),
+                    isCenterOnly: $('input[type=radio][id$="StoreClass-2"]').prop('checked'),
+                    search: PrintCaseLabelView.syukkasakiTransporterSearchModal_Search
+                });
+
+                PrintCaseLabelView.syukkasakiTransporterSearchModal_Search = true;
+            });
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(PrintCaseLabelView.SELECTORS.syukkasakiTransporterSelect).on("click", function () {
+                    $("#txtErrMassage").hide();
+                    claerSyukkasakiTransporterSelect();
+
+                    var dayClass = $('input[id="DayClass"]:checked ').val();
+
+                    $('#syukkasakiTransporterSearchResult input[type=checkbox]:checked').each(function (index, item) {
+                        var shipToStoreId = $(item).parents("tr").find("td:eq(6)").text().trim();
+                        var shipToStoreName = $(item).parents("tr").find("td:eq(7)").text().trim();
+                        //メイン配送業者取得(曜日別配送業者削除)
+                        var transporterName = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        var transporterId = $(item).parents("tr").find("td:eq(8)").text().trim();
+                        //switch(dayClass) {
+                        //    case "0":
+                        //        var transporterName = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        //        var transporterId = $(item).parents("tr").find("td:eq(16)").text().trim();
+                        //        break;
+                        //    case "1":
+                        //        var transporterName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                        //        var transporterId = $(item).parents("tr").find("td:eq(17)").text().trim();
+                        //        break;
+                        //    case "2":
+                        //        var transporterName = $(item).parents("tr").find("td:eq(6)").text().trim();
+                        //        var transporterId = $(item).parents("tr").find("td:eq(18)").text().trim();
+                        //        break;
+                        //    case "3":
+                        //        var transporterName = $(item).parents("tr").find("td:eq(7)").text().trim();
+                        //        var transporterId = $(item).parents("tr").find("td:eq(19)").text().trim();
+                        //        break;
+                        //    case "4":
+                        //        var transporterName = $(item).parents("tr").find("td:eq(8)").text().trim();
+                        //        var transporterId = $(item).parents("tr").find("td:eq(20)").text().trim();
+                        //        break;
+                        //    case "5":
+                        //        var transporterName = $(item).parents("tr").find("td:eq(9)").text().trim();
+                        //        var transporterId = $(item).parents("tr").find("td:eq(21)").text().trim();
+                        //        break;
+                        //    case "6":
+                        //        var transporterName = $(item).parents("tr").find("td:eq(10)").text().trim();
+                        //        var transporterId = $(item).parents("tr").find("td:eq(22)").text().trim();
+                        //        break;
+                        //    case "7":
+                        //        var transporterName = $(item).parents("tr").find("td:eq(11)").text().trim();
+                        //        var transporterId = $(item).parents("tr").find("td:eq(23)").text().trim();
+                        //        break;
+                        //     default:
+                        //        var transporterName = $(item).parents("tr").find("td:eq(12)").text().trim();
+                        //        var transporterId = $(item).parents("tr").find("td:eq(24)").text().trim();
+                        //        break;
+                        //}
+
+                        if ($(PrintCaseLabelView.SELECTORS.txtShipToStoreId).val() == "") {
+                            $(PrintCaseLabelView.SELECTORS.txtShipToStoreId).val(shipToStoreId);
+                            $(PrintCaseLabelView.SELECTORS.txtTransporterId).val(transporterId);
+                            $(PrintCaseLabelView.SELECTORS.txtSyukkasakiTransporterName).val(shipToStoreName + '：' + transporterName);
+                        } else {
+                            $(PrintCaseLabelView.SELECTORS.txtShipToStoreId).val($(PrintCaseLabelView.SELECTORS.txtShipToStoreId).val() + ',' + shipToStoreId);
+                            $(PrintCaseLabelView.SELECTORS.txtTransporterId).val($(PrintCaseLabelView.SELECTORS.txtTransporterId).val() + ',' + transporterId);
+                            $(PrintCaseLabelView.SELECTORS.txtSyukkasakiTransporterName).val($(PrintCaseLabelView.SELECTORS.txtSyukkasakiTransporterName).val() + '、' + shipToStoreName + '：' + transporterName);
+                        }
+
+                    })
+                });
+                 /**
+                 *Click button get data Brand
+                 */
+                $(PrintCaseLabelView.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(PrintCaseLabelView.SELECTORS.brandId).val(brandId);
+                        $(PrintCaseLabelView.SELECTORS.brandName).val(brandName);
+                        //ブランド選択時に出荷先選択をリセットする
+                        claerSyukkasakiTransporterSelect();
+                        PrintCaseLabelView.syukkasakiTransporterSearchModal_Search = true;
+                    })
+                });
+
+                $(PrintCaseLabelView.SELECTORS.chkInTable1).click(function (evt) {
+                    clearError();
+                    $("#btnSyukkasakiTransporter").removeAttr('disabled');
+                    $("#chkShipInstructFlag").removeAttr('disabled');
+                    $("#txtBatchNo").removeAttr('disabled');
+                    $("#txtNumberofSheets").removeAttr('disabled');
+                    $("#txtNumberofSheets").val('0');
+                    $("#txtReleaseBoxNo").attr('disabled', 'disabled');
+                    if ($(PrintCaseLabelView.SELECTORS.chkStore1).prop('checked') && $("#hdBrandWorkClass").val() == "1") {
+                        $("#btnBrandId").removeAttr('disabled');
+                        $("#txtBrandId").removeAttr('disabled');
+                    } else if ($(PrintCaseLabelView.SELECTORS.chkStore2).prop('checked')) {
+                        $("#btnBrandId").attr('disabled', 'disabled');
+                        $("#txtBrandId").attr('disabled', 'disabled');
+                        $("#txtBrandId").val("");
+                        $("#txtBrandName").val("");
+                    };
+                    $(PrintCaseLabelView.SELECTORS.chkStore).removeAttr('disabled');
+                    $(PrintCaseLabelView.SELECTORS.chkStoreOutletsClass).removeAttr('disabled');
+
+                    $("#txtErrMassage").hide();
+                });
+                $(PrintCaseLabelView.SELECTORS.chkInTable2).click(function (evt) {
+                    clearError();
+                    $("#txtReleaseBoxNo").removeAttr('disabled');
+
+                    $("#btnBrandId").attr('disabled', 'disabled');
+                    $("#txtBrandId").attr('disabled', 'disabled');
+                    $("#txtBrandId").val("");
+                    $("#txtBrandName").val("");
+
+                    $("#btnSyukkasakiTransporter").attr('disabled', 'disabled');
+                    claerSyukkasakiTransporterSelect();
+
+                    $("#chkShipInstructFlag").attr('disabled', 'disabled');
+                    $("#chkShipInstructFlag").prop('checked', false);
+                    $("#txtBatchNo").attr('disabled', 'disabled');
+                    $("#txtBatchNo").val("");
+                    $("#txtNumberofSheets").attr('disabled', 'disabled');
+                    $("#txtNumberofSheets").val("");
+                    $(PrintCaseLabelView.SELECTORS.chkStore).attr('disabled', 'disabled');
+                    $(PrintCaseLabelView.SELECTORS.chkStoreOutletsClass).attr('disabled', 'disabled');
+
+                    $("#txtErrMassage").hide();
+                });
+                $(PrintCaseLabelView.SELECTORS.chkStore1).click(function (evt) {
+                    clearError();
+                    if ($(PrintCaseLabelView.SELECTORS.chkInTable1).prop('checked') && $("#hdBrandWorkClass").val() == "1") {
+                        $("#btnBrandId").removeAttr('disabled');
+                        $("#txtBrandId").removeAttr('disabled');
+                    };
+                    $(PrintCaseLabelView.SELECTORS.chkStoreOutletsClass).removeAttr('disabled');
+
+                    $("#txtErrMassage").hide();
+                    claerSyukkasakiTransporterSelect();
+
+                    PrintCaseLabelView.syukkasakiTransporterSearchModal_Search = true;
+                });
+                $(PrintCaseLabelView.SELECTORS.chkStore2).click(function (evt) {
+                    clearError();
+                    $("#btnBrandId").attr('disabled', 'disabled');
+                    $("#txtBrandId").attr('disabled', 'disabled');
+                    $("#txtBrandId").val("");
+                    $("#txtBrandName").val("");
+                    $(PrintCaseLabelView.SELECTORS.chkStoreOutletsClass).attr('disabled', 'disabled');
+
+                    $("#txtErrMassage").hide();
+                    claerSyukkasakiTransporterSelect();
+
+                    PrintCaseLabelView.syukkasakiTransporterSearchModal_Search = true;
+                });
+
+                $(PrintCaseLabelView.SELECTORS.brandId).on("change", () => {
+                    claerSyukkasakiTransporterSelect();
+                    PrintCaseLabelView.syukkasakiTransporterSearchModal_Search = true;
+                });
+
+                //全店舗発行のModalの<button>要素押下時出荷先検索を初期化
+                var btnconfirmAllStore = $("#confirm_AllStore button");
+                $(btnconfirmAllStore).on("click", () => {
+                    PrintCaseLabelView.syukkasakiTransporterSearchModal_Search = true;
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        if ('@ViewBag.Message' != '') {
+            $("#btnAllStoreMessage").click();
+        }
+        PrintCaseLabelView.init();
+        if ($('input[type=radio][id$="ReleaseClass-1"]').prop('checked')) {
+            $("#txtReleaseBoxNo").attr('disabled', 'disabled');
+            if ($('input[type=radio][id$="StoreClass-2"]').prop('checked')) {
+                $("#btnBrandId").attr('disabled', 'disabled');
+                $("#txtBrandId").attr('disabled', 'disabled');
+            };
+        } else if ($('input[type=radio][id$="ReleaseClass-2"]').prop('checked')) {
+            $("#btnBrandId").attr('disabled', 'disabled');
+            $("#txtBrandId").attr('disabled', 'disabled');
+            $("#btnSyukkasakiTransporter").attr('disabled', 'disabled');
+            $("#chkShipInstructFlag").attr('disabled', 'disabled');
+            $("#txtBatchNo").attr('disabled', 'disabled');
+            $("#txtNumberofSheets").attr('disabled', 'disabled');
+
+        }
+        chgCenterId();
+        $("#txtErrMassage").hide();
+    });
+
+    $("#txtReleaseBoxNo").change(function () {
+        $("#txtErrMassage").text("");
+        $("#txtErrMassage").hide();
+    })
+
+    function claerSyukkasakiTransporterSelect() {
+        $(PrintCaseLabelView.SELECTORS.txtShipToStoreId).val("");
+        $(PrintCaseLabelView.SELECTORS.txtTransporterId).val("");
+        $(PrintCaseLabelView.SELECTORS.txtSyukkasakiTransporterName).val("");
+    }
+
+    function clearError() {
+        $("#msgBrandId").html("")
+        $("#msgBrandId").removeClass("field-validation-error")
+        $("#txtBrandId").removeClass("input-validation-error")
+        $("#msgNumberofSheets").html("")
+        $("#msgNumberofSheets").removeClass("field-validation-error")
+        $("#txtNumberofSheets").removeClass("input-validation-error")
+        $("#msgReleaseBoxNo").html("")
+        $("#msgReleaseBoxNo").removeClass("field-validation-error")
+        $("#txtReleaseBoxNo").removeClass("input-validation-error")
+    }
+
+    function checkRequiredBrandId() {
+        if ($('input[type=radio][id$="StoreClass-1"]').prop('checked') && $("#txtBrandId").val() == "") {
+            $("#msgBrandId").text("@string.Format(MessagesResource.Required, PrintCaseLabelResource.BrandId)");
+            $("#msgBrandId").addClass("field-validation-error");
+            $("#txtBrandId").addClass("input-validation-error");
+            $("#txtBrandId").focus();
+            return false;
+        }
+
+        $("#msgBrandId").html("")
+        $("#msgBrandId").removeClass("field-validation-error")
+        $("#txtBrandId").removeClass("input-validation-error")
+        return true;
+    }
+
+    $('#btnRelease').on("click", function () {
+        clearError();
+
+        if (!validateForm($('#frmSearch'))) {
+            return;
+        }
+        if ($('input[type=radio][id$="ReleaseClass-1"]').prop('checked')) {
+            if ($("#hdBrandWorkClass").val() == "1") {
+                if (!checkRequiredBrandId()) return false;
+            }
+
+            if ($("#txtNumberofSheets").val() == "") {
+                $("#msgNumberofSheets").text("@string.Format(MessagesResource.Required, PrintCaseLabelResource.NumberofSheets)");
+                $("#msgNumberofSheets").addClass("field-validation-error");
+                $("#txtNumberofSheets").addClass("input-validation-error");
+                $("#txtNumberofSheets").focus();
+                return false;
+            }
+            if ($("#txtNumberofSheets").val() < 1 || $("#txtNumberofSheets").val() > 99) {
+                $("#msgNumberofSheets").text("@string.Format(MessagesResource.Range, PrintCaseLabelResource.NumberofSheets, 1, 99)");
+                $("#msgNumberofSheets").addClass("field-validation-error");
+                $("#txtNumberofSheets").addClass("input-validation-error");
+                $("#txtNumberofSheets").focus();
+                return false;
+            }
+            if ($("#txtSyukkasakiTransporterName").val() == "")
+            {
+                //件数取得・確認メッセージ表示
+                var $form = $("#frmSearch");
+                var urlAction ='@Url.Action("Search", "PrintCaseLabel", new { area= "Ship" })';
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+                return;
+            }
+        } else if ($('input[type=radio][id$="ReleaseClass-2"]').prop('checked')) {
+            if ($("#txtReleaseBoxNo").val() == "") {
+                $("#msgReleaseBoxNo").text("@string.Format(MessagesResource.Required, PrintCaseLabelResource.ReleaseBoxNo)");
+                $("#msgReleaseBoxNo").addClass("field-validation-error");
+                $("#txtReleaseBoxNo").addClass("input-validation-error");
+                $("#txtReleaseBoxNo").focus();
+                return false;
+            }
+        }
+        $('#btnPrintMessage').click();
+    });
+
+    $('#Print').on("click", function () {
+        $('#Print').prop('disabled', true);
+        var releaseClass;
+        var storeClass;
+        var storeOutletsClass;
+        var r_radios = document.getElementsByName("ReleaseClass");
+        var s_radios = document.getElementsByName("StoreClass");
+        var so_radios = document.getElementsByName("StoreOutletsClass");
+        for (var i = 0; i < r_radios.length; i++) {
+            if (r_radios[i].checked) {
+                releaseClass = r_radios[i].value;
+                break;
+            }
+        }
+        for (var i = 0; i < s_radios.length; i++) {
+            if (s_radios[i].checked) {
+                storeClass = s_radios[i].value;
+                break;
+            }
+        }
+        for (var i = 0; i < so_radios.length; i++) {
+            if (so_radios[i].checked) {
+                storeOutletsClass = so_radios[i].value;
+                break;
+            }
+        }
+
+        $.ajax({
+            url:'@Url.Action("Print", "PrintCaseLabel", new { area= "Ship" })',
+            type: "POST",
+            data: {
+                centerId: $("#ddlCenterId").val(),
+                releaseClass: releaseClass,
+                storeClass: storeClass,
+                shipToStoreId: $("#txtShipToStoreIds").val(),
+                transporterId: $("#txtTransporterId").val(),
+                numberofSheets: $("#txtNumberofSheets").val(),
+                releaseBoxNo: $("#txtReleaseBoxNo").val(),
+                brandId: $("#txtBrandId").val(),
+                brandName: $("#txtBrandName").val(),
+                shipInstructFlag: $("#chkShipInstructFlag").prop('checked'),
+                batchNo: $("#txtBatchNo").val(),
+                storeOutletsClass: storeOutletsClass
+            },
+            success: function (data) {
+                $("#confirm_Print").modal('hide');
+                if (data.status == "0") {
+                    location.href = data.ret;
+                    $('#Print').prop('disabled', false);
+                }
+                else {
+                    $("#txtErrMassage").text(data.errmessage);
+                    $("#txtErrMassage").show();
+                    $('#Print').prop('disabled', false);
+                }
+            }
+        });
+    });
+
+        //全店舗ケースラベル発行処理
+        $('#AllStore').on("click", function () {
+            $('#AllStore').prop('disabled', true);
+            var releaseClass;
+            var storeClass;
+            var storeOutletsClass;
+            var r_radios = document.getElementsByName("ReleaseClass");
+            var s_radios = document.getElementsByName("StoreClass");
+            var so_radios = document.getElementsByName("StoreOutletsClass");
+            for (var i = 0; i < r_radios.length; i++) {
+                if (r_radios[i].checked) {
+                    releaseClass = r_radios[i].value;
+                    break;
+                }
+            }
+            for (var i = 0; i < s_radios.length; i++) {
+                if (s_radios[i].checked) {
+                    storeClass = s_radios[i].value;
+                    break;
+                }
+            }
+            for (var i = 0; i < so_radios.length; i++) {
+                if (so_radios[i].checked) {
+                    storeOutletsClass = so_radios[i].value;
+                    break;
+                }
+            }
+
+            $.ajax({
+                url:'@Url.Action("Print", "PrintCaseLabel", new { area= "Ship" })',
+                type: "POST",
+                data: {
+                    centerId: $("#ddlCenterId").val(),
+                    releaseClass: releaseClass,
+                    storeClass: storeClass,
+                    shipToStoreId: $("#txtShipToStoreIds").val(),
+                    transporterId: $("#txtTransporterId").val(),
+                    numberofSheets: $("#txtNumberofSheets").val(),
+                    releaseBoxNo: $("#txtReleaseBoxNo").val(),
+                    brandId: $("#txtBrandId").val(),
+                    brandName: $("#txtBrandName").val(),
+                    shipInstructFlag: $("#chkShipInstructFlag").prop('checked'),
+                    batchNo: $("#txtBatchNo").val(),
+                    storeOutletsClass: storeOutletsClass
+                },
+                success: function (data) {
+                    $("#confirm_AllStore").modal('hide');
+                    if (data.status == "0") {
+                        location.href = data.ret;
+                        $('#AllStore').prop('disabled', false);
+                    }
+                    else {
+                        $("#txtErrMassage").text(data.errmessage);
+                        $("#txtErrMassage").show();
+                        $('#AllStore').prop('disabled', false);
+                    }
+                }
+            });
+        });
+
+        //印刷定義設定
+        function KickChangeSet() {
+            var s_radios = document.getElementsByName("ShipToClass");
+            if (s_radios[0].checked == true) {
+                cwebclient.ChangePrintInfo("CaseLabelBtoB");
+            } else {
+                cwebclient.ChangePrintInfo("CaseLabelEc");
+            }
+        }
+
+        //センター変更時
+        function chgCenterId() {
+            $.ajax({
+                url:'@Url.Action("ChgCenter", "PrintCaseLabel", new { area= "Ship" })',
+                type: "POST",
+                data: {
+                    centerId: $("#ddlCenterId").val()
+                },
+                success: function (data) {
+                    $("#hdBrandWorkClass").val(data.brandWorkClass);
+                    if (data.brandWorkClass == "1" && $('input[type=radio][id$="ReleaseClass-1"]').prop('checked') && $('input[type=radio][id$="StoreClass-1"]').prop('checked')) {
+                        $("#btnBrandId").removeAttr('disabled');
+                        $("#txtBrandId").removeAttr('disabled');
+                    } else {
+                        $("#btnBrandId").attr('disabled', 'disabled');
+                        $("#txtBrandId").attr('disabled', 'disabled');
+                        $("#txtBrandId").val("");
+                        $("#txtBrandName").val("");
+                    }
+                }
+            });
+        }
+
+
+    </script>
+}
+

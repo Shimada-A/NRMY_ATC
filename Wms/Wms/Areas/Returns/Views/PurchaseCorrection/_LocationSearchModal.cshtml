@@ -1,0 +1,150 @@
+﻿@using Resources = Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.PurchaseCorrection.PurchaseCorrectionSearchConditions
+<div id="vendorReturnSearchModalDialog">
+    <div id="vendorReturnSearchResult">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        <h5>@Resources.PurchaseCorrectionResource.LocationModalTitle</h5>
+        <br />
+        <div class="d_continer main">
+            @if (Model.locationViewModel.Count == 0)
+            {
+                <h5>@Resources.PurchaseCorrectionResource.STOCK_NOT_ERR</h5>
+            }else
+            {
+            <div class="modalheadareaheight">
+                <table class="headtable">
+                    <tr>
+                        <td>
+                            @Resources.PurchaseCorrectionResource.JanS
+                            @Html.DisplayFor(model => Model.locationViewModel[0].Jan)
+                        </td>
+                        <td>
+                            @Resources.PurchaseCorrectionResource.SkuS
+                            @Html.DisplayFor(model => Model.locationViewModel[0].ItemSkuId)
+                        </td>
+                        <td>
+                            @Resources.PurchaseCorrectionResource.ItemS
+                            @Html.DisplayFor(model => Model.locationViewModel[0].ItemId)
+                            @Html.DisplayFor(model => Model.locationViewModel[0].ItemName)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Resources.PurchaseCorrectionResource.ItemColorS
+                            @Html.DisplayFor(model => Model.locationViewModel[0].ItemColorId)
+                            @Html.DisplayFor(model => Model.locationViewModel[0].ItemColorName)
+                        </td>
+                        <td>
+                            @Resources.PurchaseCorrectionResource.ItemSizeS
+                            @Html.DisplayFor(model => Model.locationViewModel[0].ItemSizeId)
+                            @Html.DisplayFor(model => Model.locationViewModel[0].ItemSizeName)
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="sublbarea">
+                <div class="sortarea">
+                    <ul>
+                        <li class="totalcount">
+                            @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.totalCnt)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="Container">
+                <div>
+                    <div class="tb_scroll">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey w_checkbox"></th>
+                                    <th class="bg-grey">
+                                        No
+                                    </th>
+                                    <th class="bg-grey">
+                                        @Resources.PurchaseCorrectionResource.LocationCd
+                                    </th>
+                                    <th class="bg-grey">
+                                        @Resources.PurchaseCorrectionResource.LocationClass
+                                    </th>
+                                    <th class="bg-grey">
+                                        @Resources.PurchaseCorrectionResource.GradeId
+                                    </th>
+                                    <th class="bg-grey">
+                                        @Resources.PurchaseCorrectionResource.StockQty
+                                    </th>
+                                    <th class="bg-grey">
+                                        @Resources.PurchaseCorrectionResource.AllocQty
+                                    </th>
+                                    <th class="bg-grey">
+                                        @Resources.PurchaseCorrectionResource.KanouQty
+                                    </th>
+                                    <th hidden>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.locationViewModel.Count(); i++)
+                                {
+
+                                    var idx = i + 1;
+                                    var id = "hidLocation" + i;
+                                    var caseClass = "hidClass" + i;
+                                    var stockQty = "hidStock" + i;
+                                <tr>
+                                    <td class="align-middle chk_cell">
+                                        <label>
+                                            @Html.RadioButton("SelectIndex", i.ToString(), new { @id = "LocationReturnSelectIndex" + i.ToString(), @class = "radio_input", @onclick = "chkRadioLocation(" + i + ")" })
+                                            <span class="radio_parts"></span>
+                                        </label>
+                                    </td>
+                                    <td class="text-right w_no">
+                                        @idx
+                                    </td>
+                                    <td>
+                                        <span id=@id>
+                                            @Html.DisplayFor(model => Model.locationViewModel[i].LocationCd)
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => Model.locationViewModel[i].LocationClass)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => Model.locationViewModel[i].GradeId)
+                                    </td>
+                                    <td class="text-right">
+                                        @Html.DisplayFor(model => Model.locationViewModel[i].StockQty)
+                                    </td>
+                                    <td class="text-right">
+                                        @Html.DisplayFor(model => Model.locationViewModel[i].AllocQty)
+                                    </td>
+                                    <td class="text-right">
+                                        @Html.DisplayFor(model => Model.locationViewModel[i].KanouQty)
+                                    </td>
+                                    <td hidden>
+                                        <span id=@caseClass>
+                                            @Html.DisplayFor(model => Model.locationViewModel[i].CaseClass)
+                                        </span>
+                                        <span id=@stockQty>
+                                            @Html.DisplayFor(model => Model.locationViewModel[i].StockQty)
+                                        </span>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            }
+            <div class="bottomnav">
+                <div class="btnarea">
+                    <button id="LocationReturnClose" type="button" class="btn btn-outline-dark" onclick="closeDialogLocation()">@FormsResource.Close</button>
+                    <button id="LocationReturnSelect" type="button" class="btn btn-dark" onclick="chkDialogLocation()">@FormsResource.BTN_SELECT</button>
+                </div>
+            </div>
+            <input type="hidden" id="chkIndexLocation" value="" />
+        </div>
+    </div>
+</div>

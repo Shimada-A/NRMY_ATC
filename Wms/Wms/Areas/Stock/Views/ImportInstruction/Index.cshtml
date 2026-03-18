@@ -1,0 +1,434 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Stock.Resources;
+@using Wms.Areas.Stock.ViewModels.ImportInstruction;
+@model Wms.Areas.Stock.ViewModels.ImportInstruction.ImportInstructionViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_ImportInstruction;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+@* Head *@
+@using (Html.BeginForm("Download", "ImportInstruction", FormMethod.Get, new { id = "frmDL" }))
+{
+}
+@using (Html.BeginForm("Search", "ImportInstruction", FormMethod.Post, new { id = "frmSearch" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Partial("_DeleteConfirmMessageDialog", @MessagesResource.QUE_DELETE)
+    <div id="div_search" class="head head_white collapse">
+        <table>
+            <colgroup>
+                <col class="tdtitle" />
+                <col width="400px" />
+                <col class="tdtitle_large" />
+            </colgroup>
+            <tr>
+                <td class="tdtitle">@ImportInstructionResource.CenterIdS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+             model => model.SearchConditions.CenterId
+             , Wms.Common.Profile.User.UserId
+             , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td colspan="4">
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="2" onclick="Search();">@FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.Key, new { id = "hidKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        @Html.HiddenFor(model => model.SearchConditions.ResultCnt, new { id = "hidResultCnt" })
+        @Html.HiddenFor(model => model.SearchConditions.Print, new { id = "hidPrint" })
+        <div style="display:none">
+            @if (Model.Results.ImportInstructions != null && Model.Results.ImportInstructions.Count() > 0)
+            {
+                <table>
+
+                    @for (int i = 0; i < Model.Results.ImportInstructions.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.InstructionViewModels[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.ImportInstructions[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.ImportInstructions[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.ImportInstructions[i].SortInstructNo, new { @id = (id + "SortInstructNo"), Name = id + "SortInstructNo" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    </div>
+}
+@using (Html.BeginForm("Download", "ImportInstruction", FormMethod.Get, new { id = "frmUP" }))
+{
+    <div class="head head_white">
+        @Html.AntiForgeryToken()
+        <table>
+            <colgroup>
+                <col class="tdtitle" />
+                <col width="400px" />
+                <col class="tdtitle_large" />
+            </colgroup>
+            <tr>
+                <td class="tdtitle">@ImportInstructionResource.SortInstructNameDisp</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.SortInstructName, new { htmlAttributes = new { @class = "column_byte_30", @id = "txtSortInstructName", tabindex = "3" } })
+                    @Html.RequiredMark()
+                    @Html.ValidationMessageFor(model => model.SearchConditions.SortInstructName)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_large">@ImportInstructionResource.SortInstructFileDisp</td>
+                <td>
+                    <button type="button" id="btnUpload" class="Upload _pm" tabindex="4" style="vertical-align: top;">
+                        <img src="~/Content/img/upload.png" />
+                        @FormsResource.BTN_UPLOAD
+                    </button>
+                </td>
+                <td class="tdtitle">@ImportInstructionResource.Template</td>
+                <td>
+                    <button type="button" id="btnDownload" class="download" tabindex="5" style="vertical-align: top;">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.ImportInstructions != null && Model.Results.ImportInstructions.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Key, new { Name = "SearchConditions.Key", @id = "ddlKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.ImportInstructions.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.ImportInstructions.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.ImportInstructions, Page => Url.Action("Search", "ImportInstruction", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.ImportInstructions != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.ImportInstructions.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:59vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @ImportInstructionResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ImportInstructionResource.SortInstructNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ImportInstructionResource.SortImportDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ImportInstructionResource.SortInstructName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ImportInstructionResource.SkuSortQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ImportInstructionResource.CategorySortQty
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cModel in Model.Results.ImportInstructions.Select((v, i) => new { v, i }))
+                            {
+                                var key = String.Format("ImportInstructions[{0}].", cModel.i);
+                                <tr>
+                                    <td class="w_checkbox align-middle">
+                                        <label class="checkboxgroup">
+                                            @Html.CheckBoxFor(modelItem => cModel.v.IsCheck, new { @id = (key + "CheckedValue"), @class = "check-box", onclick = "SetCheckValue(" + @cModel.i + ")" })
+                                            <span class="chk_parts"></span>
+                                        </label>
+                                    </td>
+                                    <td class="align-middle  w_no">
+                                        @Html.DisplayFor(modelItem => cModel.v.No)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.SortInstructNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.SortImportDate)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.SortInstructName)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.SkuSortQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.CategorySortQty)
+                                    </td>
+                                    <td class="template" hidden>
+                                        @Html.HiddenFor(modelItem => cModel.v.SortInstructNo, new { Name = key + "SortInstructNo" })
+                                        @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                        @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                        @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                        @Html.HiddenFor(modelItem => cModel.v.ResultFlg, new { @id = key + "ResultFlg" })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    @Html.Partial("_CheckBoxCounter")
+<div class="btnarea">
+    <button id="btnDeleteHidden" type="button" class="btn btn-outline-danger btnsize _pm" data-toggle="modal" data-target="#delconfirm" hidden>@FormsResource.BTN_DELETE</button>
+    <button type="submit" id="btnDelete" class="btn btn-outline-danger btnsize _pm">@FormsResource.BTN_DELETE</button>
+    <button type="submit" id="btnPrint" class="btn btn-dark btnsize _pm" onclick="BodyPrint()">
+        @ImportInstructionResource.PRINT_KANBAN
+    </button>
+</div>
+}
+@using (Html.BeginForm("Search", "ImportInstruction", FormMethod.Post, new { id = "frmPrint" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.SearchConditions.Ret)
+}
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@Html.Partial("_FileUploadModal")
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+<script>
+    Dropzone.autoDiscover = false;
+    $("#btnDownload").on("click", function () {
+            var urlAction = '@Url.Action("Download", "ImportInstruction", new { area = "Stock" })';
+            var $form = $("#frmDL");
+            $form.attr("action", urlAction);
+            $form.attr("method", "Get");
+            $form.submit();
+        });
+        //ファイルアップロード
+        fileUploadModal.init();
+        $('#btnUpload').on('click', function () {
+            if ($("#txtSortInstructName").val() == "") {
+                alert("@ImportInstructionResource.ERR_NULL_SORT_INS_NAME");
+                $("#txtSortInstructName").focus();
+            } else if ($("#txtSortInstructName").val().length > 20) {
+                $("#txtSortInstructName").focus();
+            }else {
+                var urlAction = '@Url.Action("Upload", "ImportInstruction", new { area = "Stock" })';
+                var urlIndexAction = '@Url.Action("IndexSearch", "ImportInstruction", new { area = "Stock" })';
+                fileUploadModal.setting({
+                    url: urlAction,
+                    title: "@ImportInstructionResource.Title" + "@FormsResource.FileUplaodTitle",
+                    acceptedFiles: ".xlsx",
+                    successCallback: function (data) {
+                        if (data.err == 'true') {
+                            location.href = urlIndexAction;
+                        } else {
+                            location.href = urlIndexAction;
+                        }
+                    }
+                });
+                fileUploadModal.open();
+            }
+        });
+
+        $(document).ready(function () {
+            setCheckboxs(-1);
+            if ($('#spnCheckedCounter').text() == 0) {
+                $('#btnDelete').prop('disabled', true);
+                $('#btnPrint').prop('disabled', true);
+            }
+
+            if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+            }
+
+            if ($("#hidPrint").val() == "Print") {
+                $("#hidPrint").val("")
+                location.href = '@Model.SearchConditions.Ret';
+            }
+
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var $form = $("#frmSearch");
+                var urlAction ='@Url.Action("Search", "ImportInstruction", new { area= "Stock" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                });
+            });
+        });
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidKey").val($("#ddlKey").val());
+            $("#hidSearchType").val("SortPage");
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "ImportInstruction", new { area= "Stock" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Search() {
+                var urlAction = '@Url.Action("Search", "ImportInstruction", new { area = "Stock" })';
+                var $form = $("#frmSearch");
+                $("#hidSearchType").val("Search");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        function SetCheckValue(lineNo) {
+            $('input[type=checkbox][id$="SearchConditions.InstructionViewModels[' + lineNo + '].CheckedValue"]').each(function (i, item) {
+                $(item).trigger('click');
+            });
+            if ($('input[type=checkbox][id$="SearchConditions.InstructionViewModels[' + lineNo + '].CheckedValue"]').is(':checked')) {
+                if ($('input[type=hidden][id$="ImportInstructions[' + lineNo + '].ResultFlg"]').val() == 1) {
+                    $("#hidResultCnt").val(Number($("#hidResultCnt").val()) + 1);
+                }
+                setCheckboxs(1);
+            } else {
+                if ($('input[type=hidden][id$="ImportInstructions[' + lineNo + '].ResultFlg"]').val() == 1) {
+                    $("#hidResultCnt").val(Number($("#hidResultCnt").val()) - 1);
+                }
+                setCheckboxs(0);
+            }
+        }
+
+
+    $('#btnDelete').on("click", function () {
+        if ($('#spnCheckedCounter').text() == '0') {
+            alert("1件以上選択してください");
+            return;
+        }
+
+            var submitButton = $('button[type="submit"]');
+            submitButton.prop('disabled', false);
+            var urlAction = '@Url.Action("Delete", "ImportInstruction", new { area = "Stock" })';
+            var $form = $("#frmSearch");
+            $("#hidSearchType").val("Search");
+            $form.attr("action", urlAction);
+            $('#btnDeleteHidden').click();
+        });
+
+        function setCheckboxs(flag) {
+            if (flag == 1) {
+                $('#spnCheckedCounter').text(Number($('#spnCheckedCounter').text()) + 1);
+            } else if (flag == 0) {
+                $('#spnCheckedCounter').text(Number($('#spnCheckedCounter').text()) - 1);
+            } else {
+                if (@Model.SearchConditions.SelectedCnt != '0') {
+                    $("#spnCheckedCounter").text(@Model.SearchConditions.SelectedCnt);
+                } else {
+                    $('#spnCheckedCounter').text(0);
+                }
+            }
+            if ($('#spnCheckedCounter').text() == 0) {
+                $('#btnDelete').prop('disabled', true);
+                $('#btnPrint').prop('disabled', true);
+            } else {
+                if ($("#hidResultCnt").val() == 0) {
+                    $('#btnDelete').prop('disabled', false);
+                } else {
+                    $('#btnDelete').prop('disabled', true);
+                }
+                $('#btnPrint').prop('disabled', false);
+            }
+        };
+
+        $('#rbCheckAll').click(function () {
+            if ($("#listData").length) {
+                $("#hidSearchType").val("SortPage");
+                var urlAction = '@Url.Action("AllSelectedSearch", "ImportInstruction", new { area= "Stock" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+        });
+
+        $('#rbUnCheckAll').click(function () {
+            if ($("#listData").length) {
+                $("#hidSearchType").val("SortPage");
+                var urlAction = '@Url.Action("UnSelectedSearch", "ImportInstruction", new { area= "Stock" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+        });
+
+        //印刷定義設定
+        function BodyPrint() {
+            if ($('#spnCheckedCounter').text() == '0') {
+                alert("1件以上選択してください");
+                return;
+            }
+            var urlAction = '@Url.Action("Print", "ImportInstruction", new { area= "Stock" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        };
+</script>
+}

@@ -1,0 +1,305 @@
+﻿@using Wms.Resources;
+@model Wms.ViewModels.LoginViewModel
+
+@{
+    ViewBag.Title = LoginResource.LBL_LOGIN_TITLE;
+    Layout = "~/Views/Shared/_Base.cshtml";
+}
+
+  @using (Html.BeginForm("Index", "Login", FormMethod.Post, new { id = "formLogin" }))
+    {
+<div class="container div-login">
+  
+
+        @Html.AntiForgeryToken()
+        <div class="col-md-5 m-auto shadow" style="padding:4rem;">
+            <div class="row mb-3">
+                <img class="logo" src="~/Content/img/companylogo_portrait.png" />
+            </div>
+            <div class="row mb-3">
+                <span class="label label-default">@LoginResource.LBL_LOGIN_SHIPPER</span>
+                @if (ConfigurationManager.AppSettings["IsLoginTestMode"] == "true")
+                {
+                    @Html.TextBoxFor(model => model.ShipperId,
+                        new
+                        {
+                            placeholder = @LoginResource.PLH_LOGIN_SHIPPER_ID,
+                            @class = "form-control",
+                            id = "txtShipperId",
+                            tabindex = "1",
+                            @Value = System.Configuration.ConfigurationManager.AppSettings["LOGIN_SHIPPER"]
+                        })
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.ShipperId,
+                        new
+                        {
+                            placeholder = @LoginResource.PLH_LOGIN_SHIPPER_ID,
+                            @class = "form-control",
+                            id = "txtShipperId",
+                            tabindex = "1",
+                            @Value = System.Configuration.ConfigurationManager.AppSettings["LOGIN_SHIPPER"],
+                            @readonly = "readonly"
+                        })
+                }
+                @Html.ValidationMessageFor(model => model.ShipperId)
+            </div>
+
+            <div class="row mb-3">
+                <span class="label label-default">@LoginResource.LBL_LOGIN_CENTER_CODE</span>
+                @Html.TextBoxFor(model => model.CenterId, new { placeholder = @LoginResource.PLH_LOGIN_CENTER_CODE, @class = "form-control", id = "txtCenterId", tabindex = "2" })
+                @Html.ValidationMessageFor(model => model.CenterId)
+            </div>
+
+            <div class="row mb-3">
+                <span class="label label-default">@LoginResource.LBL_LOGIN_USER </span>
+                @Html.TextBoxFor(model => model.UserId, new { placeholder = @LoginResource.PLH_LOGIN_USER_ID, @class = "form-control", id = "txtUserId", tabindex = "3" })
+                @Html.ValidationMessageFor(model => model.UserId)
+            </div>
+
+            <div class="row mb-4">
+                <span class="label label-default">@LoginResource.LBL_LOGIN_PASSWORD </span>
+                @Html.TextBoxFor(model => model.PasswordHash, new { placeholder = @LoginResource.PLH_LOGIN_PASSWORD, @class = "form-control", @type = "password", id = "txtPassword", tabindex = "4" })
+                @Html.ValidationMessageFor(model => model.PasswordHash)
+            </div>
+
+            @*Error*@
+            <div class="row">
+                <span class="err_messge_plan" id="spMessage">@ViewBag.ErrorMessage</span>
+            </div>
+
+            <div class="row col-md-6 mb-3 m-auto">
+                 <button id="btnLoginHidden" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#infoConfirm" hidden>@LoginResource.BTN_LOGIN_SUBMIT</button>
+                <button type="submit" id="btnLogin" class="btn btn-dark btn-block" tabindex="5">@LoginResource.BTN_LOGIN_SUBMIT</button>
+                <input type="hidden" value="@ViewBag.LoginStatus" id="hdfLoginStatus" />
+            </div>
+        </div>
+      
+</div>
+
+@Html.Partial("_InformationMessageDialog", ViewBag.LoginMessage == null ? string.Empty : (string)ViewBag.LoginMessage)
+    }
+
+ @using (Html.BeginForm("ChangePassword", "Login", FormMethod.Post, new { id = "frmChangePassword" }))
+  {
+           @Html.HiddenFor(model => Model.ShipperId)
+           @Html.HiddenFor(model => Model.CenterId)
+           @Html.HiddenFor(model => Model.UserId)
+           @Html.HiddenFor(model => Model.PasswordHash)
+           @Html.HiddenFor(model => Model.MinLength)
+   }
+@section BaseChildScripts{
+ <script>
+        @* autocompleteを無効にする *@
+        $('input').attr('autocomplete', 'off');
+        /**
+         * The Js handle login logic
+         */
+        var Login = {
+            /**
+             * Constants
+             */
+            CONST: {
+
+            },
+            /**
+             * Result of validate login status
+             */
+            ResultValidateLogin:
+                {
+                    OK: 0,
+                    ERR_PASSWORD_DEFAULT: 1,
+                    ERR_LOGIN_MENU: 2,
+                    ERR_PASSWORD_EXPIRED: 3,
+                    ERR_PASSWORD_MISTYPE: 4,
+                    WAR_PASSWORD_EXPIRED: 5,
+                    ERR_ACCOUNT_EXPIRATION: 6,
+                    MultiLogin: 7,
+                },
+            /**
+            * SELECTORS Object
+            */
+            SELECTORS: {
+                btnLogin: "#btnLogin",
+                txtShipperId: "#txtShipperId",
+                CenterId: "#txtCenterId",
+                txtUserId: "#txtUserId",
+                txtPassword: "#txtPassword",
+                frmLogin: "#formLogin",
+                spMessage: "#spMessage",
+                hdfLoginStatus: "#hdfLoginStatus"
+
+            },
+
+            /**
+            * Init data
+            */
+            init: function () {
+                var loginStatus = $(this.SELECTORS.hdfLoginStatus).val();
+                if (loginStatus != "" && loginStatus != Login.ResultValidateLogin.OK) {
+                    this.validateUserLogin(parseInt(loginStatus));
+                }
+                this.setUpEvent();
+            },
+
+            /**
+            * Set up event
+            */
+            setUpEvent: function () {
+                // Event click on button Login
+                $(Login.SELECTORS.btnLogin).click(function (e) {
+                    e.preventDefault();
+                    $(Login.SELECTORS.spMessage).text("");
+                    if (!$(Login.SELECTORS.frmLogin).valid()) {
+                        $(this.SELECTORS.CenterId).focus();
+
+                        return false;
+                    }
+                    else {
+                        $(Login.SELECTORS.frmLogin).submit();
+
+                    }
+
+                });
+
+            },
+            /**
+             * Handle logic validate user login while after submit
+             */
+            validateUserLogin: function (status) {
+               
+                switch (status) {
+                    case 1:
+                        //初期パスワード設定
+                        $("#btnLoginHidden").click();
+                         $("#submitInfo").on("click", function () {
+                             //window.location.href = '@Url.Action("ChangePassword","Login")';
+                             
+                             $("#frmChangePassword").submit();
+                         });
+
+                        break;
+                   
+                    case 2:
+                        //不正な入力エラー
+                        $(Login.SELECTORS.spMessage).text('@ViewBag.LoginMessage');
+
+                        // Focus to model error
+                        //focusFirstError();
+                        $(this.SELECTORS.CenterId).focus();
+
+                        break;
+                    case 3:
+                        //失効した担当者入力エラー
+                         $(Login.SELECTORS.spMessage).text('@ViewBag.LoginMessage');
+
+                        // Focus to model error
+                        $(this.SELECTORS.CenterId).focus();
+
+                        break;
+                    case 4:
+                        //入力ミス回数上限を超える
+                         $(Login.SELECTORS.spMessage).text('@ViewBag.LoginMessage');
+
+                        // Focus to model error
+                        $(this.SELECTORS.CenterId).focus();
+
+                        break;
+                    default:
+                        $(Login.SELECTORS.spMessage).text('@ViewBag.LoginMessage');
+
+                        // Focus to model error
+                        $(this.SELECTORS.CenterId).focus();
+                        break;
+                }
+            }
+        }
+         var current_scrollY;
+        $(function () {
+            $("#dialog").dialog({
+                autoOpen: false,
+                width: 1100,
+                Height: 100,
+                modal: true,
+                position: { my: 'center top+30', at: 'center top', of: "body" },
+                dialogClass: 'modalct',
+                resizable: false
+            });
+            $(".ui-icon-closethick").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    $("#dialog").dialog("close");
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+            $(".btn_close").on("click",
+                function () {
+                    $('.wrap').attr({ style: '' });
+                    $('html, body').prop({ scrollTop: current_scrollY });
+                    $("#dialog").dialog("close");
+                    document.activeElement.blur(); /* フォーカス解除 IE11 */
+                });
+
+
+        });
+        $(document).ready(function () {
+            Login.init();
+
+
+        });
+        $(document.body).on("click",
+                ".ui-widget-overlay",
+                function () {
+                    $.each($(".ui-dialog"),
+                        function () {
+                            var $dialog = $(this).children(".ui-dialog-content");
+                            if ($dialog.dialog("option", "modal")) {
+                                $('.wrap').attr({ style: '' });
+                                $('html, body').prop({ scrollTop: current_scrollY });
+                                $dialog.dialog("close");
+                            }
+                        });
+                });
+         function searchDialogData() {
+              $("#dialog").css("display", "");
+                    $("#dialog").dialog(
+                        {
+                            width:800,
+                            height:400
+                        });
+        }
+
+
+        function pwdDisplay(obj) {
+
+            var srcContent = obj.src;
+            if (srcContent.indexOf('visibility.svg') > 0) {
+                obj.src = srcContent.replace('visibility.svg', 'visibility_off.svg');
+                document.getElementById("txtPassword").type = "text";
+            }
+            else {
+                obj.src = srcContent.replace('visibility_off.svg', 'visibility.svg');
+                document.getElementById("txtPassword").type = "password";
+            }
+        }
+
+        function GoToAuthenticationKey() {
+            //window.location = "@Url.Action("AuthenticationKey", "Login", null)";
+            //window.location.href = '@Url.Action("AuthenticationKey","Login")';
+
+            $("#formAuthenKey").submit();
+        }
+
+        function isSave()
+        {
+            if (document.getElementById("chxIsSaveCooike").checked) {
+                document.getElementById("hidIsSaveCooike").value = true;
+            }
+            else {
+                document.getElementById("hidIsSaveCooike").value = false;
+            }
+        }
+    </script>
+}

@@ -1,0 +1,494 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Inventory.Resources;
+@model Wms.Areas.Inventory.ViewModels.Input.InputViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_INV_Input;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("Search", "Input", FormMethod.Post, new { id = "frmSearch", @leave_confirm = "yes" }))
+{
+<div id="div_search" class="head head_white collapse">
+    @Html.AntiForgeryToken()
+    <table>
+        <tr>
+            <td class="tdtitle_large">@InputResource.CenterIdS</td>
+            <td>
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.CenterDropDownFor(
+                            model => model.SearchConditions.CenterId
+                            , Wms.Common.Profile.User.UserId
+                            , "", new { @id = "ddlCenterId", tabindex = "1", onchange = "InventoryNoList()" })
+                    </div>
+                </div>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="tdtitle_large">@InputResource.InventoryNoS</td>
+            <td>
+                <div class="sort">
+                    <div class="sort_inner">
+                        @Html.DropDownListFor(
+             model => model.SearchConditions.InventoryNo,
+             (IEnumerable<SelectListItem>)ViewBag.InventoryNoList,
+             new { id = "ddlInventoryNo", tabindex = "2" })
+                    </div>
+                </div>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="tdtitle_large">@InputResource.LocationCdS</td>
+            <td>
+                @Html.EditorFor(model => model.SearchConditions.LocationCd, new { htmlAttributes = new { @id = "txtLocationCd", tabindex = "3" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="tdtitle_large">@InputResource.BoxNoS</td>
+            <td>
+                @Html.EditorFor(model => model.SearchConditions.BoxNo, new { htmlAttributes = new { @id = "txtBoxNo", tabindex = "4" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="tdtitle_large">@InputResource.ItemSkuId</td>
+            <td>
+                @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @id = "txtItemSkuId", tabindex = "5" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>
+                @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Input", new { area = "Inventory" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "6" })
+                <button type="button" class="btn btn-outline-dark" id="btnSearch" tabindex="7" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" name="page" id="page" value="" />
+    <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+    <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+    @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+    @Html.HiddenFor(model => model.SearchConditions.AreaType, new { id = "hidAreaType" })
+    @Html.HiddenFor(model => model.SearchConditions.TotalCount, new { id = "hidTotalCount" })
+    @Html.HiddenFor(model => model.ChangeModel, new { id = "hidChangeModel" })
+</div>
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.Results.Inputs != null && Model.Results.Inputs.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.Inputs.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.Inputs.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.Inputs, Page => Url.Action("Search", "Input", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+    }
+    if (Model.Results.Inputs != null)
+    {
+        @* Container *@
+        <div class="Container">
+
+            @* Content *@
+            @if (Model.Results.Inputs.Count() == 0)
+            {
+                <div>
+                    <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+                </div>
+            }
+            else
+            {
+                @Html.Partial("~/Areas/Inventory/Views/Input/_InputRows.cshtml", Model);
+            }
+        </div>
+    }
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="button" id="BtnBaraAdd" class="btn btn-dark btnsize_large _pm" onclick="AddTr('Bara')"
+                @(Model.SearchConditions.AreaType == 0 || Model.SearchConditions.AreaType == Wms.Areas.Inventory.ViewModels.Input.InputSearchConditions.AreaTypes.Case ? "disabled" : "")>
+            @InputResource.BtnBaraAdd
+        </button>
+        <button type="button" id="BtnCaseAdd" class="btn btn-dark btnsize_large _pm" onclick="AddTr('Case')"
+                @(Model.SearchConditions.AreaType == 0 || Model.SearchConditions.AreaType == Wms.Areas.Inventory.ViewModels.Input.InputSearchConditions.AreaTypes.Bara ? "disabled" : "")>
+            @InputResource.BtnCaseAdd
+        </button>
+        <button type="button" id="BtnAdd" class="btn btn-dark btnsize_large _pm"
+                @(Model.Results.Inputs == null || Model.Results.Inputs.Count() == 0 ? "disabled" : "")>
+            @InputResource.BtnAdd
+        </button>
+        <button type="button" id="BtnAddHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@InputResource.BtnAdd</button>
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+    </div>
+}
+
+@*@Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_ALLOCATION)*@
+@Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        var linecnt = 0;
+        function Search() {
+                InputCheck();
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "Input", new { area = "Inventory" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+
+        $("#BtnAdd").on("click", function () {
+            if (!validateForm($('#frmSearch'))) {
+                return;
+            }
+            var len = $("#listData").find("tr").length-1;
+            var errCnt = 0;
+            for (var i = 0; i < len; i++) {
+                if ($("#Results_InputList_" + i + "__AddFlag").val() == 'True') {
+                    if ($("#Results_InputList_" + i + "__Jan").val() != ""
+                     || $("#Results_InputList_" + i + "__LocationCd").val() != ""
+                     || $("#Results_InputList_" + i + "__ResultQty").val() != ""
+                     || ($("#Results_InputList_" + i + "__ChangeModel").val() == 'Case' && $("#Results_InputList_" + i + "__BoxNo").val() != "")) {
+
+                    var jan = $("#Results_InputList_" + i + "__Jan").val();
+                    if (jan.length != 13) {
+                        $("#Jan-errormessage" + i).html('<span id="Jan-error" class="">JAN は13桁で入力してください。</span>');
+                        $("#Jan-errormessage" + i).addClass("field-validation-error");
+                        $("#Results_InputList_" + i + "__Jan").addClass("input-validation-error");
+                        errCnt = errCnt + 1;
+                    } else {
+                        $("#Jan-errormessage" + i).html('');
+                        $("#Jan-errormessage" + i).removeClass("field-validation-error");
+                        $("#Results_InputList_" + i + "__Jan").removeClass("input-validation-error");
+                    }
+                        if ($("#Results_InputList_" + i + "__ChangeModel").val() == 'Case' && $("#Results_InputList_" + i + "__BoxNo").val().trim() == "") {
+                            $("#BoxNo-errormessage" + i).html('<span id="BoxNo-error" class="">' + '@(string.Format(MessagesResource.Required,"ケースNo"))' + '</span>');
+                            $("#BoxNo-errormessage" + i).addClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__BoxNo").addClass("input-validation-error");
+                            errCnt = errCnt + 1;
+                        } else {
+                            $("#BoxNo-errormessage" + i).html('');
+                            $("#BoxNo-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__BoxNo").removeClass("input-validation-error");
+                        }
+                        if ($("#Results_InputList_" + i + "__LocationCd").val() == "") {
+                            $("#LocationCd-errormessage" + i).html('<span id="LocationCd-error" class="">' + '@(string.Format(MessagesResource.Required,"ロケーション"))' + '</span>');
+                            $("#LocationCd-errormessage" + i).addClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__LocationCd").addClass("input-validation-error");
+                            errCnt = errCnt + 1;
+                        } else {
+                            $("#LocationCd-errormessage" + i).html('');
+                            $("#LocationCd-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__LocationCd").removeClass("input-validation-error");
+                        }
+                        if ($("#Results_InputList_" + i + "__Jan").val() != ""
+                     && $("#Results_InputList_" + i + "__LocationCd").val() != ""
+                     && (($("#Results_InputList_" + i + "__ChangeModel").val() == 'Case' && $("#Results_InputList_" + i + "__BoxNo").val() != "") || $("#Results_InputList_" + i + "__ChangeModel").val() == 'Bara')
+                     && $("#Results_InputList_" + i + "__ResultQty").val() == "") {
+                            $("#ResultQty-errormessage" + i).html('<span id="ResultQty-error" class="">' + '@(string.Format(MessagesResource.Required,"実棚数"))' + '</span>');
+                            $("#ResultQty-errormessage" + i).addClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__ResultQty").addClass("input-validation-error");
+                            errCnt = errCnt + 1;
+                        } else {
+                            $("#ResultQty-errormessage" + i).html('');
+                            $("#ResultQty-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__ResultQty").removeClass("input-validation-error");
+                        }
+                    }
+                }
+            }
+            if (errCnt==0) {
+                $('#BtnAddHidden').click();
+            }
+        });
+
+        $('#updconfirm').find('[type="submit"]').on("click", function () {
+            var urlAction = '@Url.Action("AddSearch", "Input", new { area = "Inventory" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "Post");
+            $form.submit();
+        });
+        $('.mdi-chevron-right').on("click", function () {
+            InputCheck();
+        });
+
+        $(document).ready(function () {
+            if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+            }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var pageUrlAction ='@Url.Action("Search", "Input", new { area= "Inventory" })';
+                var pageUrl = pageUrlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    var len = $("#listData").find("tr").length-1;
+            var errCnt = 0;
+            for (var i = 0; i < len; i++) {
+                if ($("#Results_InputList_"+i+"__AddFlag").val()=='True') {
+                    if ($("#Results_InputList_" + i + "__Jan").val() != ""
+                        || $("#Results_InputList_" + i + "__LocationCd").val() != ""
+                        || $("#Results_InputList_" + i + "__ResultQty").val() != ""
+                        || $("#Results_InputList_" + i + "__LocationCd").val() != ""
+                        || ($("#Results_InputList_" + i + "__ChangeModel").val() == 'Case' && $("#Results_InputList_" + i + "__BoxNo").val() != "")) {
+                        var jan = $("#Results_InputList_" + i + "__Jan").val();
+                        if (jan.length != 13) {
+                            $("#Jan-errormessage" + i).html('<span id="Jan-error" class="">JAN は13桁で入力してください。</span>');
+                            $("#Jan-errormessage" + i).addClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__Jan").addClass("input-validation-error");
+                            errCnt = errCnt + 1;
+                        } else {
+                            $("#Jan-errormessage" + i).html('');
+                            $("#Jan-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__Jan").removeClass("input-validation-error");
+                        }
+                        if ($("#Results_InputList_" + i + "__ChangeModel").val() == 'Case' && $("#Results_InputList_" + i + "__BoxNo").val().trim() == "") {
+                            $("#BoxNo-errormessage" + i).html('<span id="BoxNo-error" class="">' + '@(string.Format(MessagesResource.Required,"ケースNo"))' + '</span>');
+                            $("#BoxNo-errormessage" + i).addClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__BoxNo").addClass("input-validation-error");
+                            errCnt = errCnt + 1;
+                        } else {
+                            $("#BoxNo-errormessage" + i).html('');
+                            $("#BoxNo-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__BoxNo").removeClass("input-validation-error");
+                        }
+                        if ($("#Results_InputList_" + i + "__LocationCd").val() == "") {
+                            $("#LocationCd-errormessage" + i).html('<span id="LocationCd-error" class="">' + '@(string.Format(MessagesResource.Required,"ロケーション"))' + '</span>');
+                            $("#LocationCd-errormessage" + i).addClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__LocationCd").addClass("input-validation-error");
+                            errCnt = errCnt + 1;
+                        }
+                        else {
+                            $("#LocationCd-errormessage" + i).html('');
+                            $("#LocationCd-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__LocationCd").removeClass("input-validation-error");
+                        }
+                        if ($("#Results_InputList_" + i + "__Jan").val() != ""
+                     && $("#Results_InputList_" + i + "__LocationCd").val() != ""
+                     && (($("#Results_InputList_" + i + "__ChangeModel").val() == 'Case' && $("#Results_InputList_" + i + "__BoxNo").val() != "") || $("#Results_InputList_" + i + "__ChangeModel").val() == 'Bara')
+                     && $("#Results_InputList_" + i + "__ResultQty").val() == "") {
+                            $("#ResultQty-errormessage" + i).html('<span id="ResultQty-error" class="">' + '@(string.Format(MessagesResource.Required,"実棚数"))' + '</span>');
+                            $("#ResultQty-errormessage" + i).addClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__ResultQty").addClass("input-validation-error");
+                            errCnt = errCnt + 1;
+                        } else {
+                            $("#ResultQty-errormessage" + i).html('');
+                            $("#ResultQty-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__ResultQty").removeClass("input-validation-error");
+                        }
+                    }
+                }
+            }
+                    if (errCnt == 0) {
+                    InputCheck();
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").attr("action", pageUrlAction);
+                    $("#frmSearch").attr("method", "POST");
+                    $("#frmSearch").submit();
+                    }
+                });
+            });
+        });
+        function InputCheck() {
+            var notinputcnt = 0;
+            for (var i = 0; i < linecnt; i++) {
+                var line = parseInt('@(Model.Results.InputList == null ? 0 : Model.Results.InputList.Count())') + i;
+                if (($("#Results_InputList_" + line + "__ChangeModel").val() == 'Bara'
+                    && ($("#Results_InputList_" + line + "__LocationCd").val() == '' || $("#Results_InputList_" + line + "__Jan").val() == '')) ||
+                    ($("#Results_InputList_" + line + "__ChangeModel").val() == 'Case'
+                    && ($("#Results_InputList_" + line + "__LocationCd").val() == '' || $("#Results_InputList_" + line + "__BoxNo").val() == '' || $("#Results_InputList_" + line + "__Jan").val() == ''))) {
+                    notinputcnt = notinputcnt + 1;
+                }
+            }
+            if (notinputcnt > 0) {
+                $(window).bind('beforeunload', function () {
+                    var warning = '@InputResource.DiscardMessage';
+                    return warning;
+                });
+
+            } else {
+                $(window).unbind('beforeunload', function () {
+                    var warning = '@InputResource.DiscardMessage';
+                    return warning;
+                });
+            }
+        }
+
+        /* 行変更 */
+        function AddTr(type) {
+            $("#hidChangeModel").val(type);
+            $("#hidTotalCount").val(parseInt($("#hidTotalCount").val()) + 1);
+            var form = new FormData(document.getElementById("frmSearch"));
+            var urlAction ='@Url.Action("AddTr", "Input", new { area= "Inventory" })';
+            $.ajax({
+                method: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                url: urlAction,
+                dataType: "html",
+                data: form,
+                async: "false",
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $(".Container").html(data);
+                    linecnt = linecnt + 1;
+                    $("#BtnAdd").attr('disabled', false);
+                }
+            });
+        }
+
+        /* JAN変更 */
+        function JanChange(jan, i) {
+            if (jan.length != 13) {
+                $("#Jan-errormessage" + i).html('<span id="Jan-error" class="">JAN は13桁で入力してください。</span>');
+                $("#Jan-errormessage" + i).addClass("field-validation-error");
+                $("#Results_InputList_" + i + "__Jan").addClass("input-validation-error");
+            } else {
+                $("#Jan-errormessage" + i).html('');
+                $("#Jan-errormessage" + i).removeClass("field-validation-error");
+                $("#Results_InputList_" + i + "__Jan").removeClass("input-validation-error");
+                var urlAction = '@Url.Action("JanChange", "Input", new { area= "Inventory" })';
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    data: {
+                        jan: jan
+                    },
+                    success: function (data) {
+                        if (data.itemId == "") {
+                            $("#Jan-errormessage" + i).html('<span id="Jan-error" class="">入力されたJANは、品番SKUマスタに登録されていません。</span>');
+                            $("#Jan-errormessage" + i).addClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__Jan").addClass("input-validation-error");
+                            $("#item" + i).html("");
+                            $("#itemcolor" + i).html("");
+                            $("#itemsize" + i).html("");
+                            $("#Results_InputList_" + i + "__ItemSkuId").val("");
+                            $("#Results_InputList_" + i + "__ItemId").val("");
+                            $("#Results_InputList_" + i + "__ItemName").val("");
+                            $("#Results_InputList_" + i + "__ItemColorId").val("");
+                            $("#Results_InputList_" + i + "__ItemColorName").val("");
+                            $("#Results_InputList_" + i + "__ItemSizeId").val("");
+                            $("#Results_InputList_" + i + "__ItemSizeName").val("");
+                        } else {
+                            $("#Jan-errormessage" + i).html('');
+                            $("#Jan-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__Jan").removeClass("input-validation-error");
+                            $("#item" + i).html(data.itemId + "<br/>" + data.itemName);
+                            $("#itemcolor" + i).html(data.itemColorId + "<br/>" + data.itemColorName);
+                            $("#itemsize" + i).html(data.itemSizeId + "<br/>" + data.itemSizeName);
+                            $("#Results_InputList_" + i + "__ItemSkuId").val(data.itemSkuId);
+                            $("#Results_InputList_" + i + "__ItemId").val(data.itemId);
+                            $("#Results_InputList_" + i + "__ItemName").val(data.itemName);
+                            $("#Results_InputList_" + i + "__ItemColorId").val(data.itemColorId);
+                            $("#Results_InputList_" + i + "__ItemColorName").val(data.itemColorName);
+                            $("#Results_InputList_" + i + "__ItemSizeId").val(data.itemSizeId);
+                            $("#Results_InputList_" + i + "__ItemSizeName").val(data.itemSizeName);
+                        }
+                    }
+                });
+            }
+        }
+
+        /* 実棚数変更 */
+        function ResultQtyChange(qty, i) {
+            var differenceQty = qty - $("#Results_InputList_" + i + "__StockQtyStart").val();
+            $("#Results_InputList_" + i + "__DifferenceQty").val(differenceQty);
+
+            // 差異数<0の時はテキストを赤くする
+            var color;
+            if (differenceQty < 0) {
+                color = "red";
+            } else {
+                color = "black";
+            }
+
+            //  差異数!=0の時かつ、qty!=""の時は差異数表示
+            var difQtyText;
+            if (differenceQty != 0 && qty != "")
+                difQtyText = differenceQty.toLocaleString().toString();
+            else
+                difQtyText = "";
+
+            $("#DifferenceQty" + i).html(difQtyText);
+            $("#DifferenceQty" + i).css("color",color);
+        }
+
+        /* ロケーション変更 */
+        function LocationCdChange(locationCd, i) {
+            if (locationCd != "") {
+                var urlAction = '@Url.Action("LocationCdChange", "Input", new { area= "Inventory" })';
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    data: {
+                        locationCd: locationCd,
+                        centerId: $("#ddlCenterId").val(),
+                        inventoryNo: $("#ddlInventoryNo").val(),
+                        lineClass: $("#Results_InputList_" + i + "__CaseClass").val(),
+                    },
+                    success: function (data) {
+                        if (data.message != "" && data.message != null) {
+                            $("#LocationCd-errormessage" + i).html('<span id="LocationCd-error" class="">' + data.message + '</span>');
+                            $("#LocationCd-errormessage" + i).addClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__LocationCd").addClass("input-validation-error");
+                        } else {
+                            $("#LocationCd-errormessage" + i).html('');
+                            $("#LocationCd-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__LocationCd").removeClass("input-validation-error");
+                            $("#Results_InputList_" + i + "__GradeId").val(data.gradeId);
+                        }
+                    }
+                });
+            }else {
+                            $("#LocationCd-errormessage" + i).html('');
+                            $("#LocationCd-errormessage" + i).removeClass("field-validation-error");
+                            $("#Results_InputList_" + i + "__LocationCd").removeClass("input-validation-error");
+                            $("#Results_InputList_" + i + "__GradeId").val(data.gradeId);
+                        }
+        }
+
+        function InventoryNoList() {
+            var urlAction = '@Url.Action("GetInventoryNoList","Input",new { area = "Inventory"})';
+            $.ajax({
+                url: urlAction,
+                type: "POST",
+                data: {
+                    CenterId: $("#ddlCenterId").val(),
+                },
+                success: function (data) {
+                    $("#ddlInventoryNo").html("");
+                    $("#ddlInventoryNo").html(data.html);
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,134 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.TransferReference.PickSortDetailStoreViewModel
+
+<div id="dialogPickSortDetail" class="d_continer main">
+
+    @if (Model.Head != null)
+    {
+        @* Sublbarea *@
+        <div class="color-blue">
+            @TransferReferenceResource.TitlePickSortStoreDetail
+            <table class="headtable">
+                <tr>
+                    <td class="color-blue">
+                        @TransferReferenceResource.BatchNoD
+                        @Html.DisplayFor(model => model.Head.BatchNo)
+                    </td>
+                    <td class="color-blue">
+                        @TransferReferenceResource.ItemSkuIdD
+                        @Html.DisplayFor(model => model.Head.ItemSkuId)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="color-blue">
+                        @TransferReferenceResource.ItemNameD
+                        @Html.DisplayFor(model => model.Head.ItemId)&ensp;@Html.DisplayFor(model => model.Head.ItemName)
+                    </td>
+                    <td class="color-blue">
+                        @TransferReferenceResource.JAND
+                        @Html.DisplayFor(model => model.Head.Jan)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="color-blue">
+                        @TransferReferenceResource.ItemColorIdD
+                        @Html.DisplayFor(model => model.Head.ItemColorId)&ensp;@Html.DisplayFor(model => model.Head.ItemColorName)
+                    </td>
+                    <td class="color-blue">
+                        @TransferReferenceResource.ItemSizeIdD
+                        @Html.DisplayFor(model => model.Head.ItemSizeId)&ensp;@Html.DisplayFor(model => model.Head.ItemSizeName)
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+
+    @* Container *@
+    <div class="dialog_scroll" style="margin-top:10px;height:90%;">
+        @* Content *@
+        <div class="tb_scroll" style="height:100%;">
+            <table class="table table-bordered" id="listData">
+                <thead>
+                    <tr>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.LaneNo
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.FrontageNo
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.ShipToStore
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.AllocQty
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.SortStatus
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.SortQty
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.SortUser
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.SortDate
+                        </th>
+                    </tr>
+
+                </thead>
+                @if (Model.PickResults != null && Model.PickResults.PickStoreResults.Any())
+                {
+                    <tbody>
+                        @foreach (var cModel in Model.PickResults.PickStoreResults.Select((v, i) => new { v, i }))
+                        {
+                            var key = String.Format("PickStoreResults[{0}].", cModel.i);
+                        <tr>
+                            <td class="align-middle text-right">
+                                @Html.DisplayFor(modelItem => cModel.v.LaneNo)
+                            </td>
+                            <td class="align-middle text-right">
+                                @Html.DisplayFor(modelItem => cModel.v.FrontageNo)
+                            </td>
+                            <td class="align-middle text-left">
+                                @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)<br />
+                                @Html.DisplayFor(modelItem => cModel.v.StoreName)
+                            </td>
+                            <td class="align-middle text-right">
+                                @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                            </td>
+                            <td class="align-middle text-left">
+                                @Html.DisplayFor(modelItem => cModel.v.SortStatus)
+                            </td>
+                            <td class="align-middle text-right">
+                                @Html.DisplayFor(modelItem => cModel.v.SortQty)
+                            </td>
+                            <td class="align-middle text-left">
+                                @Html.DisplayFor(modelItem => cModel.v.SortUserId)<br />
+                                @Html.DisplayFor(modelItem => cModel.v.SortUserName)
+                            </td>
+                            <td class="align-middle text-left">
+                                @Html.DisplayFor(modelItem => cModel.v.SortDate)
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                }
+            </table>
+        </div>
+
+    </div>
+    @*Bottomnav*@
+    <div class="bottomnav">
+        <div class="btnarea">
+            <button id="btnDetailsStoreClose" type="button" class="btn btn-outline-dark btn_close" onclick="closeDialogStore()">@FormsResource.Close</button>
+        </div>
+    </div>
+</div>

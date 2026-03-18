@@ -1,0 +1,9 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.TransferReference;
+@model Wms.Areas.Ship.ViewModels.TransferReference.PickResultViewModel
+
+<div id="dialogPicResult" class="d_continer main">
+    @Html.Action("GetPickResultDetails", "TransferReference", new { area = "Ship", SearchConditions = Model.Head })
+</div>

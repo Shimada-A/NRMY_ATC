@@ -1,0 +1,242 @@
+﻿@model Wms.Areas.Master.ViewModels.Size.Index
+@{
+    /**/
+
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Size01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "Size", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        <table>
+            <tr>
+                <td class="tbtitle">@SizeResource.ItemSizeId</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.ItemSizeId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtItemSizeId", tabindex = "1" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tbtitle">@SizeResource.ItemSizeName</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.ItemSizeName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemSizeName", tabindex = "2" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@SizeResource.DeleteFlagSearch</td>
+                <td class="w_checkbox" colspan="3">
+                    <label class="checkboxgroup">
+                        @Html.CheckBoxFor(model => model.SearchConditions.DeleteFlag, new { @id = "chkIsNewDate", @class = "check-box" })
+                        <span class="chk_parts"></span>
+                    </label>
+                    <span>@SizeResource.DeleteFlagSearch2</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5.3rem;"></td>
+                <td style="width: 12rem;"></td>
+                <td class="alignright">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Size", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="4" onclick="$('#frmSearch').submit()">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+@if (Model.SizeResult.Sizes != null)
+{
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.SizeResult.Sizes.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.SizeResult.Sizes.Count() > 0)
+            {
+                @Html.PagedListPager(Model.SizeResult.Sizes, Page => Url.Action("Search", "Size", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.SizeResult.Sizes.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:71vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @SizeResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SizeResource.ItemSizeId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SizeResource.ItemSizeName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SizeResource.DeleteFlag
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "Size", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.SizeResult.Sizes.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Colors[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.SizeResult.Sizes.PageNumber - 1) * Model.SizeResult.Sizes.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                        </td>
+
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.ItemSizeId, new { Name = key + "ItemColorId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                        </td>
+                                        <td class="align-middle">
+                                            <label class="chklist">
+                                                @Html.CheckBoxFor(model => cModel.v.DeleteFlag, new { @class = "check-box _pm", onclick = "return false;" })
+                                                <span class="chk_parts">
+                                                </span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+     * Country class
+     */
+    var SizesView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            ddlSortKey: '#ddlSortKey',
+            ddlSort: '#ddlSort',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+;
+                /**
+                * Dropdownlist change item  
+                */
+                $(SizesView.SELECTORS.ddlSort).change(function (val) {
+                    $(SizesView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(SizesView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(SizesView.SELECTORS.btnSearch).click();
+                });
+            },
+
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        SizesView.init();
+    });
+        function ClearConditons() {
+            $("#txtItemSizeId").val("");
+            $("#txtItemSizeName").val("");
+    }
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "Size", new { area= "Master" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "GET");
+            $form.submit();
+        }
+    </script>
+}

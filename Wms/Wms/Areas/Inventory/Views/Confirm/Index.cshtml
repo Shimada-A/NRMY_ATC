@@ -1,0 +1,362 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Inventory.Resources;
+@model Wms.Areas.Inventory.ViewModels.Confirm.ConfirmViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_INV_Confirm;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "Confirm", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@ConfirmResource.CenterIdS</td>
+                <td colspan="3">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1", onchange = "InventoryNoList()" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_large">@ConfirmResource.InventoryNoS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.InventoryNo,
+                                (IEnumerable<SelectListItem>)ViewBag.InventoryNo,
+                                CommonResource.None, new { id = "ddlInventoryNo", tabindex = "5" })
+                        </div>
+                    </div>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ConfirmResource.InventoryDateS</td>
+                <td>
+                    <div class="sortarea" style="width:600px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.InventoryDateFrom, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;", @id = "txtInventoryDateFrom", onchange = "InventoryNoList()" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        &nbsp;-&nbsp;
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.InventoryDateTo, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;", @id = "txtInventoryDateTo", onchange = "InventoryNoList()" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.InventoryDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.InventoryDateTo, "", new { })
+                    </div>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Confirm", new { area = "Inventory" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "6" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="7" onclick="Search();">@FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.Confirms != null)
+{
+    if (Model.Results.Confirms.Count() > 0)
+    {
+        <div class="sublbarea">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.Confirms.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @Html.PagedListPager(Model.Results.Confirms, Page => Url.Action("Search", "Confirm", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            </div>
+        </div>
+    }
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.Confirms.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:71vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmResource.InventoryNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmResource.InventoryName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmResource.InventoryStartDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmResource.ConfirmStatus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ConfirmResource.InventoryConfirmDate
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "Confirm", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.Confirms.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Confirms[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="chk_cell align-middle">
+                                            <label>
+                                                <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetCheckValue(@cModel.v.LineNo, @cModel.v.ResultsDataFlag, '@cModel.v.InventoryConfirmFlag')" />
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.Confirms.PageNumber - 1) * Model.Results.Confirms.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryNo)
+                                        </td>
+
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryStartDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryConfirmFlag)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.InventoryConfirmDate)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.ResultsDataFlag, new { Name = key + "ResultsDataFlag" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+    @*Bottomnav*@
+    @section Basefooter{
+        <div class="btnarea">
+            <button id="btnInventoryConfirmHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_Update" hidden>@FormsResource.BTN_REAL_CONFIRM</button>
+            <button type="button" id="btnInventoryConfirm" class="btn btn-dark btnsize _pm">@FormsResource.BTN_REAL_CONFIRM</button>
+            <button id="btnConfirm" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#confirm_Confirm" hidden></button>
+        </div>
+    }
+    @Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Confirm", Message = (string)ViewBag.ErrorMessage })
+    @Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Update", Message = @MessagesResource.QUE_INVENTORY_FORMAL_CONFIRM })
+    @** スクリプト *@
+    @section LayoutScripts{
+        <script>
+    /**
+     * Country class
+     */
+    var resultsDataFlag = 0;
+    var inventoryStatus = "";
+    var ConfirmView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=radio][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=radio][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=radio][class=check-box]',
+            tblRow: '#listData tbody tr',
+            chkChecked: ':radio:checked',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnInventoryConfirm: '#btnInventoryConfirm',
+        },
+
+        /**
+        * Init data
+        */
+        init: function () {
+            this.registerEvent();
+            this.setButtonStatus();
+        },
+
+        /**
+        * Register event for control
+        */
+        registerEvent: function () {
+
+            /**
+                * Check box click
+                */
+            $(ConfirmView.SELECTORS.chkInTable).click(function (evt) {
+                $(this).prop("checked", true);
+                evt.stopPropagation();
+                ConfirmView.setButtonStatus();
+            });
+
+        },
+
+            /**
+            * Enable/Disable button Edit
+            */
+        setButtonStatus: function () {
+            // Enable/Disable button Update
+            if ($(ConfirmView.SELECTORS.chkCheckedInTable).length == 1 && resultsDataFlag == 1 && inventoryStatus == '@ConfirmResource.ProvisionalDecision') {
+                $(ConfirmView.SELECTORS.btnInventoryConfirm).removeAttr('disabled');
+            } else {
+                $(ConfirmView.SELECTORS.btnInventoryConfirm).attr('disabled', 'disabled');
+            }
+        },
+
+    }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        ConfirmView.init();
+        if ('@ViewBag.Status' == '@ProcedureStatus.NoAllocData') {
+            $("#btnConfirm").click();
+        }
+        @* Pageを変更時 *@
+        $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+            var urlAction ='@Url.Action("Search", "Confirm", new { area= "Inventory" })';
+            var pageUrl = urlAction + '?Page=';
+            var page = $(item).attr("href").replace(pageUrl, "");
+            page = page.replace("&class=btn-outline-dark", "");
+            $(item).attr("href", "javascript:void(0);").click(function () {
+                $("#hidPage").val(page);
+                $("#hidSearchType").val("SortPage");
+                $("#frmSearch").attr("action", urlAction);
+                $("#frmSearch").attr("method", "POST");
+                $("#frmSearch").submit();
+            });
+        });
+    });
+
+    function SetCheckValue(lineNo, ResultsDataFlag, InventoryConfirmFlag) {
+        $("#hidLineNo").val(lineNo);
+        resultsDataFlag = ResultsDataFlag;
+        inventoryStatus = InventoryConfirmFlag;
+    }
+
+    function Search() {
+        $("#hidSearchType").val("Search");
+        var urlAction = '@Url.Action("Search", "Confirm", new { area = "Inventory" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    }
+
+    $('#btnInventoryConfirm').on("click", function () {
+        if (!validateForm($('#frmSearch'))) {
+            return;
+        }
+        $('#btnInventoryConfirmHidden').click();
+    });
+
+    $('#Update').on("click", function () {
+        var urlAction ='@Url.Action("InvConfirm", "Confirm", new { area= "Inventory" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+
+    $('#Confirm').on("click", function () {
+        var urlAction ='@Url.Action("InvAgainConfirm", "Confirm", new { area= "Inventory" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+
+    function InventoryNoList() {
+        var urlAction = '@Url.Action("GetInventoryNoList","Confirm",new { area = "Inventory"})';
+        $.ajax({
+            url: urlAction,
+            type: "POST",
+            data: {
+                InventoryDateFrom: $("#txtInventoryDateFrom").val(),
+                InventoryDateTo: $("#txtInventoryDateTo").val(),
+                CenterId: $("#ddlCenterId").val(),
+            },
+            success: function (data) {
+                $("#ddlInventoryNo").html("");
+                $("#ddlInventoryNo").html(data.html);
+            }
+        });
+    }
+    function Remove(e) {
+        $("#" + e.id).val('');
+        $("#" + e.id).flatpickr(single_flatpickr_opts);
+        $("#" + e.id).attr('readonly', true);
+        $("#" + e.id).change();
+    }
+
+        </script>
+    }

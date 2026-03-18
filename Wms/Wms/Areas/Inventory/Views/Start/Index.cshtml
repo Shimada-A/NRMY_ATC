@@ -1,0 +1,312 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Inventory.Resources;
+@using Wms.Areas.Inventory.ViewModels.Start;
+@model Wms.Areas.Inventory.ViewModels.Start.StartViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_INV_Start;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+@* Head *@
+@using (Html.BeginForm("Search", "Start", FormMethod.Post, new { id = "frmSearch" }))
+{
+    <div id="div_search" class="head head_white collapse">
+        @Html.AntiForgeryToken()
+        <table>
+            <colgroup>
+                <col class="tdtitle" />
+                <col width="400px" />
+                <col class="tdtitle_large" />
+            </colgroup>
+            <tr>
+                <td class="tdtitle">@ConfirmResource.CenterIdS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td colspan="4">
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="2" onclick="Search();">@FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.Key, new { id = "hidKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+
+    </div>
+    <div class="head head_white">
+        <table>
+            <colgroup>
+                <col class="tdtitle" />
+                <col width="400px" />
+                <col class="tdtitle_large" />
+            </colgroup>
+            <tr>
+                <td class="tdtitle">@StartResource.InventoryClass</td>
+                <td width="400px">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                model => model.SearchConditions.InventoryClass
+                                , "INVENTORY_CLASS", Wms.Common.Profile.User.CenterId
+                                , null, new { @class = "w_10_normal", @id = "txtInventoryClass", tabindex = "3", onchange = "InventoryClassChange()" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle_large">@StartResource.InventoryLocation</td>
+                <td>
+                    <button type="button" id="btnUpload" class="Upload _pm" tabindex="5"
+                            @(Model.SearchConditions.InventoryClass != "1" ? "" : "disabled") style="vertical-align: top;">
+                        <img src="~/Content/img/upload.png" />
+                        @FormsResource.BTN_UPLOAD
+                    </button>
+                </td>
+                <td rowspan="2">
+                    <button type="button" id="btnStart" class="btn btn-dark _pm" tabindex="7"
+                            @(Model.SearchConditions.InventoryClass != "2" ? "" : "disabled")>
+                        @StartResource.BtnStart
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.SimpleIInventoryFlag, new { id = "txtSimpleIInventoryFlag", tabindex = "4", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @StartResource.SimpleIInventoryFlag
+                </td>
+                <td class="tdtitle">@StartResource.Template</td>
+                <td>
+                    <button type="button" id="btnDownload" class="download" tabindex="6" style="vertical-align: top;">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>  }
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.Starts != null && Model.Results.Starts.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Key, new { Name = "SearchConditions.Key", @id = "ddlKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.Starts.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.Starts.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.Starts, Page => Url.Action("Search", "Start", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.Starts != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.Starts.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:59vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @StartResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @StartResource.InventoryNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @StartResource.InventoryStartDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @StartResource.InventoryName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @StartResource.InventoryClassName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @StartResource.SimpleIInventoryFlagName
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cModel in Model.Results.Starts.Select((v, i) => new { v, i }))
+                            {
+                                var key = String.Format("Starts[{0}].", cModel.i);
+                                <tr>
+                                    <td class="align-middle text-right w_no">
+                                        @((cModel.i + 1) + (Model.Results.Starts.PageNumber - 1) * Model.Results.Starts.PageSize)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.InventoryNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.InventoryStartDate)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.InventoryName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.InventoryClassName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.SimpleInventoryFlagName)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+    </div>
+}
+
+@Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_ALLOCATION_CANCEL)
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@Html.Partial("_FileUploadModal")
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+    <script>
+    Dropzone.autoDiscover = false;
+        $("#btnDownload").on("click", function () {
+            var urlAction = '@Url.Action("Download", "Start", new { area = "Inventory" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "Post");
+            $form.submit();
+        });
+        //ファイルアップロード
+        fileUploadModal.init();
+        $('#btnUpload').on('click', function () {
+            var urlAction = '@Url.Action("Upload", "Start", new { area = "Inventory" })';
+            var urlIndexAction = '@Url.Action("IndexSearch", "Start", new { area = "Inventory" })';
+            fileUploadModal.setting({
+                url: urlAction,
+                title: "@StartResource.Title" + "@FormsResource.FileUplaodTitle",
+                acceptedFiles: ".xlsx",
+                successCallback: function (data) {
+                    if (data.err == 'true') {
+                        location.href = urlIndexAction;
+                    } else {
+                        location.href = urlIndexAction;
+                    }
+                }
+            });
+            fileUploadModal.open();
+        });
+        $("#btnStart").on("click", function () {
+            var urlAction = '@Url.Action("InventoryStart", "Start", new { area = "Inventory" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "Post");
+            $form.submit();
+        });
+        $(document).ready(function () {
+            if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+            }
+            if ($("#txtInventoryClass").val() == "1") {
+                $("#btnUpload").attr('disabled', 'disabled');
+                $("#btnStart").removeAttr('disabled');
+            } else {
+                $("#btnUpload").removeAttr('disabled');
+                $("#btnStart").attr('disabled', 'disabled');
+            }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "Start", new { area= "Inventory" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").attr("action", urlAction);
+                    $("#frmSearch").attr("method", "POST");
+                    $("#frmSearch").submit();
+                });
+            });
+        });
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidKey").val($("#ddlKey").val());
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "Start", new { area= "Inventory" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        // Sort
+        function InventoryClassChange() {
+            if ($("#txtInventoryClass").val() == "1") {
+                $("#btnUpload").attr('disabled', 'disabled');
+                $("#btnStart").removeAttr('disabled');
+            } else {
+                $("#btnUpload").removeAttr('disabled');
+                $("#btnStart").attr('disabled', 'disabled');
+            }
+        }
+        function Search() {
+                var urlAction = '@Url.Action("Search", "Start", new { area = "Inventory" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+    </script>
+}

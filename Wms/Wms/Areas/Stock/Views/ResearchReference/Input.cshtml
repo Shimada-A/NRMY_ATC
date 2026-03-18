@@ -1,0 +1,288 @@
+﻿@using Share.Common;
+@using Share.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Stock.Resources;
+@model Wms.Areas.Stock.ViewModels.ResearchReference.ResearchReferenceInputViewModel
+@{
+    ViewBag.Title = ResearchReferenceResource.TitleInput;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Update", "ResearchReference", FormMethod.Post, new { id = "frmUpdate" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("Json", Model.ResultRow.ToJson(), new { @id = "hiddenJson" })
+    <div id="div_search" class="headarea sortheadareaheight">
+        <table class="headtable">
+            <tr>
+                <td class="tdtitle min-width-label">
+                    @ResearchReferenceResource.LabelRegistClass
+                </td>
+                <td class="min-width-value">
+                    @Model.ResultRow.RegistClassName
+                </td>
+                <td class="tdtitle min-width-label">
+                    @ResearchReferenceResource.LabelRegistUser
+                </td>
+                <td class="min-width-value">
+                    @Model.ResultRow.RegistUserId&ensp; @Model.ResultRow.RegistUserName
+                </td>
+                <td class="tdtitle min-width-label">
+                    @ResearchReferenceResource.LabelSlipNo
+                </td>
+                <td class="min-width-value">
+                    @Model.ResultRow.SlipNo
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelInvoiceNo
+                </td>
+                <td>
+                    @Model.ResultRow.InvoiceNo
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelBatchNo
+                </td>
+                <td>
+                    @Model.ResultRow.GetBatchNoForDisplay()
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelLocation
+                </td>
+                <td>
+                    @Model.ResultRow.LocationCd
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelBoxNo
+                </td>
+                <td>
+                    @Model.ResultRow.BoxNo
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelItemId
+                </td>
+                <td>
+                    @Model.ResultRow.ItemId
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelColorId
+                </td>
+                <td>
+                    @Model.ResultRow.ColorId
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelSizeId
+                </td>
+                <td>
+                    @Model.ResultRow.SizeId
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelItemName
+                </td>
+                <td>
+                    @Model.ResultRow.ItemName
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelColorName
+                </td>
+                <td>
+                    @Model.ResultRow.ColorName
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelSizeName
+                </td>
+                <td>
+                    @Model.ResultRow.SizeName
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelJan
+                </td>
+                <td>
+                    @Model.ResultRow.Jan
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelGrade
+                </td>
+                <td>
+                    @Model.ResultRow.GradeName
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelDiffQuantity
+                </td>
+                <td>
+                    @Model.ResultRow.DiffQuantity
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelResearchLocation
+                </td>
+                <td>
+                    @Model.ResultRow.ResearchLocationCd
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelResearchUser
+                </td>
+                <td>
+                    @Model.ResultRow.ResearchUserId
+                </td>
+                <td class="tdtitle">
+                    @ResearchReferenceResource.LabelResearchNote
+                </td>
+                <td>
+                    @Model.ResultRow.ResearchNote
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <div>
+            <div class="tb_scroll" style="height:71vh;">
+                <table class="table table-bordered" id="listData">
+                    <thead>
+                        <tr>
+                            <th class="bg-grey align-middle">
+                                No
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ThSlipNo
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ThSlipRowNo
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ThBatchNo2
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.Sku
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.Jan
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ReportItemId
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ReportColorId
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ReportSizeId
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.LocationCd
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ThGrade
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.StatusQty
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ThResearchNote
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ThResearchUserId
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ThResearchDateTime
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.AssortStockOutQty
+                            <th class="bg-grey align-middle">
+                                @ResearchReferenceResource.ResearchClass
+
+                            </th>
+                            <th hidden>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.ResultCheckD != null)
+                        {
+                            for (int i = 0; i < Model.ResultCheckD.Count(); i++)
+                            {
+                        <tr>
+                            <td class="align-middle text-right w_no">
+                                @(i + 1)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].SlipNo)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].SlipSeq)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].BatchNo)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].ItemSkuId)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].Jan)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].ItemId)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].ItemColorId)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].ItemSizeId)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].LocationCd)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].GradeId)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].Qty)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].ResearchNote)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].ResearchUserId)
+                                <br />
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].ResearchUserName)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].ResearchDate)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].AssortStockOutQty)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => Model.ResultCheckD[i].ResearchClassName)
+                            </td>
+                        </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+
+@section Basefooter
+{
+    <div class="btnarea">
+        @Html.ActionLink(
+            FormsResource.BTN_RETURN,
+            "ReSearch",
+            "ResearchReference",
+            new { area = "Stock" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}

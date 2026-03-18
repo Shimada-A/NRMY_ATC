@@ -1,0 +1,33 @@
+﻿@model Wms.Areas.Styleguide.Models.Label
+@{
+    ViewBag.Title = "Label";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>Label</h1>
+        <p class="pg_caption">ラベルの使い方</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content of">
+        <h3>Label(@@Html.Label)</h3>
+        <div class="mtop20">
+            @Html.Label("ラベルのサンプル")
+        </div>
+        <div class="codearea">
+            <p>検索条件のタイトルなどに使用する</p>
+        </div>
+    </div>
+    <div class="content of">
+        <h3>Label(@@Html.LabelFor)</h3>
+        <div class="mtop20">
+            @Html.LabelFor(model => model.Name)
+        </div>
+        <div class="codearea">
+            <p>入力フォームのタイトルなどに使用する。Modelのプロパティからラベルを生成する。</p>
+        </div>
+    </div>
+</div>

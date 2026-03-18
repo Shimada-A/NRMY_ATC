@@ -1,0 +1,23 @@
+﻿/*グローバルナビのアカウント情報ツールチップ*/
+#tt_account {
+    display: none;
+}
+
+table.account_tb {
+    width: 100px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+    table.account_tb td {
+        padding: 15px 0;
+        vertical-align: middle;
+        font-size: 1.2rem;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+        table.account_tb td:nth-child(1) {
+            width: 100px;
+            padding-left: 20px;
+            position: relative;
+        }

@@ -1,0 +1,23 @@
+﻿@* This view is checkbox's checked counter, slect all button and unselect all button in footer. *@
+
+@* CheckBoxes jQuery selector (ex) input[name$='IsCheck'] *@
+@*@model string*@
+
+<ul class="selectmenu">
+    <li class="selected">
+        <span id="spnCheckedCounter" class="num">0</span>
+        @Share.Common.Resources.FormsResource.BTN_SELECTING
+    </li>
+    <li class="allchecked">
+        <label>
+            @Html.RadioButton("rbCheckAll", "CheckAll", new {@class = "" } )
+            <span class="checkcursor">@Share.Common.Resources.FormsResource.BTN_SELECT_ALL</span>
+        </label>
+    </li>
+    <li class="uncheked">
+        <label>
+            @Html.RadioButton("rbUnCheckAll", "UnCheckAll", new {@class = "" })
+            <span class="checkcursor ">@Share.Common.Resources.FormsResource.BTN_SELECT_OFF</span>
+        </label>
+    </li>
+</ul>

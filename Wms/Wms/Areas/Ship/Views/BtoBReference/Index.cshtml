@@ -1,0 +1,1024 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.BtoBReference;
+@model Wms.Areas.Ship.ViewModels.BtoBReference.BtoBReference01ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_BtoBReference01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "BtoBReference", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                     model => model.SearchConditions.CenterId
+                                     , Wms.Common.Profile.User.UserId
+                                     , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.DivisionS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                     model => model.SearchConditions.DivisionId,
+                                     (IEnumerable<SelectListItem>)ViewBag.DivisionList,
+                                     CommonResource.None, new { id = "ddlDivisionId", tabindex = "20" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.MakeDateTimeS</td>
+                <td>
+                    <div class="sortarea" style="width:600px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.MakeDateFrom, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "flatpickr flatpickr_single flatpickr-input" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.MakeTimeFrom, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "time_input", @onblur = "TimeBlur();" } })
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.MakeDateTo, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "flatpickr flatpickr_single flatpickr-input" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.MakeTimeTo, new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "time_input", @onblur = "TimeBlur();" } })
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.MakeDateFrom, "", new { id = "MakeDateFromMessage" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.MakeTimeFrom, "", new { id = "MakeTimeFromMessage" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.MakeDateTo, "", new { id = "MakeDateToMessage" })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.MakeTimeTo, "", new { id = "MakeTimeToMessage" })
+                    </div>
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.BrandS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "21" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "22" } })
+                    <div class="search">
+                        <button type="button" id="btnBrandId" class="search_btn" tabindex="23" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.ShipPlanDateS</td>
+                <td>
+                    <div class="sortarea" style="width:600px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ShipPlanDateFrom, new { htmlAttributes = new { tabindex = "6", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.ShipPlanDateTo, new { htmlAttributes = new { tabindex = "7", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ShipPlanDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.ShipPlanDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.MainVendorS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.MainVendorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtMainVendorId", tabindex = "24" } })
+                    @Html.EditorFor(model => model.SearchConditions.MainVendorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtMainVendorName", tabindex = "25" } })
+                    <div class="search">
+                        <button type="button" id="btnMainVendor" class="search_btn" tabindex="26" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.KakuDateS</td>
+                <td>
+                    <div class="sortarea" style="width:600px;">
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.KakuDateFrom, new { htmlAttributes = new { tabindex = "8", @placeholder = "", @class = "startDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                        -
+                        <span class="date_input">
+                            @Html.EditorFor(model => model.SearchConditions.KakuDateTo, new { htmlAttributes = new { tabindex = "9", @placeholder = "", @class = "endDate flatpickr", @style = "height:30px;" } })
+                            <span class="arrow">&nbsp;</span>
+                        </span>
+                    </div>
+                    <div>
+                        @Html.ValidationMessageFor(model => model.SearchConditions.KakuDateFrom, "", new { })
+                        @Html.ValidationMessageFor(model => model.SearchConditions.KakuDateTo, "", new { })
+                    </div>
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.CategoryS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                     model => model.SearchConditions.CategoryId1,
+                                     (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                     CommonResource.None, new { id = "ddlCategoryId1", tabindex = "27", onchange = "CategoryChange(1)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                     model => model.SearchConditions.CategoryId2,
+                                     (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                     CommonResource.None, new { id = "ddlCategoryId2", tabindex = "28", disabled = "disabled", onchange = "CategoryChange(2)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                     model => model.SearchConditions.CategoryId3,
+                                     (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                     CommonResource.None, new { id = "ddlCategoryId3", tabindex = "29", disabled = "disabled", onchange = "CategoryChange(3)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                     model => model.SearchConditions.CategoryId4,
+                                     (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                     CommonResource.None, new { id = "ddlCategoryId4", tabindex = "30", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.ShipBoxStatusS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                     model => model.SearchConditions.ShipBoxStatus
+                                     , "SHIP_BOX_STATUS", Model.SearchConditions.CenterId
+                                     , CommonResource.None, new { @class = "w_10_normal", @id = "txtShipBoxStatus", tabindex = "10", onchange = "ShipBoxStatusChange()" })
+                        </div>
+                    </div>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.ShipBoxStatusOld, new { id = "txtShipBoxStatusOld", tabindex = "11", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @BtoBReferenceResource.ShipBoxStatusOldS
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.ItemS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                     model => model.SearchConditions.ItemCode,
+                                     (IEnumerable<SelectListItem>)ViewBag.ItemList,
+                                     CommonResource.None, new { id = "ddlItemCode", tabindex = "31" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.InstructClassS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                     model => model.SearchConditions.InstructClass
+                                     , "INSTRUCT_CLASS", Model.SearchConditions.CenterId
+                                     , CommonResource.None, new { @class = "w_10_normal", @id = "txtInstructClass", tabindex = "12" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.ItemIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @id = "txtItemId", tabindex = "32" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.StoreClassS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                     model => model.SearchConditions.StoreClass
+                                     , "STORE_CLASS", Model.SearchConditions.CenterId
+                                     , CommonResource.None, new { @class = "w_10_normal", @id = "txtStoreClass", tabindex = "13" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.JanS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @id = "txtJan", tabindex = "33" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.ShipToStoreS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ShipToStoreId, new { htmlAttributes = new { @class = "w_6_short _pm", @id = "txtShipToStoreId", tabindex = "14" } })
+                    @Html.EditorFor(model => model.SearchConditions.ShipToStoreName, new { htmlAttributes = new { @class = "w_30_normal _pm", @id = "txtShipToStoreName", tabindex = "15" } })
+                    <div class="search">
+                        <button type="button" id="btnStore" class="search_btn _pm" data-toggle="modal" data-target="#SyukkasakiModal" data-id="#txtShipToStoreId" data-name="#txtShipToStoreName" tabindex="16" />
+                    </div>
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.SkuS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @id = "txtItemSkuId", tabindex = "34" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.TransporterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                     model => model.SearchConditions.TransporterId,
+                                     (IEnumerable<SelectListItem>)ViewBag.TransporterList,
+                                     CommonResource.None, new { id = "ddlTransporterId", tabindex = "17" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.BoxNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BoxNo, new { htmlAttributes = new { @id = "txtBoxNo", tabindex = "35" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.ShipInstructIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ShipInstructId, new { htmlAttributes = new { @id = "txtShipInstructId", tabindex = "18" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.DeliNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.DeliNo, new { htmlAttributes = new { @id = "txtDeliNo", tabindex = "36" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@BtoBReferenceResource.BatchNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BatchNo, new { htmlAttributes = new { @id = "txtBatchNo", tabindex = "19" } })
+                </td>
+                <td class="tdtitle">@BtoBReferenceResource.NouhinNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.NouhinNo, new { htmlAttributes = new { @id = "txtDeliNo", tabindex = "36" } })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "BtoBReference", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "37" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="38" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+        <div style="display:none">
+            @if (Model.Results.BtoBReference01s != null && Model.Results.BtoBReference01s.Count() > 0)
+            {
+                <table>
+                    @for (int i = 0; i < Model.Results.BtoBReference01s.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.BtoBReference01s[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.BtoBReference01s[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.BtoBReference01s[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.BtoBReference01s[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.BtoBReference01s != null && Model.Results.BtoBReference01s.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border stock_detail_load">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    <button type="button" id="btnDownload" class="download" style="width:200px;">
+                        <img src="~/Content/img/download.png" />
+                        @BtoBReferenceResource.BTN_DOWNLOAD_MEISAI
+                    </button>
+                    <button type="button" id="btnDownloadCase" class="download" style="width:200px;">
+                        <img src="~/Content/img/download.png" />
+                        @BtoBReferenceResource.BTN_DOWNLOAD_CASE
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.BtoBReference01s.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.BtoBReference01s.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.BtoBReference01s, Page => Url.Action("Search", "BtoBReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    if (Model.Results.BtoBReference01s.Count() > 0)
+    {
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @BtoBReferenceResource.ItemSkuSum @Html.DisplayFor(model => model.SearchConditions.ItemSkuSum)
+                    </li>
+                    <li>
+                        @BtoBReferenceResource.DetailSum @Html.DisplayFor(model => model.SearchConditions.DetailSum)
+                    </li>
+                    <li>
+                        @BtoBReferenceResource.ResultQtySum @Html.DisplayFor(model => model.SearchConditions.ResultQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+}
+@if (Model.Results.BtoBReference01s != null)
+{
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.BtoBReference01s.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @BtoBReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBReferenceResource.BoxNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBReferenceResource.ShipToStore
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBReferenceResource.Transporter
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBReferenceResource.ResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBReferenceResource.BatchNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBReferenceResource.ShipPlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBReferenceResource.ShipStatus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBReferenceResource.KakuDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "Ship", FormMethod.Post, new { id = "frmList" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.BtoBReference01s.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("BtoBReference01s[{0}].", cModel.i);
+                                    <tr>
+                                        @*<td class="w_checkbox align-middle">
+                                            <label class="checkboxgroup">
+                                                @if ((cModel.v.ShipStatusName != BtoBReferenceResource.Print && cModel.v.ShipStatusName != BtoBReferenceResource.InvoicePrint) || cModel.v.StoreInvFlag == "1")
+                                                {
+                                                    @Html.CheckBoxFor(modelItem => cModel.v.IsCheck, new { @id = (key + "CheckedValue"), @class = "check-box", onclick = "SetCheckValue(" + @cModel.i + ")", disabled = true })
+                                                }
+                                                else
+                                                {
+                                                    @Html.CheckBoxFor(modelItem => cModel.v.IsCheck, new { @id = (key + "CheckedValue"), @class = "check-box", onclick = "SetCheckValue(" + @cModel.i + ")" })
+                                                }
+                                                <span class="chk_parts"></span>
+                                            </label>
+                                        </td>*@
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.BtoBReference01s.PageNumber - 1) * Model.Results.BtoBReference01s.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipToStoreName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransporterName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BatchNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipPlanDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipStatusName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.KakuDate)
+                                        </td>
+                                        <td class="align-middle"  style="width:100px;">
+                                            <button type="button" class="btn btn-dark btn-sm" onclick="Detail(@cModel.v.Seq,@cModel.v.LineNo)">@BtoBReferenceResource.BtnPackageDetail</button>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    @*@Html.Partial("_CheckBoxCounter")
+    <div class="btnarea">
+        <button type="button" id="btnShipConfirm" class="btn btn-dark btnsize _pm">@BtoBReferenceResource.BtnShipConfirm</button>
+        <button type="button" id="btnShipConfirmHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_ShipConfirm" hidden>@BtoBReferenceResource.BtnShipConfirm</button>
+    </div>*@
+}
+
+@{
+    var storeConditions = new ViewDataDictionary { { "ParameterStoreId", Model.SearchConditions.ShipToStoreId },{ "TempStoreId", Model.SearchConditions.ShipToStoreId } };
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_VendorSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml", storeConditions)
+@Html.Partial("~/Areas/Master/Views/Shared/_TransporterSearchModal.cshtml", "dialog")
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "ShipConfirm", Message = BtoBReferenceResource.ShipConfirmMessage })
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+<script>
+        $("#btnDownload").on("click", function () {
+                var urlAction = '@Url.Action("Download", "BtoBReference", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        });
+
+        $("#btnDownloadCase").on("click", function () {
+                var urlAction = '@Url.Action("DownloadCase", "BtoBReference", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        });
+
+    /**
+     * Country class
+     */
+        var curentSelectedCnt = 0;
+        var curentSelectedCntDiff = 0;
+    var BtoBReference01View = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=checkbox][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            rowSelected: '#spnCheckedCounter',
+            btnShipConfirm: '#btnShipConfirm',
+            ddlSortKey: '#ddlSortKey',
+            chkChecked: ':checkbox:checked',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnBrandId: '#btnBrandId',
+            brandId:'#txtBrandId',
+            brandName:'#txtBrandName',
+            brandSelect: '#brandSelect',
+            btnMainVendor:'#btnMainVendor',
+            mainVendorId:'#txtMainVendorId',
+            mainVendorName:'#txtMainVendorName',
+            vendorSelect: '#vendorSelect',
+            btnTransporterArea: '#btnTransporterArea',
+            txtTransporterArea: '#txtTransporterArea',
+            txtTransporterAreaName: '#txtTransporterAreaName',
+            deliareaGroupSelect: '#deliareaGroupSelect',
+            btnTransporter: '#btnTransporter',
+            txtTransporterId: '#txtTransporterId',
+            txtTransporterName: '#txtTransporterName',
+            transporterSelect: '#transporterSelect',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus(0);
+                brandSearchModal.init();
+                vendorSearchModal.init();
+                deliareaGroupSearchModal.init();
+                transporterSearchModal.init();
+                curentSelectedCnt = $(BtoBReference01View.SELECTORS.chkCheckedInTable).length;
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Stop event fired when click to checkbox
+                 */
+                $(BtoBReference01View.SELECTORS.chkLabel).click(function (evt) {
+                    evt.stopPropagation();
+                });
+
+                /**
+                 * Check box click
+                 */
+                $(BtoBReference01View.SELECTORS.chkInTable).click(function (evt) {
+                    evt.stopPropagation();
+                    curentSelectedCntDiff = curentSelectedCnt - $(BtoBReference01View.SELECTORS.chkCheckedInTable).length;
+                    BtoBReference01View.setButtonStatus(curentSelectedCntDiff);
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(BtoBReference01View.SELECTORS.ddlSort).change(function (val) {
+                    $(BtoBReference01View.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                 * Dropdownlist change item
+                 */
+                $(BtoBReference01View.SELECTORS.ddlSortKey).change(function (val) {
+                    $(BtoBReference01View.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(BtoBReference01View.SELECTORS.btnBrandId).on("click", brandSearchModal.open);
+
+                /**
+                * 仕入先検索ダイアログの設定
+                */
+                $(BtoBReference01View.SELECTORS.btnMainVendor).on("click", vendorSearchModal.open);
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(BtoBReference01View.SELECTORS.btnTransporterArea).on("click", deliareaGroupSearchModal.open);
+
+                /**
+                * 配送業者検索ダイアログの設定
+                */
+                $(BtoBReference01View.SELECTORS.btnTransporter).on("click", transporterSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(BtoBReference01View.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(BtoBReference01View.SELECTORS.brandId).val(brandId);
+                        $(BtoBReference01View.SELECTORS.brandName).val(brandName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(BtoBReference01View.SELECTORS.vendorSelect).on("click", function () {
+                    $('#vendorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var vendorId = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        var vendorName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                        $(BtoBReference01View.SELECTORS.mainVendorId).val(vendorId);
+                        $(BtoBReference01View.SELECTORS.mainVendorName).val(vendorName);
+                    })
+                });
+                /**
+                 *Click button get data Brand
+                 */
+                $(BtoBReference01View.SELECTORS.transporterSelect).on("click", function () {
+                    $(BtoBReference01View.SELECTORS.txtTransporterId).val("");
+                    $(BtoBReference01View.SELECTORS.txtTransporterName).val("");
+                    $('#transporterSearchResult input[type=checkbox]:checked').each(function (index, item) {
+                        var transporterId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var transporterName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        if ($(BtoBReference01View.SELECTORS.txtTransporterId).val() == "") {
+                            $(BtoBReference01View.SELECTORS.txtTransporterId).val(transporterId);
+                            $(BtoBReference01View.SELECTORS.txtTransporterName).val(transporterName);
+                        } else {
+                            $(BtoBReference01View.SELECTORS.txtTransporterId).val($(BtoBReference01View.SELECTORS.txtTransporterId).val() + ',' + transporterId);
+                            $(BtoBReference01View.SELECTORS.txtTransporterName).val($(BtoBReference01View.SELECTORS.txtTransporterName).val() + '、' + transporterName);
+                        }
+
+                    })
+                });
+
+                /**
+                 * Button check all clicked
+                 */
+                $(BtoBReference01View.SELECTORS.btnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("AllSelectedSearch", "BtoBReference", new { area= "Ship" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+
+                /**
+                 * Button UnCheck all clicked
+                 */
+                $(BtoBReference01View.SELECTORS.btnUnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("UnSelectedSearch", "BtoBReference", new { area= "Ship" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function (difCnt) {
+                // Display row is selected
+                $(BtoBReference01View.SELECTORS.rowSelected).text(@Model.SearchConditions.SelectedCnt - difCnt );
+                // Enable/Disable button Edit
+                if ($(BtoBReference01View.SELECTORS.rowSelected).text() >= 1) {
+                    if (getUsable_Class() != 1) {
+                        $(BtoBReference01View.SELECTORS.btnShipConfirm).removeAttr('disabled');
+                    }
+                } else {
+                    $(BtoBReference01View.SELECTORS.btnShipConfirm).attr('disabled', 'disabled');
+                }
+            },
+        }
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        BtoBReference01View.init();
+        if ($("#ddlCategoryId1").val() != '') {
+            $("#ddlCategoryId2").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId2").val() != '') {
+                $("#ddlCategoryId3").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId3").val() != '') {
+                $("#ddlCategoryId4").removeAttr('disabled');
+        }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "BtoBReference", new { area= "Ship" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").attr("action", urlAction);
+                    $("#frmSearch").submit();
+                });
+            });
+
+            if ($("#txtShipBoxStatus").val() == "") {
+                $("#txtShipBoxStatusOld").removeAttr('disabled');
+            } else {
+                $("#txtShipBoxStatusOld").attr('disabled', 'disabled');
+                $("#txtShipBoxStatusOld").prop("checked",false);
+            }
+    });
+        function ShipBoxStatusChange() {
+            if ($("#txtShipBoxStatus").val() == "") {
+                $("#txtShipBoxStatusOld").removeAttr('disabled');
+            } else {
+                $("#txtShipBoxStatusOld").attr('disabled', 'disabled');
+                $("#txtShipBoxStatusOld").prop("checked",false);
+            }
+        }
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "BtoBReference", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function GetCategoryList(id) {
+                    var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            id: id + 1,
+                            category1: $("#ddlCategoryId1").val(),
+                            category2: $("#ddlCategoryId2").val(),
+                            category3: $("#ddlCategoryId3").val()
+                        },
+                        success: function (data) {
+                            $("#ddlCategoryId" + (id + 1)).html("");
+                            $("#ddlCategoryId" + (id + 1)).html(data.html);
+                        }
+                    });
+        }
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+        function SetCheckValue(lineNo) {
+            $('input[type=checkbox][id$="SearchConditions.BtoBReference01s[' + lineNo + '].CheckedValue"]').each(function (i, item) {
+                $(item).trigger('click');
+                });
+        }
+        function TimeBlur() {
+            var idFromtime = '#SearchConditions_MakeTimeFrom';
+            var idTotime = '#SearchConditions_MakeTimeTo';
+            var msgFromtime = '#MakeTimeFromMessage';
+            var msgTotime = '#MakeTimeToMessage';
+
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                if (!IsTime($(idFromtime).val().replace(":",""))) {
+                    $(msgFromtime).html('<span id="MakeTimeFromError" class="">'+'@BtoBReferenceResource.ErrTime' +'</span>');
+                    $(msgFromtime).addClass("field-validation-error");
+                    $(idFromtime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgFromtime).html("")
+                    $(msgFromtime).removeClass("field-validation-error")
+                    $(idFromtime).removeClass("input-validation-error")
+                }
+            }
+
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                if (!IsTime($(idTotime).val().replace(":",""))) {
+                    $(msgTotime).html('<span id="MakeTimeToError" class="">'+'@BtoBReferenceResource.ErrTime' +'</span>');
+                    $(msgTotime).addClass("field-validation-error");
+                    $(idTotime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgTotime).html("")
+                    $(msgTotime).removeClass("field-validation-error")
+                    $(idTotime).removeClass("input-validation-error")
+                }
+            }
+            var str = "";
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                str = $(idFromtime).val().replace(":", "").replace(":", "");
+                $(idFromtime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                str = $(idTotime).val().replace(":", "").replace(":", "");
+                $(idTotime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+        }
+        function ConditionsCheck(mod) {
+            var msgAllocationName = '#msgAllocationName';
+            var idAllocationName = '#txtAllocationName';
+            var iddateFrom = '#SearchConditions_MakeDateFrom';
+            var iddateTo = '#SearchConditions_MakeDateTo';
+            var idFromtime = '#SearchConditions_MakeTimeFrom';
+            var idTotime = '#SearchConditions_MakeTimeTo';
+            var msgdateFrom = '#MakeDateFromMessage';
+            var msgdateTo = '#MakeDateToMessage';
+            var msgFromtime = '#MakeTimeFromMessage';
+            var msgTotime = '#MakeTimeToMessage';
+
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                if (!IsTime($(idFromtime).val().replace(":",""))) {
+                    $(msgFromtime).html('<span id="MakeTimeFromError" class="">'+'@BtoBReferenceResource.ErrTime' +'</span>');
+                    $(msgFromtime).addClass("field-validation-error");
+                    $(idFromtime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgFromtime).html("")
+                    $(msgFromtime).removeClass("field-validation-error")
+                    $(idFromtime).removeClass("input-validation-error")
+                }
+            }
+
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                if (!IsTime($(idTotime).val().replace(":",""))) {
+                    $(msgTotime).html('<span id="MakeTimeToError" class="">'+'@BtoBReferenceResource.ErrTime' +'</span>');
+                    $(msgTotime).addClass("field-validation-error");
+                    $(idTotime).addClass("input-validation-error");
+                    return false;
+                } else {
+                    $(msgTotime).html("")
+                    $(msgTotime).removeClass("field-validation-error")
+                    $(idTotime).removeClass("input-validation-error")
+                }
+            }
+            var str = "";
+            if ($(idFromtime).val() != "" && $(idFromtime).val() != undefined) {
+                str = $(idFromtime).val().replace(":", "").replace(":", "");
+                $(idFromtime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+            if ($(idTotime).val() != "" && $(idTotime).val() != undefined) {
+                str = $(idTotime).val().replace(":", "").replace(":", "");
+                $(idTotime).val(str.length == 6 ? (str.substring(0, 2) + ":" + str.substring(2, 4) + ":" + str.substring(4, 6)) : str);
+            }
+            if ($(iddateFrom).val()=="" && $(idFromtime).val()!="") {
+                $(msgdateFrom).html('<span id="SearchConditions_MakeDateFrom_error" class="">'+'@BtoBReferenceResource.ErrNoDate' +'</span>');
+                $(msgdateFrom).addClass("field-validation-error");
+                $(iddateFrom).addClass("input-validation-error");
+                return false;
+            } else {
+                $(msgdateFrom).html("")
+                $(msgdateFrom).removeClass("field-validation-error")
+                $(iddateFrom).removeClass("input-validation-error")
+            }
+            if ($(iddateTo).val()=="" && $(idTotime).val()!="") {
+                $(msgdateTo).html('<span id="SearchConditions_MakeDateTo_error" class="">'+'@BtoBReferenceResource.ErrNoDate' +'</span>');
+                $(msgdateTo).addClass("field-validation-error");
+                $(iddateTo).addClass("input-validation-error");
+                return false;
+            } else {
+                $(msgdateTo).html("")
+                $(msgdateTo).removeClass("field-validation-error")
+                $(iddateTo).removeClass("input-validation-error")
+            }
+                var date1 = $(iddateFrom).val().replace(/\//g, "");
+                var date2 = $(iddateTo).val().replace(/\//g, "");
+                var time1 = $(idFromtime).val().replace(/\:/g, "");
+                var time2 = $(idTotime).val().replace(/\:/g, "");
+                var msg = "@String.Format(MessagesResource.ERR_DATE_MINMAX, BtoBReferenceResource.MakeDateTimeFrom, BtoBReferenceResource.MakeDateTimeTo)";
+            if (!(validateDate.checkDate(date1, time1, date2, time2, "SearchConditions_MakeDateFrom", "SearchConditions.MakeDateFrom", msg))) return false;
+            return true;
+        }
+        function Search() {
+            if (ConditionsCheck('search')) {
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "BtoBReference", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();}
+            }
+        function IsDate(value) {
+            value = value.replace(/\//g, "-");
+            return value.match(/^(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)$/);
+        }
+        function IsTime(value) {
+            value = value.replace(":", "");
+            return value.match(/^([01][0-9]|2[0-3])([0-5][0-9])([0-5][0-9])$/);
+        }
+        $('#btnShipConfirm').on("click", function () {
+            if (!validateForm($('#frmSearch')) || !ConditionsCheck('upd')) {
+                return;
+            }
+            $('#btnShipConfirmHidden').click();
+        });
+        $('#ShipConfirm').on("click", function () {
+            var urlAction = '@Url.Action("ShipConfirm", "BtoBReference", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        function Detail(seq,lineNo) {
+                $("#hidSeq").val(seq);
+                $("#hidLineNo").val(lineNo);
+                var urlAction = '@Url.Action("Detail", "BtoBReference", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+</script>
+}

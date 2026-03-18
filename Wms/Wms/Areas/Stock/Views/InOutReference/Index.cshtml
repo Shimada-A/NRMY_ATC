@@ -1,0 +1,404 @@
+﻿@using Wms.Areas.Stock.Resources;
+@using Wms.Helpers;
+@using Share.Common;
+@using PagedList.Mvc;
+
+@model Wms.Areas.Stock.ViewModels.InOutReference.InOutReferenceViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_InOutReference;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "InOutReference", FormMethod.Post, new { id = "formSearch", @class = "show_scroll" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@InOutReferenceResource.Center :</td>
+                <td style="width: 20rem;">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(m => m.SearchConditions.CenterId, Wms.Common.Profile.User.UserId, "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_large">
+                    @InOutReferenceResource.MoveDate :
+                    @Html.RequiredMark()
+                </td>
+                <td colspan="3">
+                    <span class="date_input">
+                        @Html.EditorFor(m => m.SearchConditions.MoveDateFrom, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "startDate flatpickr", @id = "txtMoveDateFrom" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                    @InOutReferenceResource.Hypen
+                    <span class="date_input">
+                        @Html.EditorFor(m => m.SearchConditions.MoveDateTo, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "startDate flatpickr", @id = "txtMoveDateTo" } })
+                        <span class="arrow">&nbsp;</span>
+                    </span>
+                    @Html.ValidationMessageFor(m => m.SearchConditions.MoveDateFrom)
+                    @Html.ValidationMessageFor(m => m.SearchConditions.MoveDateTo)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    @Html.RadioButtonFor(m => m.SearchConditions.ResultType, ResultTypes.Stock, new { id = "rdoResultTypeStock", tabindex = "4", @class = "radio_input _pm", style = "display:inherit;" })
+                    <span class="radio_txt">@CommonResource.Stock</span>
+                    @Html.RadioButtonFor(m => m.SearchConditions.ResultType, ResultTypes.PackageStock, new { id = "rdoResultTypePackageStock", tabindex = "5", @class = "radio_input _pm", style = "display:inherit;" })
+                    <span class="radio_txt">@CommonResource.PackageStock</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@InOutReferenceResource.Jan :</td>
+                <td>
+                    @Html.EditorFor(m => m.SearchConditions.Jan, new { htmlAttributes = new { @id = "txtJan", tabindex = "6" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle_large">@InOutReferenceResource.LocationClass :</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(m => m.SearchConditions.LocationClass, (IEnumerable<SelectListItem>)ViewBag.LocationClassList, CommonResource.None, new { id = "ddlLocationClass", tabindex = "10" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@InOutReferenceResource.ItemId :</td>
+                <td>
+                    @Html.EditorFor(m => m.SearchConditions.ItemId, new { htmlAttributes = new { @id = "txtItemId", tabindex = "7" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle_large">@InOutReferenceResource.LocationCode :</td>
+                <td>
+                    @Html.EditorFor(m => m.SearchConditions.LocationCode, new { htmlAttributes = new { @class = "column_byte_20", @id = "txtLocationCode", tabindex = "11" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@InOutReferenceResource.ItemSkuId :</td>
+                <td>
+                    @Html.EditorFor(m => m.SearchConditions.ItemSkuId, new { htmlAttributes = new { @id = "txtItemSkuId", tabindex = "8" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@InOutReferenceResource.BoxNo :</td>
+                <td>
+                    @Html.EditorFor(m => m.SearchConditions.BoxNo, new { htmlAttributes = new { @id = "txtBoxNo", tabindex = "12" } })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.NotZeroDisp, new { id = "chkNotZeroDisp", tabindex = "9", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @InOutReferenceResource.NotZeroDisp
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3"></td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "InOutReference", new { area = "Stock" }, new { tabindex = "101", type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="102">@FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        @Html.HiddenFor(m => m.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(m => m.SearchConditions.PackageSortKey, new { id = "hidPackageSortKey" })
+        @Html.HiddenFor(m => m.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(m => m.SearchConditions.PageNumber)
+        @Html.HiddenFor(m => m.SearchConditions.PageSize)
+        @Html.HiddenFor(m => m.SearchConditions.SearchType, new { id = "hidSearchType" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results != null && Model.Results.Count() > 0)
+{
+    <div class="sublbarea no_border stock_detail_load">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    <button type="button" id="btnDownload" class="download">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                            {
+                                @Html.EnumDropDownListFor(m => m.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey" })
+                            }
+                            else
+                            {
+                                @Html.EnumDropDownListFor(m => m.SearchConditions.PackageSortKey, new { Name = "SearchConditions.PackageSortKey", @id = "ddlPackageSortKey" })
+                            }
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(m => m.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @Html.PagedListPager(Model.Results, Page => Url.Action("Search", "InOutReference", new { Page }), PagerHelper.Default)
+        </div>
+    </div>
+}
+@if (Model.Results != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                @Html.Label(string.Format("【{0}】", (Model.SearchConditions.ResultType == ResultTypes.Stock)? CommonResource.Stock : CommonResource.PackageStock))
+                <div class="tb_scroll" style="height:65vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.MoveDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.OperationId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.OperationName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.OperationClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.OperationUser
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.UpdateCount
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.LocationCode
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.LocationClassName
+                                </th>
+                                @if (Model.SearchConditions.ResultType == ResultTypes.PackageStock)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @InOutReferenceResource.BoxNo
+                                    </th>
+                                }
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.CategoryId1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.ItemIdName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.ItemColorId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.ItemSizeId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.Jan
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.GradeId
+                                </th>
+                                @if (Model.SearchConditions.ResultType == ResultTypes.PackageStock)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @InOutReferenceResource.InvoiceNo
+                                    </th>
+                                }
+                                <th class="bg-grey align-middle">
+                                    @InOutReferenceResource.StockQty
+                                </th>
+                                @if (Model.SearchConditions.ResultType == ResultTypes.Stock)
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @InOutReferenceResource.AllocQty
+                                    </th>
+                                }
+                                else
+                                {
+                                    <th class="bg-grey align-middle">
+                                        @InOutReferenceResource.AssortAllocQty
+                                    </th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cModel in Model.Results.Select((v, i) => new { v, i }))
+                            {
+                                <tr>
+                                    <td class="align-middle text-right w_no">
+                                        @((cModel.i + 1) + (Model.Results.PageNumber - 1) * Model.Results.PageSize)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.MoveDate)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(m => cModel.v.OperationId)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.OperationName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.OperationClassName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.OperationUserId)<br />
+                                        @Html.DisplayFor(m => cModel.v.OperationUserName)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(m => cModel.v.UpdateCount)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.LocationCode)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.LocationClassName)
+                                    </td>
+                                    @if (Model.SearchConditions.ResultType == ResultTypes.PackageStock)
+                                    {
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(m => cModel.v.BoxNo)
+                                        </td>
+                                    }
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.CategoryName1)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.ItemId)<br />
+                                        @Html.DisplayFor(m => cModel.v.ItemName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.ItemColorId)<br />
+                                        @Html.DisplayFor(m => cModel.v.ItemColorName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.ItemSizeId)<br />
+                                        @Html.DisplayFor(m => cModel.v.ItemSizeName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.Jan)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(m => cModel.v.GradeName)
+                                    </td>
+                                    @if (Model.SearchConditions.ResultType == ResultTypes.PackageStock)
+                                    {
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(m => cModel.v.InvoiceNo)
+                                        </td>
+                                    }
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(m => cModel.v.StockQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(m => cModel.v.AllocQty)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script type="text/javascript">
+        $(function () {
+            if ($("#rdoResultTypeStock").prop("checked")) {
+                $("#txtBoxNo").prop("disabled", true);
+            } else {
+                $("#txtBoxNo").prop("disabled", false);
+            }
+
+            $("#rdoResultTypeStock").on("click", () => {
+                $("#txtBoxNo").prop("disabled", true);
+            });
+
+            $("#rdoResultTypePackageStock").on("click", () => {
+                $("#txtBoxNo").prop("disabled", false);
+            });
+
+            $("#btnSearch").on("click", () => {
+                $("#hidSearchType").val("@Wms.Common.SearchTypes.Search");
+                $("#formSearch")
+                    .attr("action", '@Url.Action("Search", "InOutReference", new { area = "Stock" })')
+                    .attr("method", "Post")
+                    .submit();
+            });
+
+            $("#ddlSortKey").on("change", () => {
+                $("#hidSearchType").val("@Wms.Common.SearchTypes.SortPage");
+                $("#hidSortKey").val($("#ddlSortKey").val());
+                $("#formSearch")
+                    .attr("action", '@Url.Action("Search", "InOutReference", new { area = "Stock" })')
+                    .attr("method", "Post")
+                    .submit();
+            });
+
+            $("#ddlPackageSortKey").on("change", () => {
+                $("#hidSearchType").val("@Wms.Common.SearchTypes.SortPage");
+                $("#hidPackageSortKey").val($("#ddlPackageSortKey").val());
+                $("#formSearch")
+                    .attr("action", '@Url.Action("Search", "InOutReference", new { area = "Stock" })')
+                    .attr("method", "Post")
+                    .submit();
+            });
+
+            $("#ddlSort").on("change", () => {
+                $("#hidSearchType").val("@Wms.Common.SearchTypes.SortPage");
+                $("#hidSort").val($("#ddlSort").val());
+                $("#formSearch")
+                    .attr("action", '@Url.Action("Search", "InOutReference", new { area = "Stock" })')
+                    .attr("method", "Post")
+                    .submit();
+            });
+
+            $("#btnDownload").on("click", () => {
+                $("#formSearch")
+                    .attr("action", '@Url.Action("Download", "InOutReference", new { area = "Stock" })')
+                    .attr("method", "Post")
+                    .submit();
+            });
+        });
+    </script>
+}

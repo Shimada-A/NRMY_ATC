@@ -1,0 +1,606 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.UploadCaseInstruction;
+@model Wms.Areas.Ship.ViewModels.UploadCaseInstruction.UploadCaseInstructionViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_UploadCaseInstruction;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+@* Head *@
+@Html.Partial("_WaitDialog")
+@using (Html.BeginForm("Download", "ImportInstruction", FormMethod.Get, new { id = "frmDL" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.SearchConditions.HidCenterId, new { id = "hidCenterId" })
+    @Html.HiddenFor(model => model.SearchConditions.HidShipKind, new { id = "hidShipKind" })
+    @Html.HiddenFor(model => model.SearchConditions.HidBatchNo, new { id = "hidBatchNo" })
+    @Html.HiddenFor(model => model.SearchConditions.HidShipInstructName, new { id = "hidShipInstructName" })
+    @Html.HiddenFor(model => model.SearchConditions.HidStoreQty, new { id = "hidStoreQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidCaseQty, new { id = "hidCaseQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidDetailRowQty, new { id = "hidDetailRowQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidPicJanQty, new { id = "hidPicJanQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidPicInsQty, new { id = "hidPicInsQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidHikiErrQty, new { id = "hidHikiErrQty" })
+    @Html.HiddenFor(model => model.SearchConditions.HidShipKindName, new { id = "hidShipKindName" })
+    @Html.HiddenFor(model => model.SearchConditions.HidCaseShipName, new { id = "hidCaseShipName" })
+    @Html.HiddenFor(model => model.SearchConditions.HidSaleClass, new { id = "hidSaleClass" })
+    @Html.HiddenFor(model => model.SearchConditions.HidDiscount, new { id = "hidDiscount" })
+    @Html.HiddenFor(model => model.SearchConditions.Seq, new { id = "hidSeq" })
+    @Html.HiddenFor(model => model.SearchConditions.HidIndexPage, new { id = "hidIndexPage" })
+    @Html.HiddenFor(model => model.SearchConditions.PageSize, new { id = "hidIndexPageSize" })
+    @Html.HiddenFor(model => model.SearchConditions.HidSort, new { id = "hidSortPage" })
+    @Html.HiddenFor(model => model.SearchConditions.HidKey, new { id = "hidKeyPage" })
+}
+@using (Html.BeginForm("Search", "UploadCaseInstruction", FormMethod.Post, new { id = "frmSearch" }))
+{
+    <div id="div_search" class="head head_white collapse">
+        @Html.AntiForgeryToken()
+        <table>
+            <colgroup>
+                <col class="tdtitle" />
+                <col width="400px" />
+                <col class="tdtitle_large" />
+            </colgroup>
+            <tr>
+                <td class="tdtitle">@UploadCaseInstructionResource.CenterIdS : </td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                          model => model.SearchConditions.CenterId
+                                          , Wms.Common.Profile.User.UserId
+                                          , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td colspan="4">
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="2" onclick="Search();">@FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.Key, new { id = "hidKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+    </div>
+}
+@using (Html.BeginForm("Download", "UploadCaseInstruction", FormMethod.Get, new { id = "frmUP" }))
+{
+    <div class="head head_white">
+        @Html.AntiForgeryToken()
+        <table>
+            <colgroup>
+                <col class="tdtitle_15" />
+                <col width="400px" />
+                <col class="w_8_normal" />
+            </colgroup>
+            <tr>
+                <td class="tdtitle">@UploadCaseInstructionResource.ShipKind :</td>
+                <td>
+                    @Html.RadioButtonFor(model => model.SearchConditions.ShipKind, 4, new { id = "kindCase", @checked = "checked", tabindex = "3", @class = "radio_input _pm", style = "display:inherit;", @onchange = "getRadio(4);" })
+                    <span class="radio_txt">@UploadCaseInstructionResource.KindCase</span>
+                    @Html.RadioButtonFor(model => model.SearchConditions.ShipKind, 5, new { id = "kindJan", tabindex = "4", @class = "radio_input _pm", style = "display:inherit;", @onchange = "getRadio(5);" })
+                    <span class="radio_txt">@UploadCaseInstructionResource.KindJan</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_15">
+                    @UploadCaseInstructionResource.ShipInstructName :
+                    @Html.RequiredMark()
+                </td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.CaseShipName, new { htmlAttributes = new { @onchange = "CaseShipNameChange()", @class = "w_30_normal", @id = "txtCaseShipName", tabindex = "5" } })
+                    @Html.ValidationMessageFor(model => model.SearchConditions.CaseShipName, "", new { id = "msgCaseShipName" })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">
+                    @UploadCaseInstructionResource.SaleKbn
+                    @Html.RequiredMark()
+                </td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.SaleClass,
+                                (IEnumerable<SelectListItem>)ViewBag.SaleClassList,
+                                CommonResource.None, new { id = "ddlSaleClass", tabindex = "6" , @onchange = "SaleClassChange()"})
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.SaleClass, "", new { id = "msgSaleClass" })
+                </td>
+                <td class="tdtitle">
+                    @UploadCaseInstructionResource.DiscountPercent
+                </td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.Discount, new { htmlAttributes = new { @onchange = "DiscountBlur()", @class = "w_10_normal", @id = "txtDiscount", tabindex = "7" } })
+                    @*@Html.ValidationMessageFor(model => model.SearchConditions.Discount, "", new { id = "msgDiscount" })*@
+                    <span id="msgDiscount"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_15">@UploadCaseInstructionResource.CaseShipFile :</td>
+                <td>
+                    <button type="button" id="btnUpload" class="Upload _pm" tabindex="8" style="vertical-align: top;">
+                        <img src="~/Content/img/upload.png" />
+                        @FormsResource.BTN_UPLOAD
+                    </button>
+                </td>
+                <td class="w_1_bit">@UploadCaseInstructionResource.Template :</td>
+                <td>
+                    <button type="button" id="btnDownload" class="download" tabindex="9" style="vertical-align: top;">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </td>
+                <td class="w_14_long">@UploadCaseInstructionResource.ImportErrData :</td>
+                <td>
+                    <button type="button" id="btnDownloadErr" class="download" tabindex="10" style="vertical-align: top;">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </td>
+            </tr>
+        </table>
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        <div style="display:none">
+            @if (Model.Results.UploadCaseInstructions != null && Model.Results.UploadCaseInstructions.Count() > 0)
+            {
+                <table>
+
+                    @for (int i = 0; i < Model.Results.UploadCaseInstructions.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.AssortCaseViewModels[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.UploadCaseInstructions[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.UploadCaseInstructions[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.UploadCaseInstructions[i].BatchNo, new { @id = (id + "BatchNo"), Name = id + "BatchNo" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    </div>
+}
+<div class="message-area" id="msg_area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.UploadCaseInstructions != null && Model.Results.UploadCaseInstructions.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Key, new { Name = "SearchConditions.Key", @id = "ddlKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.UploadCaseInstructions.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.UploadCaseInstructions.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.UploadCaseInstructions, Page => Url.Action("Search", "UploadCaseInstruction", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.UploadCaseInstructions != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.UploadCaseInstructions.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:59vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.BatchNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.ShipInstructDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.ShipInstructName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.ShipKind
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.StoreQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.CaseQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.DetailRowQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.PicJanQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.PicInsQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @UploadCaseInstructionResource.HikiErrQty
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cModel in Model.Results.UploadCaseInstructions.Select((v, i) => new { v, i }))
+                            {
+                                var key = String.Format("UploadCaseInstructions[{0}].", cModel.i);
+                                <tr>
+                                    <td class="align-middle chk_cell">
+                                        <label>
+                                            <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetIsCheck('@(cModel.v.BatchNo)','@(cModel.v.ShipInstructName)','@(cModel.v.StoreQty)','@(cModel.v.CaseQty)','@(cModel.v.DetailRowQty)','@(cModel.v.PicJanQty)','@(cModel.v.PicInsQty)','@(cModel.v.HikiErrQty)','@(cModel.v.ShipKindName)')" />
+                                            <span class="radio_parts"></span>
+                                        </label>
+                                        @Html.CheckBox(key + "IsCheck", new { @id = (key + "IsCheck"), @class = "check-box", hidden = true })
+                                    </td>
+                                    <td class="align-middle  w_no">
+                                        @Html.DisplayFor(modelItem => cModel.v.LineNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.BatchNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipInstructDate)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipInstructName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipKindName)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.StoreQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.CaseQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.DetailRowQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.PicJanQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.PicInsQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.HikiErrQty)
+                                    </td>
+                                    <td class="template" hidden>
+                                        @Html.HiddenFor(modelItem => cModel.v.BatchNo, new { Name = key + "BatchNo" })
+                                        @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                        @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                        @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button id="btnDeleteHidden" type="button" class="btn btn-outline-danger btnsize _pm" data-toggle="modal" data-target="#confirm_Confirm" hidden>@UploadCaseInstructionResource.BTN_DELETE</button>
+        <button type="submit" id="btnDelete" class="btn btn-outline-danger btnsize _pm">@UploadCaseInstructionResource.BTN_DELETE</button>
+        <button type="button" id="btnDetails" class="btn btn-dark btnsize">@UploadCaseInstructionResource.BTN_DETAILS</button>
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+    </div>
+}
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Confirm", Message = @UploadCaseInstructionResource.ConfirmMsgDelete })
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@Html.Partial("_FileUploadModal")
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+<script>
+    Dropzone.autoDiscover = false;
+        $("#btnDownload").on("click", function () {
+            var urlAction = '@Url.Action("Download", "UploadCaseInstruction", new { area = "Ship" })';
+            var $form = $("#frmDL");
+            $form.attr("action", urlAction);
+            $form.attr("method", "Post");
+            $form.submit();
+
+            setTimeout(function () {
+                if ($('#listData input[type=radio][id$=".CheckedValue"]:checked').length == 1) {
+                    $('#btnDelete').prop('disabled', false);
+                }
+            }, 1000);
+        });
+        $("#btnDownloadErr").on("click", function () {
+            var urlAction = '@Url.Action("DownloadErr", "UploadCaseInstruction", new { area = "Ship" })';
+            var $form = $("#frmDL");
+            $form.attr("action", urlAction);
+            $form.attr("method", "Post");
+            $form.submit();
+
+            setTimeout(function () {
+                if ($('#listData input[type=radio][id$=".CheckedValue"]:checked').length == 1) {
+                    $('#btnDelete').prop('disabled', false);
+                }
+            }, 1000);
+        });
+        $('#btnDetails').on("click", function () {
+            var urlAction = '@Url.Action("Detail", "UploadCaseInstruction", new { area = "Ship" })';
+            var $form = $("#frmDL");
+            $form.attr("action", urlAction);
+            $form.attr("method", "Post");
+            $form.submit();
+        });
+
+        //ファイルアップロード
+        fileUploadModal.init();
+        $('#btnUpload').on('click', function () {
+            if ($("#txtCaseShipName").val() == "") {
+                $("#msgCaseShipName").html('<span id="caseShipNameError" class="">'+'@UploadCaseInstructionResource.ERR_NULL_CASE_SHIP_NAME' +'</span>');
+                $("#msgCaseShipName").addClass("field-validation-error");
+                $("#txtCaseShipName").addClass("input-validation-error");
+                $("#txtCaseShipName").focus();
+                return;
+            }
+            if ($("#txtCaseShipName").val().length > 20) {
+                $("#msgCaseShipName").html('<span id="caseShipNameError" class="">'+'@UploadCaseInstructionResource.ERR_OVER_CASE_SHIP_NAME' +'</span>');
+                $("#msgCaseShipName").addClass("field-validation-error");
+                $("#txtCaseShipName").addClass("input-validation-error");
+                $("#txtCaseShipName").focus();
+                return;
+            }
+            if ($("#ddlSaleClass").val() == "") {
+                $("#msgSaleClass").html('<span id="saleClassError" class="">' + '@UploadCaseInstructionResource.ERR_SALE_CLASS_NULL' + '</span>');
+                $("#msgSaleClass").addClass("field-validation-error");
+                $("#ddlSaleClass").addClass("input-validation-error");
+                $("#ddlSaleClass").focus();
+                return;
+            }
+            if ($("#ddlSaleClass").val() == "1" && ($("#txtDiscount").val() < 1 || $("#txtDiscount").val() > 100 || $("#txtDiscount").val() == "")) {
+                $("#msgDiscount").html('<span id="discountError" class="">' + '@UploadCaseInstructionResource.ERR_OVER_RANGE_DISCOUNT' + '</span>');
+                $("#msgDiscount").addClass("field-validation-error");
+                $("#txtDiscount").addClass("input-validation-error");
+                $("#txtDiscount").focus();
+                return;
+            }
+
+            var urlAction = '@Url.Action("Upload", "UploadCaseInstruction", new { area = "Ship" })';
+            fileUploadModal.setting({
+                url: urlAction,
+                title: "@UploadCaseInstructionResource.Title" + "@FormsResource.FileUplaodTitle",
+                acceptedFiles: ".xlsx",
+                successCallback: function (data) {
+                    if (data.err == 'false') {
+                        document.getElementById('waitDialog').style.display = 'initial';
+                        $("#hidSeq").val(data.seq);
+                        $("#hidCaseShipName").val($("#txtCaseShipName").val());
+                        $("#hidSaleClass").val($("#ddlSaleClass").val());
+                        $("#hidDiscount").val($("#txtDiscount").val());
+                        var urlAction = '@Url.Action("Alloc", "UploadCaseInstruction", new { area = "Ship" })';
+                        var $form = $("#frmDL");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "Post");
+                        $form.submit();
+                    } else {
+                        var urlIndexAction = '@Url.Action("Index", "UploadCaseInstruction", new { area = "Ship" })';
+                        location.href = urlIndexAction + "?name=" + data.title + "&kindCase=" + data.kindCase;
+                    }
+                }
+            });
+            fileUploadModal.open();
+        });
+        function getRadio(int) {
+            $("#hidShipKind").val(int);
+        }
+        function getSaleClass(int) {
+            $("#hidSaleClass").val(int);
+        }
+
+        function CaseShipNameChange() {
+            if ($("#txtCaseShipName").val().length > 20) {
+                $("#msgCaseShipName").html('<span id="caseShipNameError" class="">'+'@UploadCaseInstructionResource.ERR_OVER_CASE_SHIP_NAME' +'</span>');
+                $("#msgCaseShipName").addClass("field-validation-error");
+                $("#txtCaseShipName").addClass("input-validation-error");
+                $("#txtCaseShipName").focus();
+            } else {
+                $("#msgCaseShipName").html("")
+                $("#msgCaseShipName").removeClass("field-validation-error")
+                $("#txtCaseShipName").removeClass("input-validation-error")
+            }
+        }
+        function DiscountBlur() {
+            if ($("#ddlSaleClass").val() == 1) {
+                if ($("#txtDiscount").val() < 1 || $("#txtDiscount").val() > 100) {
+                    $("#msgDiscount").html('<span id="discountError" class="">'+'@UploadCaseInstructionResource.ERR_OVER_RANGE_DISCOUNT' +'</span>');
+                    $("#msgDiscount").addClass("field-validation-error");
+                    $("#txtDiscount").addClass("input-validation-error");
+                    $("#txtDiscount").focus();
+                } else {
+                    $("#msgDiscount").html("")
+                    $("#msgDiscount").removeClass("field-validation-error")
+                    $("#txtDiscount").removeClass("input-validation-error")
+                }
+            }
+        }
+        $(document).ready(function () {
+            if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+            }
+            if ($("#hidShipKind").val() == 5) {
+                $("#kindJan").prop('checked', true);
+            }
+            $('#btnDetails').attr('disabled', 'disabled');
+            $('#btnDelete').attr('disabled', 'disabled');
+            clearCheckBox();
+            clearhidData();
+            SaleClassChange();
+            $("#hidIndexPage").val($("#hidPage").val());
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var $form = $("#frmSearch");
+                var urlAction ='@Url.Action("Search", "UploadCaseInstruction", new { area= "Ship" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                });
+            });
+            var urlParam = location.search.substring(1);
+            if (urlParam) {
+                // 「&」が含まれている場合は「&」で分割
+                var param = urlParam.split('&');
+                // パラメータを格納する用の配列を用意
+                var paramArray = [];
+                // 用意した配列にパラメータを格納
+                for (i = 0; i < param.length; i++) {
+                    var paramItem = param[i].split('=');
+                    paramArray[paramItem[0]] = paramItem[1];
+                }
+
+                if (paramArray.kindCase == "5") {
+                    $("#kindJan").prop('checked', true);
+                    getRadio(5);
+                }
+
+                $("#txtCaseShipName").val(paramArray.name)
+            }
+        });
+        // Sort
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidKey").val($("#ddlKey").val());
+            $("#hidSortPage").val($("#ddlSort").val());
+            $("#hidKeyPage").val($("#ddlKey").val());
+            $("#hidSearchType").val("SortPage");
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "UploadCaseInstruction", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Search() {
+            var urlAction = '@Url.Action("Search", "UploadCaseInstruction", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $("#hidSearchType").val("Search");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+    $('#btnDelete').on("click", function () {
+        if ($('#listData input[type=radio][id$=".CheckedValue"]:checked').length == 0) {
+            alert("対象データを選択してください");
+            return;
+        };
+            var urlAction = '@Url.Action("Delete", "UploadCaseInstruction", new { area = "Ship" })';
+            var $form = $("#frmDL");
+            $("#hidSearchType").val("Search");
+            $form.attr("action", urlAction);
+            $('#btnDeleteHidden').click();
+        });
+
+    $('#Confirm').on("click", function () {
+        var urlAction ='@Url.Action("Delete", "UploadCaseInstruction", new { area = "Ship" })';
+        var $form = $("#frmDL");
+        $("#hidSearchType").val("Search");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+    function SetIsCheck(pBatchNo, pShipInstructName, pStoreQty, pCaseQty, pDetailRowQty, pPicJanQty, pPicInsQty, pHikiErrQty, pShipKindName) {
+        setCheckBox($(this).parents('td'));
+        $('#btnDetails').removeAttr('disabled');
+        $('#btnDelete').removeAttr('disabled');
+        $("#hidBatchNo").val(pBatchNo);
+        $("#hidShipInstructName").val(pShipInstructName);
+        $("#hidStoreQty").val(pStoreQty);
+        $("#hidCaseQty").val(pCaseQty);
+        $("#hidDetailRowQty").val(pDetailRowQty);
+        $("#hidPicJanQty").val(pPicJanQty);
+        $("#hidPicInsQty").val(pPicInsQty);
+        $("#hidHikiErrQty").val(pHikiErrQty);
+        $("#hidShipKindName").val(pShipKindName);
+    };
+
+    function SaleClassChange() {
+        if ($("#ddlSaleClass").val() == "1") {
+            $("#txtDiscount").removeAttr('disabled');
+        } else if ($("#ddlSaleClass").val() == "0" || $("#ddlSaleClass").val() == "") {
+            $('#txtDiscount').attr('disabled', 'disabled');
+            $("#txtDiscount").val("0");
+            $("#msgDiscount").html("")
+            $("#msgDiscount").removeClass("field-validation-error")
+            $("#txtDiscount").removeClass("input-validation-error")
+        }
+    };
+    
+
+    function clearhidData() {
+        $("#hidBatchNo").val("");
+        $("#hidShipInstructName").val("");
+        $("#hidStoreQty").val("");
+        $("#hidCaseQty").val("");
+        $("#hidDetailRowQty").val("");
+        $("#hidPicJanQty").val("");
+        $("#hidPicInsQty").val("");
+        $("#hidHikiErrQty").val("");
+        $("#hidShipKindname").val("");
+        $("#hidDiscount").val("");
+    };
+    const clearCheckBox = function () {
+        $('#listData td .check-box').prop('checked', false);
+        $('#listData td .radio_input').prop('checked', false);
+        };
+
+    const setCheckBox = function (selector) {
+            $('#listData input[type=checkbox][id$=".IsCheck"]').prop("checked", false);
+            selector.find('.check-box').prop('checked', true);
+            selector.find('.radio_input').prop('checked', true);
+        };
+</script>
+}

@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "Number";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>数値の書式指定文字列</h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content of">
+        <h3>通常(必要に応じて負の符号が付く整数と小数、桁区切り記号、および小数点記号)</h3>
+        <div class="mtop20">
+            <h3>正数 : @Int32.MaxValue.ToString("N")</h3>
+            <h3>負数 : @Int32.MinValue.ToString("N")</h3>
+            <h3>小数部を指定 : @Int32.MinValue.ToString("N0")</h3>
+        </div>
+        <div class="codearea">
+            <p>
+                ToString("N")
+                <br />
+                ToString("N0") N + 数値 で小数部の桁数を指定できる
+            </p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>パーセント(数値に 100 を掛けて、パーセント記号を付けて表示します)</h3>
+        <div class="mtop20">
+            <h3>正数 : @Int32.MaxValue.ToString("P")</h3>
+            <h3>負数 : @Int32.MinValue.ToString("P")</h3>
+            <h3>小数部を指定 : @Int32.MinValue.ToString("P1")</h3>
+        </div>
+        <div class="codearea">
+            <p>
+                ToString("P")
+                <br />
+                ToString("P1") N + 数値 で小数部の桁数を指定できる
+            </p>
+        </div>
+    </div>
+
+    <div class="content of">
+        <h3>通貨</h3>
+        <div class="mtop20">
+            <h3>@Int32.MaxValue.ToString("C")</h3>
+            <h3>@Int32.MinValue.ToString("C")</h3>
+        </div>
+        <div class="codearea">
+            <p>ToString("C")</p>
+        </div>
+    </div>
+</div>

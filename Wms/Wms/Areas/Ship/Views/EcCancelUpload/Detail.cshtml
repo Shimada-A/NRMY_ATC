@@ -1,0 +1,271 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.EcCancelUpload.EcCancelUpload02ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_EcCancelUpload02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("SearchDetail", "EcCancelUpload", FormMethod.Post, new { id = "frmDetailSearch" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="headarea sortheadareaheight">
+        @if (Model.DetailResults.EcCancelUpload02s != null && Model.DetailResults.EcCancelUpload02s.Count() > 0)
+        {
+            <table class="headtable">
+                <tr>
+                    <td>@EcCancelUploadResource.ShipPlanDateS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().ShipPlanDate)
+                    </td>
+                    <td>@EcCancelUploadResource.MakeDateS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().AllocDate)
+                    </td>
+                </tr>
+                <tr>
+                    <td>@EcCancelUploadResource.ShipInstructIdS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().ShipInstructId)
+                    </td>
+                    <td>@EcCancelUploadResource.OrderDateS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().OrderDate)
+                    </td>
+                </tr>
+                <tr>
+                    <td>@EcCancelUploadResource.DestPrefNameS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().DestPrefName)
+                    </td>
+                    <td>@EcCancelUploadResource.TransporterS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().TransporterName)
+                    </td>
+                    <td>@EcCancelUploadResource.DeliShiwakeCdS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().DeliShiwakeCd)
+                    </td>
+                </tr>
+                <tr>
+                    <td>@EcCancelUploadResource.EcShipClassS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().EcShipClass)
+                    </td>
+                    <td>@EcCancelUploadResource.ArriveRequestDateS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().ArriveRequestDate)
+                    </td>
+                    <td>@EcCancelUploadResource.ArriveRequestTimeS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().ArriveRequestTime)
+                    </td>
+                </tr>
+                <tr>
+                    <td>@EcCancelUploadResource.BatchNoS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().BatchNo)
+                    </td>
+                    <td>@EcCancelUploadResource.GASBatchNoS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().GASBatchNo)
+                    </td>
+                    <td>@EcCancelUploadResource.GasMaguchiNoS</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => modelItem.DetailResults.EcCancelUpload02s.FirstOrDefault().GasMaguchiNo)
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.DetailResults.EcCancelUpload02s != null)
+    {
+        if (Model.DetailResults.EcCancelUpload02s.Count() > 0)
+        {
+            <div class="sublbarea no_border">
+                <div class="sortarea mainpagearea">
+                    <ul>
+                        <li>
+                            @FormsResource.DISPLAY_SHORT
+                            <div class="sort">
+                                <div class="sort_inner">
+                                    @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                                    @Html.HiddenFor(model => model.SearchConditions.CenterId)
+                                    @Html.HiddenFor(model => model.SearchConditions.ShipStatus)
+                                    @Html.HiddenFor(model => model.SearchConditions.Seq)
+                                    @Html.HiddenFor(model => model.SearchConditions.LineNo)
+                                    @Html.HiddenFor(model => model.SearchConditions.ShipInstructId)
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sublbarea no_border stock_detail_head">
+                @EcCancelUploadResource.DetailTitle
+                <div class="sortarea">
+                    <ul>
+                        <li>
+                            @EcCancelUploadResource.BoxNoSum @Html.DisplayFor(model => model.SearchConditions.BoxNoSum)
+                        </li>
+                        <li>
+                            @EcCancelUploadResource.SkuQtySum @Html.DisplayFor(model => model.SearchConditions.ItemSkuSum)
+                        </li>
+                        <li>
+                            @EcCancelUploadResource.AllocQtySum @Html.DisplayFor(model => model.SearchConditions.AllocQtySum)
+                        </li>
+                        <li>
+                            @EcCancelUploadResource.ResultQtySum @Html.DisplayFor(model => model.SearchConditions.ResultQtySum)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        }
+    }
+    if (Model.DetailResults.EcCancelUpload02s != null)
+    {
+
+        @* Container *@
+        <div class="Container">
+
+            @* Content *@
+            @if (Model.DetailResults.EcCancelUpload02s.Count() == 0)
+            {
+                <div>
+                    <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <div class="tb_scroll">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.BoxNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.DeliNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.ShipInstructSeqs
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.CategoryName1
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.Item
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.Color
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.Size
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.JAN
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.OrderQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.ResultQtys
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @EcCancelUploadResource.NouhinPrnUserId
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var pkey = 0;
+                                }
+                                @foreach (var cModel in Model.DetailResults.EcCancelUpload02s.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("EcCancelUpload02s[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right">
+                                            @(cModel.i + 1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BoxNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.DeliNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructSeq)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @if (cModel.v.ShipInstructSeq != pkey)
+                                            {
+                                                @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                            }
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.NouhinPrnUserId)
+                                        </td>
+                                    </tr>
+                                    pkey = cModel.v.ShipInstructSeq;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>  }
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "EcCancelUpload", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        // Sort
+        function getSortData() {
+            var $form = $("#frmDetailSearch");
+            var urlAction ='@Url.Action("DetailSearch", "EcCancelUpload", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+    </script>
+}

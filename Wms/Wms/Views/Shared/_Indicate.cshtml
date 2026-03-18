@@ -1,0 +1,15 @@
+﻿
+@model Wms.ViewModels.Shared.IndicateViewModel
+<div id="indicator" class="indicate" style="display:@Model.IsIndicateVisible ">
+
+    <label class="indicatetitle">
+        @Model.IndicateTitle
+    </label>
+    <br />
+    <img src="~/Content/img/244.gif" style="width:15VW;" />
+    <br />
+    <label class="indicatetext">
+        @Model.IndicateProgressText
+    </label>
+    <br />
+</div>

@@ -1,0 +1,14 @@
+﻿/*メッセージを表示するModal dialog用のCSS*/
+div.messageDialog {
+    display: none;
+}
+
+    div.messageDialog .endmes p {
+        margin-bottom: 120px;
+        font-size: 1.6rem;
+        line-height: 1.5;
+    }
+
+div.messageDialogFrame {
+    min-width: 600px;
+}

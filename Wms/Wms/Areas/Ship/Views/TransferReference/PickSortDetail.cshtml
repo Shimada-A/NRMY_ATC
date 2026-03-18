@@ -1,0 +1,9 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.TransferReference;
+@model Wms.Areas.Ship.ViewModels.TransferReference.PickSortDetailViewModel
+
+<div id="dialogPickSortDetail" class="d_continer main">
+    @Html.Action("GetPickSortDetail", "TransferReference", new { area = "Ship", SearchConditions = Model.Head })
+</div>

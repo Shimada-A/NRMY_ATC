@@ -1,0 +1,696 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Stock.Resources;
+@model Wms.Areas.Stock.ViewModels.Adjust.AdjustViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_Adjust;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "Adjust", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@AdjustResource.CenterIdS</td>
+                <td colspan="3">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@AdjustResource.DivisionIdS</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.DivisionId,
+                                (IEnumerable<SelectListItem>)ViewBag.DivisionList,
+                                CommonResource.None, new { id = "ddlDivisionId", tabindex = "14" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_large">@AdjustResource.LocationClassS</td>
+                <td colspan="3">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.LocationClass,
+                                (IEnumerable<SelectListItem>)ViewBag.LocationClassList,
+                                CommonResource.None, new { id = "ddlLocationClass", tabindex = "2" })
+                        </div>
+                    </div>
+                </td>
+                <td class="tdtitle">@AdjustResource.BrandIdS</td>
+                <td colspan="4">
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "15" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "16" } })
+                    <div class="search">
+                        <button type="button" id="btnBrandId" class="search_btn" tabindex="17" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@AdjustResource.Locsec1S</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.Locsec1, new { htmlAttributes = new { @class = "w_6_short", @id = "txtLocsec1", tabindex = "3" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@AdjustResource.MainVendorIdS</td>
+                <td colspan="4">
+                    @Html.EditorFor(model => model.SearchConditions.MainVendorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtMainVendorId", tabindex = "18" } })
+                    @Html.EditorFor(model => model.SearchConditions.MainVendorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtMainVendorName", tabindex = "19" } })
+                    <div class="search">
+                        <button type="button" id="btnMainVendor" class="search_btn" tabindex="20" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@AdjustResource.LocationCdS</td>
+                <td colspan="3">
+                    <div>
+                        @Html.EditorFor(model => model.SearchConditions.LocationCdFrom, new { htmlAttributes = new { @class = "column_byte_20", @id = "txtLocationCdFrom", tabindex = "4" } })
+                        <span>～</span>
+                        @Html.EditorFor(model => model.SearchConditions.LocationCdTo, new { htmlAttributes = new { @class = "column_byte_20", @id = "txtLocationCdTo", tabindex = "5" } })
+                    </div>
+                </td>
+                <td class="tdtitle">@AdjustResource.CategoryIdS</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId1,
+                                (IEnumerable<SelectListItem>)ViewBag.Category1List,
+                                CommonResource.None, new { id = "ddlCategoryId1", tabindex = "22", onchange = "CategoryChange(1)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId2,
+                                (IEnumerable<SelectListItem>)ViewBag.Category2List,
+                                CommonResource.None, new { id = "ddlCategoryId2", tabindex = "22", disabled = "disabled", onchange = "CategoryChange(2)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId3,
+                                (IEnumerable<SelectListItem>)ViewBag.Category3List,
+                                CommonResource.None, new { id = "ddlCategoryId3", tabindex = "23", disabled = "disabled", onchange = "CategoryChange(3)" })
+                        </div>
+                    </div>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.CategoryId4,
+                                (IEnumerable<SelectListItem>)ViewBag.Category4List,
+                                CommonResource.None, new { id = "ddlCategoryId4", tabindex = "24", disabled = "disabled" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@AdjustResource.JanS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @id = "txtJan", tabindex = "6" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@AdjustResource.ItemCodeS</td>
+                <td colspan="4">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.ItemCode,
+                                (IEnumerable<SelectListItem>)ViewBag.ItemList,
+                                CommonResource.None, new { id = "ddlItemCode", tabindex = "25" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@AdjustResource.ItemIdS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @id = "txtItemId", tabindex = "7" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@AdjustResource.BoxNoS</td>
+                <td colspan="4">
+                    @Html.EditorFor(model => model.SearchConditions.BoxNo, new { htmlAttributes = new { @id = "txtBoxNo", tabindex = "26" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@AdjustResource.ItemColorS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.ItemColorId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtItemColorId", tabindex = "8" } })
+                    @Html.EditorFor(model => model.SearchConditions.ItemColorName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemColorName", tabindex = "9" } })
+                    <div class="search">
+                        <button type="button" id="btnItemColor" class="search_btn" tabindex="10" />
+                    </div>
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td class="tdtitle">@AdjustResource.ItemSkuIdS</td>
+                <td colspan="4">
+                    @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @id = "txtItemSkuId", tabindex = "27" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@AdjustResource.ItemSizeS</td>
+                <td colspan="8">
+                    @Html.EditorFor(model => model.SearchConditions.ItemSizeId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtItemSizeId", tabindex = "11" } })
+                    @Html.EditorFor(model => model.SearchConditions.ItemSizeName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemSizeName", tabindex = "12" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@AdjustResource.GrageIdS</td>
+                <td colspan="8">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.GradeId,
+                                (IEnumerable<SelectListItem>)ViewBag.GradeList,
+                                CommonResource.None, new { id = "ddlGradeId", tabindex = "13" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7">
+                </td>
+                <td colspan="2">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Adjust", new { area = "Stock" }, new { tabindex = "28", type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="29" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.Adjusts != null && Model.Results.Adjusts.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.Adjusts.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.Adjusts.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.Adjusts, Page => Url.Action("Search", "Adjust", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    if (Model.Results.Adjusts.Count() > 0)
+    {
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @AdjustResource.LocationSum @Html.DisplayFor(model => model.SearchConditions.LocationSum)
+                    </li>
+                    <li>
+                        @AdjustResource.ItemSkuSum @Html.DisplayFor(model => model.SearchConditions.ItemSkuSum)
+                    </li>
+                    <li>
+                        @AdjustResource.StockQtySum @Html.DisplayFor(model => model.SearchConditions.StockQtySum)
+                    </li>
+                    <li>
+                        @AdjustResource.AllocQtySum @Html.DisplayFor(model => model.SearchConditions.AllocQtySum)
+                    </li>
+                    <li>
+                        @AdjustResource.UnAllocQtySum @Html.DisplayFor(model => model.SearchConditions.UnAllocQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+}
+@if (Model.Results.Adjusts != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.Adjusts.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.LocationCd
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.CategoryId1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.ItemIdName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.ItemColor
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.ItemSize
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.Jan
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.Grade
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.CaseQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.StockQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.AllocQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @AdjustResource.UnAllocQty
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "ItemSku", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.Adjusts.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Adjusts[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            <label>
+                                                <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetIsCheck('@(key + "IsCheck")')" @((cModel.v.LocationClass == "16") ? "disabled" : "") />
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                            @Html.CheckBox(key + "IsCheck", new { @id = (key + "IsCheck"), @class = "check-box", hidden = true })
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.Adjusts.PageNumber - 1) * Model.Results.Adjusts.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CategoryName1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.GradeName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.CaseQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.StockQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.UnAllocQty)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="button" id="btnCreate" class="btn btn-dark btnsize">@AdjustResource.BtnNew</button>
+        <button type="button" id="btnAdjustInput" class="btn btn-dark btnsize">@AdjustResource.BtnAdjustInput</button>
+    </div>
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@Html.Partial("~/Areas/Master/Views/Shared/_VendorSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_ColorSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_SizeSearchModal.cshtml")
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        function RadioClick(rowNo) {
+            document.getElementById("Adjusts[" + rowNo + "].IsCheckHidden").value = "1";
+        }
+    /**
+     * Country class
+     */
+    var AdjustView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=radio][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=radio][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=radio][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnAdjustInput: '#btnAdjustInput',
+            ddlSortKey: '#ddlSortKey',
+            ddlPackageSortKey: '#ddlPackageSortKey',
+            btnEdit: '#btnUpdate',
+            ddlSortKey: '#ddlSortKey',
+            chkChecked: ':radio:checked',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+            btnBrandId: '#btnBrandId',
+            brandId:'#txtBrandId',
+            brandName:'#txtBrandName',
+            brandSelect: '#brandSelect',
+            btnMainVendor:'#btnMainVendor',
+            colorSelect: '#colorSelect',
+            btnItemColor:'#btnItemColor',
+            colorId:'#txtItemColorId',
+            colorName:'#txtItemColorName',
+            sizeSelect: '#sizeSelect',
+            btnItemSize:'#btnItemSize',
+            sizeId:'#txtItemSizeId',
+            sizeName:'#txtItemSizeName',
+            mainVendorId:'#txtMainVendorId',
+            mainVendorName:'#txtMainVendorName',
+            vendorSelect: '#vendorSelect',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+                brandSearchModal.init();
+                vendorSearchModal.init();
+                colorSearchModal.init();
+                sizeSearchModal.init();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Check box click
+                 */
+                $(AdjustView.SELECTORS.chkInTable).click(function (evt) {
+                    $(this).prop("checked", true);
+                    evt.stopPropagation();
+                    AdjustView.setButtonStatus();
+                });
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(AdjustView.SELECTORS.btnBrandId).on("click", brandSearchModal.open);
+
+                /**
+                * 仕入先検索ダイアログの設定
+                */
+                $(AdjustView.SELECTORS.btnMainVendor).on("click", vendorSearchModal.open);
+
+                /**
+                * カラー検索ダイアログの設定
+                */
+                $(AdjustView.SELECTORS.btnItemColor).on("click", colorSearchModal.open);
+
+                ///**
+                //* サイズ検索ダイアログの設定
+                //*/
+                //$(AdjustView.SELECTORS.btnItemSize).on("click", sizeSearchModal.open);
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(AdjustView.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(AdjustView.SELECTORS.brandId).val(brandId);
+                        $(AdjustView.SELECTORS.brandName).val(brandName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(AdjustView.SELECTORS.vendorSelect).on("click", function () {
+                    $('#vendorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var vendorId = $(item).parents("tr").find("td:eq(4)").text().trim();
+                        var vendorName = $(item).parents("tr").find("td:eq(5)").text().trim();
+                        $(AdjustView.SELECTORS.mainVendorId).val(vendorId);
+                        $(AdjustView.SELECTORS.mainVendorName).val(vendorName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(AdjustView.SELECTORS.colorSelect).on("click", function () {
+                    $('#colorSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var colorId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var colorName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(AdjustView.SELECTORS.colorId).val(colorId);
+                        $(AdjustView.SELECTORS.colorName).val(colorName);
+                    })
+                });
+
+                /**
+                 *Click button get data Vendor
+                 */
+                $(AdjustView.SELECTORS.sizeSelect).on("click", function () {
+                    $('#sizeSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var sizeId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var sizeName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(AdjustView.SELECTORS.sizeId).val(sizeId);
+                        $(AdjustView.SELECTORS.sizeName).val(sizeName);
+                    })
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function () {
+                // Enable/Disable button Edit
+                if ($(AdjustView.SELECTORS.chkCheckedInTable).length === 1) {
+                    if (getUsable_Class() != 1) {
+                        $(AdjustView.SELECTORS.btnAdjustInput).removeAttr('disabled');
+                    }
+                } else {
+                    $(AdjustView.SELECTORS.btnAdjustInput).attr('disabled', 'disabled');
+                }
+            },
+        }
+
+    /**
+    * Page loaded
+    */
+    $(document).ready(function () {
+        AdjustView.init();
+        if ($("#ddlCategoryId1").val() != '') {
+            $("#ddlCategoryId2").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId2").val() != '') {
+                $("#ddlCategoryId3").removeAttr('disabled');
+        }
+        if ($("#ddlCategoryId3").val() != '') {
+                $("#ddlCategoryId4").removeAttr('disabled');
+        }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("Search", "Adjust", new { area= "Stock" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmSearch").submit();
+                });
+            });
+    });
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidPackageSortKey").val($("#ddlPackageSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "Adjust", new { area= "Stock" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function GetCategoryList(id) {
+                    var urlAction = '@Url.Action("GetCategoryList","ItemSku",new { area = "Master"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            id: id + 1,
+                            category1: $("#ddlCategoryId1").val(),
+                            category2: $("#ddlCategoryId2").val(),
+                            category3: $("#ddlCategoryId3").val()
+                        },
+                        success: function (data) {
+                            $("#ddlCategoryId" + (id + 1)).html("");
+                            $("#ddlCategoryId" + (id + 1)).html(data.html);
+                        }
+                    });
+        }
+        function CategoryChange(id) {
+            if ($("#ddlCategoryId" + id).val() != '') {
+                GetCategoryList(id);
+                $("#ddlCategoryId" + (id + 1)).removeAttr('disabled');
+                if (id == 1) {
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            } else {
+                if (id == 1) {
+                    $("#ddlCategoryId2").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId2").val('');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 2){
+                    $("#ddlCategoryId3").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId3").val('');
+                    $("#ddlCategoryId4").val('');
+                }else if(id == 3){
+                    $("#ddlCategoryId4").attr('disabled', 'disabled');
+                    $("#ddlCategoryId4").val('');
+                }
+            }
+        }
+        function Search() {
+                $("#hidSearchType").val("Search");
+                var urlAction = '@Url.Action("Search", "Adjust", new { area = "Stock" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            }
+        $('#btnAdjustInput').on("click", function () {
+                var urlAction ='@Url.Action("Input", "Adjust", new { area= "Stock" })';
+                var $form = $("#frmUpdate");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        });
+        $('#btnCreate').on("click", function () {
+            var urlAction ='@Url.Action("CreateInput", "Adjust", new { area= "Stock" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        function SetIsCheck(id) {
+            $('#listData input[type=checkbox][id$=".IsCheck"]').prop("checked", false);
+            $('#listData input[type=checkbox][id="' + id + '"]').prop("checked", true);
+        }
+    </script>
+}

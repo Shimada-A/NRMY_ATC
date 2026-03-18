@@ -1,0 +1,132 @@
+﻿@using Share.Common;
+@using Share.Common.Resources;
+@model Wms.ViewModels.VmError
+
+@{
+    ViewBag.Title = "インフォメーション";
+    Layout = "~/Views/Shared/_Base.cshtml";
+}
+    <link href="../Content/css/materialdesignicons.min.css" rel="stylesheet">
+    <style>
+        html, body {
+            color: #656790;
+            background-color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            font-family: -apple-system,BlinkMacSystemFont,"arial","游ゴシック Medium",YuGothic,YuGothicM,"Hiragino Kaku Gothic ProN",メイリオ,Meiryo,sans-serif;
+            font-weight: 400;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .error-div {
+            margin-left: 10VW;
+        }
+
+            .error-div,
+            .error-div div {
+                margin: 3VH;
+                font-size: 1.2rem;
+                text-align: left;
+            }
+
+                .error-div .btn {
+                    border: 1px solid black;
+                    text-align: center;
+                    position: absolute;
+                    margin: unset;
+                    padding: 0;
+                    border-radius: 3px;
+                    font-size: 1rem;
+                    box-sizing: border-box;
+                    font-weight: bold;
+                }
+
+        .error-message {
+            height: 54VH;
+            overflow-y: auto;
+        }
+
+        .btnarea {
+            position: relative;
+        }
+
+        input[type="button"], button, .btnbox {
+            width: 360px;
+            height: 48px;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            font-weight: bold;
+            background-color: #ededff;
+            -webkit-filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.3));
+        }
+
+        .undersheet {
+            position: relative;
+            border-top-color: #656790;
+            border-top-style: solid;
+            border-top-width: 2px;
+            border-bottom-color: #656790;
+            border-bottom-style: solid;
+            border-bottom-width: 3px;
+            padding-top: 90px;
+            width: 100VW;
+            height: 100VH;
+            top: 0VH;
+        }
+    </style>
+<div class="undersheet">
+    <table style="margin-left:10VW; padding-top:10VH; text-align: center;">
+        <tbody>
+            <tr>
+                <td style="width:auto; height:2VH; font-weight: 400; font-size: 2.2rem; padding-right: 20px;">
+                    @Model.Title
+                </td>
+                <td>
+                    <div style="width: 5VW; height:2VH;background-color:#656790;" />
+                </td>
+                <td>
+                    <div style="width: 50VW; height:2VH;background-color:#f5f7f6;" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div style="margin-left: 10VW; padding:30px; z-index:1; position:fixed; top:12VH;">
+    <div class="error-div">
+        <h2 style="color:#656790;font-weight: 400;    font-size: 1.8rem;"> @ViewData[AppConst.ERROR]</h2>
+        <div> Http Status : @ViewData[AppConst.HTTP_STATUS]</div>
+        <div> @Model.Information </div>
+
+        <button onclick="GoToHome()" style="font-size: 1.3rem;line-height: 0px;">
+            <i class="mdi mdi-format-align-left"></i>
+            
+                    @MessagesResource.GoToHome
+            
+        </button>
+
+        @if (ViewData[AppConst.ERROR] != null)
+        {
+    <div class="error-message" style="display : @Model.DisplayDiv ;">
+        @MessagesResource.ErrorMessage: <br />
+        @MessagesResource.Source : @Model.Source <br />
+        @MessagesResource.Category : @Model.Category<br />
+        @MessagesResource.EventID  : @Model.EventID<br />
+        @MessagesResource.TimeWritten  : @Model.TimeWritten<br />
+        <br />
+        @MessagesResource.Message
+        <div style="font-size:small;">
+            @Html.Raw(Html.Encode(Model.Message).Replace("\n", "<br />"))
+        </div>
+    </div>
+        }
+    </div>
+</div>
+@section BaseChildScripts{
+    <script>
+        function GoToHome() {
+            window.location = "@Url.Action("Index", "Home", new {area = ""})";
+        }
+    </script>
+}

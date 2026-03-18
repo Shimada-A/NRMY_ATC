@@ -1,0 +1,358 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.SortSet;
+@model Wms.Areas.Ship.ViewModels.SortSet.SortSetViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_SortSet;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .mismatch {
+        color: orange;
+        margin-top: -25px;
+        display: none;
+    }
+
+    .lineheight {
+        height: 60px;
+    }
+</style>
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "SortSet", FormMethod.Post, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="tdtitle">@SortSetResource.Center</td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1", onchange = "GetBatchNoList()" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle"></td>
+                <td class="w_80_normal"></td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "SortSet", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "3" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="4" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.SortSets != null && Model.Results.SortSets.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.SortSets.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.SortSets.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.SortSets, Page => Url.Action("UpdateList", "SortSet", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+}
+@if (Model.Results.SortSets != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.SortSets.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @SortSetResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SortSetResource.Class
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SortSetResource.ShipPlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SortSetResource.ShipInstructId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SortSetResource.ShipToStore
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SortSetResource.TransporterName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SortSetResource.ShipToZip
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SortSetResource.ShipToAddress
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @SortSetResource.SortingCd
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("UpdateList", "SortSet", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                for (int i = 0; i < Model.Results.SortSets.Count(); i++)
+                                {
+                                    var key = String.Format("SortSets[{0}].", i);
+                                    <tr style="height:85px">
+                                        <td class="align-middle text-right w_no">
+                                            @((i + 1) + (Model.Results.SortSets.PageNumber - 1) * Model.Results.SortSets.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.SortSets[i].Class)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.SortSets[i].ShipPlanDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.SortSets[i].ShipInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.SortSets[i].ShipToStoreId)<br>
+                                            @Html.DisplayFor(modelItem => modelItem.Results.SortSets[i].ShipToStoreName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.SortSets[i].TransporterName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @if (Model.Results.SortSets[i].TableClass == 1)
+                                            {
+                                                @Html.DisplayFor(modelItem => modelItem.Results.SortSets[i].ShipToZip)
+                                                @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].ShipToZip, new { Name = key + "ShipToZip" })
+                                            }
+                                            else
+                                            {
+                                                @Html.EditorFor(modelItem => modelItem.Results.SortSets[i].ShipToZip, new { htmlAttributes = new { Name = key + "ShipToZip", onblur = "GetSortingCd(this.value," + @i + ")", @class = "lineheight" } })<br />
+                                                @Html.ValidationMessageFor(modelItem => modelItem.Results.SortSets[i].ShipToZip, "", new { id = "ShipToZip-errormessage" + i, style = "margin-left:0px;" })
+                                            }
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => modelItem.Results.SortSets[i].ShipToAddress)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.EditorFor(modelItem => modelItem.Results.SortSets[i].SortingCd, new { htmlAttributes = new { Name = key + "SortingCd", onblur = "SortingCdOnblur(this.value," + @i + ")", @class = "lineheight" } })
+                                            <lablel class="mismatch" id=@("mismatch" + i)>@SortSetResource.Mismatch</lablel>
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].SortingCdHid)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].TableClass, new { Name = key + "TableClass" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].TransporterId, new { Name = key + "TransporterId" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].Class, new { Name = key + "Class" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].ShipPlanDate, new { Name = key + "ShipPlanDate" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].ShipInstructId, new { Name = key + "ShipInstructId" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].ShipToStoreId, new { Name = key + "ShipToStoreId" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].ShipToStoreName, new { Name = key + "ShipToStoreName" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].TransporterId, new { Name = key + "TransporterId" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].TransporterName, new { Name = key + "TransporterName" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].ShipToAddress, new { Name = key + "ShipToAddress" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].PrefName, new { Name = key + "PrefName" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].CityName, new { Name = key + "CityName" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].LineNo, new { Name = key + "LineNo" })
+                                            @Html.HiddenFor(modelItem => modelItem.Results.SortSets[i].Address1, new { Name = key + "Address1" })
+                                        </td>
+                                    </tr>
+                                }
+                                @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+                                @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+                                @Html.HiddenFor(model => model.SearchConditions.Seq, new { id = "hidSeq" })
+                                @Html.HiddenFor(model => model.SearchConditions.TotalCount)
+                                @Html.HiddenFor(model => model.SearchConditions.Page, new { id = "hidPage" })
+                                @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+                                @Html.HiddenFor(model => model.SearchConditions.CenterId, new { id = "hidCenterId" })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="submit" id="btnSortSet" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm"
+                @(Model.Results.SortSets != null && Model.Results.SortSets.Count() > 0 ? "" : "disabled")>
+            @SortSetResource.BtnSet
+        </button>
+        <button type="button" id="btnSortSetHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_Update" hidden>@SortSetResource.BtnSet</button>
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+    </div>
+}
+
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "Update", Message = SortSetResource.MsgSortSet })
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        $(document).ready(function () {
+            if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+            }
+            for (var i = 0; i < @(Model.Results.SortSets != null && Model.Results.SortSets.Count() > 0 ? Model.Results.SortSets.Count() : 0); i++){
+                if ($("#Results_SortSets_" + i + "__SortingCd").val().trim().length > 0 && $("#Results_SortSets_" + i + "__SortingCd").val() != $("#Results_SortSets_" + i + "__SortingCdHid").val()) {
+                    $("#mismatch" + i).css("display", "block");
+                } else {
+                    $("#mismatch" + i).css("display", "none");
+                }
+            }
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var urlAction ='@Url.Action("UpdateList", "SortSet", new { area= "Ship" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $("#frmUpdate").submit();
+                });
+            });
+        });
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+
+            var $form = $("#frmUpdate");
+            var urlAction ='@Url.Action("UpdateList", "SortSet", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function Search() {
+                var urlAction = '@Url.Action("Search", "SortSet", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        $("#btnSortSet").on("click", function () {
+            if (!validateForm($('#frmSearch'))) {
+                return;
+            }
+            var errcnt = 0;
+            for (var i = 0; i < @(Model.Results.SortSets != null && Model.Results.SortSets.Count() > 0 ? Model.Results.SortSets.Count() : 0); i++){
+                if ($("#Results_SortSets_" + i + "__ShipToZip").val() == "" && $("#Results_SortSets_" + i + "__SortingCd").val() != "") {
+                    $("#ShipToZip-errormessage" + i).html('<span id="ShipToZip-error" class="">郵便番号は必須項目です。</span>');
+                    $("#ShipToZip-errormessage" + i).addClass("field-validation-error");
+                    $("#Results_SortSets_" + i + "__ShipToZip").addClass("input-validation-error");
+                    errcnt = errcnt + 1;
+                } else {
+                    $("#ShipToZip-errormessage" + i).html('');
+                    $("#ShipToZip-errormessage" + i).removeClass("field-validation-error");
+                    $("#Results_SortSets_" + i + "__ShipToZip").removeClass("input-validation-error");
+                }
+            }
+            if (errcnt > 0) {
+                return;
+            }
+            $('#btnSortSetHidden').click();
+        });
+        $('#Update').on("click", function () {
+            var urlAction ='@Url.Action("SortSet", "SortSet", new { area= "Ship" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+        /* 「郵便番号」入力 */
+        function GetSortingCd(zip, i) {
+            if (zip == "" && $("#Results_SortSets_" + i + "__SortingCd").val() != "") {
+                $("#ShipToZip-errormessage" + i).html('<span id="ShipToZip-error" class="">郵便番号は必須項目です。</span>');
+                $("#ShipToZip-errormessage" + i).addClass("field-validation-error");
+                $("#Results_SortSets_" + i + "__ShipToZip").addClass("input-validation-error");
+            } else {
+                $("#ShipToZip-errormessage" + i).html('');
+                $("#ShipToZip-errormessage" + i).removeClass("field-validation-error");
+                $("#Results_SortSets_" + i + "__ShipToZip").removeClass("input-validation-error");
+                var urlAction = '@Url.Action("GetSortingCd", "SortSet", new { area= "Ship" })';
+                var prefName = $("#Results_SortSets_" + i + "__PrefName").val();
+                var cityName = $("#Results_SortSets_" + i + "__CityName").val();
+                var address1 = $("#Results_SortSets_" + i + "__Address1").val();
+                var centerId = $("#ddlCenterId").val();
+                var transporterId = $("#Results_SortSets_" + i + "__TransporterId").val();
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    data: {
+                        zip: zip,
+                        prefName: prefName,
+                        cityName: cityName,
+                        centerId: centerId,
+                        transporterId: transporterId,
+                        address1: address1
+                    },
+                    success: function (data) {
+                        $("#Results_SortSets_" + i + "__SortingCd").val(data.sortingCd);
+                        $("#Results_SortSets_" + i + "__SortingCdHid").val(data.sortingCd);
+                        $("#mismatch" + i).css("display", "none");
+                    }
+                });
+            }
+        }
+        /* 「仕分コード」入力 */
+        function SortingCdOnblur(sortingCd, i) {
+            if ($("#Results_SortSets_" + i + "__SortingCdHid").val() != '') {
+                if (sortingCd.length > 0 && $("#Results_SortSets_" + i + "__SortingCd").val() != $("#Results_SortSets_" + i + "__SortingCdHid").val()) {
+                    $("#mismatch" + i).css("display", "block");
+                } else {
+                    $("#mismatch" + i).css("display", "none");
+                }
+            }
+        }
+    </script>
+}

@@ -1,0 +1,364 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Helpers;
+@using Wms.Areas.Ship.Resources;
+@model Wms.Areas.Ship.ViewModels.EcCancelUpload.EcCancelUpload01ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_EcCancelUpload01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "EcCancelUpload", FormMethod.Post, new { id = "frmSearch", @class = "show_scroll" }))
+    {
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td>@EcCancelUploadResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>@EcCancelUploadResource.ShipInstructIdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.ShipInstructId, new { htmlAttributes = new { @id = "txtShipInstructId", tabindex = "2" } })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="text-right w_80_normal">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "EcCancelUpload", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "3" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="4" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        @Html.HiddenFor(model => model.SearchConditions.HidShipInstructId, new { id = "hidShipInstructId" })
+        @Html.HiddenFor(model => model.SearchConditions.HidCuClass, new { id = "hidCuClass" })
+        <input type="hidden" name="SearchConditions.ItemSkuSum" id="hidItemSkuSum" value="@Model.SearchConditions.ItemSkuSum" />
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+        <div style="display:none">
+            @if (Model.Results.EcCancelUpload01s != null && Model.Results.EcCancelUpload01s.Count() > 0)
+            {
+                <table>
+
+                    @for (int i = 0; i < Model.Results.EcCancelUpload01s.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.EcCancelUpload01s[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.EcCancelUpload01s[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.EcCancelUpload01s[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.EcCancelUpload01s[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.EcCancelUpload01s != null && Model.Results.EcCancelUpload01s.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border">
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.EcCancelUpload01s.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.EcCancelUpload01s.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.EcCancelUpload01s, Page => Url.Action("Search", "EcCancelUpload", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    if (Model.Results.EcCancelUpload01s.Count() > 0)
+    {
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @EcCancelUploadResource.ItemSkuSum @Html.DisplayFor(model => model.SearchConditions.ItemSkuSum)
+                    </li>
+                    <li>
+                        @EcCancelUploadResource.InstructQtySum @Html.DisplayFor(model => model.SearchConditions.InstructQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+}
+@if (Model.Results.EcCancelUpload01s != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.EcCancelUpload01s.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:64vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.CUDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.CUClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.ShipPlanDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.ShipInstructId
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.OrderDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.TransporterName
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.ArriveRequestDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.MakeDate
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.BatchNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.EcShipClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.OrderQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @EcCancelUploadResource.GasQty
+                                </th>
+                                <th class="bg-grey">
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "EcCancelUpload", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.EcCancelUpload01s.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("EcCancelUpload01s[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            <label>
+                                                <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetIsCheck('@(cModel.v.ShipInstructId)','@(cModel.v.CuClass)')" />
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                            @Html.CheckBox(key + "IsCheck", new { @id = (key + "IsCheck"), @class = "check-box", hidden = true })
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @Html.DisplayFor(modelItem => cModel.v.LineNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CuDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CuClass)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipPlanDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.TransporterName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ArriveRequestDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.AllocDate)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.BatchNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.EcShipClassName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.OrderQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.GasQty)
+                                        </td>
+                                        <td class="align-middle">
+                                            <button type="button" class="btn btn-dark btn-sm" onclick="Detail('@cModel.v.ShipInstructId')">@EcCancelUploadResource.BtnPackageDetail</button>
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div> }
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="button" id="btnShipConfirm" class="btn btn-dark btnsize _pm" onclick="ClickBtn();" disabled>@EcCancelUploadResource.BtnShipConfirm</button>
+        <button type="button" id="btnShipConfirmCancelHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_ShipConfirmCancel" hidden>@EcCancelUploadResource.BtnShipConfirm</button>
+        <button type="button" id="btnShipConfirmUploadHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#confirm_ShipConfirmUpload" hidden>@EcCancelUploadResource.BtnShipConfirm</button>
+    </div>
+}
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "ShipConfirmCancel", Message = EcCancelUploadResource.ConfirmMsg + @Environment.NewLine + EcCancelUploadResource.ShipCancelMessage1 + @Environment.NewLine + EcCancelUploadResource.ShipCancelMessage2 + @Environment.NewLine + @Environment.NewLine + EcCancelUploadResource.ShipCancelMessage3 + @Environment.NewLine + EcCancelUploadResource.ShipCancelMessage4 })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "ShipConfirmUpload", Message = EcCancelUploadResource.ConfirmMsg + @Environment.NewLine + EcCancelUploadResource.ShipConfirmMessage1 + @Environment.NewLine + EcCancelUploadResource.ShipConfirmMessage2 + @Environment.NewLine + @Environment.NewLine + EcCancelUploadResource.ShipConfirmMessage3 + @Environment.NewLine + EcCancelUploadResource.ShipConfirmMessage4 })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+          $(document).ready(function () {
+            if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+            }
+              $('#btnShipConfirm').attr('disabled', 'disabled');
+              $("#ddlSort").removeClass("input-validation-error");
+              $("#ddlSortKey").removeClass("input-validation-error");
+              $("#hidShipInstructId").val("");
+              $("#hidCuClass").val("");
+            $("#hidIndexPage").val($("#hidPage").val());
+
+            @* Pageを変更時 *@
+            $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                var $form = $("#frmSearch");
+                var urlAction ='@Url.Action("Search", "EcCancelUpload", new { area= "Ship" })';
+                var pageUrl = urlAction + '?Page=';
+                var page = $(item).attr("href").replace(pageUrl, "");
+                page = page.replace("&class=btn-outline-dark", "");
+                $(item).attr("href", "javascript:void(0);").click(function () {
+                    $("#hidPage").val(page);
+                    $("#hidSearchType").val("SortPage");
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                });
+            });
+
+              $("#hidSortKey").val($("#ddlSortKey").val());
+              $("#hidSort").val($("#ddlSort").val());
+          });
+        function SetIsCheck(pShipInstructId, pCuClass) {
+            $('#btnShipConfirm').prop("disabled", false);
+            $("#hidShipInstructId").val(pShipInstructId);
+            $("#hidCuClass").val(pCuClass);
+        };
+
+        function Detail(pShipInstructId) {
+            $("#hidShipInstructId").val(pShipInstructId);
+                var urlAction = '@Url.Action("Detail", "EcCancelUpload", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        };
+        // Sort
+        function getSortData() {
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSearchType").val("SortPage");
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "EcCancelUpload", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        };
+        function Search() {
+            var urlAction = '@Url.Action("Search", "EcCancelUpload", new { area = "Ship" })';
+            var $form = $("#frmSearch");
+            $("#hidSearchType").val("Search");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        };
+
+        //キャンセル/更新ボタン押下時
+        function ClickBtn() {
+            if ($("#hidCuClass").val() == '@EcCancelUploadResource.Cancel') {
+                $('#btnShipConfirmCancelHidden').click();
+                $('#ShipConfirmCancel').click(function () {
+                    var urlAction = '@Url.Action("ShipConfirm", "EcCancelUpload", new { area = "Ship" })';
+                    var $form = $("#frmSearch");
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                });
+            } else {
+                $('#btnShipConfirmUploadHidden').click();
+                $('#ShipConfirmUpload').click(function () {
+                    var urlAction = '@Url.Action("ShipConfirm", "EcCancelUpload", new { area = "Ship" })';
+                    var $form = $("#frmSearch");
+                    $form.attr("action", urlAction);
+                    $form.attr("method", "POST");
+                    $form.submit();
+                });
+            }
+        };
+    </script>
+}

@@ -1,0 +1,41 @@
+﻿@model Wms.Areas.Master.Models.User
+
+@{
+    ViewBag.Title = "Link";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>Link</h1>
+        <p class="pg_caption">Linkの使い方</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content of">
+        <h3>Link(パラメータ無し)</h3>
+        <div class="mtop20">
+            @Html.ActionLink("Link1", "Edit", null, new { @class = "btn2" })
+        </div>
+        <div class="codearea">
+            <p>
+                Non parameter Link.
+            </p>
+        </div>
+    </div>
+    <div class="content of">
+        <h3>Link(with parameter)</h3>
+        <div class="mtop20">
+            @Html.ActionLink("Link2", "Edit", new { id = "0001" }, new { @class = "btn2" })
+        </div>
+        <div class="codearea">
+            <p>
+                Link with parameter.
+            </p>
+        </div>
+    </div>
+</div>
+}

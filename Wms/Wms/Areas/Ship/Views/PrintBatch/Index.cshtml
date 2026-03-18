@@ -1,0 +1,522 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.PrintBatch;
+@model Wms.Areas.Ship.ViewModels.PrintBatch.PrintBatchViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_PrintBatch;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("Search", "PrintBatch", FormMethod.Post, new { id = "frmSearch" }))
+{
+    @Html.AntiForgeryToken()
+    <div id="div_search" class="head head_white collapse">
+        <table>
+            <tr>
+                <td class="tdtitle">@PrintBatchResource.CenterId</td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1", onchange = "GetBatchNoList()" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@PrintBatchResource.AllocGroupNo</td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.AllocGroupNo,
+                                (IEnumerable<SelectListItem>)ViewBag.BatchNoList,
+                                CommonResource.None, new { id = "ddlBatchNo", tabindex = "2" })
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SearchConditions.AllocGroupNo, "", new { id = "msgAllocGroupNo" })
+                </td>
+            </tr>
+            @*<tr>
+                    <td class="tdtitle"></td>
+                    <td colspan="2" class="bluecolor">@PrintBatchResource.HeadCommet</td>
+                </tr>*@
+            <tr>
+                <td class="tdtitle"></td>
+                <td class="w_80_normal">
+                    @*<button type="button" id="btnPrint" class="download" tabindex="3" onclick="HeadPrint('Ec')">
+                            <img src="~/Content/img/print.png" />
+                            @PrintBatchResource.BtnEcBatchList
+                        </button>*@
+                    <button type="button" id="btnPrint" class="download" tabindex="4" onclick="HeadPrint('Dc')">
+                        <img src="~/Content/img/print.png" />
+                        @PrintBatchResource.BtnDcBatchList
+                    </button>
+                    <button type="button" id="btnPrint" class="download" tabindex="5" onclick="HeadPrint('Ship')" style="width:10rem">
+                        <img src="~/Content/img/print.png" />
+                        @PrintBatchResource.BtnShipBatchList
+                    </button>
+                    @Html.HiddenFor(model => model.SearchConditions.PrintFlag, new { id = "hidPrintFlag" })
+                </td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "PrintBatch", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "6" })
+                    <button class="btn btn-outline-dark" id="btnSearch" type="button" tabindex="7" onclick="Search();">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        @Html.HiddenFor(model => model.SearchConditions.Print, new { id = "hidPrint" })
+    </div>
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.Results.PrintBatchs != null)
+    {
+        @* Container *@
+        <div class="Container">
+
+            @* Content *@
+            @if (Model.Results.PrintBatchs.Count() == 0)
+            {
+                <div>
+                    <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <div class="tb_scroll">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">&nbsp;</th>
+                                    <th class="bg-grey align-middle">
+                                        @PrintBatchResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PrintBatchResource.ReportName
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @PrintBatchResource.StatusName
+                                    </th>
+                                    <th hidden>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cModel in Model.Results.PrintBatchs.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("PrintBatchs[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle chk_cell">
+                                            <label>
+                                                @if (cModel.v.Active)
+                                                {
+                                                    <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetCheckValue(@cModel.v.No)" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetCheckValue(@cModel.v.No)" disabled />
+                                                }
+                                                <span class="radio_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @Html.DisplayFor(modelItem => cModel.v.DispNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ReportName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StatusName)
+                                        </td>
+                                        <td class="template" hidden>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            <span>@PrintBatchResource.PrintConditions</span>
+            <table class="foot">
+                <tr>
+                    <td>
+                        <label class="chklist">
+                            @Html.CheckBoxFor(model => model.SearchConditions.OnlyUnpicked, new { id = "ddlOnlyUnpicked", tabindex = "8", @placeholder = "", @class = "check-box", disabled = "disabled" })
+                            <span class="chk_parts">
+                            </span>
+                        </label>
+                        @PrintBatchResource.OnlyUnpicked
+                    </td>
+                    <td colspan="5">
+                        <label class="chklist">
+                            @Html.CheckBoxFor(model => model.SearchConditions.OnlyPicDuring, new { id = "ddlOnlyPicDuring", tabindex = "9", @placeholder = "", @class = "check-box", disabled = "disabled" })
+                            <span class="chk_parts">
+                            </span>
+                        </label>
+                        @PrintBatchResource.OnlyPicDuring
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdtitle_large">@PrintBatchResource.LocationCd</td>
+                    <td colspan="5">
+                        @Html.EditorFor(model => model.SearchConditions.LocationCdFrom, new { htmlAttributes = new { @class = "", @id = "txtLocationCdFrom", tabindex = "10", disabled = "disabled" } })
+                        ～
+                        @Html.EditorFor(model => model.SearchConditions.LocationCdTo, new { htmlAttributes = new { @class = "", @id = "txtLocationCdTo", tabindex = "11", disabled = "disabled" } })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdtitle">@PrintBatchResource.ItemId</td>
+                    <td>
+                        @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemId", tabindex = "12", disabled = "disabled" } })
+                    </td>
+                    <td class="tdtitle text-right">@PrintBatchResource.Jan</td>
+                    <td>
+                        @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtJan", tabindex = "13", disabled = "disabled" } })
+                    </td>
+                    <td class="tdtitle text-right">@PrintBatchResource.Sku</td>
+                    <td>
+                        @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtItemSkuId", tabindex = "14", disabled = "disabled" } })
+                    </td>
+                </tr>
+                @*<tr>
+                        <td class="tdtitle">@PrintBatchResource.BatchNo</td>
+                        <td colspan="5">
+                            @Html.EditorFor(model => model.SearchConditions.BatchNo, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBatchNo", tabindex = "15", disabled = "disabled" } })
+                        </td>
+                    </tr>*@
+                @* 管理者の場合、JAN付きの帳票発行可能にする *@
+                @if (ViewBag.PermissionLevel == PermissionLevelClasses.PermissionLevelSystemManager)
+                {
+                    <tr>
+                        <td>
+                            <label class="chklist">
+                                @Html.CheckBoxFor(model => model.SearchConditions.chkJan, new { id = "chkJan", tabindex = "-1", @placeholder = "", @class = "check-box" })
+                                <span class="chk_parts">
+                                </span>
+                            </label>
+                            @PrintBatchResource.ChkJan
+                        </td>
+                    </tr>
+                }
+            </table>
+            @*@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml")*@
+            @Html.HiddenFor(model => model.SearchConditions.No, new { id = "hidNo" })
+        </div>
+    }
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        <button type="submit" id="btnPrintBatch" class="btn btn-dark btnsize _pm" onclick="BodyPrint()" disabled>
+            @PrintBatchResource.BtnPrintBatch
+        </button>
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+        <button id="btnErrorMsg" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrorMsg" hidden></button>
+    </div>
+}
+
+@using (Html.BeginForm("Search", "PrintBatch", FormMethod.Post, new { id = "frmPrint" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.SearchConditions.Ret)
+    @Html.HiddenFor(model => model.SearchConditions.StyleName)
+    @Html.HiddenFor(model => model.SearchConditions.DownloadFileName)
+}
+@Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_ALLOCATION_CANCEL)
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrorMsg", Message = Share.Common.Resources.MessagesResource.MSG_NOT_FOUND })
+@** スクリプト *@
+@section LayoutScripts{
+
+    <script>
+    var PrintBatchView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=radio][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=radio][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=radio][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnPrintBatch: '#btnPrintBatch',
+            chkChecked: ':radio:checked',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnSubmit: 'button[type=submit],input[type=submit]',
+        },
+
+            /**
+             * Init data
+             */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus();
+            },
+
+            /**
+             * Register event for control
+             */
+            registerEvent: function () {
+
+                /**
+                 * Stop event fired when click to checkbox
+                 */
+                $(PrintBatchView.SELECTORS.chkLabel).click(function (evt) {
+                    $('input[type=checkbox][id$=".CheckedValue"]').each(function (i, item) {
+                        if ($(item).prop("checked")) {
+                            $(item).trigger('click');
+                        }
+                    });
+                    evt.stopPropagation();
+                });
+
+                /**
+                 * Check box click
+                 */
+                $(PrintBatchView.SELECTORS.chkInTable).click(function (evt) {
+                    $('input[type=checkbox][id$=".CheckedValue"]').each(function (i, item) {
+                        if ($(item).prop("checked")) {
+                            $(item).prop("checked", false);
+                        }
+                    });
+                    $(this).prop("checked", true);
+                    evt.stopPropagation();
+                    PrintBatchView.setButtonStatus();
+                });
+            },
+
+            /**
+             * Enable/Disable button Edit
+             */
+            setButtonStatus: function () {
+                // Enable/Disable button Edit
+                if ($(PrintBatchView.SELECTORS.chkCheckedInTable).length === 1) {
+                    $(PrintBatchView.SELECTORS.btnPrintBatch).removeAttr('disabled');
+                } else {
+                    $(PrintBatchView.SELECTORS.btnPrintBatch).attr('disabled', 'disabled');
+                }
+            },
+        }
+    $(document).ready(function () {
+        PrintBatchView.init();
+            if ('@ViewBag.Status' != '@ProcedureStatus.Success' && '@ViewBag.Status' != '') {
+                $("#btnErrorMessage").click();
+        }
+        if ($("#hidPrint").val() == "Print") {
+            $("#hidPrint").val("")
+            var urlAction ='@Url.Action("ReportPrint", "PrintBatch", new { area= "Ship" })';
+            var $form = $("#frmPrint");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+    });
+        function Search() {
+                if ($("#ddlBatchNo").val()=="") {
+                    $("#msgAllocGroupNo").html('<span class="">'+'@string.Format(MessagesResource.Required,PrintBatchResource.AllocGroupNoH)' +'</span>');
+                    $("#msgAllocGroupNo").addClass("field-validation-error");
+                    $("#ddlBatchNo").addClass("input-validation-error");
+                    return;
+                } else {
+                    $("#msgAllocGroupNo").html("")
+                    $("#msgAllocGroupNo").removeClass("field-validation-error")
+                    $("#ddlBatchNo").removeClass("input-validation-error")
+                }
+                var urlAction = '@Url.Action("Search", "PrintBatch", new { area = "Ship" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+        }
+        function SetCheckValue(no) {
+            $("#btnPrintBatch").removeAttr('disabled');
+            if (no == 1) {
+                $("#ddlOnlyUnpicked").attr('disabled', 'disabled');
+                $("#ddlOnlyPicDuring").attr('disabled', 'disabled');
+                $("#txtLocationCdFrom").attr('disabled', 'disabled');
+                $("#txtLocationCdTo").attr('disabled', 'disabled');
+                $("#txtItemId").attr('disabled', 'disabled');
+                $("#txtJan").attr('disabled', 'disabled');
+                $("#txtItemSkuId").attr('disabled', 'disabled');
+                //$("#txtBatchNo").attr('disabled', 'disabled');
+                $("#hidNo").val(1);
+            } else if (no == 2) {
+                $("#ddlOnlyUnpicked").removeAttr('disabled');
+                $("#ddlOnlyPicDuring").removeAttr('disabled');
+                $("#txtLocationCdFrom").removeAttr('disabled');
+                $("#txtLocationCdTo").removeAttr('disabled');
+                $("#txtItemId").removeAttr('disabled');
+                $("#txtJan").removeAttr('disabled');
+                $("#txtItemSkuId").removeAttr('disabled');
+                //$("#txtBatchNo").attr('disabled', 'disabled');
+                $("#hidNo").val(2);
+            } else if (no == 3) {
+                $("#ddlOnlyUnpicked").removeAttr('disabled');
+                $("#ddlOnlyPicDuring").removeAttr('disabled');
+                $("#txtLocationCdFrom").removeAttr('disabled');
+                $("#txtLocationCdTo").removeAttr('disabled');
+                $("#txtItemId").removeAttr('disabled');
+                $("#txtJan").removeAttr('disabled');
+                $("#txtItemSkuId").removeAttr('disabled');
+                //$("#txtBatchNo").removeAttr('disabled');
+                $("#hidNo").val(3);
+            } else if (no == 4) {
+                $("#ddlOnlyUnpicked").attr('disabled', 'disabled');
+                $("#ddlOnlyPicDuring").attr('disabled', 'disabled');
+                $("#txtLocationCdFrom").attr('disabled', 'disabled');
+                $("#txtLocationCdTo").attr('disabled', 'disabled');
+                $("#txtItemId").attr('disabled', 'disabled');
+                $("#txtJan").attr('disabled', 'disabled');
+                $("#txtItemSkuId").attr('disabled', 'disabled');
+                //$("#txtBatchNo").attr('disabled', 'disabled');
+                $("#hidNo").val(4);
+            } else if (no == 5) {
+                $("#ddlOnlyUnpicked").attr('disabled', 'disabled');
+                $("#ddlOnlyPicDuring").attr('disabled', 'disabled');
+                $("#txtLocationCdFrom").attr('disabled', 'disabled');
+                $("#txtLocationCdTo").attr('disabled', 'disabled');
+                $("#txtItemId").attr('disabled', 'disabled');
+                $("#txtJan").attr('disabled', 'disabled');
+                $("#txtItemSkuId").attr('disabled', 'disabled');
+                //$("#txtBatchNo").attr('disabled', 'disabled');
+                $("#hidNo").val(5);
+            } else if (no == 6) {
+                $("#ddlOnlyUnpicked").removeAttr('disabled');
+                $("#ddlOnlyPicDuring").removeAttr('disabled');
+                $("#txtLocationCdFrom").removeAttr('disabled');
+                $("#txtLocationCdTo").removeAttr('disabled', 'disabled');
+                $("#txtItemId").attr('disabled', 'disabled');
+                $("#txtJan").attr('disabled', 'disabled');
+                $("#txtItemSkuId").attr('disabled', 'disabled');
+                //$("#txtBatchNo").attr('disabled', 'disabled');
+                $("#hidNo").val(6);
+            } else if (no == 7) {
+                $("#ddlOnlyUnpicked").removeAttr('disabled');
+                $("#ddlOnlyPicDuring").removeAttr('disabled');
+                $("#txtLocationCdFrom").removeAttr('disabled');
+                $("#txtLocationCdTo").removeAttr('disabled');
+                $("#txtItemId").removeAttr('disabled');
+                $("#txtJan").removeAttr('disabled');
+                $("#txtItemSkuId").removeAttr('disabled');
+                //$("#txtBatchNo").attr('disabled', 'disabled');
+                $("#hidNo").val(7);
+            } else if (no == 8) {
+                $("#ddlOnlyUnpicked").attr('disabled', 'disabled');
+                $("#ddlOnlyPicDuring").attr('disabled', 'disabled');
+                $("#txtLocationCdFrom").attr('disabled', 'disabled');
+                $("#txtLocationCdTo").attr('disabled', 'disabled');
+                $("#txtItemId").removeAttr('disabled');
+                $("#txtJan").removeAttr('disabled');
+                $("#txtItemSkuId").removeAttr('disabled');
+                //$("#txtBatchNo").attr('disabled', 'disabled');
+                $("#hidNo").val(8);
+            } else if (no == 10) {
+                $("#ddlOnlyUnpicked").removeAttr('disabled');
+                $("#ddlOnlyPicDuring").removeAttr('disabled');
+                $("#txtLocationCdFrom").removeAttr('disabled');
+                $("#txtLocationCdTo").removeAttr('disabled');
+                $("#txtItemId").removeAttr('disabled');
+                $("#txtJan").removeAttr('disabled');
+                $("#txtItemSkuId").removeAttr('disabled');
+                $("#hidNo").val(10);
+            }
+        }
+        function BodyPrint() {
+            if ($("#ddlBatchNo").val()=="") {
+                $("#msgAllocGroupNo").html('<span class="">'+'@string.Format(MessagesResource.Required,PrintBatchResource.AllocGroupNoH)' +'</span>');
+                $("#msgAllocGroupNo").addClass("field-validation-error");
+                $("#ddlBatchNo").addClass("input-validation-error");
+                return;
+            } else {
+                $("#msgAllocGroupNo").html("")
+                $("#msgAllocGroupNo").removeClass("field-validation-error")
+                $("#ddlBatchNo").removeClass("input-validation-error")
+            }
+            var urlAction ='@Url.Action("Reports", "PrintBatch", new { area= "Ship" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        function HeadPrint(btnflag) {
+            $("#hidPrintFlag").val(btnflag);
+
+           var urlAction ='@Url.Action("PrintCheck", "PrintBatch", new { area= "Ship" })';
+
+            if (btnflag == "Ec") {
+                urlAction ='@Url.Action("PrintCheckEc", "PrintBatch", new { area= "Ship" })';
+            } else if (btnflag == "Dc") {
+                urlAction ='@Url.Action("PrintCheckDc", "PrintBatch", new { area= "Ship" })';
+            } else if (btnflag == "Ship") {
+               urlAction ='@Url.Action("PrintCheckShip", "PrintBatch", new { area= "Ship" })';
+            }
+            $.ajax({
+                method: 'POST',
+                url: urlAction,
+                dataType: "html",
+                async: false,
+                data: {
+                    centerId: $("#ddlCenterId").val()
+                },
+                success: function (data) {
+                    if (data != null) {
+                        if (data ==0) {
+                            var urlAction = '@Url.Action("Print", "PrintBatch", new { area = "Ship" })';
+                                var $form = $("#frmSearch");
+                                $form.attr("action", urlAction);
+                                $form.attr("method", "POST");
+                                $form.submit();
+                        }
+                        else {
+                            $("#btnErrorMsg").click();
+                        }
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                }
+            });
+
+        }
+        function GetBatchNoList() {
+                    var urlAction = '@Url.Action("GetBatchNoList","PrintBatch",new { area = "Ship"})';
+                    $.ajax({
+                        url: urlAction,
+                        type: "POST",
+                        data: {
+                            centerId: $("#ddlCenterId").val()
+                        },
+                        success: function (data) {
+                            $("#ddlBatchNo").html("");
+                            $("#ddlBatchNo").html(data.html);
+                        }
+                    });
+        }
+    </script>
+}

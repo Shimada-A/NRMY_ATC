@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "HeaderNav";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section LayoutChildStyle{
+    <style>
+        div.head div.ctrlarea {
+            height: 32px;
+        }
+    </style>
+}
+
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>HeaderNav</h1>
+        <p class="pg_caption">HeaderNavの使い方</p>
+
+        @Html.Partial("_Stepper", 0)
+    </div>
+    <div class="btnarea">
+        @Html.ActionLink("新規登録", "", null, new { @class = "btn btn2" })
+    </div>
+
+    <div class="ctrlarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    商品ランク：
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @* TODO:ヘルパーメソッドにする *@
+                            <select name="cate">
+                                <option value="cate-1">未指定</option>
+                                <option value="cate-2">ランクA</option>
+                            </select>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    @* TODO:ヘルパーメソッドにする *@
+                    販売期間：
+                    <input class="flatpickr startDate" type="text" placeholder="開始日付を選択">
+                    <span> - </span>
+                    <input class="flatpickr endDate" type="text" placeholder="終了日付を選択">
+                </li>
+            </ul>
+        </div>
+
+        <div class="search">
+            @* TODO:ヘルパーメソッドにする *@
+            <input class="searchbox" name="search_input" type="text" placeholder="担当者名、担当ID" />
+            <input type="button" class="search_btn">
+        </div>
+    </div>
+</div>

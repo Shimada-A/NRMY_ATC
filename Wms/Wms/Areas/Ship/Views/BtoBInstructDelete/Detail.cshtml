@@ -1,0 +1,220 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.BtoBInstructDelete;
+@model Wms.Areas.Ship.ViewModels.BtoBInstructDelete.BtoBInsDelDetailViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_SHP_BtoBInstructDelete;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("DetailSearch", "BtoBInstructDelete", FormMethod.Post, new { id = "frmDetailSearch" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.DetailResults.BtoBInsDelDetails != null && Model.DetailResults.BtoBInsDelDetails.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border">
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.DetailSearchConditions.DetailSortKey, new { Name = "DetailSearchConditions.DetailSortKey", @id = "ddlDetailSortKey", @onchange = "getSortData();" })
+                                @Html.HiddenFor(model => model.DetailSearchConditions.DetailSortKey, new { id = "hidDetailSortKey" })
+                                @Html.HiddenFor(model => model.DetailSearchConditions.Sort, new { id = "hidSort" })
+                                @Html.HiddenFor(model => model.DetailSearchConditions.CenterId, new { id = "hidCenterId"} )
+                                @Html.HiddenFor(model => model.DetailSearchConditions.ShipInstructId)
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.DetailSearchConditions.Sort, new { Name = "DetailSearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                                @Html.HiddenFor(model => model.DetailSearchConditions.DetailSortKey, new { id = "hidDetailSortKey" })
+                                @Html.HiddenFor(model => model.DetailSearchConditions.Sort, new { id = "hidSort" })
+                                @Html.HiddenFor(model => model.DetailSearchConditions.CenterId)
+                                @Html.HiddenFor(model => model.DetailSearchConditions.ShipInstructId)
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="sublbarea no_border stock_detail_head" style="height:50px">
+
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @BtoBInstructDeleteResource.ItemSkuSum @Html.DisplayFor(model => model.DetailSearchConditions.ItemSkuSum)
+                    </li>
+                    <li>
+                        @BtoBInstructDeleteResource.DetailQtySum @Html.DisplayFor(model => model.DetailSearchConditions.InstructSeqSum)
+                    </li>
+                    <li>
+                        @BtoBInstructDeleteResource.PlanQtySum @Html.DisplayFor(model => model.DetailSearchConditions.InstructQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    }
+    //}
+if (Model.DetailResults.BtoBInsDelDetails != null)
+{
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.DetailResults.BtoBInsDelDetails.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:69vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.ShipPlanDateD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.EmergencyClassD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.ShipInstructIdD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.ShipInstructSeqD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.ItemD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.ItemColorD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.ItemSizeD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.JanD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.ShipToD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.ShipToClassD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.TransporterNameD
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @BtoBInstructDeleteResource.PlanQtyD
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cModel in Model.DetailResults.BtoBInsDelDetails.Select((v, i) => new { v, i }))
+                            {
+                                var key = String.Format("BtoBInsDelDetails[{0}].", cModel.i);
+                                <tr>
+                                    <td class="align-middle text-right w_no">
+                                        @(cModel.i + 1)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipPlanDate)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.EmergencyClassName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipInstructId)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipInstructSeq)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.Jan)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipToStoreId)<br />
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipToStoreName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipToStoreClassName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.TransporterName)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.InstructQty)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+    }
+}
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "BtoBInstructDelete", new { area = "Ship" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+
+        <button id="btnErrorMessage" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrMsg" hidden></button>
+    </div>
+}
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        // Sort
+        function getSortData() {
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidDetailSortKey").val($("#ddlDetailSortKey").val());
+            $("#hidCenterId").val($("#hidCenterId").val());
+
+            var $form = $("#frmDetailSearch");
+            var urlAction ='@Url.Action("DetailSearch", "BtoBInstructDelete", new { area= "Ship" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+        $(document).ready(function () {
+            $("#btnSearchMagnifier").addClass('dp-none');
+        });
+    </script>
+}

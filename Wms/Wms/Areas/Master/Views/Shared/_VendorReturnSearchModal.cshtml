@@ -1,0 +1,100 @@
+﻿@using Resources = Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.VendorReturnSearchModal.VendorReturnSearchCondition
+<div id="vendorReturnSearchModalDialog">
+    <div id="vendorReturnSearchResult">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        <h5>@Resources.VendorReturnResource.VendorReturnTitle</h5>
+        <br />
+        <div class="message-area">
+            @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+            @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+        </div>
+        <div class="d_continer main">
+            @if (Model.vendorReturnViewModel != null)
+            {
+                <div class="sublbarea">
+                    <div class="sortarea">
+                        <ul>
+                            <li class="totalcount">
+                                @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.totalCnt)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="Container">
+                    <div>
+                        <div class="tb_scroll">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-grey w_checkbox"></th>
+                                        <th class="bg-grey">
+                                            No
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.VendorReturnResource.VendorReturnIdName
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.VendorReturnResource.ReturnStockQty
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.vendorReturnViewModel.Count(); i++)
+                                    {
+
+                                        var idx = i + 1;
+                                        var id = "hidVendorId" + i;
+                                        var name = "hidVendorName" + i;
+                                        <tr>
+                                            <td class="align-middle chk_cell">
+                                                <label>
+                                                    @Html.RadioButton("SelectIndex", i.ToString(), new { @id = "VendorReturnSelectIndex" + i.ToString(), @class = "radio_input", @onclick = "chkRadio(" + i + ")" })
+                                                    <span class="radio_parts"></span>
+                                                </label>
+                                            </td>
+                                            <td class="text-right w_no">
+                                                @idx
+                                            </td>
+                                            <td>
+                                                <span id=@id>
+                                                    @Html.DisplayFor(model => Model.vendorReturnViewModel[i].VendorId)
+                                                </span>
+                                                <br />
+                                                <span id=@name>
+                                                    @Html.DisplayFor(model => Model.vendorReturnViewModel[i].VendorName1)
+                                                </span>
+                                                @Html.DisplayFor(model => Model.vendorReturnViewModel[i].VendorName2)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.vendorReturnViewModel[i].ReturnStockQty)
+                                            </td>
+                                            <td class="template" hidden>
+                                                @Html.DisplayFor(model => Model.vendorReturnViewModel[i].VendorId)
+                                            </td>
+                                            <td class="template" hidden>
+                                                @Html.DisplayFor(model => Model.vendorReturnViewModel[i].VendorName1)
+                                            </td>
+                                            @Html.HiddenFor(model => Model.vendorReturnViewModel[i].VendorId)
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="bottomnav">
+                <div class="btnarea">
+                    <button id="vendorReturnClose" type="button" class="btn btn-outline-dark" onclick="closeDialog()">@FormsResource.Close</button>
+                    <button id="vendorReturnSelect" type="button" class="btn btn-dark" onclick="chkDialog()">@FormsResource.BTN_SELECT</button>
+                </div>
+            </div>
+            <input type="hidden" id="chkIndex" value="" />
+            @* 検索条件を変えてもチェックした値を保持するためhiddenで保持する *@
+            <div id="checked"></div>
+            @* 確定した店舗を保持する(確定せずに閉じたときに変わらないように) *@
+            <div id="selectedVendorReturn"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,324 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Stock.Resources;
+@using Wms.Areas.Stock.ViewModels.Adjust;
+@model Wms.Areas.Stock.ViewModels.Adjust.AdjustInputViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_Adjust;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("Update", "Adjust", FormMethod.Post, new { id = "frmUpdate" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CenterId)
+    @Html.HiddenFor(m => m.ItemId)
+    @Html.HiddenFor(m => m.ItemName)
+    @Html.HiddenFor(m => m.ItemColorId)
+    @Html.HiddenFor(m => m.ItemColorName)
+    @Html.HiddenFor(m => m.ItemSizeId)
+    @Html.HiddenFor(m => m.ItemSizeName)
+    @Html.HiddenFor(m => m.LocationCd)
+    @Html.HiddenFor(m => m.LocationClass)
+    @Html.HiddenFor(m => m.Jan)
+    @Html.HiddenFor(m => m.GradeId)
+    @Html.HiddenFor(m => m.GradeName)
+    @Html.HiddenFor(m => m.BeforeStockQty)
+    @Html.HiddenFor(m => m.AllocQty)
+    @Html.HiddenFor(m => m.UnAllocQty)
+    @Html.HiddenFor(m => m.StockQtySum)
+    <div class="headarea">
+        <table class="headtable">
+            <tr>
+                <td class="w_30_normal">@AdjustResource.ItemIdS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.ItemId)
+                </td>
+                <td class="w_30_normal">@AdjustResource.ItemColorIdS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.ItemColorId)
+                </td>
+                <td>@AdjustResource.ItemSizeIdS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.ItemSizeId)
+                </td>
+                <td colspan="2">
+                </td>
+            </tr>
+            <tr>
+                <td>@AdjustResource.ItemNameS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.ItemName)
+                </td>
+                <td>@AdjustResource.ItemColorNameS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.ItemColorName)
+                </td>
+                <td>@AdjustResource.ItemSizeNameS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.ItemSizeName)
+                </td>
+                <td colspan="2">
+                </td>
+            </tr>
+            <tr>
+                <td>@AdjustResource.LocationCdS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.LocationCd)
+                </td>
+                <td>@AdjustResource.JanS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.Jan)
+                </td>
+                <td>@AdjustResource.GrageIdS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.GradeName)
+                </td>
+                <td colspan="2">
+                </td>
+            </tr>
+            <tr>
+                <td>@AdjustResource.BeforeStockQtyS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.BeforeStockQty)
+                </td>
+                <td>@AdjustResource.AllocQtyS
+                    &nbsp;
+                    <span id="spanAllocQty">
+                        @Html.DisplayFor(modelItem => modelItem.AllocQty)
+                    </span>
+                </td>
+                <td>@AdjustResource.UnAllocQtyS
+                    &nbsp;
+                    @Html.DisplayFor(modelItem => modelItem.UnAllocQty)
+                </td>
+                <td colspan="2">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>@AdjustResource.AdjustReasonCdS
+                    &nbsp;
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(
+                                model => model.AdjustReasonCd
+                                , "ADJUST_REASON_CD", Model.CenterId
+                                , CommonResource.None, new { @class = "w_10_normal", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td colspan="4">
+                    @AdjustResource.NoteS
+                    &nbsp;
+                    @Html.EditorFor(modelItem => modelItem.Note, new { htmlAttributes = new { @class = "w_50_normal" } })
+                    @Html.ValidationMessageFor(modelItem => modelItem.Note)
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="4">
+                    @AdjustResource.SlipNoS
+                    &nbsp;
+                    @Html.EditorFor(modelItem => modelItem.SlipNo)
+                    <label class="bluecolor">@AdjustResource.MsgSlipNo</label>
+                    @Html.ValidationMessageFor(modelItem => modelItem.SlipNo)
+                </td>
+            </tr>
+        </table>
+        @Html.HiddenFor(modelItem => modelItem.Seq)
+    </div>
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.AdjustInputs != null)
+    {
+        if (Model.AdjustInputs.Count() > 0)
+        {
+            <div class="sublbarea no_border stock_detail_head">
+                <div class="sortarea">
+                    <ul>
+                        <li>
+                            @AdjustResource.StockQtySum @Html.DisplayFor(model => model.StockQtySum)
+                        </li>
+                        <li>
+                            @AdjustResource.AdjustQtyToSum
+                            <span id="spanAdjustQtyTo">
+                                @Html.DisplayFor(model => model.AdjustQtyToSum)
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        }
+    }
+    if (Model.AdjustInputs != null)
+    {
+
+        @* Container *@
+        <div class="Container">
+
+            @* Content *@
+            @if (Model.AdjustInputs.Count() == 0)
+            {
+                <div>
+                    <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <div class="tb_scroll" style="height:50vh;">
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">
+                                        @AdjustResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @AdjustResource.CaseClass
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @AdjustResource.BoxNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @AdjustResource.InvoiceNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @AdjustResource.AllocQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @AdjustResource.StockQty
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @AdjustResource.AdjustQtyTo
+                                    </th>
+                                    <th hidden>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (var i = 0; i < Model.AdjustInputs.Count(); i++)
+                                {
+                                    var key = String.Format("AdjustInputs[{0}].", i);
+                                <tr>
+                                    <td class="align-middle text-right">
+                                        @(i + 1)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.AdjustInputs[i].CaseClassName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.AdjustInputs[i].BoxNo)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => modelItem.AdjustInputs[i].InvoiceNo)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => modelItem.AdjustInputs[i].TpsAllocQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => modelItem.AdjustInputs[i].StockQty)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.EditorFor(modelItem => modelItem.AdjustInputs[i].AdjustQtyTo, new { htmlAttributes = new { onblur = "AdjustQtyToSum()", id = key + "AdjustQtyTo" } })
+                                        @Html.ValidationMessageFor(model => model.AdjustInputs[i].AdjustQtyTo, "", new { id = "AdjustInputs[" + i + "].MsgAdjustQtyTo" })
+                                    </td>
+                                    <td class="template" hidden>
+                                        @Html.HiddenFor(modelItem => modelItem.AdjustInputs[i].Seq)
+                                        @Html.HiddenFor(modelItem => modelItem.AdjustInputs[i].LineNo)
+                                        @Html.HiddenFor(modelItem => modelItem.AdjustInputs[i].CaseClass)
+                                        @Html.HiddenFor(modelItem => modelItem.AdjustInputs[i].CaseClassName)
+                                        @Html.HiddenFor(modelItem => modelItem.AdjustInputs[i].BoxNo)
+                                        @Html.HiddenFor(modelItem => modelItem.AdjustInputs[i].StockQty)
+                                        @Html.HiddenFor(modelItem => modelItem.AdjustInputs[i].ShipperId)
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div> }
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Adjust", new { area = "Stock" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+        <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@AdjustResource.BtnUpdate</button>
+        <button type="button" id="btnUpdate" class="btn btn-dark btnsize _pm" @(Model.AdjustInputs != null && Model.AdjustInputs.Count() > 0 ? "" : "disabled")>@AdjustResource.BtnUpdate</button>
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+    /**
+    * Page loaded
+    */
+        $(document).ready(function () {
+            AdjustQtyToSum();
+    });
+        $("#btnUpdate").on("click", function () {
+            if (!validateForm($('#frmUpdate')) || !UpdateCheck()) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+        function UpdateCheck() {
+            var errcnt = 0;
+            for (var i = 0; i < @Model.AdjustInputs.Count(); i++)
+            {
+                if ($(" input[ id='AdjustInputs[" + i + "].AdjustQtyTo' ] ").val()=="") {
+                    $(" span[ id='AdjustInputs[" + i + "].MsgAdjustQtyTo' ] ").html('<span id="AllocationNameError" class="">'+'@string.Format(MessagesResource.Required,AdjustResource.AdjustQtyTo)' +'</span>');
+                    $(" span[ id='AdjustInputs[" + i + "].MsgAdjustQtyTo' ] ").addClass("field-validation-error");
+                    $(" input[ id='AdjustInputs[" + i + "].AdjustQtyTo' ] ").addClass("input-validation-error");
+                    errcnt = errcnt + 1;
+                } else {
+                    $(" span[ id='AdjustInputs[" + i + "].MsgAdjustQtyTo' ] ").html("")
+                    $(" span[ id='AdjustInputs[" + i + "].MsgAdjustQtyTo' ] ").removeClass("field-validation-error")
+                    $(" input[ id='AdjustInputs[" + i + "].AdjustQtyTo' ] ").removeClass("input-validation-error")
+                }
+            }
+            if (Number($("#spanAllocQty").html().replace(',', '')) > Number($("#spanAdjustQtyTo").html().replace(',', ''))) {
+                $(".message-area .alert-danger").html("@AdjustResource.ErrSmallerAdjustQtyTo");
+                     $(".message-area .alert-danger").show()
+                    errcnt = errcnt + 1;
+                } else {
+                $(".message-area .alert-danger").hide();
+                }
+            return errcnt > 0 ? false : true;
+        }
+        function AdjustQtyToSum() {
+            var sum = 0;
+            for (var i = 0; i < @Model.AdjustInputs.Count(); i++)
+            {
+                sum = sum + Number($(" input[ id='AdjustInputs[" + i + "].AdjustQtyTo' ] ").val() == "" ? 0 : $(" input[ id='AdjustInputs[" + i + "].AdjustQtyTo' ] ").val());
+            }
+            $("#spanAdjustQtyTo").text(sum.toLocaleString().toString());
+        }
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,75 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditCondition
+        <div class="detail Container">
+        <div class="Container">
+
+            <div class="tb_scroll" style="height:65vh;">
+                <table class="table table-bordered" id="objectData">
+                    <thead>
+                        <tr>
+                            <th class="bg-grey">
+                                @EditLayoutResource.No
+                            </th>
+                            <th class="bg-grey">
+                                @EditLayoutResource.ItemName
+                            </th>
+                            <th class="bg-grey">
+                                @EditLayoutResource.DataType
+                            </th>
+                            <th class="bg-grey">
+                                @EditLayoutResource.SortOrder
+                            </th>
+                            <th class="bg-grey">
+                                @EditLayoutResource.SortDirection
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cModel in Model.Details.Select((v, i) => new { v, i }))
+                        {
+                            var key = String.Format("ObjectDetails[{0}].", cModel.i);
+                            <tr>
+                                <td class="text-right w_no  tno">
+                                    @Html.HiddenFor(model => model.Details[cModel.i].IsNew)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].ColumnId)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].ShipperId)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].TemplateId)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].ObjectId)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].ConditionValueFrom)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].ConditionValueTo)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].ConditionClass)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].DataType)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].DigitDec)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].DigitInt)
+                                    @Html.HiddenFor(model => model.Details[cModel.i].PrimaryFlag)
+
+                                    @Html.DisplayAndHiddenFor(model => model.Details[cModel.i].ColumnNo)
+                                </td>
+                                <td class="output-title">
+                                    @Html.DisplayAndHiddenFor(model => model.Details[cModel.i].ColumnName)
+                                </td>
+                                <td>
+                                    @Html.DisplayAndHiddenFor(model => model.Details[cModel.i].DataTypeName)
+                                </td>
+                                <td class="sort-order">
+                                    @Html.EditorFor(model => model.Details[cModel.i].SortOrder
+                     , new { htmlAttributes = new { @class = "sort-order" } })
+                                </td>
+                                <td>
+                                    @Html.CreateEnumDropDown(model => model.Details[cModel.i].SortDirection)
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

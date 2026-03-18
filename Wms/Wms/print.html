@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title> ブラウザー任意指定印刷 </title>
+    <script type="text/javascript" src="Scripts/cwebclient.min.js?version=11.2.0" charset="utf-8"></script>
+    <script type="text/javascript">
+        function KickPrintExecuteEx() {
+            cwebclient.CreatePrintingDataScriptUrl = "http://localhost/Wms/Master/LocTransporter/ttt";
+            cwebclient.PrintExecuteEx("SchoolLife");
+        }
+    </script>
+</head>
+<body>
+    <input type="button" value=" ブラウザー任意指定印刷 " onclick="KickPrintExecuteEx()" />
+</body>
+</html> 

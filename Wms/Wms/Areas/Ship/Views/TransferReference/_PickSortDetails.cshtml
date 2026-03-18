@@ -1,0 +1,170 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.TransferReference;
+@model Wms.Areas.Ship.ViewModels.TransferReference.PickSortDetailViewModel
+
+@if (Model.Head != null)
+{
+    @* Sublbarea *@
+    <div class="sublbarea" style="height: 60px; margin: 0; border-bottom: none;">
+        <div class="color-blue">
+            @TransferReferenceResource.TitlePickSortDetail
+            <table>
+                <tr>
+                    <td class="color-blue">
+                        @TransferReferenceResource.BatchNoD
+                        @Html.DisplayFor(model => model.Head.BatchNo)
+                        @Html.DisplayFor(model => model.Head.BatchName)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="color-blue">
+                        @TransferReferenceResource.PicKindD
+                        @if (Model.Head.PicKind == 1)
+                        {
+                            @TransferReferenceResource.TotalPic
+                        }
+                        else if (Model.Head.PicKind == 2)
+                        {
+                            @TransferReferenceResource.Ec1BatchPic
+                        }
+                        else if (Model.Head.PicKind == 5)
+                        {
+                            @TransferReferenceResource.StorePic
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="sortarea color-blue" style="margin-top: 25px;">
+            <ul>
+                <li>
+                    @TransferReferenceResource.ItemSkuQtyD @Html.DisplayFor(model => model.Head.ItemSkuQty)
+                </li>
+                <li>
+                    @TransferReferenceResource.AllHikiQtyD @Html.DisplayFor(model => model.Head.HikiQty)
+                </li>
+                <li class="totalcount" style="color: black;">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.PickResults.PickResults.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.PickResults.PickResults.Count() > 0)
+            {
+                @Html.PagedListPager(Model.PickResults.PickResults, Page => Url.Action("GetPickSortDetail", "TransferReference", new { Page, @class = "btn-outline-dark" }), PagerHelper.GetOptions("dialogPickSortDetail", "enableSubmit();"))
+            }
+        </div>
+    </div>
+}
+
+@* Container *@
+<div class="dialog_scroll" style="margin-top:10px;height:95%;">
+    @* Content *@
+    <div class="tb_scroll" style="height:100%;">
+        <table class="table table-bordered" id="listData">
+            <thead>
+                <tr>
+                    <th class="bg-grey align-middle">&nbsp;</th>
+                    <th class="bg-grey align-middle">
+                        <br />
+                        @TransferReferenceResource.ItemName
+                    </th>
+                    <th class="bg-grey align-middle">
+                        <br />
+                        @TransferReferenceResource.ItemColorId
+                    </th>
+                    <th class="bg-grey align-middle">
+                        <br />
+                        @TransferReferenceResource.ItemSizeId
+                    </th>
+                    <th class="bg-grey align-middle">
+                        <br />
+                        @TransferReferenceResource.JAN
+                    </th>
+                    <th class="bg-grey align-middle">
+                        @TransferReferenceResource.Alloc<br />
+                        @TransferReferenceResource.Qty
+                    </th>
+                    <th class="bg-grey align-middle">
+                        @TransferReferenceResource.End<br />
+                        @TransferReferenceResource.Qty1
+                    </th>
+                    <th class="bg-grey align-middle redcolor">
+                        @TransferReferenceResource.StockOutD<br />
+                        @TransferReferenceResource.Insert
+                    </th>
+                    <th class="bg-grey align-middle redcolor">
+                        @TransferReferenceResource.StockOutD<br />
+                        @TransferReferenceResource.Commit
+                    </th>
+                    <th class="bg-grey align-middle">
+                        <br />
+                        @TransferReferenceResource.Percent
+                    </th>
+                </tr>
+
+            </thead>
+            @if (Model.PickResults != null && Model.PickResults.PickResults.Any())
+            {
+                <tbody>
+                    @foreach (var cModel in Model.PickResults.PickResults.Select((v, i) => new { v, i }))
+                    {
+                        var key = String.Format("PickResults[{0}].", cModel.i);
+                        <tr>
+                            @if (Model.Head.ShipKind == Wms.Common.ShipKinds.Dc)
+                            {
+                                <td class="align-middle chk_cell">
+                                    <label>
+                                        <input type="radio" id=@(key + "CheckedValue") name="IsCheck" class="radio_input" onclick="SetCheckValueStore('@(cModel.v.ItemSkuId)','@(Model.Head.BatchNoHid)')" />
+                                        <span class="radio_parts"></span>
+                                    </label>
+                                </td>
+                            }
+                            <td class="align-middle text-left">
+                                @Html.DisplayFor(modelItem => cModel.v.ItemId)<br />
+                                @Html.DisplayFor(modelItem => cModel.v.ItemName)
+                            </td>
+                            <td class="align-middle text-left">
+                                @Html.DisplayFor(modelItem => cModel.v.ItemColorId)<br />
+                                @Html.DisplayFor(modelItem => cModel.v.ItemColorName)
+                            </td>
+                            <td class="align-middle text-left">
+                                @Html.DisplayFor(modelItem => cModel.v.ItemSizeId)<br />
+                                @Html.DisplayFor(modelItem => cModel.v.ItemSizeName)
+                            </td>
+                            <td class="align-middle text-left">
+                                @Html.DisplayFor(modelItem => cModel.v.Jan)
+                            </td>
+                            <td class="align-middle text-right">
+                                @Html.DisplayFor(modelItem => cModel.v.HikiQty)
+                            </td>
+                            <td class="align-middle text-right">
+                                @Html.DisplayFor(modelItem => cModel.v.PicQty)
+                            </td>
+                            <td class="align-middle text-right redcolor">
+                                @Html.DisplayFor(modelItem => cModel.v.StockOutRegQty)
+                            </td>
+                            <td class="align-middle text-right redcolor">
+                                @Html.DisplayFor(modelItem => cModel.v.StockOutFixQty)
+                            </td>
+                            <td class="align-middle text-right">
+                                @Html.DisplayFor(modelItem => cModel.v.Percent)@(cModel.v.Percent == null ? "" : "%")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            }
+        </table>
+    </div>
+
+</div>
+@*Bottomnav*@
+<div class="bottomnav">
+    <div class="btnarea">
+        @if (Model.Head.ShipKind == Wms.Common.ShipKinds.Dc)
+        {
+            <button id="btnPickSortDetailStore" type="button" class="btn btn-outline-dark btnsize" onclick="ShowDetailsStore()" disabled>@TransferReferenceResource.BtnPickDetailStore</button>
+        }
+        <button id="btnDetailsClose" type="button" class="btn btn-outline-dark btn_close" onclick="closeDialog()">@FormsResource.Close</button>
+    </div>
+</div>

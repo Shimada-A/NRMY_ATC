@@ -1,0 +1,31 @@
+﻿@model Wms.Areas.Ship.ViewModels.PrintInvoice.PrintInvoiceConditions
+@{
+    Layout = null;
+}
+@if (Model.ScanAssortViews is null)
+{
+    <tr>
+        <td>
+            <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+        </td>
+    </tr>
+}
+else
+{
+    for (int i = 0; i < Model.ScanAssortViews.Count; i++)
+    {
+        var id = String.Format("PrintInvoiceConditions.ScanAssortViews[{0}].", i);
+        <tr>
+            <td>
+                @Html.ActionLink((i + 1).ToString() + ".", "GetZanStoreList", "PrintInvoice", new { area = "Ship" }, new {@class = "GetZanStoreList" })
+            </td>
+            <td>
+                @Html.DisplayFor(m => Model.ScanAssortViews[i].Message)
+                @Html.HiddenFor(m => Model.ScanAssortViews[i].Message, new { name = id + "Message" })
+                @Html.HiddenFor(m => Model.ScanAssortViews[i].InvoiceNo, new { name = id + "InvoiceNo" })
+                @Html.HiddenFor(m => Model.ScanAssortViews[i].ShipClass, new { name = id + "ShipClass" })
+                @Html.HiddenFor(m => Model.ScanAssortViews[i].SlipDate, new { name = id + "SlipDate" })
+            </td>
+        </tr>
+    }
+}

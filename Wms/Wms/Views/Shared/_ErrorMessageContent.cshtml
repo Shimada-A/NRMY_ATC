@@ -1,0 +1,10 @@
+﻿@model string
+
+    @if (!string.IsNullOrWhiteSpace(Model.ToString()))
+    {
+        <div class="alert alert-danger" role="alert">@Model</div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert" style="display:none">@Model</div>
+    }

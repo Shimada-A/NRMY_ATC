@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+@using (Html.BeginForm("NormalIndex", "Temp"))
+{
+<input type="submit" value="normal index" />
+}
+
+@using (Ajax.BeginForm("AjaxIndex", new AjaxOptions { OnSuccess = "complete" }))
+{
+
+<input type="submit" value="ajax index" />
+}
+@using (Ajax.BeginForm("AjaxSuccess", new AjaxOptions { OnSuccess = "complete" }))
+{
+<input type="submit" value="ajax success" />
+}
+
+@section LayoutChildScripts{
+    <script>
+        function complete() {
+            alert("complete");
+        }
+    </script>
+}

@@ -1,0 +1,31 @@
+﻿<script>
+    // 全ての行の制約をチェック
+    function changeAllConditionClass() {
+        var len = $('#objectData tbody tr').length;
+        for (var i = 0; i < len; i++) {
+            changeConditionClass(i);
+        }
+    }
+
+    function changeConditionClass(i) {
+        var val = $('select[name="Details[' + i + '].ConditionClass"]').val();
+        var selectorFrom = 'input[name="Details[' + i + '].ConditionValueFrom"]';
+        var selectorTo = 'input[name="Details[' + i + '].ConditionValueTo"]';
+        itemOff(selectorFrom);
+        itemOff(selectorTo);
+
+        if (val == "None") {
+            $(selectorFrom).val("");
+            $(selectorTo).val("");
+            return;
+        }
+
+        if (val != 'None' && val != 'Today' && val != 'ThisMonth') 
+            itemOn(selectorFrom);
+
+        if (val == 'Range')
+            itemOn(selectorTo);
+        else
+            $(selectorTo).val("");
+    }
+</script>

@@ -1,0 +1,317 @@
+﻿@model Wms.Areas.Master.ViewModels.ShipFrontage.ShipFrontageResultRow
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_ShipFrontage02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "ShipFrontage", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ShipperId)
+            @Html.HiddenFor(model => model.CenterId)
+            @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+            <div class="form_content">
+                <dl>
+                    <dt>
+                        @Wms.Areas.Master.Resources.ShipFrontageResource.BrandS
+                    </dt>
+                    @if (Model.LaneNo == 0 && Model.FrontageNo == 0)
+                    {
+                        <dd>
+                            @Html.EditorFor(model => model.BrandId, new { htmlAttributes = new { @class = "w_6_short _pm", @id = "txtBrandId", tabindex = "1" } })
+                            @Html.EditorFor(model => model.BrandName, new { htmlAttributes = new { @class = "w_18_normal _pm", @id = "txtBrandName", tabindex = "2", @readonly = "readonly" } })
+                            <div class="search">
+                                <button type="button" id="btnBrand" class="search_btn" tabindex="160" />
+                            </div>
+                            @Html.ValidationMessageFor(model => model.BrandId, "", new { })
+                        </dd>
+                    }
+                    else
+                    {
+                        <dd style="width:90px;">
+                            @Html.DisplayFor(model => model.BrandId)
+                            @Html.HiddenFor(model => model.BrandId)
+                        </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.BrandName)
+                            @Html.HiddenFor(model => model.BrandName)
+                        </dd>
+                    }
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.LaneNo)
+                    </dt>
+                    <dd>
+                        @if (Model.LaneNo == 0 && Model.FrontageNo == 0)
+                        {
+                            @Html.EditorFor(model => model.LaneNo, new { htmlAttributes = new { tabindex = "3", @placeholder = "", id = "LaneNo", @class = "_pm" } })
+                            @Html.ValidationMessageFor(model => model.LaneNo, "", new { })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(m => m.LaneNo)
+                            @Html.HiddenFor(model => model.LaneNo)
+                        }
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.FrontageNo)
+                    </dt>
+                    <dd>
+                        @if (Model.LaneNo == 0 && Model.FrontageNo == 0)
+                        {
+                            @Html.EditorFor(model => model.FrontageNo, new { htmlAttributes = new { tabindex = "4", @placeholder = "", id = "FrontageNo", @class = "_pm" } })
+                            @Html.ValidationMessageFor(model => model.FrontageNo, "", new { })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(m => m.FrontageNo)
+                            @Html.HiddenFor(model => model.FrontageNo)
+                        }
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @ShipFrontageResource.Store
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.StoreId, new { htmlAttributes = new { @class = "w_6_short _pm", @id = "txtStoreId", tabindex = "5" } })
+                        @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "w_30_normal _pm", @id = "txtStoreName", tabindex = "6", @readonly = "readonly" } })
+                        <div class="search">
+                            <button type="button" id="btnStore" class="search_btn _pm" data-toggle="modal" data-target="#SyukkasakiModal" data-id="#txtStoreId" data-name="#txtStoreName" />
+                        </div>
+                        @Html.ValidationMessageFor(model => model.StoreId, "", new { })
+                    </dd>
+                </dl>
+            </div>
+
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @if (Model.SearchFlag)
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "ShipFrontage", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            else
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "ShipFrontage", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            @*<button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>*@
+
+            @if (Model.LaneNo == 0 && Model.FrontageNo == 0)
+            {
+                <button id="btnCreateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm" hidden>@FormsResource.BTN_CREATE</button>
+                <button id="btnCreate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_CREATE</button>
+            }
+            else
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+            }
+        </div>
+    }
+
+    @* 出荷先を追加する 画面 *@
+
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+        @Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml")
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@** スクリプト *@
+@section LayoutScripts{
+
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+
+    <script>
+        //ShipFrontageMasterEdit
+        var ShipFrontageMasterEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                btnBrand: '#btnBrand',
+                brandId: '#txtBrandId',
+                brandName: '#txtBrandName',
+                brandSelect: '#brandSelect',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+                brandSearchModal.init();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(ShipFrontageMasterEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(ShipFrontageMasterEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+
+                /**
+                * ブランド検索ダイアログの設定
+                */
+                $(ShipFrontageMasterEdit.SELECTORS.btnBrand).on("click", brandSearchModal.open);
+
+
+
+                /**
+                 *Click button get data Brand
+                 */
+                $(ShipFrontageMasterEdit.SELECTORS.brandSelect).on("click", function () {
+                    $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                        var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                        var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                        $(ShipFrontageMasterEdit.SELECTORS.brandId).val(brandId);
+                        $(ShipFrontageMasterEdit.SELECTORS.brandName).val(brandName);
+                    })
+                });
+
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(ShipFrontageMasterEdit.SELECTORS.hdUpdateError).val() === ShipFrontageMasterEdit.CONST.STR_TRUE) {
+                    if ($(ShipFrontageMasterEdit.SELECTORS.hdUpdateError).attr(ShipFrontageMasterEdit.CONST.ATTR_ERROR_CODE) === ShipFrontageMasterEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(ShipFrontageMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(ShipFrontageMasterEdit.SELECTORS.exclusiveUpdateDialog, ShipFrontageMasterEdit.GLOBAL.titleInformation, ShipFrontageMasterEdit.GLOBAL.msgExclusiveUpdate);
+                        $(ShipFrontageMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(ShipFrontageMasterEdit.SELECTORS.hdUpdateError).attr(ShipFrontageMasterEdit.CONST.ATTR_ERROR_CODE) === ShipFrontageMasterEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(ShipFrontageMasterEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(ShipFrontageMasterEdit.SELECTORS.overWriteRecordDialog, ShipFrontageMasterEdit.GLOBAL.titleInformation, (ShipFrontageMasterEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(ShipFrontageMasterEdit.SELECTORS.AreaId).val())));
+                        $(ShipFrontageMasterEdit.SELECTORS.btnSubmitOverWriteDialog).attr(ShipFrontageMasterEdit.SELECTORS.form, ShipFrontageMasterEdit.SELECTORS.frmUpdate).attr(ShipFrontageMasterEdit.CONST.FORM_METHOD, ShipFrontageMasterEdit.CONST.POST).attr(ShipFrontageMasterEdit.CONST.FORM_ACTION, '@Url.Action("Update", "ShipFrontageMasterEdit", new { area = "Master" })').attr(ShipFrontageMasterEdit.SELECTORS.form, ShipFrontageMasterEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#updconfirm button[type="submit"]').removeAttr('disabled');
+            $('#btnUpdateHidden').click();
+        });
+        $('#btnCreate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnCreateHidden').click();
+        });
+        $('#submitCreate').on("click", function () {
+            var urlAction = '@Url.Action("Create", "ShipFrontage", new { area = "Master" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        /**
+         * Register event click for buttons
+         */
+        $(document).ready(function () {
+            ShipFrontageMasterEdit.init();
+            $('#LaneNo').val($('#LaneNo').val()=='0'? '' : $('#LaneNo').val())
+            $('#FrontageNo').val($('#FrontageNo').val()=='0'? '' : $('#FrontageNo').val())
+        });
+
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,15 @@
+﻿/*
+    _FileUploadModal.cshtmlで使用する
+*/
+.dropzone {
+    margin-top: 30px;
+}
+    .dropzone.dz-clickable .dz-message {
+        margin-top: 40px;
+    }
+
+        .dropzone.dz-clickable .dz-message * {
+            color: #666666;
+            font-size: 24px;
+            font-family: -apple-system,BlinkMacSystemFont,"arial","游ゴシック Medium",YuGothic,YuGothicM,"Hiragino Kaku Gothic ProN",メイリオ,Meiryo,sans-serif;
+        }

@@ -1,0 +1,205 @@
+﻿@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Resources;
+@model Wms.Areas.Master.ViewModels.Location.Upload
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Location03;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.UploadResult.Locations != null)
+{
+    using (Html.BeginForm("Search", "Location", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        @Html.AntiForgeryToken()
+        @* Sublbarea *@
+        <div class="sublbarea no_border stock_detail_load">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnUpload" class="Upload _pm">
+                            <img src="~/Content/img/upload.png" />
+                            @FormsResource.BTN_UPLOAD
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="sublbarea">
+            <div class="sortarea">
+                <ul>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.UploadResult.Locations.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.UploadResult.Locations.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.UploadResult.Locations, Page => Url.Action("UploadErr", "Location", new { Page }), PagerHelper.Default)
+                }
+                @Html.HiddenFor(model => model.UploadConditions.WorkId)
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.UploadResult.Locations.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div id="LocationRows">
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.LocationCd
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.Locsec1
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.Locsec2
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.Locsec3
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.Locsec4
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.Locsec5
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.LocationClass
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.Case
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.Grade
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.AllocPriority
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.PickingGroupNo
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocationResource.ErrMsg
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Update", "Location", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.UploadResult.Locations.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Locations[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.No)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec_1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec_2)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec_3)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec_4)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec_5)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationClass)<br />
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CaseName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.GradeName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.AllocPriority)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.PickingGroupNo)
+                                        </td>
+                                        <td class="fontred align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.ErrMsg)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@Html.Partial("_FileUploadModal")
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "Location", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+    <script>
+        //ファイルアップロード
+        fileUploadModal.init();
+        $('#btnUpload').on('click', function () {
+            var urlAction = '@Url.Action("Upload", "Location", new { area = "Master" })';
+            var urlIndexAction = '@Url.Action("Index", "Location", new { area = "Master" })';
+            var urlErrAction = '@Url.Action("UploadErr", "Location", new { area = "Master" })';
+            fileUploadModal.setting({
+                url: urlAction,
+                title: "@LocationResource.Title" + "@FormsResource.FileUplaodTitle",
+                acceptedFiles: ".xlsx",
+                successCallback: function (data) {
+                    if (data.err == 'true') {
+                        location.href = urlErrAction;
+                    } else {
+                        location.href = urlIndexAction;
+                    }
+                }
+            });
+            fileUploadModal.open();
+        });
+    </script>
+}

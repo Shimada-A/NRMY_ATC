@@ -1,0 +1,641 @@
+﻿@using Wms.Helpers;
+@model Wms.Areas.Master.ViewModels.ShipFrontage.Index
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_ShipFrontage01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "ShipFrontage", FormMethod.Get, new { id = "frmSearch", @class = "show_scroll" }))
+    {
+        <table>
+            <tr>
+                <td class="tdtitle">@ShipFrontageResource.CenterIdSearch</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            <span class="bluecolor">
+                                @MessageResource.UploadCenterId
+                            </span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ShipFrontageResource.BrandSearch</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BrandId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtBrandId", tabindex = "2" } })
+                    @Html.EditorFor(model => model.SearchConditions.BrandName, new { htmlAttributes = new { @class = "w_18_normal", @id = "txtBrandName", tabindex = "3" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                    <div class="search">
+                        <button type="button" id="btnBrand" class="search_btn" tabindex="160" />
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ShipFrontageResource.LaneNoSearch</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.LaneNo, new { htmlAttributes = new { @class = "w_14_long", @id = "txtLaneNo", tabindex = "4" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@ShipFrontageResource.FrontageNoSearch</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.FrontageNo, new { htmlAttributes = new { @class = "w_14_long", @id = "txtFrontageNo", tabindex = "5" } })
+                </td>
+            </tr>
+            <tr>
+            <td class="tdtitle">@ShipFrontageResource.StoreIdSearch</td>
+            <td>
+                @Html.EditorFor(model => model.SearchConditions.ShipToStoreId, new { htmlAttributes = new { @class = "w_6_short", @id = "txtShipToStoreId", tabindex = "4" } })
+                @Html.EditorFor(model => model.SearchConditions.ShipToStoreName, new { htmlAttributes = new { @class = "w_30_normal", @id = "txtShipToStoreName", tabindex = "5" } })
+                @Html.LikeMark(CommonsResource.BeforeLike)
+                <div class="search">
+                    <button type="button" id="btnStore" class="search_btn" data-toggle="modal" data-target="#SyukkasakiModal" data-id="#txtShipToStoreId" data-name="#txtShipToStoreName" tabindex="6" />
+                </div>
+            </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <button type="button" id="btnDownloadTemp" class="download">
+                        <img src="~/Content/img/download.png" />
+                        @ShipFrontageResource.BTN_DOWNLOAD_TEMP
+                    </button>
+                    <button type="button" id="btnUpload" class="Upload _pm">
+                        <img src="~/Content/img/upload.png" />
+                        @FormsResource.BTN_UPLOAD
+                    </button>
+                </td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "ShipFrontage", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="4">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchFlag, new { id = "hidSearchFlag"})
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.ShipFrontageResult.ShipFrontages != null)
+{
+    if (Model.ShipFrontageResult.ShipFrontages.Count() > 0)
+    {
+        <div class="sublbarea no_border" style="height:54px;margin-right:40px;margin-bottom: -10px;">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnDownload" class="download">
+                            <img src="~/Content/img/download.png" />
+                            @FormsResource.BTN_DOWNLOAD
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.ShipFrontageResult.ShipFrontages.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.ShipFrontageResult.ShipFrontages.Count() > 0)
+            {
+                @Html.PagedListPager(Model.ShipFrontageResult.ShipFrontages, Page => Url.Action("Search", "ShipFrontage", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.ShipFrontageResult.ShipFrontages.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+                    @using (Html.BeginForm("Edit", "ShipFrontage", FormMethod.Post, new { id = "frmUpdate" }))
+                    {
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey align-middle">&nbsp;</th>
+                                    <th class="bg-grey align-middle">
+                                        @ShipFrontageResource.No
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @ShipFrontageResource.BrandS
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @ShipFrontageResource.LaneNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @ShipFrontageResource.FrontageNo
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @ShipFrontageResource.StoreId
+                                    </th>
+                                    <th class="bg-grey align-middle">
+                                        @ShipFrontageResource.StoreName
+                                    </th>
+                                    <th hidden>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @Html.AntiForgeryToken()
+                                @Html.Partial("_DeleteConfirmMessageDialog", @MessagesResource.QUE_DELETE)
+                                @foreach (var cModel in Model.ShipFrontageResult.ShipFrontages.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("ShipFrontages[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="w_checkbox align-middle">
+                                            <label class="checkboxgroup">
+                                                @Html.CheckBox(key + "IsCheck", new { @id = (key + "CheckedValue"), @class = "check-box" })
+                                                <span class="chk_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.ShipFrontageResult.ShipFrontages.PageNumber - 1) * Model.ShipFrontageResult.ShipFrontages.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                                @Html.DisplayFor(modelItem => cModel.v.BrandId)
+                                            <br>
+                                                @Html.DisplayFor(modelItem => cModel.v.BrandName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LaneNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.FrontageNo)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StoreId)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.StoreName)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LaneNo, new { Name = key + "LaneNo" })
+                                            @Html.HiddenFor(modelItem => cModel.v.FrontageNo, new { Name = key + "FrontageNo" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Rid, new { Name = key + "Rid", @id = key + "Rid", @class = "rowid" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <input id="hiddata" type="hidden" name="rowid" />
+                    }
+                </div>
+            </div>
+        }
+    </div>  }
+@{
+    var storeConditions = new ViewDataDictionary { { "ParameterStoreId", Model.SearchConditions.ShipToStoreId }, { "TempStoreId", Model.SearchConditions.ShipToStoreId } };
+}
+@Html.Partial("_FileUploadModal")
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml", storeConditions)
+@Html.Partial("~/Areas/Master/Views/Shared/_BrandSearchModal.cshtml", "dialog")
+@*Bottomnav*@
+@section Basefooter{
+    @Html.Partial("_CheckBoxCounter")
+<div class="btnarea">
+    @if (Wms.Common.Profile.User.GetUsable_Class(Request.Url) != "1")
+    {
+        <button type="submit" id="btnCreate" class="btn btn-outline-dark btnsize" form="frmSearch" formmethod="get" formaction=@Url.Action("Create", "ShipFrontage", new { area = "Master", controller = "ShipFrontage", action = "Create" })>@FormsResource.BTN_NEW</button>
+        @*@Html.ActionLink(FormsResource.BTN_NEW, "Create", "ShipFrontage", null, new { @class = "btn btn-outline-dark btnsize _pm", @id = "lnkCreate", tabindex = "1001" })*@
+        <button type="submit" id="btnDelete" class="btn btn-outline-danger btnsize _pm">@FormsResource.BTN_DELETE</button> }
+    else
+    {
+        <button type="submit" id="btnCreate" class="btn btn-outline-dark btnsize _pm" disabled>@FormsResource.BTN_NEW</button>
+        <button type="submit" id="btnDelete" class="btn btn-outline-danger btnsize _pm" disabled>@FormsResource.BTN_DELETE</button>
+    }
+    <button id="btnDeleteHidden" type="button" class="btn btn-outline-danger _pm" data-toggle="modal" data-target="#delconfirm" hidden>@FormsResource.BTN_DELETE</button>
+    <button type="submit" id="btnUpdate" class="btn btn-dark btnsize" form="frmUpdate" formmethod="post" formaction=@Url.Action("Edit", "ShipFrontage", new { area = "Master", controller = "ShipFrontage", action = "Edit" })>@FormsResource.BTN_DETAIL</button>
+</div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+    @Scripts.Render("~/bundles/FileUpload")
+<script>
+    /**
+     * Country class
+     */
+    var ShipFrontagesView = {
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            btnBrand: '#btnBrand',
+            brandId: '#txtBrandId',
+            brandName: '#txtBrandName',
+            brandSelect: '#brandSelect',
+            rowSelected: '#spnCheckedCounter',
+            btnUpdate: '#btnUpdate',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            frmUpdate: 'frmUpdate',
+            btnSearch: '#btnSearch',
+            btnDelete: '#btnDelete',
+        },
+
+        /**
+         * Init data
+         */
+        init: function () {
+            this.registerEvent();
+            this.setCheckboxs();
+            this.setButtonStatus();
+            brandSearchModal.init();
+        },
+
+        /**
+         * Register event for control
+         */
+        registerEvent: function () {
+
+            /**
+            * ブランド検索ダイアログの設定
+            */
+            $(ShipFrontagesView.SELECTORS.btnBrand).on("click", brandSearchModal.open);
+
+
+
+            /**
+             *Click button get data Brand
+             */
+            $(ShipFrontagesView.SELECTORS.brandSelect).on("click", function () {
+                $('#brandSearchResult input[type=radio]:checked').each(function (index, item) {
+                    var brandId = $(item).parents("tr").find("td:eq(2)").text().trim();
+                    var brandName = $(item).parents("tr").find("td:eq(3)").text().trim();
+                    $(ShipFrontagesView.SELECTORS.brandId).val(brandId);
+                    $(ShipFrontagesView.SELECTORS.brandName).val(brandName);
+                })
+            });
+
+
+            /**
+             * Stop event fired when click to checkbox
+             */
+            $(ShipFrontagesView.SELECTORS.chkLabel).click(function (evt) {
+                evt.stopPropagation();
+            });
+
+            /**
+             * Check box click
+             */
+            $(ShipFrontagesView.SELECTORS.chkInTable).click(function (evt) {
+                evt.stopPropagation();
+                ShipFrontagesView.setButtonStatus();
+            });
+
+            /**
+             * Button check all clicked
+             */
+            $(ShipFrontagesView.SELECTORS.btnCheckAll).click(function () {
+                if ($("#listData").length) {
+                    $(ShipFrontagesView.SELECTORS.chkInTable).prop('checked', true);
+                    ShipFrontagesView.setRowidsFlag(true);
+                }
+            });
+
+            /**
+             * Button UnCheck all clicked
+             */
+            $(ShipFrontagesView.SELECTORS.btnUnCheckAll).click(function () {
+                if ($("#listData").length) {
+                    $(ShipFrontagesView.SELECTORS.chkInTable).prop('checked', false);
+                    ShipFrontagesView.setRowidsFlag(false);
+                }
+            });
+
+            $(ShipFrontagesView.SELECTORS.btnSearch).click(function () {
+                ShipFrontagesView.setStorageInit();
+                $("#hidSearchFlag").val(true)
+                var urlAction = '@Url.Action("Search", "ShipFrontage", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "GET");
+                $form.submit();
+            });
+            
+            $("#btnCreate").click(function () {
+                var urlAction = '@Url.Action("Create", "ShipFrontage", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "GET");
+                $form.submit();
+            });
+
+            $(ShipFrontagesView.SELECTORS.btnUpdate).click(function () {
+                var target = $("#hiddata").val();
+                if (target == "") {
+                    var list = ShipFrontagesView.getCheckList();
+                    $("#hiddata").val(list[0]);
+                } else {
+                    $("#hiddata").val(JSON.parse(target)[0]);
+                }
+                var urlAction = '@Url.Action("Edit", "ShipFrontage", new { area= "Master" })';
+                $("#frmUpdate").attr("action", urlAction);
+                $("#frmUpdate").attr("method", "POST");
+                $("#frmUpdate").submit();
+
+            //    ShipFrontagesView.setStorageInit();
+            });
+
+            $(ShipFrontagesView.SELECTORS.btnDelete).click(function () {
+                var list = ShipFrontagesView.getCheckList();
+                //ShipFrontagesView.setStorageInit();
+                $("#hiddata").val(JSON.stringify(list));
+
+                var urlAction = '@Url.Action("Delete", "ShipFrontage", new { area= "Master" })';
+                $("#frmUpdate").attr("action", urlAction);
+                $('#btnDeleteHidden').click();
+            });
+        },
+
+        /**
+         * Enable/Disable button Edit
+         */
+        setButtonStatus: function () {
+            ShipFrontagesView.setCheckboxs('set')
+        },
+
+        // save page
+        setRowidsFlag: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+                var jrid = JSON.parse(rowids);
+                $.each(jrid, function (key) {
+                    jrid[key] = flag;
+                });
+                storage.setItem('PKeys', JSON.stringify(jrid));
+            }
+            ShipFrontagesView.setButtonStatus();
+        },
+
+        setCheckboxs: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+                var cnt = 0;
+                var jrid = JSON.parse(rowids);
+                var checkboxs = $("#listData input[type=checkbox]")
+                checkboxs.each(function () {
+                    var row = $(this).parent().parent().parent();
+                    var rowid = row.find(".rowid").val();
+
+                    if (flag == 'set') {
+                        jrid[rowid] = $(this).is(':checked');
+                    }
+                    else {
+                        if (jrid[rowid]) {
+                            $(this).prop("checked", true);
+                        }
+                    }
+                });
+
+                if (flag == 'set') {
+                    storage.setItem('PKeys', JSON.stringify(jrid));
+                }
+
+                $.each(jrid, function (key, value) {
+                    if (value) {
+                        cnt++;
+                    }
+                });
+
+                $(ShipFrontagesView.SELECTORS.btnDelete).attr('disabled', 'disabled');
+                $(ShipFrontagesView.SELECTORS.btnUpdate).attr('disabled', 'disabled');
+
+                if ($('#frmUpdate').length > 0) {
+                    if (cnt > 0) {
+                        if (getUsable_Class() == 3) {
+                            $(ShipFrontagesView.SELECTORS.btnDelete).removeAttr('disabled');
+                        }
+                        if (cnt == 1) {
+                            $(ShipFrontagesView.SELECTORS.btnUpdate).removeAttr('disabled');
+                        }
+                    }
+
+                    $(ShipFrontagesView.SELECTORS.rowSelected).text(cnt);
+                }
+            }
+
+        },
+
+        setStorageInit: function () {
+            if (window.localStorage) {
+
+                var storage = window.localStorage;
+                storage.removeItem('PKeys');
+                var data = {
+                    'SearchConditions.CenterId': $("#ddlCenterId").val(),
+                    'SearchConditions.LaneNo': $("#txtLaneNo").val(),
+                    'SearchConditions.FrontageNo': $("#txtFrontageNo").val(),
+                    'SearchConditions.ShipToStoreId': $("#txtShipToStoreId").val(),
+                    'SearchConditions.ShipToStoreName': $("#txtShipToStoreName").val(),
+                    'SearchConditions.BrandId': $("#txtBrandId").val(),
+                    'SearchConditions.BrandName': $("#txtBrandName").val()
+                };
+
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("GetPKeys", "ShipFrontage", new { area = "Master" })",
+                    data: data,
+                    async: false,
+                    success: function (data) {
+                        var rowids = {};
+                        $.each(data, function (n, value) {
+                            rowids[value] = false;
+                        });
+
+                        var storage = window.localStorage;
+                        storage.setItem('PKeys', JSON.stringify(rowids));
+
+                    }
+                });
+            }
+        },
+
+        getCheckList: function () {
+            var list = [];
+            var storage = window.localStorage;
+            rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+
+                var jrid = JSON.parse(rowids);
+                $.each(jrid, function (key) {
+                    if (jrid[key]) {
+                        list.push(key);
+                    }
+                });
+            }
+            return list;
+        },
+    }
+
+    /**
+    * File Download
+    */
+    $("#btnDownload").on("click", function () {
+        var urlAction = '@Url.Action("Download", "ShipFrontage", new { area = "Master" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "GET");
+        $form.submit();
+
+        setTimeout(function () {
+            var count = ShipFrontagesView.getCheckList().length;
+            if (count == 1) {
+                $(ShipFrontagesView.SELECTORS.btnUpdate).prop("disabled", false);
+            }
+
+            if (getUsable_Class() == 3) {
+                if (count >= 1) {
+                    $(ShipFrontagesView.SELECTORS.btnDelete).prop('disabled', false);
+                }
+                $("#btnCreate").prop("disabled", false);
+            }
+        }, 1000);
+    });
+    $("#btnDownloadTemp").on("click", function () {
+        var urlAction = '@Url.Action("DownloadTemp", "ShipFrontage", new { area = "Master" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "GET");
+        $form.submit();
+
+        setTimeout(function () {
+            var count = ShipFrontagesView.getCheckList().length;
+            if ($("#hidSearchFlag").val() == 'true') {
+                if (count == 1) {
+                    $(ShipFrontagesView.SELECTORS.btnUpdate).prop("disabled", false);
+                }
+
+                if (getUsable_Class() == 3) {
+                    if (count >= 1) {
+                        $(ShipFrontagesView.SELECTORS.btnDelete).prop('disabled', false);
+                    }
+                    $("#btnCreate").prop("disabled", false);
+                }
+            }
+            if (getUsable_Class() == 3) {
+                $("#btnCreate").prop("disabled", false);
+            }
+        }, 1000);
+    });
+
+    Dropzone.autoDiscover = false;
+    //ファイルアップロード
+    fileUploadModal.init();
+    /**
+    * File Upload
+    */
+    $('#btnUpload').on('click', function () {
+        var urlAction = '@Url.Action("Upload", "ShipFrontage", new { area = "Master" })';
+        var urlIndexAction = '@Url.Action("Index", "ShipFrontage", new { area = "Master" })';
+        var urlErrAction = '@Url.Action("UploadErr", "ShipFrontage", new { area = "Master" })';
+        fileUploadModal.setting({
+            url: urlAction,
+            title: "@ShipFrontageResource.BaseName" + "@FormsResource.FileUplaodTitle",
+            acceptedFiles: ".xlsx",
+            successCallback: function (data) {
+                if (data.err == 'true') {
+                    location.href = urlErrAction;
+                } else {
+                    location.href = urlIndexAction;
+                }
+            }
+        });
+        fileUploadModal.open();
+    });
+
+    /**
+    * Page loaded
+    */
+    //$(document).ready(function () {
+    //    ShipFrontagesView.init();
+    //});
+
+    $(document).ready(function () {
+        if ('@TempData[AppConst.SUCCESS]' != '') {
+            ShipFrontagesView.setStorageInit();
+        }
+        ShipFrontagesView.init();
+    });
+
+        function ClearConditons() {
+        $("#txtCenterClass").val(0);
+        $("#txtCenterId").val("");
+    }
+
+    // Sort
+    function getSortData() {
+
+        $("#hidSort").val($("#ddlSort").val());
+        $("#hidSortKey").val($("#ddlSortKey").val());
+
+        var $form = $("#frmSearch");
+        var urlAction ='@Url.Action("Search", "ShipFrontage", new { area= "Master" })';
+        $form.attr("action", urlAction);
+        $form.attr("method", "GET");
+        $form.submit();
+    }
+</script>
+}

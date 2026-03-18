@@ -1,0 +1,84 @@
+﻿@model Wms.Areas.Master.ViewModels.EcPrefTransporter.Detail
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_EcPrefTransporter02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "EcPrefTransporter", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.CenterId)
+            @Html.HiddenFor(model => model.PrefId)
+            @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+            <div class="form_content">
+                <dl>
+                    <dt>@Html.DisplayNameFor(model => model.CenterName)</dt>
+                    <dd>
+                        @Html.Raw(Model.CenterName)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt> @Html.DisplayNameFor(model => model.PrefId)</dt>
+                    <dd>
+                        @Html.Raw(Model.PrefId)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.PrefName)
+                    </dt>
+                    <dd>
+                        @Html.Raw(Model.PrefName)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.TransporterId)
+                    </dt>
+                    <dd>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.DropDownListFor(model => model.TransporterId, (IEnumerable<SelectListItem>)ViewBag.Transporter, new { id = "ddlTransporterId", tabindex = "2", @class = "_pm" })
+                            </div>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @*@Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "EcPrefTransporter", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })*@
+            <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+            <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+            <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+        </div>
+    }
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+    </script>
+
+}
+

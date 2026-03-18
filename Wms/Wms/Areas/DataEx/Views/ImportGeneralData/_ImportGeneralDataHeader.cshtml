@@ -1,0 +1,44 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+@using Wms.Areas.Master.Resources;
+@using PagedList.Mvc;
+
+@model Wms.Areas.DataEx.ViewModels.GeneralData.GeneralDataViewModel
+
+<table>
+    <tr>
+        <td class="tdtitle_15">@EditLayoutResource.EncodeType :</td>
+        <td colspan="2">
+            @Html.DisplayFor(model => model.EncodeTypeName)
+            @Html.HiddenFor(model => model.EncodeType)
+        </td>
+        <td class="tdtitle_15">@EditLayoutResource.FileType :</td>
+        <td>
+            @Html.DisplayFor(model => model.FileTypeName)
+            @Html.HiddenFor(model => model.FileType)
+        </td>
+    </tr>
+    <tr>
+        <td class="tdtitle_15">@EditLayoutResource.HeadingRow :</td>
+        <td colspan="2">
+            @Html.DisplayFor(model => model.HeadingRowName)
+            @Html.HiddenFor(model => model.HeadingRow)
+        </td>
+        <td class="tdtitle_15">@EditLayoutResource.TableToBeImorted :</td>
+        <td>
+            @Html.DisplayFor(model => model.ObjectName)
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <hr />
+        </td>
+    </tr>
+
+</table>
+

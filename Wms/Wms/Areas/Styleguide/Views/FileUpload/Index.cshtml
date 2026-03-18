@@ -1,0 +1,89 @@
+﻿@model Wms.Areas.Styleguide.ViewModels.FileUpload.EditViewModel
+@using Resources = Wms.Areas.Styleguide.Resources.FileUploadResource;
+
+@{
+    /**/
+
+    /*
+     * FileUploadのSyleGuide
+     */
+    ViewBag.Title = "FileUpload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>FileUpload</h1>
+        <p class="pg_caption">FileUploadの使い方</p>
+    </div>
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+<div class="container">
+    <div class="form_content">
+
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.ItemId)
+            </dt>
+            <dd>
+                @Html.EditorFor(model => model.ItemId, new { htmlAttributes = new { @placeholder = "" } })
+                @Html.ValidationMessageFor(model => model.ItemId, "", new { })
+            </dd>
+        </dl>
+
+        <div class="container">
+            <button type="button" id="btnFileUpload" class="btn1 btn_small btn_checked">CSVファイルをアップロードする</button>
+        </div>
+
+        <div class="container">
+            <button type="button" id="btnFileUploadImage" class="btn1 btn_small btn_checked">画像ファイルをアップロードする</button>
+        </div>
+    </div>
+</div>
+@Html.Partial("_FileUploadModal")
+}
+
+@section LayoutChildScripts{
+    @*ファイルアップロードに必要なCSS,JS*@
+    @Styles.Render("~/bundles/FileUploadCss")
+    @Scripts.Render("~/bundles/FileUpload")
+
+    <script>
+        Dropzone.autoDiscover = false;
+        $(function () {
+            //ファイルアップロードダイアログの設定初期化する。
+            fileUploadModal.init();
+
+            //CSVファイルアップロード
+            $('#btnFileUpload').on('click', function () {
+                fileUploadModal.setting({
+                    url: "/Styleguide/FileUpload/UploadCsv",
+                    title: "@Resources.FileUplaodTitle",
+                    acceptedFiles: ".csv",
+                    successCallback: function () {
+                        alert('ここにファイルアップロード後の任意の処理を書いてください。');
+                    },
+                });
+                fileUploadModal.open();
+            });
+
+            //画像ファイルアップロード
+            $('#btnFileUploadImage').on('click', function () {
+                fileUploadModal.setting({
+                    url: "/Styleguide/FileUpload/UploadImage",
+                    title: "@Resources.FileUplaodTitleImage",
+                    acceptedFiles: "image/*",
+                    successCallback: function () { },
+                });
+                fileUploadModal.open();
+            });
+        });
+    </script>
+}

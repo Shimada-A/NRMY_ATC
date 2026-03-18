@@ -1,0 +1,479 @@
+﻿@using Share.Common;
+@using Wms.Helpers;
+@using PagedList.Mvc;
+@using Wms.Areas.Inventory.Resources;
+@model Wms.Areas.Inventory.ViewModels.Reference.Reference02ViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_INV_Reference02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+<div class="headarea sortheadareaheight">
+    <table class="headtable">
+        <tr>
+            <td width="95">@ReferenceResource.CenterIdS</td>
+            <td width="200">
+                @Html.DisplayFor(modelItem => modelItem.Head.CenterId)
+            </td>
+            <td width="95">@ReferenceResource.InventoryNoS</td>
+            <td width="200">
+                @Html.DisplayFor(modelItem => modelItem.Head.InventoryNo)
+            </td>
+            <td width="85">@ReferenceResource.InventoryNameS</td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Head.InventoryName)
+            </td>
+        </tr>
+        <tr>
+            <td>@ReferenceResource.InventoryDateS</td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Head.InventoryStartDate)
+            </td>
+            <td>@ReferenceResource.InventoryClassS</td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Head.InventoryClass)
+            </td>
+            <td width="85">@ReferenceResource.SimpleInventoryFlagS</td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Head.SimpleInventoryFlag)
+            </td>
+        </tr>
+        <tr>
+            <td>@ReferenceResource.InventoryStatusS</td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Head.InventoryStatus)
+            </td>
+            <td>@ReferenceResource.InventoryConfirmDateS</td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Head.InventoryConfirmDate)
+            </td>
+        </tr>
+    </table>
+</div>
+@using (Html.BeginForm("LocDetailsSearch", "Reference", FormMethod.Post, new { id = "frmLocSearch" }))
+{
+    <div id="div_search" class="head head_white collapse">
+        @Html.AntiForgeryToken()
+        <table>
+            <tr>
+                <td class="">@ReferenceResource.AreaS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Area, new { htmlAttributes = new { @class = "w_6_short", @id = "txtArea", tabindex = "1" } })
+                </td>
+                <td class="tdtitle text-right">@ReferenceResource.InventoryRowS</td>
+                <td width="200">
+                    @Html.EditorFor(model => model.SearchConditions.InventoryRow, new { htmlAttributes = new { @class = "w_6_short", @id = "txtInventoryRow", tabindex = "2" } })
+
+                </td>
+                <td>@ReferenceResource.LocationCdS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.LocationCdFrom, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtLocationCdFrom", tabindex = "3" } })
+                    ～
+                    @Html.EditorFor(model => model.SearchConditions.LocationCdTo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtLocationCdTo", tabindex = "4" } })
+                </td>
+            </tr>
+            <tr>
+                <td>@ReferenceResource.ItemIdS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.ItemId, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtItemId", tabindex = "6" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td>@ReferenceResource.BoxNoS</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.BoxNo, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtBoxNo", tabindex = "7" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td>@ReferenceResource.ItemSkuIdS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.ItemSkuId, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtItemSkuId", tabindex = "9" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td>@ReferenceResource.GradeIdS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.GradeId,
+                                (IEnumerable<SelectListItem>)ViewBag.GradeId,
+                                CommonResource.None, new { id = "ddlGradeId", tabindex = "5" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>@ReferenceResource.JanS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.Jan, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtJan", tabindex = "10" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+                <td width="500" colspan="2">
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.InventoryStatusOld, new { id = "txtInventoryStatusOld", tabindex = "8", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                    @ReferenceResource.DifferenceInventory
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6"></td>
+                <td colspan="2">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "LocDetailClear", "Reference", new { area = "Inventory" }, new { type = "button", @class = "btn btn-outline-dark" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="12" onclick="LocSearch();">@FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey02, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        <input type="hidden" name="SearchConditions.Seq2" id="hidSeq2" value='@Model.SearchConditions.Seq2' />
+        <input type="hidden" name="SearchConditions.Seq4" id="hidSeq4" value='@Model.SearchConditions.Seq4' />
+        <input type="hidden" name="SearchConditions.LineNo" id="hidLineNo" value='@Model.SearchConditions.LineNo' />
+        <input type="hidden" name="SearchConditions.CenterId" id="hidCenterId" value='@Model.SearchConditions.CenterId' />
+        <input type="hidden" name="SearchConditions.InventoryNo" id="hidInventoryNo" value='@Model.SearchConditions.InventoryNo' />
+    </div>
+}
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.Results.Reference != null && Model.Results.Reference.Count() > 0)
+{
+    @* Sublbarea *@
+    <div class="sublbarea no_border Ship_detail_load">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    <button type="button" id="btnDownload" class="download">
+                        <img src="~/Content/img/download.png" />
+                        @FormsResource.BTN_DOWNLOAD
+                    </button>
+                </li>
+                <li>
+                <li>
+                    <button type="button" id="btnPrint" class="download">
+                        <img src="~/Content/img/print.png" />
+                        @ReferenceResource.DifferenceList
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="sublbarea no_border">
+        <div class="btn-group btn-group-toggle">
+            <label class="btn btn-outline-dark active" id="lblLoc">
+                <input type="radio" name="options" id="Loc"> @ReferenceResource.BtnLocDetails
+            </label>
+            <label class="btn btn-outline-dark" id="lbSku">
+                <input type="radio" name="options" id="Sku"> @ReferenceResource.BtnSkuDetails
+            </label>
+        </div>
+        <div class="sortarea mainpagearea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey02, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.Reference.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.Results.Reference.Count() > 0)
+            {
+                @Html.PagedListPager(Model.Results.Reference, Page => Url.Action("LocDetailsSearch", "Reference", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+    if (Model.Results.Reference.Count() > 0)
+    {
+        <div class="sublbarea no_border stock_detail_head" style="height:50px">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        @ReferenceResource.LocationCountS @Html.DisplayFor(model => model.Total.LocationCount)
+                    </li>
+                    <li>
+                        @ReferenceResource.StockSkuS @Html.DisplayFor(model => model.Total.StockSku)
+                    </li>
+                    <li>
+                        @ReferenceResource.ResultSkuS @Html.DisplayFor(model => model.Total.ResultSku)
+                    </li>
+                    <li>
+                        @ReferenceResource.StockCaseS @Html.DisplayFor(model => model.Total.StockCase)
+                    </li>
+                    <li>
+                        @ReferenceResource.ResultCaseS @Html.DisplayFor(model => model.Total.ResultCase)
+                    </li>
+                    <li>
+                        @ReferenceResource.StockQtyS @Html.DisplayFor(model => model.Total.StockQty)
+                    </li>
+                    <li>
+                        @ReferenceResource.ResultQtyS @Html.DisplayFor(model => model.Total.ResultQty)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+}
+@if (Model.Results.Reference != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.Reference.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:47vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.LocationCd
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.Case
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.Grade
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.StockQtyStart
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.ResultQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.DifferencePlus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.DifferenceMinus
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @ReferenceResource.DifferenceSum
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Update", "Reference", FormMethod.Post, new { id = "frmUpdate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.Reference.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Reference[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.Reference.PageNumber - 1) * Model.Results.Reference.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CaseClass)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.GradeId)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.StockQtyStart)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.ResultQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.DifferencePlus)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.DifferenceMinus)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.DifferenceSum)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@*Bottomnav*@
+@section Basefooter{
+    <div class="btnarea">
+        @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Reference", new { area = "Inventory" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+<script>
+
+    $("#btnDownload").on("click", function () {
+        var urlAction = '@Url.Action("DownloadLocDetail", "Reference", new { area = "Inventory" })';
+        var $form = $("#frmLocSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "Post");
+        $form.submit();
+    });
+
+    $("#btnPrint").on("click", function () {
+        var urlAction = '@Url.Action("PrintLocDetail", "Reference", new { area = "Inventory" })';
+        var $form = $("#frmLocSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    });
+
+    /**
+     * Country class
+     */
+    var ReferenceLocDetailView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInRow: 'input[type=checkbox][class=check-box]',
+            tblRow: '#listData tbody tr',
+            rowSelected: '#spnCheckedCounter',
+            ddlSortKey: '#ddlSortKey',
+            ddlInventoryStatus: 'ddlInventoryStatus',
+            chkChecked: ':checkbox:checked',
+            form: 'form',
+            searchForm: '#frmLocSearch',
+        },
+
+        /**
+         * Init data
+         */
+        init: function () {
+            this.registerEvent();
+            this.setButtonStatus();
+        },
+
+        /**
+         * Register event for control
+         */
+        registerEvent: function () {
+
+        },
+
+        /**
+         * Enable/Disable button Edit
+         */
+        setButtonStatus: function (difCnt) {
+            
+        },
+
+    }
+
+    /**
+     * Page loaded
+     */
+    $(document).ready(function () {
+        ReferenceLocDetailView.init();
+        @* Pageを変更時 *@
+        $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+            var urlAction ='@Url.Action("LocDetailsSearch", "Reference", new { area= "Inventory" })';
+            var pageUrl = urlAction + '?Page=';
+            var page = $(item).attr("href").replace(pageUrl, "");
+            page = page.replace("&class=btn-outline-dark", "");
+            $(item).attr("href", "javascript:void(0);").click(function () {
+                $("#hidPage").val(page);
+                $("#hidSearchType").val("SortPage");
+                $("#frmLocSearch").attr("action", urlAction);
+                $("#frmLocSearch").attr("method", "POST");
+                $("#frmLocSearch").submit();
+            });
+        });
+    });
+
+    // Sort
+    function getSortData() {
+
+        $("#hidSort").val($("#ddlSort").val());
+        $("#hidSortKey").val($("#ddlSortKey").val());
+        $("#hidSearchType").val("SortPage");
+
+        var $form = $("#frmLocSearch");
+        var urlAction ='@Url.Action("LocDetailsSearch", "Reference", new { area= "Inventory" })';
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    }
+
+    function LocSearch() {
+        $("#hidSearchType").val("Search");
+        var urlAction = '@Url.Action("LocDetailsSearch", "Reference", new { area = "Inventory" })';
+        var $form = $("#frmLocSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    }
+
+    $("#Loc").on("click", function () {
+        $("#hidSearchType").val("Search");
+        var urlAction = '@Url.Action("LocDetailsSearch", "Reference", new { area = "Inventory" })';
+        var $form = $("#frmLocSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    });
+
+    $("#Sku").on("click", function () {
+        $("#hidSearchType").val("Search");
+        var urlAction = '@Url.Action("SkuDetailsSearch", "Reference", new { area = "Inventory" })';
+        var $form = $("#frmLocSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    });
+
+</script>
+}

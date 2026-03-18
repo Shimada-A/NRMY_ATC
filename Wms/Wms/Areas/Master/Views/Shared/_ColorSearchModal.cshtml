@@ -1,0 +1,30 @@
+﻿@*
+    ブランド検索のモーダルダイアログ
+    ColorSearchModal.js が必要
+*@
+<div id="colorSearchModalDialog" style="display:none;">
+    <div class="d_continer main">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        @using (Ajax.BeginForm(
+                "Index",
+                "ColorSearchModal",
+                new { area = "Master" },
+                new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "colorSearchResult", OnComplete = "colorSearchModal.setCheckBoxCounter();vendorSearchModal.adjust();enableSubmit();" },
+                new { id = "frmColorSearch" }))
+        {
+        <div id="colorSearchResult">
+            @Html.Action("Index", "ColorSearchModal", new { area = "Master" })
+        </div>
+        }
+        <div class="bottomnav">
+            <div class="btnarea">
+                <button id="colorClose" type="button" class="btn btn-outline-dark">@FormsResource.Close</button>
+                <button id="colorSelect" type="button" class="btn btn-dark">@FormsResource.BTN_SELECT</button>
+            </div>
+        </div>
+        @* 検索条件を変えてもチェックした値を保持するためhiddenで保持する *@
+        <div id="checked"></div>
+        @* 確定した店舗を保持する(確定せずに閉じたときに変わらないように) *@
+        <div id="selectedColor"></div>
+    </div>
+</div>

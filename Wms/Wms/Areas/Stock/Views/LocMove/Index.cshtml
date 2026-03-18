@@ -1,0 +1,536 @@
+@using Wms.Helpers;
+@using Share.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Stock.Resources;
+@model Wms.Areas.Stock.ViewModels.LocMove.LocMoveViewModel
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_LocMove;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Head *@
+@using (Html.BeginForm("Search", "LocMove", FormMethod.Post, new { id = "frmSearch" }))
+{
+    <div id="div_search" class="head head_white collapse">
+        @Html.AntiForgeryToken()
+        <table class="w-search">
+            <tr>
+                <td class="tdtitle">@LocMoveResource.CenterS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_large">@LocMoveResource.LocationClassS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.LocationClass,
+                                (IEnumerable<SelectListItem>)ViewBag.LocationClassList,
+                                CommonResource.None, new { id = "ddlLocationClass", tabindex = "2" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@LocMoveResource.Locsec1S</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.Locsec1, new { htmlAttributes = new { @class = "w_6_short", @id = "txtLocsec1", tabindex = "3" } })
+                    @Html.LikeMark(CommonsResource.BeforeLike)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@LocMoveResource.LocationS</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.LocationCdFrom, new { htmlAttributes = new { @class = "column_byte_20", @id = "txtLocationCdFrom", tabindex = "4" } })　～　
+                    @Html.EditorFor(model => model.SearchConditions.LocationCdTo, new { htmlAttributes = new { @class = "column_byte_20", @id = "txtLocationCdTo", tabindex = "5" } })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@LocMoveResource.GradeS</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(
+                                model => model.SearchConditions.GradeId,
+                                (IEnumerable<SelectListItem>)ViewBag.GradeList,
+                                CommonResource.None, new { id = "ddlGradeClass", tabindex = "6" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.SearchConditions.AllocQtyZero, new { id = "chkAllocQtyZero", tabindex = "7", @placeholder = "", @class = "check-box" })
+                        <span class="chk_parts"></span>
+                    </label>
+                    @LocMoveResource.AllocQtyZeroS
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-right">
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "LocMove", new { area = "Stock" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "8" })
+                    <button class="btn btn-outline-dark head-btn" id="btnSearch" onclick="Search();" tabindex="9">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        <input type="hidden" name="SearchConditions.Page" id="hidPage" value="@Model.SearchConditions.Page" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        <input type="hidden" name="SearchConditions.Seq" id="hidSeq" value='@Model.SearchConditions.Seq' />
+        @Html.HiddenFor(model => model.SearchConditions.SearchType, new { id = "hidSearchType" })
+        <div style="display:none">
+            @if (Model.Results.LocMoves != null && Model.Results.LocMoves.Count() > 0)
+            {
+                <table>
+                    @for (int i = 0; i < Model.Results.LocMoves.Count; i++)
+                    {
+                        var id = String.Format("SearchConditions.LocMoves[{0}].", i);
+                        <tr>
+                            <td class="template" hidden>
+                                @Html.CheckBoxFor(modelItem => Model.Results.LocMoves[i].IsCheck, new { @id = (id + "CheckedValue"), @class = "check-box", Name = id + "IsCheck" })
+                                @Html.HiddenFor(modelItem => Model.Results.LocMoves[i].Seq, new { @id = (id + "Seq"), Name = id + "Seq" })
+                                @Html.HiddenFor(modelItem => Model.Results.LocMoves[i].LineNo, new { @id = (id + "LineNo"), Name = id + "LineNo" })
+                                @Html.HiddenFor(modelitem => Model.Results.LocMoves[i].LocationCd, new { @id = (id + "LocationCd"), Name = id + "LocationCd" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    </div>
+
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    if (Model.Results.LocMoves != null && Model.Results.LocMoves.Count() > 0)
+    {
+        @* Sublbarea *@
+        <div class="sublbarea no_border">
+            <div class="sublbarea no_border stock_detail_head">
+                <table>
+                    <tr>
+                        <td colspan="2">
+                            @LocMoveResource.LocationCdTo
+                            @Html.RequiredMark()&emsp;
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.SearchConditions.LocationCdMove, new { htmlAttributes = new { @onblur = "LocationCdMoveBlur()", @class = "column_byte_20", @id = "txtLocationCdMove", tabindex = "10" } })
+                            @Html.ValidationMessageFor(model => model.SearchConditions.LocationCdMove, "", new { id = "msgLocationCdMove" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="sortarea mainpagearea">
+                <ul>
+                    <li>
+                        @FormsResource.DISPLAY_SHORT
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sort">
+                            <div class="sort_inner">
+                                @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                            </div>
+                        </div>
+                    </li>
+                    <li class="totalcount">
+                        @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.Results.LocMoves.TotalItemCount.ToString("N0"))
+                    </li>
+                </ul>
+                @if (Model.Results.LocMoves.Count() > 0)
+                {
+                    @Html.PagedListPager(Model.Results.LocMoves, Page => Url.Action("Search", "LocMove", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+                }
+            </div>
+        </div>
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea">
+                <ul>
+
+                    <li>
+                        @LocMoveResource.LocationCount @Html.DisplayFor(model => model.SearchConditions.LocationCount)
+                    </li>
+                    <li>
+                        @LocMoveResource.SkuQtySum @Html.DisplayFor(model => model.SearchConditions.ItemSkuQtySum)
+                    </li>
+                    <li>
+                        @LocMoveResource.StockQtySum @Html.DisplayFor(model => model.SearchConditions.StockQtySum)
+                    </li>
+                    <li>
+                        @LocMoveResource.AllocQtySum @Html.DisplayFor(model => model.SearchConditions.AllocQtySum)
+                    </li>
+                    <li>
+                        @LocMoveResource.NotAllocQtySum @Html.DisplayFor(model => model.SearchConditions.NotAllocQtySum)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+}
+@if (Model.Results.LocMoves != null)
+{
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.Results.LocMoves.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:70vh;">
+                    <table class="table table-bordered" id="listData">
+                        <thead>
+                            <tr>
+                                <th class="bg-grey align-middle">&nbsp;</th>
+                                <th class="bg-grey align-middle">
+                                    @LocMoveResource.No
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocMoveResource.LocationCd
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocMoveResource.Grade
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocMoveResource.CaseQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocMoveResource.SkuQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocMoveResource.StockQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocMoveResource.AllocQty
+                                </th>
+                                <th class="bg-grey align-middle">
+                                    @LocMoveResource.NotAllocQty
+                                </th>
+                                <th hidden>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("Edit", "Stock", FormMethod.Post, new { id = "frmList" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                foreach (var cModel in Model.Results.LocMoves.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("LocMoves[{0}].", cModel.i);
+                                    <tr>
+                                        @if (cModel.v.AllocQty == 0) 
+                                        {
+                                            <td class="w_checkbox align-middle">
+                                                <label class="checkboxgroup">
+                                                    @Html.CheckBoxFor(modelItem => cModel.v.IsCheck, new { @id = (key + "CheckedValue"), @class = "check-box", onclick = "SetCheckValue(" + @cModel.i + ")" })
+                                                    <span class="chk_parts"></span>
+                                                </label>
+                                            </td>                                            
+                                        }
+                                        else 
+                                        { 
+                                            <td></td>
+                                        }
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.Results.LocMoves.PageNumber - 1) * Model.Results.LocMoves.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.GradeName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.CaseQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.SkuQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.StockQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.NotAllocQty)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.Seq, new { Name = key + "Seq" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LineNo, new { Name = key + "LineNo" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@*Bottomnav*@
+@section Basefooter{
+@Html.Partial("_CheckBoxCounter")
+    <div class="btnarea">
+        <button type="button" id="btnMove" class="btn btn-dark btnsize _pm">@LocMoveResource.BtnMove</button>
+        <button type="button" id="btnMoveHidden" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm" hidden>@LocMoveResource.BtnMove</button>
+    </div>
+}
+@Html.Partial("_CreateConfirmMessageDialog", MessagesResource.QUE_LOCATION_MOVE)
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrMsg", Message = (string)ViewBag.ErrorMessage })
+@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "ConfirmMessage", Message = (string)ViewBag.ConfirmMessage })
+
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        var currentSelectedCnt = 0;
+        var currentSelectedCntDiff = 0;
+        var LocMoveView = {
+
+            /**
+             * CONST Object
+             */
+            CONST: {
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                FORM: 'form',
+                METHOD: 'method',
+                ACTION: 'action'
+            },
+
+            /**
+             * SELECTORS Object
+             */
+            SELECTORS: {
+                chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+                chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+                chkInRow: 'input[type=checkbox][class=check-box]',
+                tblRow: '#listData tbody tr',
+                btnCheckAll: '#rbCheckAll',
+                btnUnCheckAll: '#rbUnCheckAll',
+                rowSelected: '#spnCheckedCounter',
+                btnMove: '#btnMove',
+                ddlSortKey: '#ddlSortKey',
+                chkChecked: ':checkbox:checked',
+                chkLabel: '#listData span.chk_parts',
+                form: 'form',
+                searchForm: '#frmSearch',
+                frmUpdate: 'frmUpdate',
+                btnSubmit: 'button[type=submit],input[type=submit]',
+            },
+
+            /**
+            * Init data
+            */
+            init: function () {
+                this.registerEvent();
+                this.setButtonStatus(0);
+                brandSearchModal.init();
+                vendorSearchModal.init();
+                currentSelectedCnt = $(LocMoveView.SELECTORS.chkCheckedInTable).length;
+            },
+
+            /**
+            * Register event for control
+            */
+            registerEvent: function () {
+
+                /**
+                * Stop event fired when click to checkbox
+                */
+                $(LocMoveView.SELECTORS.chkLabel).click(function (evt) {
+                    evt.stopPropagation();
+                });
+
+                /**
+                * Check box click
+                */
+                $(LocMoveView.SELECTORS.chkInTable).click(function (evt) {
+                    //$(this).prop("checked", true);
+                    evt.stopPropagation();
+                    currentSelectedCntDiff = currentSelectedCnt - $(LocMoveView.SELECTORS.chkCheckedInTable).length;
+                    LocMoveView.setButtonStatus(currentSelectedCntDiff);
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(LocMoveView.SELECTORS.ddlSort).change(function (val) {
+                    $(LocMoveView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                * Dropdownlist change item
+                */
+                $(LocMoveView.SELECTORS.ddlSortKey).change(function (val) {
+                    $(LocMoveView.SELECTORS.btnSearch).click();
+                });
+
+                /**
+                * Button check all clicked
+                */
+                $(LocMoveView.SELECTORS.btnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSedarchType").val("SortPage");
+                        var urlAction = '@Url.Action("AllSelectedSearch", "LocMove", new { area = "Stock" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+
+                /**
+                * Button uncheck all clicked
+                */
+                $(LocMoveView.SELECTORS.btnUnCheckAll).click(function () {
+                    if ($("#listData").length) {
+                        $("#hidSearchType").val("SortPage");
+                        var urlAction = '@Url.Action("UnSelectedSearch", "LocMove", new { area = "Stock" })';
+                        var $form = $("#frmSearch");
+                        $form.attr("action", urlAction);
+                        $form.attr("method", "POST");
+                        $form.submit();
+                    }
+                });
+            },
+
+            /**
+            * Enable/Disable button Edit
+            */
+            setButtonStatus: function (diffCnt) {
+                // Display row is selected
+                $(LocMoveView.SELECTORS.rowSelected).text(@Model.SearchConditions.SelectedCount - diffCnt);
+
+                // Enable/Disable button Edit
+                if ($(LocMoveView.SELECTORS.chkCheckedInTable).length >= 1) {
+                    if (getUsable_Class() != 1) {
+                        $(LocMoveView.SELECTORS.btnMove).removeAttr('disabled');
+                    }
+                } else {
+                    $(LocMoveView.SELECTORS.btnMove).attr('disabled', 'disabled');
+                }
+            },
+        }
+
+        /**
+        * Page loaded
+        */
+        $(document).ready(function () {
+            LocMoveView.init();
+            $("#ddlPackageSortKey").removeClass("input-validation-error");
+            $("#ddlSortKey").removeClass("input-validation-error");
+                @* Pageを変更時 *@
+                $(".mainpagearea .paging>li>a[href]").each(function (i, item) {
+                    var urlAction ='@Url.Action("Search", "LocMove", new { area= "stock" })';
+                    var pageUrl = urlAction + '?Page=';
+                    var page = $(item).attr("href").replace(pageUrl, "");
+                    page = page.replace("&class=btn-outline-dark", "");
+                    $(item).attr("href", "javascript:void(0);").click(function () {
+                        $("#hidPage").val(page);
+                        $("#hidSearchType").val("SortPage");
+                        $("#frmSearch").submit();
+                    });
+                });
+        });
+
+        // Sort
+        function getSortData() {
+
+            $("#hidSort").val($("#ddlSort").val());
+            $("#hidSortKey").val($("#ddlSortKey").val());
+            $("#hidSearchType").val("SortPage");
+
+            var $form = $("#frmSearch");
+            var urlAction ='@Url.Action("Search", "LocMove", new { area= "stock" })';
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+        function Search() {
+            $("#hidSearchType").val("Search");
+            var urlAction = '@Url.Action("Search", "LocMove", new { area = "stock" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        }
+
+        $("#btnMove").on("click", function () {
+            if (!validateForm($("#frmSearch")) || !ConditionCheck()){
+                return;
+            }
+            $("#btnMoveHidden").click();
+        });
+
+        $('#submitCreate').on("click", function () {
+            var urlAction ='@Url.Action("UpdateSearch", "LocMove", new { area= "stock" })';
+            var $form = $("#frmSearch");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        function ConditionCheck() {
+            var idLocationCdMoveName = '#txtLocationCdMove'
+            var msgLocationCdMoveName = '#msgLocationCdMove'
+
+            if ($(idLocationCdMoveName).val() == "") {
+                $(msgLocationCdMoveName).html('<span id="LocationCdMoveError" class="">' + '@LocMoveResource.LocationCdMoveRequired' + '</span>');
+                $(msgLocationCdMoveName).addClass("field-validation-error");
+                $(idLocationCdMoveName).addClass("input-validation-error");
+
+                return false;
+            }
+            else {
+                $(msgLocationCdMoveName).html("");
+                $(msgLocationCdMoveName).removeClass("field-validation-error");
+                $(idLocationCdMoveName).removeClass("input-validation-error");
+
+                return true;
+            }
+        }
+
+        function LocationCdMoveBlur() {
+            var idLocationCdMoveName = '#txtLocationCdMove'
+            var msgLocationCdMoveName = '#msgLocationCdMove'
+
+            $(msgLocationCdMoveName).html("");
+            $(msgLocationCdMoveName).removeClass("field-validation-error");
+            $(idLocationCdMoveName).removeClass("input-validation-error");
+        }
+
+        function SetCheckValue(lineNo) {
+            $('input[type=checkbox][id$="SearchConditions.LocMoves[' + lineNo + '].CheckedValue"]').each(function (i, item) {
+                $(item).trigger('click');
+            });
+        }
+    </script>
+}

@@ -1,0 +1,264 @@
+﻿@using Wms.Areas.Master.Resources;
+@using CResource = Wms.Common.Resources;
+@using PagedList.Mvc;
+@using Wms.Areas.Master.Extensions;
+@using Wms.Helpers;
+@using Wms.Areas.Master.Controllers;
+@using Wms.Common;
+@using Wms.Areas.Master.Views.Extention;
+
+@model Wms.Areas.Master.ViewModels.EditLayout.EditImport
+
+@{
+    ViewBag.Title = EditLayoutResource.EditLayout_EditImport;
+    Layout = "_EditLayoutBase.cshtml";
+
+}
+<style>
+    .detail {
+        display: flex;
+    }
+
+    .tno {
+        width: 50px;
+    }
+
+    td select {
+        background-color: white;
+        cursor: pointer;
+    }
+</style>
+
+@using (Html.BeginForm("EditImport", "EditLayout", FormMethod.Post, new { enctype = "multipart/form-data", @id = "dataForm" }))
+{
+
+    @Html.AntiForgeryToken()
+
+    <div id="div_search" class="head head_white">
+        <table>
+            <tr>
+                <td class="tdtitle_15">@EditLayoutResource.LayoutName</td>
+                <td>
+                    @Html.HiddenFor(model => model.TemplateId)
+                    @Html.DisplayAndHiddenFor(model => model.LayoutName)
+                </td>
+                <td class="tdtitle_15">@EditLayoutResource.IoClass</td>
+                <td>
+                    @Html.HiddenFor(model => model.IoClass)
+                    @Html.DisplayAndHiddenFor(model => model.IoClassName)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <hr />
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_15">@EditLayoutResource.EncodeType :</td>
+                <td colspan="1">
+                    @Html.EnumDropDownInSortArea(model => model.EncodeType)
+                </td>
+                <td class="tdtitle_15">@EditLayoutResource.FileType :</td>
+                <td>
+                    @Html.EnumDropDownInSortArea(model => model.FileTypeImport)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_15">@EditLayoutResource.HeadingRow :</td>
+                <td colspan="2">
+                    @Html.EnumDropDownInSortArea(model => model.HeadingRow)
+                </td>
+            </tr>
+            <tr>
+
+                <td class="tdtitle_15">@EditLayoutResource.UploadFile  :</td>
+                <td colspan="3">
+                    <div class="d_continer main">
+
+                        <span class="ui-helper-hidden-accessible">
+                            <input type="image" />
+                        </span>
+
+                        <div class="pgtitlearea">
+                            <h1 id="fileUploadTitle"></h1>
+                        </div>
+
+                        <div id="myDropzone" class="dropzone dz-clickable">
+                            <div class="dz-default dz-message" data-dz-message="">
+                                <span>@FormsResource.FileUploadMessage</span>
+                            </div>
+                        </div>
+                        @Html.TextBoxFor(model => model.Files, "", new { @type = "file", @multiple = "multiple", @style = "display:none;" })
+
+                        <div>
+                            <ul id="myDropzone-list"></ul>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <hr />
+                </td>
+            </tr>
+
+        </table>
+        <div class="detail Container">
+            <div class="fileInfo">
+                @if (Model.FileInfos != null)
+                {
+                    @Html.Partial("_EditImportDetail", Model);
+                }
+            </div>
+            <div class=" Container">
+                <div class="table-info-header">
+                    @EditLayoutResource.TargetTable :
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @if (Model.IsNewLayout)
+                            {
+                                @Html.DropDownListFor(model => model.ObjectId, Model.ObjectList, string.Empty)
+                                @Html.ValidationMessageFor(model => model.ObjectId)
+                            }
+                            else
+                            {
+                                @Html.HiddenFor(model => model.ObjectId)
+                                @Html.DropDownListFor(model => model.ObjectId, Model.ObjectList, string.Empty, new { @disabled = true })
+                            }
+                        </div>
+                    </div>
+                    <button type="button" id="btnGetInfo" onclick="getObjectDetail()" style="margin:0px 5px 0px 5px" class="btn btn-outline-dark">@EditLayoutResource.GetInfomation</button>
+                </div>
+                <div class="data tb_scroll">
+                    @if (Model.TableInfos != null)
+                    {
+                        @Html.Partial("_EditImportData", Model);
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+}
+
+
+@section EditLayoutBasefooter{
+    <button type="button" id="btnBack" class="btn  btn-outline-dark btnsize">@EditLayoutResource.Back</button>
+    <div class="btnarea">
+        @Html.CreateOrUpdateButtonFor(Model.IsNewLayout, "dataForm")
+    </div>
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+@Scripts.Render("~/bundles/FileUpload")
+
+@section EditLayoutScripts{
+
+    <script>
+
+        $(function () {
+            changeDropzoneUrl();
+            if ($('#objectData').children().length == 0) {
+                importTableHide();
+                changeObjectId();
+            } else {
+                itemOff('#btnGetInfo');
+            }
+        })
+
+        function importTableHide() {
+            $('.table-info-header').hide();
+        }
+
+        function importTableShow() {
+            $('.table-info-header').show();
+        }
+
+        var files = $("#Files");
+        var dt = new DataTransfer();
+        // Dropzone class:
+        var myDropzone = new Dropzone("div#myDropzone", {url:"@Url.Action("FileDrop", "EditLayout", new { area = "Master" })"});
+        myDropzone.on("complete", function (file) {
+
+            myDropzone.removeAllFiles();
+            if (file.xhr.response == "") {
+                alert('@(EditLayoutResource.NotExistsImportData)');
+                return;
+            }
+
+            $('.fileInfo').html(file.xhr.response);
+            importTableShow();
+        });
+
+        addChangeEvent(
+            '#EncodeType',
+            function () {
+                changeDropzoneUrl();
+            });
+
+        addChangeEvent(
+            '#FileTypeImport',
+            function () {
+                changeDropzoneUrl();
+            });
+
+        addChangeEvent(
+            '#HeadingRow',
+            function () {
+                changeDropzoneUrl();
+            });
+
+        addClickEvent('.confirm-update', 
+            function () {
+                postForm('#dataForm','@Url.EditLayoutAction("EditImport")');
+            }
+        )
+
+        addChangeEvent('#ObjectId', changeObjectId);
+
+        function changeObjectId() {
+            var val = $('#ObjectId').val();
+            if (val == "") {
+                itemOff('#btnGetInfo');
+            } else {
+                itemOn('#btnGetInfo');
+            }
+            // オブジェクトIDが変更されたタイミングでは確定不可能とする
+            // 表示されているテーブル情報と、オブジェクトIDが一致しないまま登録される為。
+            itemOff('#confirmButton');
+        }
+
+        function changeConfirmButton() {
+            var val = $('#ObjectId').val();
+            if (val == "") {
+                itemOff('#confirmButton');
+            } else {
+                itemOn('#confirmButton');
+            }
+        }
+
+        function changeDropzoneUrl() {
+            var encodeType = $('#EncodeType').val();
+            var fileType = $('#FileTypeImport').val();
+            var headingRow = $('#HeadingRow').val();
+            myDropzone.options.url = "@Url.EditLayoutAction("FileDrop")"
+                + "encodeType=" + encodeType
+                + "&fileType=" + fileType
+                + "&headingRow=" + headingRow;
+        }
+
+        function getObjectDetail() {
+            $.get('@Url.EditLayoutAction("GetEditImportObjectDetail")',
+                { shipperId: shipperId, objectId: $('#ObjectId').val()},
+                function (data) {
+                    $('.data').html(data);
+                    formUtil.resetValidation('#dataForm');
+                    changeConfirmButton();
+                }
+            )
+        }
+
+    </script>
+}

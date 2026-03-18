@@ -1,0 +1,250 @@
+﻿@model Wms.Areas.Master.Models.Transporter
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Transporter02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Transporter", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+@*message*@
+@Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+@* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ShipperId)
+            @Html.HiddenFor(model => model.TransporterId)
+            @Html.HiddenFor(model => model.TransporterName)
+            @Html.HiddenFor(model => model.TransporterShortName)
+            @Html.HiddenFor(model => model.TransportWeekFlags)
+            @Html.HiddenFor(model => model.TransporterClass)
+            @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+        <div class="form_content">
+            <dl>
+                <dt>@Html.DisplayNameFor(model => model.TransporterId)</dt>
+                <dd>
+                    @Html.Raw(Model.TransporterId)
+                </dd>
+            </dl>
+            <dl>
+                <dt>@Html.DisplayNameFor(model => model.TransporterName)</dt>
+                <dd>
+                    @Html.Raw(Model.TransporterName)
+                </dd>
+            </dl>
+            <dl>
+                <dt>@Html.DisplayNameFor(model => model.TransporterShortName)</dt>
+                <dd>
+                    @Html.Raw(Model.TransporterShortName)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TransporterTel)
+                </dt>
+                <dd>
+                    @Html.EditorFor(model => model.TransporterTel, new { htmlAttributes = new { tabindex = "1", @placeholder = "", @class = "w_10_normal _pm" } })
+                    @Html.ValidationMessageFor(model => model.TransporterTel, "", new { })
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TransporterFax)
+                </dt>
+                <dd>
+                    @Html.EditorFor(model => model.TransporterFax, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "w_10_normal _pm" } })
+                    @Html.ValidationMessageFor(model => model.TransporterFax, "", new { })
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TransporterMail)
+                </dt>
+                <dd>
+                    @Html.EditorFor(model => model.TransporterMail, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "_pm" } })
+                    @Html.ValidationMessageFor(model => model.TransporterMail, "", new { })
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TransporterZip)
+                </dt>
+                <dd>
+                    @Html.EditorFor(model => model.TransporterZip, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "w_10_normal _pm" } })
+                    @Html.ValidationMessageFor(model => model.TransporterZip, "", new { })
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TransporterAddress1)
+                </dt>
+                <dd>
+                    @Html.EditorFor(model => model.TransporterAddress1, new { htmlAttributes = new { tabindex = "5", @placeholder = "", @class = "_pm" } })
+                    @Html.ValidationMessageFor(model => model.TransporterAddress1, "", new { })
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TransporterAddress2)
+                </dt>
+                <dd>
+                    @Html.EditorFor(model => model.TransporterAddress2, new { htmlAttributes = new { tabindex = "6", @placeholder = "", @class = "_pm" } })
+                    @Html.ValidationMessageFor(model => model.TransporterAddress2, "", new { })
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.InvoicePrintFlag)
+                </dt>
+                <dd>
+                    <label class="chklist">
+                        @Html.CheckBoxFor(model => model.InvoicePrintFlag, new { tabindex = "7", @placeholder = "", @class = "check-box _pm" })
+                        <span class="chk_parts">
+                        </span>
+                    </label>
+                </dd>
+            </dl>
+        </div>
+
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+@* Bottom Nav *@
+@section Basefooter{
+    <div class="btnarea">
+        @*@Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Transporter", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })*@
+        <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+        <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+        <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+    </div>
+}
+@Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //TransporterMasterEdit
+        var TransporterMasterEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+             * Global variables
+             */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+             * Jquery selector
+             */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+             * Init function
+             */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+             * Set up event
+             */
+            setUpEvent: function () {
+                /**
+                 * Allow overwrite record
+                 */
+                $(TransporterMasterEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(TransporterMasterEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+             * Check error when update record.
+             */
+            checkUpdateError: function () {
+                if ($(TransporterMasterEdit.SELECTORS.hdUpdateError).val() === TransporterMasterEdit.CONST.STR_TRUE) {
+                    if ($(TransporterMasterEdit.SELECTORS.hdUpdateError).attr(TransporterMasterEdit.CONST.ATTR_ERROR_CODE) === TransporterMasterEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(TransporterMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(TransporterMasterEdit.SELECTORS.exclusiveUpdateDialog, TransporterMasterEdit.GLOBAL.titleInformation, TransporterMasterEdit.GLOBAL.msgExclusiveUpdate);
+                        $(TransporterMasterEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(TransporterMasterEdit.SELECTORS.hdUpdateError).attr(TransporterMasterEdit.CONST.ATTR_ERROR_CODE) === TransporterMasterEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(TransporterMasterEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(TransporterMasterEdit.SELECTORS.overWriteRecordDialog, TransporterMasterEdit.GLOBAL.titleInformation, (TransporterMasterEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(TransporterMasterEdit.SELECTORS.AreaId).val())));
+                        $(TransporterMasterEdit.SELECTORS.btnSubmitOverWriteDialog).attr(TransporterMasterEdit.SELECTORS.form, TransporterMasterEdit.SELECTORS.frmUpdate).attr(TransporterMasterEdit.CONST.FORM_METHOD, TransporterMasterEdit.CONST.POST).attr(TransporterMasterEdit.CONST.FORM_ACTION, '@Url.Action("Update", "Transporter", new { area = "Master" })').attr(TransporterMasterEdit.SELECTORS.form, TransporterMasterEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+
+        /* 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        /**
+         * Register event click for buttons
+         */
+        $(document).ready(function () {
+            TransporterMasterEdit.init();
+        });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

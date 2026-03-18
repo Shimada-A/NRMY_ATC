@@ -1,0 +1,160 @@
+﻿@using Wms.Helpers;
+@using Share.Common;
+@using Wms.Areas.Stock.Resources;
+
+@model Wms.Areas.Stock.ViewModels.Adjust.AdjustCreateViewModel
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_STK_Adjust;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Create", "Adjust", FormMethod.Post, new { id = "frmCreate", @leave_confirm = "yes" }))
+{
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    <div class="Container">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.CenterId)
+        <div class="form_content">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.LocationCd)
+                </dt>
+                <dd>
+                    @Html.EditorFor(m => m.LocationCd)
+                    @Html.ValidationMessageFor(m => m.LocationCd)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.BoxNo)
+                </dt>
+                <dd>
+                    @Html.EditorFor(m => m.BoxNo)
+                    @Html.ValidationMessageFor(m => m.BoxNo)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.ItemSkuId)
+                </dt>
+                <dd>
+                    @Html.EditorFor(m => m.ItemSkuId)
+                    @Html.ValidationMessageFor(m => m.ItemSkuId)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.Jan)
+                </dt>
+                <dd>
+                    @Html.EditorFor(m => m.Jan)
+                    @Html.ValidationMessageFor(m => m.Jan)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.InvoiceNo)
+                </dt>
+                <dd>
+                    @Html.EditorFor(m => m.InvoiceNo)
+                    @Html.ValidationMessageFor(m => m.InvoiceNo)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.StockQty)
+                </dt>
+                <dd>
+                    @Html.EditorFor(m => m.StockQty)
+                    @Html.ValidationMessageFor(m => m.StockQty)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.AdjustReasonCd)
+                </dt>
+                <dd>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.GeneralDropDownFor(m => m.AdjustReasonCd, "ADJUST_REASON_CD", Model.CenterId, CommonResource.None, new { @class = "w_10_normal" })
+                        </div>
+                    </div>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.Note)
+                </dt>
+                <dd>
+                    @Html.EditorFor(m => m.Note, new { htmlAttributes = new { @class = "w_50_normal" } })
+                    @Html.ValidationMessageFor(m => m.Note)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.SlipNo)
+                </dt>
+                <dd>
+                    @Html.EditorFor(m => m.SlipNo)
+                    @Html.ValidationMessageFor(m => m.SlipNo)
+                    <br /><label class="bluecolor">@AdjustResource.MsgSlipNo</label>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+
+    @section Basefooter{
+        <div class="btnarea">
+            @*@Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Adjust", new { area = "Stock" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })*@
+            <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+            <button id="btnCreateHidden" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_CREATE</button>
+            <button id="btnCreate" type="button" class="btn btn-dark btnsize">@FormsResource.BTN_CREATE</button>
+        </div>
+    }
+
+}
+@section LayoutScripts{
+    <script>
+        $("#btnCreate").on("click", function () {
+            if (!$("#ItemSkuId").val() && !$("#Jan").val()) {
+                $("#ItemSkuId")
+                    .data("rule-required", true)
+                    .data("msg-required", "@Wms.Areas.Stock.Resources.AdjustResource.RequiredWhichJan");
+                $("#Jan")
+                    .data("rule-required", true)
+                    .data("msg-required", "@Wms.Areas.Stock.Resources.AdjustResource.RequiredWhichJan");
+            } else {
+                $("#ItemSkuId").data("rule-required", false);
+                $("#Jan").data("rule-required", false);
+            }
+
+            if (!validateForm($('#frmCreate'))) {
+                return;
+            }
+            $('#btnCreateHidden').click();
+        });
+
+        //$('#submitCreate').on("click", function () {
+        //     $("#frmCreate").submit();
+        //});
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

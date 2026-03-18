@@ -1,0 +1,30 @@
+﻿@*
+    ブランド検索のモーダルダイアログ
+    BrandSearchModal.js が必要
+*@
+<div id="brandSearchModalDialog" style="display:none;">
+    <div class="d_continer main">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        @using (Ajax.BeginForm(
+                "Index",
+                "BrandSearchModal",
+                new { area = "Master" },
+                new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "brandSearchResult", OnComplete = "brandSearchModal.setCheckBoxCounter();vendorSearchModal.adjust();enableSubmit();" },
+                new { id = "frmBrandSearch" }))
+        {
+        <div id="brandSearchResult">
+            @Html.Action("Index", "BrandSearchModal", new { area = "Master" })
+        </div>
+        }
+        <div class="bottomnav">
+            <div class="btnarea">
+                <button id="brandClose" type="button" class="btn btn-outline-dark">@FormsResource.Close</button>
+                <button id="brandSelect" type="button" class="btn btn-dark">@FormsResource.BTN_SELECT</button>
+            </div>
+        </div>
+        @* 検索条件を変えてもチェックした値を保持するためhiddenで保持する *@
+        <div id="checked"></div>
+        @* 確定した店舗を保持する(確定せずに閉じたときに変わらないように) *@
+        <div id="selectedBrand"></div>
+    </div>
+</div>

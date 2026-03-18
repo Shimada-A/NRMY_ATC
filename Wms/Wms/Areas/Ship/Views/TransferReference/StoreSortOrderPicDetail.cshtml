@@ -1,0 +1,241 @@
+﻿@using Share.Common;
+@using Wms.Common;
+@using PagedList.Mvc;
+@using Wms.Areas.Ship.Resources;
+@using Wms.Areas.Ship.ViewModels.TransferReference;
+@model Wms.Areas.Ship.ViewModels.TransferReference.StoreSortOrderPicDetailViewModel
+
+<div id="dialogStoreSortOrderPicDetail" class="d_continer main">
+
+    @if (Model.Head != null)
+    {
+        @* Sublbarea *@
+        <div class="color-blue">
+            @TransferReferenceResource.TitleStoreSortOrderOicDetail
+            <table>
+                <tr>
+                    <td class="color-blue">
+                        @if (Model.Head.ShipKind == Wms.Common.ShipKinds.Dc)
+                        {
+                            @TransferReferenceResource.BatchNoD
+                            @Html.DisplayFor(model => model.Head.BatchNo)
+                            @Html.DisplayFor(model => model.Head.BatchName)
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="sublbarea no_border stock_detail_head">
+            <div class="sortarea color-blue">
+                <ul>
+                    <li>
+                        @TransferReferenceResource.ShipToStoreQtyD @Html.DisplayFor(model => model.Head.ShipToStoreQty)
+                    </li>
+                    <li>
+                        @TransferReferenceResource.ItemSkuQtyD @Html.DisplayFor(model => model.Head.ItemSkuQty)
+                    </li>
+                    <li>
+                        @TransferReferenceResource.ShipInstructSeqQtyD @Html.DisplayFor(model => model.Head.ShipInstructSeqQty)
+                    </li>
+                    <li>
+                        @TransferReferenceResource.AllHikiQtyD @Html.DisplayFor(model => model.Head.AllocQty)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    @* Container *@
+    <div class="dialog_scroll" style="margin-top:10px;height:95%;">
+        @* Content *@
+        <div class="tb_scroll" style="height:100%;">
+            <table class="table table-bordered" id="listData">
+                <thead>
+                    <tr>
+                        <th class="bg-grey align-middle w_5_normal">
+                            <br />
+                            @TransferReferenceResource.Brand
+                        </th>
+                        <th class="bg-grey align-middle w_5_normal">
+                            <br />
+                            @TransferReferenceResource.LaneNo
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.ShipToStore<br />
+                            @TransferReferenceResource.Qty
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.Sku<br />
+                            @TransferReferenceResource.Qty
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.Alloc<br />
+                            @TransferReferenceResource.Qty
+                        </th>
+                        <th class="bg-grey align-middle">
+                            @TransferReferenceResource.End<br />
+                            @TransferReferenceResource.Qty1
+                        </th>
+                        <th class="bg-grey align-middle redcolor">
+                            @TransferReferenceResource.StockOutD
+                            <br />
+                            @TransferReferenceResource.Insert
+                        </th>
+                        <th class="bg-grey align-middle redcolor">
+                            @TransferReferenceResource.StockOutD<br />
+                            @TransferReferenceResource.Commit
+                        </th>
+                        <th class="bg-grey align-middle w_60_normal text-center">
+                            <br />
+                            50
+                        </th>
+                        <th class="bg-grey align-middle">
+                            <br />
+                            @TransferReferenceResource.Percent
+                        </th>
+                    </tr>
+
+                </thead>
+                @if (Model.StoreSortResults != null && Model.StoreSortResults.StoreSortResults.Any())
+                {
+                    <tbody>
+                        @foreach (var cModel in Model.StoreSortResults.StoreSortResults.Select((v, i) => new { v, i }))
+                        {
+                            <tr>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.BrandId)<br />
+                                    @Html.DisplayFor(modelItem => cModel.v.BrandShortName)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => cModel.v.LaneNo)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.ShipToStoreQty)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.ItemSkuQty)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.SortQty)
+                                </td>
+                                <td class="align-middle text-right redcolor">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutRegQty)
+                                </td>
+                                <td class="align-middle text-right redcolor">
+                                    @Html.DisplayFor(modelItem => cModel.v.StockOutFixQty)
+                                </td>
+                                <td class="align-middle text-right" style="padding:0">
+                                    <div class='tcdc_chart_td_chart percent-height'>
+                                        <div class='progress-bar' role='progressbar' aria-valuenow='87' aria-valuemin='0' aria-valuemax='100' style='width:@(cModel.v.Percent)%;background-color:blue;'>
+                                            <span class='sr-only'>@(cModel.v.Percent)% Complete</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="align-middle text-right">
+                                    @Html.DisplayFor(modelItem => cModel.v.Percent)@(cModel.v.Percent == null ? "" : "%")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                }
+            </table>
+
+            @if (Model.OrderPicResults != null)
+            {
+                <table class="table table-bordered" id="listData">
+                    <thead>
+                        <tr>
+                            <th class="bg-grey align-middle w_5_normal">
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @TransferReferenceResource.ShipToStore<br />
+                                @TransferReferenceResource.Qty
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @TransferReferenceResource.Sku<br />
+                                @TransferReferenceResource.Qty
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @TransferReferenceResource.Alloc<br />
+                                @TransferReferenceResource.Qty
+                            </th>
+                            <th class="bg-grey align-middle">
+                                @TransferReferenceResource.End<br />
+                                @TransferReferenceResource.Qty1
+                            </th>
+                            <th class="bg-grey align-middle redcolor">
+                                @TransferReferenceResource.StockOutD
+                                <br />
+                                @TransferReferenceResource.Insert
+                            </th>
+                            <th class="bg-grey align-middle redcolor">
+                                @TransferReferenceResource.StockOutD<br />
+                                @TransferReferenceResource.Commit
+                            </th>
+                            <th class="bg-grey align-middle w_60_normal text-center">
+                                <br />
+                                50
+                            </th>
+                            <th class="bg-grey align-middle">
+                                <br />
+                                @TransferReferenceResource.Percent
+                            </th>
+                        </tr>
+
+                    </thead>
+                    @if (Model.OrderPicResults.OrderPicResults.Any())
+                    {
+                        <tbody>
+                            @foreach (var cModel in Model.OrderPicResults.OrderPicResults.Select((v, i) => new { v, i }))
+                            {
+                                <tr>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => cModel.v.LaneNo)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.ShipToStoreQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.ItemSkuQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.AllocQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.SortQty)
+                                    </td>
+                                    <td class="align-middle text-right redcolor">
+                                        @Html.DisplayFor(modelItem => cModel.v.StockOutRegQty)
+                                    </td>
+                                    <td class="align-middle text-right redcolor">
+                                        @Html.DisplayFor(modelItem => cModel.v.StockOutFixQty)
+                                    </td>
+                                    <td class="align-middle text-right" style="padding:0">
+                                        <div class='tcdc_chart_td_chart percent-height'>
+                                            <div class='progress-bar' role='progressbar' aria-valuenow='87' aria-valuemin='0' aria-valuemax='100' style='width:@(cModel.v.Percent)%;background-color:blue;'>
+                                                <span class='sr-only'>@(cModel.v.Percent)% Complete</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.Percent)@(cModel.v.Percent == null ? "" : "%")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            }
+        </div>
+
+    </div>
+    @*Bottomnav*@
+    <div class="bottomnav">
+        <div class="btnarea">
+            <button id="btnDetailsClose" type="button" class="btn btn-outline-dark btn_close" onclick="closeDialog()">@FormsResource.Close</button>
+        </div>
+    </div>
+</div>

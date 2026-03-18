@@ -1,0 +1,93 @@
+﻿@model Wms.Areas.Styleguide.Models.TextBoxNumber
+
+@{
+    ViewBag.Title = "TextBoxNumber";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section LayoutChildStyle{
+}
+
+<div class="head head_white">
+    <div class="pgtitlearea">
+        <h1>TextBoxNumber</h1>
+        <p class="pg_caption">数値型のTextBoxの使い方</p>
+    </div>
+</div>
+
+<form>
+    <div class="container">
+        <div class="content of">
+            <h3>Byte</h3>
+            <div class="mtop20">
+                @* Rangeはモデルの属性でつける *@
+                @Html.EditorFor(m => m.ByteField, new { htmlAttributes = new { data_step = 2 } })
+                @Html.ValidationMessageFor(m => m.ByteField)
+            </div>
+        </div>
+        <div class="content of">
+            <h3>SByte</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.SByteField, new { htmlAttributes = new { data_step = 0.1 } })
+                @Html.ValidationMessageFor(m => m.SByteField)
+            </div>
+        </div>
+        <div class="content of">
+            <h3>Decimal</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.DecimalField, new { htmlAttributes = new { } })
+            </div>
+        </div>
+        <div class="content of">
+            <h3>Double</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.DoubleField, new { htmlAttributes = new { } })
+            </div>
+        </div>
+        <div class="content of">
+            <h3>Float</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.FloatField, new { htmlAttributes = new { } })
+            </div>
+        </div>
+        <div class="content of">
+            <h3>Int</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.IntField, new { htmlAttributes = new { } })
+            </div>
+        </div>
+        <div class="content of">
+            <h3>UInt</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.UIntField, new { htmlAttributes = new { } })
+            </div>
+        </div>
+        <div class="content of">
+            <h3>Long</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.LongField, new { htmlAttributes = new { } })
+            </div>
+        </div>
+        <div class="content of">
+            <h3>ULong</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.ULongField, new { htmlAttributes = new { } })
+            </div>
+        </div>
+        <div class="content of">
+            <h3>Short</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.ShortField, new { htmlAttributes = new { } })
+            </div>
+        </div>
+        <div class="content of">
+            <h3>UShort</h3>
+            <div class="mtop20">
+                @Html.EditorFor(m => m.UShortField, new { htmlAttributes = new { } })
+            </div>
+        </div>
+    </div>
+</form>
+
+@section LayoutChildScripts{
+}

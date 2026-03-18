@@ -1,0 +1,744 @@
+﻿@using Wms.Helpers;
+@model Wms.Areas.Master.ViewModels.Location.Index
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Location01;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/bundles/FileUploadCss")
+
+@* Head *@
+<div id="div_search" class="head head_white collapse">
+    @using (Html.BeginForm("Search", "Location", FormMethod.Get, new { id = "frmSearch" }))
+    {
+        <table>
+            <tr>
+                <td class="tdtitle">@LocationResource.CenterIdSearch</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.CenterDropDownFor(
+                                model => model.SearchConditions.CenterId
+                                , Wms.Common.Profile.User.UserId
+                                , "", new { @id = "ddlCenterId", tabindex = "1" })
+                        </div>
+                    </div>
+                </td>
+                <td colspan="2">
+                    <div class="sort">
+                        <div class="sort_inner">
+                            <span class="bluecolor">
+                                @MessageResource.UploadCenterId
+                            </span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle_15">@LocationResource.LocationClassSearch</td>
+                <td>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.DropDownListFor(model => model.SearchConditions.LocationClass, (IEnumerable<SelectListItem>)ViewBag.Class, LocationResource.Unspecified, new { id = "ddlSearchClass", tabindex = "2" })
+                        </div>
+                    </div>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@LocationResource.Locsec1Search</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.Locsec1, new { htmlAttributes = new { @class = "w_6_short", @id = "txtLocsec1", tabindex = "3" } })
+                    @Html.LikeMark(CommonsResource.Full)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@LocationResource.Locsec2Search</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.Locsec2, new { htmlAttributes = new { @class = "w_6_short", @id = "txtLocsec2", tabindex = "4" } })
+                    @Html.LikeMark(CommonsResource.Full)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@LocationResource.Locsec3Search</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.Locsec3, new { htmlAttributes = new { @class = "w_6_short", @id = "txtLocsec3", tabindex = "5" } })
+                    @Html.LikeMark(CommonsResource.Full)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@LocationResource.Locsec4Search</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.Locsec4, new { htmlAttributes = new { @class = "w_6_short", @id = "txtLocsec4", tabindex = "6" } })
+                    @Html.LikeMark(CommonsResource.Full)
+                </td>
+            </tr>
+            <tr>
+                <td class="tdtitle">@LocationResource.Locsec5Search</td>
+                <td colspan="3">
+                    @Html.EditorFor(model => model.SearchConditions.Locsec5, new { htmlAttributes = new { @class = "w_6_short", @id = "txtLocsec5", tabindex = "7" } })
+                    @Html.LikeMark(CommonsResource.Like)
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <button type="button" id="btnUpload" class="Upload _pm">
+                        <img src="~/Content/img/upload.png" />
+                        @FormsResource.BTN_UPLOAD
+                    </button>
+                </td>
+                <td>
+                    @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Location", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark", tabindex = "8" })
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="9">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="page" id="page" value="" />
+        @Html.HiddenFor(model => model.SearchConditions.SortKey, new { id = "hidSortKey" })
+        @Html.HiddenFor(model => model.SearchConditions.Sort, new { id = "hidSort" })
+        @Html.HiddenFor(model => model.SearchConditions.SearchFlag, new { id = "hidSearchFlag"})
+    }
+</div>
+
+<div class="message-area">
+    @Html.Partial("_InformationMessageContent", TempData[AppConst.SUCCESS] ?? "")
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+</div>
+
+@if (Model.LocationResult.Locations != null)
+{
+    if (Model.LocationResult.Locations.Count() > 0)
+    {
+        <div class="sublbarea no_border" style="height:54px;margin-right:40px;margin-bottom: -10px;">
+            <div class="sortarea">
+                <ul>
+                    <li>
+                        <button type="button" id="btnDownloadTemp" class="download">
+                            <img src="~/Content/img/download.png" />
+                            @LocationResource.BTN_DOWNLOAD_TEMP
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" id="btnDownload" class="download">
+                            <img src="~/Content/img/download.png" />
+                            @FormsResource.BTN_DOWNLOAD
+                        </button>
+                    </li>
+                    <li style="display:none;">
+                        <button type="button" id="btnPrintLabel" class="download" style="width:200px">
+                            <img src="~/Content/img/print.png" />
+                            @LocationResource.BtnPrint
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" id="btnPrintA4" class="download" style="width:200px">
+                            <img src="~/Content/img/print.png" />
+                            @LocationResource.BtnPrintA4
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+    @* Sublbarea *@
+    <div class="sublbarea">
+        <div class="sortarea">
+            <ul>
+                <li>
+                    @FormsResource.DISPLAY_SHORT
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.SortKey, new { Name = "SearchConditions.SortKey", @id = "ddlSortKey", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="sort">
+                        <div class="sort_inner">
+                            @Html.EnumDropDownListFor(model => model.SearchConditions.Sort, new { Name = "SearchConditions.Sort", @id = "ddlSort", @onchange = "getSortData();" })
+                        </div>
+                    </div>
+                </li>
+                <li class="totalcount">
+                    @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.LocationResult.Locations.TotalItemCount.ToString("N0"))
+                </li>
+            </ul>
+            @if (Model.LocationResult.Locations.Count() > 0)
+            {
+                @Html.PagedListPager(Model.LocationResult.Locations, Page => Url.Action("Search", "Location", new { Page, @class = "btn-outline-dark" }), PagerHelper.Default)
+            }
+        </div>
+    </div>
+
+    @* Container *@
+    <div class="Container">
+
+        @* Content *@
+        @if (Model.LocationResult.Locations.Count() == 0)
+        {
+            <div>
+                <p>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <div class="tb_scroll" style="height:65vh;">
+
+                    @using (Html.BeginForm("Edit", "Location", FormMethod.Post, new { id = "frmUpdate" }))
+                    {
+                        <table class="table table-bordered" id="listData">
+                            <thead>
+                                <tr>
+                                    <th class="bg-grey">&nbsp;</th>
+                                    <th class="bg-grey">
+                                        @LocationResource.No
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.LocationCd
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.Locsec1
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.Locsec2
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.Locsec3
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.Locsec4
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.Locsec5
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.LocationClass
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.Case
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.Grade
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.AllocPriority
+                                    </th>
+                                    <th class="bg-grey">
+                                        @LocationResource.PickingGroupNo
+                                    </th>
+                                    <th hidden>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @Html.AntiForgeryToken()
+                                @Html.Partial("_DeleteConfirmMessageDialog", @MessagesResource.QUE_DELETE)
+                                @foreach (var cModel in Model.LocationResult.Locations.Select((v, i) => new { v, i }))
+                                {
+                                    var key = String.Format("Locations[{0}].", cModel.i);
+                                    <tr>
+                                        <td class="align-middle w_checkbox">
+                                            <label class="checkboxgroup">
+                                                @if (cModel.v.MenteDisableFlag == 0)
+                                                {
+                                                    @Html.CheckBox(key + "IsCheck", new { @id = (key + "CheckedValue"), @class = "check-box" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.CheckBox(key + "IsCheck", new { @id = (key + "CheckedValue"), @class = "check-box", disabled = true })
+                                                }
+                                                <span class="chk_parts"></span>
+                                            </label>
+                                        </td>
+                                        <td class="align-middle text-right w_no">
+                                            @((cModel.i + 1) + (Model.LocationResult.Locations.PageNumber - 1) * Model.LocationResult.Locations.PageSize)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationCd)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec1)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec2)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec3)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec4)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.Locsec5)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.LocationClass)<br />
+                                            <span>@Html.DisplayFor(modelItem => cModel.v.LocationName)</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CaseClassName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.GradeName)
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            @Html.DisplayFor(modelItem => cModel.v.AllocPriority)
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.PickingGroupNo)
+                                        </td>
+                                        <td class="template" hidden>
+                                            @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.LocationCd, new { Name = key + "LocationCd" })
+                                            @Html.HiddenFor(modelItem => cModel.v.ShipperId, new { Name = key + "ShipperId" })
+                                            @Html.HiddenFor(modelItem => cModel.v.UpdateCount, new { Name = key + "UpdateCount" })
+                                            @Html.HiddenFor(modelItem => cModel.v.Rid, new { Name = key + "Rid", @id = key + "Rid", @class = "rowid" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <input id="hiddata" type="hidden" name="rowid" />
+                    }
+                </div>
+            </div>
+        }
+    </div>  }
+
+@Html.Partial("_FileUploadModal")
+@*Bottomnav*@
+@section Basefooter{
+    @Html.Partial("_CheckBoxCounter")
+    <div class="btnarea">
+        @if (Wms.Common.Profile.User.GetUsable_Class(Request.Url) != "1")
+        {
+            <button type="submit" id="btnCreate" class="btn btn-outline-dark btnsize" form="frmSearch" formmethod="get" formaction=@Url.Action("Create", "Location", new { area = "Master", controller = "Location", action = "Create" })>@FormsResource.BTN_NEW</button>
+            @*@Html.ActionLink(FormsResource.BTN_NEW, "Create", "Location", null, new { @class = "btn btn-outline-dark btnsize _pm", @id = "lnkCreate", tabindex = "1001" })*@
+            <button type="submit" id="btnDelete" class="btn btn-outline-danger btnsize _pm">@FormsResource.BTN_DELETE</button> }
+        else
+        {
+            <button type="submit" id="btnCreate" class="btn btn-outline-dark btnsize _pm" disabled>@FormsResource.BTN_NEW</button>
+            <button type="submit" id="btnDelete" class="btn btn-outline-danger btnsize _pm" disabled>@FormsResource.BTN_DELETE</button>
+        }
+        <button id="btnDeleteHidden" type="button" class="btn btn-outline-danger _pm" data-toggle="modal" data-target="#delconfirm" hidden>@FormsResource.BTN_DELETE</button>
+        <button type="submit" id="btnUpdate" class="btn btn-dark btnsize" form="frmUpdate" formmethod="post" formaction=@Url.Action("Edit", "Location", new { area = "Master", controller = "Location", action = "Edit" })>@FormsResource.BTN_DETAIL</button>
+    </div>
+}
+@** スクリプト *@
+@section LayoutScripts{
+    @Scripts.Render("~/bundles/FileUpload")
+<script>
+    /**
+     * Country class
+     */
+    var LocationsView = {
+
+        /**
+         * CONST Object
+         */
+        CONST: {
+            FORM_METHOD: 'formmethod',
+            FORM_ACTION: 'formaction',
+            POST: 'post',
+            FORM: 'form',
+            METHOD: 'method',
+            ACTION: 'action'
+        },
+
+        /**
+         * SELECTORS Object
+         */
+        SELECTORS: {
+            chkInTable: '#listData input[type=checkbox][id$=".CheckedValue"]',
+            chkCheckedInTable: '#listData input[type=checkbox][id$=".CheckedValue"]:checked',
+            chkInRow: 'input[type=checkbox][class=check-box]',
+            tblRow: '#listData tbody tr',
+            btnCheckAll: '#rbCheckAll',
+            btnUnCheckAll: '#rbUnCheckAll',
+            rowSelected: '#spnCheckedCounter',
+            chkChecked: ':checkbox:checked',
+            chkLabel: '#listData span.chk_parts',
+            form: 'form',
+            searchForm: '#frmSearch',
+            frmUpdate: 'frmUpdate',
+            btnDelete: '#btnDelete',
+            btnUpdate: '#btnUpdate',
+            btnSearch: '#btnSearch',
+            btnSubmit: 'button[type=submit],input[type=submit]'
+        },
+
+        /**
+            * Init data
+            */
+        init: function () {
+            this.registerEvent();
+            this.setCheckboxs();
+            this.setButtonStatus();
+        },
+
+        /**
+        * Register event for control
+        */
+        registerEvent: function () {
+
+            /**
+            * Stop event fired when click to checkbox
+            */
+            $(LocationsView.SELECTORS.chkLabel).click(function (evt) {
+                evt.stopPropagation();
+            });
+
+            /**
+            * Check box click
+            */
+            $(LocationsView.SELECTORS.chkInTable).click(function (evt) {
+                evt.stopPropagation();
+                LocationsView.setButtonStatus();
+            });
+
+            /**
+            * Button check all clicked
+            */
+            $(LocationsView.SELECTORS.btnCheckAll).click(function () {
+                if ($("#listData").length) {
+                    $(LocationsView.SELECTORS.chkInTable + ':enabled').prop('checked', true);
+                    LocationsView.setRowidsFlag(true);
+                }
+            });
+
+            /**
+            * Button UnCheck all clicked
+            */
+            $(LocationsView.SELECTORS.btnUnCheckAll).click(function () {
+                if ($("#listData").length) {
+                    $(LocationsView.SELECTORS.chkInTable).prop('checked', false);
+                    LocationsView.setRowidsFlag(false);
+                }
+            });
+
+
+            $(LocationsView.SELECTORS.btnSearch).click(function () {
+                LocationsView.setStorageInit();
+                $("#hidSearchFlag").val(true)
+                var urlAction = '@Url.Action("Search", "Location", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "POST");
+                $form.submit();
+            });
+
+            $('btnCreate').click(function () {
+                var urlAction = '@Url.Action("Create", "Location", new { area = "Master" })';
+                var $form = $("#frmSearch");
+                $form.attr("action", urlAction);
+                $form.attr("method", "GET");
+                $form.submit();
+            });
+
+            $(LocationsView.SELECTORS.btnUpdate).click(function () {
+                var target = $("#hiddata").val();
+                if (target == "") {
+                    var list = LocationsView.getCheckList();
+                    $("#hiddata").val(list[0]);
+                } else {
+                    $("#hiddata").val(JSON.parse(target)[0]);
+                }
+                var urlAction = '@Url.Action("Edit", "Location", new { area= "Master" })';
+                $("#frmUpdate").attr("action", urlAction);
+                $("#frmUpdate").attr("method", "POST");
+                $("#frmUpdate").submit();
+
+            //    LocationsView.setStorageInit();
+            });
+
+            $(LocationsView.SELECTORS.btnDelete).click(function () {
+                var list = LocationsView.getCheckList();
+                //LocationsView.setStorageInit();
+                $("#hiddata").val(JSON.stringify(list));
+
+                var urlAction = '@Url.Action("Delete", "Location", new { area= "Master" })';
+                $("#frmUpdate").attr("action", urlAction);
+                $('#btnDeleteHidden').click();
+            });
+        },
+
+        /**
+            * Enable/Disable button Edit
+            */
+        setButtonStatus: function () {
+            LocationsView.setCheckboxs('set')
+        },
+
+        // save page
+        setRowidsFlag: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+                var jrid = JSON.parse(rowids);
+                $.each(jrid, function (key) {
+                    jrid[key] = flag;
+                });
+                storage.setItem('PKeys', JSON.stringify(jrid));
+            }
+            LocationsView.setButtonStatus();
+        },
+
+        setCheckboxs: function (flag) {
+            var storage = window.localStorage;
+            var rowids = storage.getItem('PKeys');
+            if (rowids != null) {
+                var cnt = 0;
+                var jrid = JSON.parse(rowids);
+                var checkboxs = $("#listData input[type=checkbox]:enabled")
+                checkboxs.each(function () {
+                    var row = $(this).parent().parent().parent();
+                    var rowid = row.find(".rowid").val();
+
+                    if (flag == 'set') {
+                        jrid[rowid] = $(this).is(':checked');
+                    }
+                    else {
+                        if (jrid[rowid]) {
+                            $(this).prop("checked", true);
+                        }
+                    }
+                });
+
+                if (flag == 'set') {
+                    storage.setItem('PKeys', JSON.stringify(jrid));
+                }
+
+                $.each(jrid, function (key, value) {
+                    if (value) {
+                        cnt++;
+                    }
+                });
+
+
+                $(LocationsView.SELECTORS.btnDelete).attr('disabled', 'disabled');
+                $(LocationsView.SELECTORS.btnUpdate).attr('disabled', 'disabled');
+
+                if ($('#frmUpdate').length > 0) {
+                    if (cnt > 0) {
+                        if (getUsable_Class() == 3) {
+                            $(LocationsView.SELECTORS.btnDelete).removeAttr('disabled');
+                        }
+                        if (cnt == 1) {
+                            $(LocationsView.SELECTORS.btnUpdate).removeAttr('disabled');
+                        }
+                    }
+
+                    $(LocationsView.SELECTORS.rowSelected).text(cnt);
+                }
+            }
+
+        },
+
+        setStorageInit: function () {
+            if (window.localStorage) {
+
+                var storage = window.localStorage;
+                storage.removeItem('PKeys');
+                var data = {
+                    'SearchConditions.CenterId': $("#ddlSearchLoc").val(),
+                    'SearchConditions.LocationClass': $("#ddlSearchClass").val(),
+                    'SearchConditions.Locsec1': $("#txtLocsec1").val(),
+                    'SearchConditions.Locsec2': $("#txtLocsec2").val(),
+                    'SearchConditions.Locsec3': $("#txtLocsec3").val(),
+                    'SearchConditions.Locsec4': $("#txtLocsec4").val(),
+                    'SearchConditions.Locsec5': $("#txtLocsec5").val()
+                };
+
+
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("GetPKeys", "Location", new { area = "Master" })",
+                    data: data,
+                    async: false,
+                    success: function (data) {
+                        var rowids = {};
+                        $.each(data, function (n, value) {
+                            rowids[value] = false;
+                        });
+
+                        var storage = window.localStorage;
+                        storage.setItem('PKeys', JSON.stringify(rowids));
+
+                    }
+                });
+            }
+        },
+
+        getCheckList: function () {
+            var list = [];
+            var storage = window.localStorage;
+            rowids = storage.getItem('PKeys');
+
+            if (rowids != null) {
+
+                var jrid = JSON.parse(rowids);
+                $.each(jrid, function (key) {
+                    if (jrid[key]) {
+                        list.push(key);
+                    }
+                });
+            }
+
+            return list;
+        },
+
+    }
+
+    /**
+    * File Download
+    */
+    $("#btnDownload").on("click", function () {
+        var urlAction = '@Url.Action("Download", "Location", new { area = "Master" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "GET");
+        $form.submit();
+
+        setTimeout(function () {
+            var count = LocationsView.getCheckList().length;
+            if (count == 1) {
+                $(LocationsView.SELECTORS.btnUpdate).prop("disabled", false);
+            }
+            if (getUsable_Class()== 3) {
+                if(count >= 1) {
+                $(LocationsView.SELECTORS.btnDelete).prop('disabled', false);
+                }
+            $("#btnCreate").prop("disabled", false);
+            }
+        }, 1000);
+    });
+    $("#btnDownloadTemp").on("click", function () {
+        var urlAction = '@Url.Action("DownloadTemp", "Location", new { area = "Master" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "GET");
+        $form.submit();
+
+        setTimeout(function () {
+            var count = LocationsView.getCheckList().length;
+            if (count == 1) {
+                $(LocationsView.SELECTORS.btnUpdate).prop("disabled", false);
+            }
+            if (getUsable_Class() == 3) {
+                if (count >= 1) {
+                    $(LocationsView.SELECTORS.btnDelete).prop('disabled', false);
+                }
+                $("#btnCreate").prop("disabled", false);
+            }
+        }, 1000);
+    });
+
+    Dropzone.autoDiscover = false;
+    //ファイルアップロード
+    fileUploadModal.init();
+    /**
+    * File Upload
+    */
+    $('#btnUpload').on('click', function () {
+        var urlAction = '@Url.Action("Upload", "Location", new { area = "Master" })';
+        var urlIndexAction = '@Url.Action("Index", "Location", new { area = "Master" })';
+        var urlErrAction = '@Url.Action("UploadErr", "Location", new { area = "Master" })';
+        fileUploadModal.setting({
+            url: urlAction,
+            title: "@LocationResource.Title" + "@FormsResource.FileUplaodTitle",
+            acceptedFiles: ".xlsx",
+            successCallback: function (data) {
+                if (data.err == 'true') {
+                    location.href = urlErrAction;
+                } else {
+                    location.href = urlIndexAction;
+                }
+            }
+        });
+        fileUploadModal.open();
+    });
+
+    /**
+    * Page loaded
+    */
+    //$(document).ready(function () {
+    //    LocationsView.init();
+    //});
+
+        $(document).ready(function () {
+        if ('@TempData[AppConst.SUCCESS]' != '') {
+            LocationsView.setStorageInit();
+        }
+            LocationsView.init();
+    });
+
+
+    function ClearConditons() {
+        $("#txtLocsec1").val("");
+        $("#txtLocsec2").val("");
+        $("#txtLocsec3").val("");
+        $("#txtLocsec4").val("");
+        $("#txtLocsec5").val("");
+    }
+    // Sort
+    function getSortData() {
+
+        $("#hidSort").val($("#ddlSort").val());
+        $("#hidSortKey").val($("#ddlSortKey").val());
+
+        var $form = $("#frmSearch");
+        var urlAction ='@Url.Action("Search", "Location", new { area= "Master" })';
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.submit();
+    }
+    $("#btnPrintLabel").on("click", function () {
+        var urlAction = '@Url.Action("PrintLabel", "Location", new { area = "Master" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.attr("target", "newtab");
+        $form.submit();
+        $form.attr("target", "_self");
+
+        setTimeout(function () {
+            var count = LocationsView.getCheckList().length;
+            if (count == 1) {
+                $(LocationsView.SELECTORS.btnUpdate).prop("disabled", false);
+            }
+            if (getUsable_Class() == 3) {
+                if (count >= 1) {
+                    $(LocationsView.SELECTORS.btnDelete).prop('disabled', false);
+                }
+                $("#btnCreate").prop("disabled", false);
+            }
+        }, 1000);
+    });
+    $("#btnPrintA4").on("click", function () {
+        var urlAction = '@Url.Action("PrintA4", "Location", new { area = "Master" })';
+        var $form = $("#frmSearch");
+        $form.attr("action", urlAction);
+        $form.attr("method", "POST");
+        $form.attr("target", "newtab");
+        $form.submit();
+        $form.attr("target", "_self");
+
+        setTimeout(function () {
+            var count = LocationsView.getCheckList().length;
+            if (count == 1) {
+                $(LocationsView.SELECTORS.btnUpdate).prop("disabled", false);
+            }
+            if (getUsable_Class() == 3) {
+                if (count >= 1) {
+                    $(LocationsView.SELECTORS.btnDelete).prop('disabled', false);
+                }
+                $("#btnCreate").prop("disabled", false);
+            }
+        }, 1000);
+    });
+</script>
+}

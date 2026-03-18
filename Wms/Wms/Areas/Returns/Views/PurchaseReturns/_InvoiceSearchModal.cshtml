@@ -1,0 +1,147 @@
+﻿@using Resources = Wms.Areas.Returns.Resources.PurchaseReturnsResource;
+@model Wms.Areas.Returns.ViewModels.PurchaseReturns.InvoiceViewModel
+
+<div>
+    <div>
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        <h5>@Resources.InvoiceNoSearch</h5>
+        <br />
+        <div class="d_continer main">
+            @if (Model == null || Model.InvoiceResults.Count() == 0)
+            {
+                <h5>@Share.Common.Resources.MessagesResource.MSG_NOT_FOUND</h5>
+            }
+            else
+            {
+                <div class="modalheadareaheight">
+                    <table class="headtable">
+                        <tr>
+                            <td>
+                                @Resources.JanS
+                                @Html.DisplayFor(model => model.Jan)
+                            </td>
+                            <td>
+                                @Resources.ItemSkuIdS
+                                @Html.DisplayFor(model => model.ItemSkuId)
+                            </td>
+                            <td>
+                                @Resources.ItemS
+                                @Html.DisplayFor(model => model.ItemId)
+                                @Html.DisplayFor(model => model.ItemName)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Resources.ItemColorS
+                                @Html.DisplayFor(model => model.ItemColorId)
+                                @Html.DisplayFor(model => model.ItemColorName)
+                            </td>
+                            <td>
+                                @Resources.ItemSizeS
+                                @Html.DisplayFor(model => model.ItemSizeId)
+                                @Html.DisplayFor(model => model.ItemSizeName)
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="sublbarea">
+                    <div class="sortarea">
+                        <ul>
+                            <li class="totalcount">
+                                @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.InvoiceResults.Count)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="Container">
+                    <div>
+                        <div class="tb_scroll">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-grey w_checkbox"></th>
+                                        <th class="bg-grey">
+                                            No
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.Vendor
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ConfirmDate
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.InvoiceNo
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ArriveDate
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.BuyingPrice
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ConfirmQty
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.ReturnableQty
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.InvoiceResults.Count(); i++)
+                                    {
+                                        <tr>
+                                            <td class="align-middle chk_cell text-center">
+                                                <label>
+                                                    @Html.RadioButton("SelectIndex", i, Model.InvoiceResults[i].IsSelected, new { @id = "InvoiceNoReturnSelectIndex" + i, @class = "radio_input", @onclick = "chkRadioInvoice(" + i + ")" })
+                                                    @*@Html.RadioButtonFor(model => model.InvoiceResults[i].IsSelected, i, new { @id = "InvoiceNoReturnSelectIndex" + i, @name = "SelectIndex", @class = "radio_input", @onclick = "chkRadioInvoice(" + i + ")" })*@
+                                                    <span class="radio_parts"></span>
+                                                </label>
+                                            </td>
+                                            <td class="text-right w_no align-middle">
+                                                @(i + 1)
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(model => model.InvoiceResults[i].VendorId)
+                                                <br />
+                                                @Html.DisplayFor(model => model.InvoiceResults[i].VendorName)
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(model => model.InvoiceResults[i].ConfirmDate)
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(model => model.InvoiceResults[i].InvoiceNo)
+                                                @Html.HiddenFor(model => model.InvoiceResults[i].InvoiceNo, new { @id = "InvoiceSearch_InvoiceNo_" + i })
+                                            </td>
+                                            <td class="align-middle">
+                                                @Html.DisplayFor(model => model.InvoiceResults[i].ArriveDate)
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(model => model.InvoiceResults[i].NormalBuyingPrice)
+                                                @Html.HiddenFor(model => model.InvoiceResults[i].NormalBuyingPrice, new { @id = "InvoiceSearch_BuyingPrice_" + i })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(model => model.InvoiceResults[i].ArriveQty)
+                                                @Html.HiddenFor(model => model.InvoiceResults[i].ArriveQty, new { @id = "InvoiceSearch_ResultQty_" + i })
+                                            </td>
+                                            <td class="text-right align-middle">
+                                                @Html.DisplayFor(model => model.InvoiceResults[i].ReturnableQty)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="bottomnav">
+                <div class="btnarea">
+                    <button id="InvoiceNoReturnClose" type="button" class="btn btn-outline-dark" onclick="closeDialogInvoice()">@FormsResource.Close</button>
+                    <button id="InvoiceNoReturnSelect" type="button" class="btn btn-dark" onclick="chkDialogInvoice()">@FormsResource.BTN_SELECT</button>
+                </div>
+            </div>
+            <input type="hidden" id="chkIndexInvoice" value="" />
+        </div>
+    </div>
+</div>

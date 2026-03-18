@@ -1,0 +1,126 @@
+﻿@using Resources = Wms.Areas.Returns.Resources;
+@model Wms.Areas.Returns.ViewModels.PurchaseCorrection.PurchaseCorrectionSearchConditions
+<div id="vendorReturnSearchModalDialog">
+    <div id="vendorReturnSearchResult">
+        <span class="ui-helper-hidden-accessible"><input type="image" /></span>
+        <h5>@Resources.PurchaseCorrectionResource.JanModalTitle</h5>
+        <br />
+        <div class="d_continer main">
+            @if (Model.janViewModel.Count == 0)
+            {
+                <h5>@Resources.PurchaseCorrectionResource.JAN_NOT_ERR</h5>
+            }
+            else
+            {
+                <div class="modalheadareaheight">
+                    <table class="headtable">
+                        <tr>
+                            <td>
+                                @Resources.PurchaseCorrectionResource.InvoiceNoS
+                                @Html.DisplayFor(model => Model.janViewModel[0].InvoiceNo)
+                            </td>
+                            <td>
+                                @Resources.PurchaseCorrectionResource.VendorS
+                                @Html.DisplayFor(model => Model.janViewModel[0].VendorId)
+                                @Html.DisplayFor(model => Model.janViewModel[0].VendorName1)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Resources.PurchaseCorrectionResource.ArriveDateS
+                                @Html.DisplayFor(model => Model.janViewModel[0].ArriveDate)
+                            </td>
+                            <td>
+                                @Resources.PurchaseCorrectionResource.ConfirmDateS
+                                @Html.DisplayFor(model => Model.janViewModel[0].ConfirmDate)
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="sublbarea">
+                    <div class="sortarea">
+                        <ul>
+                            <li class="totalcount">
+                                @String.Format(Share.Common.Resources.FormsResource.KENSU, Model.totalCnt)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="Container">
+                    <div>
+                        <div class="tb_scroll">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-grey w_checkbox"></th>
+                                        <th class="bg-grey">
+                                            No
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.PurchaseCorrectionResource.Item
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.PurchaseCorrectionResource.ItemColor
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.PurchaseCorrectionResource.ItemSize
+                                        </th>
+                                        <th class="bg-grey">
+                                            @Resources.PurchaseCorrectionResource.Jan
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.janViewModel.Count(); i++)
+                                    {
+
+                                        var idx = i + 1;
+                                        var id = "hidJan" + i;
+                                        <tr>
+                                            <td class="align-middle chk_cell">
+                                                <label>
+                                                    @Html.RadioButton("SelectIndex", i.ToString(), new { @id = "JanReturnSelectIndex" + i.ToString(), @class = "radio_input", @onclick = "chkRadioJan(" + i + ")" })
+                                                    <span class="radio_parts"></span>
+                                                </label>
+                                            </td>
+                                            <td class="text-right w_no" style="vertical-align:middle;">
+                                                @idx
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemId)
+                                                <br />
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemColorId)
+                                                <br />
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemColorName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemSizeId)
+                                                <br />
+                                                @Html.DisplayFor(model => Model.janViewModel[i].ItemSizeName)
+                                            </td>
+                                            <td style="vertical-align:middle;">
+                                                <span id=@id>
+                                                    @Html.DisplayFor(model => Model.janViewModel[i].Jan)
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="bottomnav">
+                <div class="btnarea">
+                    <button id="JanReturnClose" type="button" class="btn btn-outline-dark" onclick="closeDialogJan()">@FormsResource.Close</button>
+                    <button id="JanReturnSelect" type="button" class="btn btn-dark" onclick="chkDialogJan()">@FormsResource.BTN_SELECT</button>
+                </div>
+            </div>
+            <input type="hidden" id="chkIndexJan" value="" />
+        </div>
+    </div>
+</div>

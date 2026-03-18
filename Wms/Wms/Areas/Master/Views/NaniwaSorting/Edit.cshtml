@@ -1,0 +1,178 @@
+﻿@using Wms.Areas.Master.Controllers;
+@model Wms.Areas.Master.ViewModels.NaniwaSorting.Detail
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_NaniwaSorting02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "NaniwaSorting", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    <div class="message-area">
+        @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+        @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    </div>
+
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.InsertFlag)
+            @Html.HiddenFor(model => model.ShipperId)
+            @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+            <div class="form_content">
+                <dl>
+                    @if (Model.InsertFlag == true)
+                    {
+                        <dt>
+                            @NaniwaSortingResource.Store
+                        </dt>
+                        <dd>
+                            @Html.EditorFor(model => model.StoreId, new { htmlAttributes = new { @class = "w_6_short _pm", @id = "txtStoreId", tabindex = "1" } })
+                            @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "w_18_normal _pm", @id = "txtStoreName", tabindex = "2" } })
+                            <div class="search">
+                                <button type="button" id="btnStore" class="search_btn _pm" data-toggle="modal" data-target="#SyukkasakiModal" data-id="#txtStoreId" data-name="#txtStoreName" tabindex="3" />
+                            </div>
+                            @Html.ValidationMessageFor(model => model.StoreId, "", new { })
+                            @Html.ValidationMessageFor(model => model.StoreName, "", new { })
+                        </dd>
+                    }
+                    else
+                    {
+                        <dt>
+                            @NaniwaSortingResource.Store
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.StoreId)
+                            @Html.HiddenFor(model => model.StoreId)
+                            &emsp;
+                            @Html.DisplayFor(model => model.StoreName)
+                            @Html.HiddenFor(model => model.StoreName)
+                        </dd>
+                    }
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.NaniwaDeliCenterCd)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.NaniwaDeliCenterCd, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "w_6_short _pm" } })
+                        @Html.ValidationMessageFor(model => model.NaniwaDeliCenterCd)
+                    </dd>
+                    <dd>
+                        @*配送センターコード確認メッセージ用 汎用コードマスタ登録状況*@
+                        @if (ViewBag.NaniwaDeliCenterCdStatus == null)
+                        {
+                            ViewBag.NaniwaDeliCenterCdStatus = (int)NaniwaSortingController.EnumNaniwaDeliCenterCdStatus.UnConfirmed;
+                        }
+                        <input type="hidden" id="naniwaDeliCenterCdStatus" name="naniwaDeliCenterCdStatus" value='@ViewBag.NaniwaDeliCenterCdStatus' />
+                    </dd>
+                </dl>
+            </div>
+        }
+    </div>
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @if (Model.SearchFlag)
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "NaniwaSorting", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            else
+            {
+                @Html.ActionLink(FormsResource.BTN_RETURN, "Index", "NaniwaSorting", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })
+            }
+            @*<button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>*@
+            @if (Model.InsertFlag == true)
+            {
+                <button id="btnCreateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#newconfirm" hidden>@FormsResource.BTN_CREATE</button>
+                <button id="btnCreate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_CREATE</button>
+            }
+            else
+            {
+                <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize _pm" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+                <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+            }
+            @*配送センターコード確認メッセージ用*@
+            <button id="btnConfirm" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#err_ErrorMessage" hidden></button>
+        </div>
+    }
+    if (Model.InsertFlag == true)
+    {
+        @Html.Partial("_CreateConfirmMessageDialog", @MessagesResource.QUE_CREATE)
+    }
+    else
+    {
+        @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+    }
+}
+@Html.Partial("~/Areas/Master/Views/Shared/_SyukkasakiSearchModal.cshtml")
+@*配送センターコード確認メッセージダイアログ*@
+@*@Html.Partial("_ConfirmMessageDialog", new Wms.Models.MessageDialog() { Id = "ConfirmMessage", Message = (string)ViewBag.NaniwaDeliCenterCdMessage })*@
+@Html.Partial("_ErrorMessageDialog", new Wms.Models.MessageDialog() { Id = "ErrorMessage", Message = (string)ViewBag.NaniwaDeliCenterCdMessage })
+@* スクリプト *@
+@section LayoutScripts{
+
+    @Scripts.Render("~/Scripts/My/SyukkasakiSearchModal.js")
+
+    <script>
+        $(document).ready(function () {
+            // 入力された配送センターコードが汎用コードマスタに存在しない場合、メッセージを表示する
+            if ($('#naniwaDeliCenterCdStatus').val() == '@NaniwaSortingController.EnumNaniwaDeliCenterCdStatus.NotExists') {
+                $("#btnConfirm").click();
+            }
+        });
+
+        /* 新規登録 確認メッセージの設定 */
+        $('#btnCreate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnCreateHidden').click();
+        });
+
+        /* 更新 確認メッセージの設定 */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        $('#submitCreate').on("click", function () {
+            var urlAction = '@Url.Action("Create", "NaniwaSorting", new { area = "Master" })';
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        // 配送センターコード確認メッセージで「はい」を押下
+        $('#ConfirmMessage').on("click", function () {
+            $('#naniwaDeliCenterCdStatus').val('@NaniwaSortingController.EnumNaniwaDeliCenterCdStatus.IsConfirmed');
+            if ($("[name='InsertFlag']").val() == 'True') {
+                var urlAction = '@Url.Action("Create", "NaniwaSorting", new { area = "Master" })';
+            } else {
+                var urlAction = '@Url.Action("Update", "NaniwaSorting", new { area = "Master" })';
+            };
+
+            var $form = $("#frmUpdate");
+            $form.attr("action", urlAction);
+            $form.attr("method", "POST");
+            $form.submit();
+        });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}

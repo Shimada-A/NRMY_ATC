@@ -1,0 +1,310 @@
+﻿@model Wms.Areas.Master.Models.Warehouses
+
+@{
+    ViewBag.Title = Wms.Common.Resources.MenuResource.W_MAS_Warehouse02;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Warehouses", FormMethod.Post, new { id = "frmUpdate", @leave_confirm = "yes" }))
+{
+    @*message*@
+    @Html.Partial("_InformationMessageContent", ViewBag.InfoMessage == null ? string.Empty : (string)ViewBag.InfoMessage)
+    @Html.Partial("_ErrorMessageContent", TempData[AppConst.ERROR] ?? "")
+    @* Container *@
+    <div class="Container">
+        @if (Model != null)
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ShipperId)
+            @Html.HiddenFor(model => model.CenterId)
+            @Html.HiddenFor(model => model.CenterClass)
+            @Html.HiddenFor(model => model.CenterName1)
+            @*@Html.HiddenFor(model => model.CenterShortName)*@
+            @Html.HiddenFor(model => model.PrefId)
+            @Html.HiddenFor(model => model.WmsClass)
+            @Html.HiddenFor(model => model.BrandWorkClass)
+            @Html.HiddenFor(model => model.UpdateCount) @* 排他制御用に更新回数をセットする *@
+
+            <div class="form_content">
+                <dl>
+                    <dt>@Html.DisplayNameFor(model => model.CenterId)</dt>
+                    <dd>
+                        @Html.Raw(Model.CenterId)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@WarehousesResource.CenterName</dt>
+                    <dd>
+                        @Html.Raw(Model.CenterName1)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>@Html.DisplayNameFor(model => model.CenterShortName)</dt>
+                    <dd>
+                        @Html.EditorFor(model => model.CenterShortName, new { htmlAttributes = new { tabindex = "1", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.CenterShortName, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CenterZip)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.CenterZip, new { htmlAttributes = new { tabindex = "2", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.CenterZip, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CenterPrefName)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.CenterPrefName, new { htmlAttributes = new { tabindex = "3", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.CenterPrefName, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CenterCityName)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.CenterCityName, new { htmlAttributes = new { tabindex = "4", @placeholder = "", @class = "w_40_normal _pm" } })
+                        @Html.ValidationMessageFor(model => model.CenterCityName, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CenterAddress1)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.CenterAddress1, new { htmlAttributes = new { tabindex = "6", @placeholder = "", @class = "w_40_normal _pm" } })
+                        @Html.ValidationMessageFor(model => model.CenterAddress1, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CenterAddress2)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.CenterAddress2, new { htmlAttributes = new { tabindex = "8", @placeholder = "", @class = "w_40_normal _pm" } })
+                        @Html.ValidationMessageFor(model => model.CenterAddress2, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CenterAddress3)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.CenterAddress3, new { htmlAttributes = new { tabindex = "10", @placeholder = "", @class = "w_40_normal _pm" } })
+                        @Html.ValidationMessageFor(model => model.CenterAddress3, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CenterTel)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.CenterTel, new { htmlAttributes = new { tabindex = "12", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.CenterTel, "", new { })
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CenterFax)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.CenterFax, new { htmlAttributes = new { tabindex = "13", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.CenterFax, "", new { })
+                    </dd>
+                </dl>
+                @*<dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.CenterMail1)
+                        </dt>
+                        <dd>
+                            @Html.Raw(Model.CenterMail1)
+                        </dd>
+                    </dl>*@
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.PrefId)
+                    </dt>
+                    <dd>
+                        @Html.Raw(Model.PrefId)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.WmsClass)
+                    </dt>
+                    <dd>
+                        <label class="chklist">
+                            @Html.CheckBoxFor(model => model.WmsClassBool, new { tabindex = "14", @class = "check-box _pm", onclick = "return false;" })
+                            <span class="chk_parts">
+                            </span>
+                        </label>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.BrandWorkClass)
+                    </dt>
+                    <dd>
+                        <label class="chklist">
+                            @Html.CheckBoxFor(model => model.BrandWorkClassBool, new { tabindex = "15", @class = "check-box _pm", onclick = "return false;" })
+                            <span class="chk_parts">
+                            </span>
+                        </label>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.InvoiceCenterName)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(model => model.InvoiceCenterName, new { htmlAttributes = new { tabindex = "16", @placeholder = "", @class = "_pm" } })
+                        @Html.ValidationMessageFor(model => model.InvoiceCenterName, "", new { })
+                    </dd>
+                </dl>
+
+            </div>
+
+            @* Hidden Fields *@
+
+            <input type="hidden" id="allowOverrideRecord" name="allowOverrideRecord" value="false" />
+            <input type="hidden" id="hdUpdateError" value="@ViewBag.hasError" errorCode="@ViewBag.ErrorCode">
+        }
+    </div>
+
+    @* Bottom Nav *@
+    @section Basefooter{
+        <div class="btnarea">
+            @*@Html.ActionLink(FormsResource.BTN_RETURN, "IndexSearch", "Warehouses", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark btnsize" })*@
+            <button id="btnReturn" type="button" class="btn btn-outline-dark btnsize">@FormsResource.BTN_RETURN</button>
+            <button id="btnUpdateHidden" type="button" class="btn btn-dark btnsize" data-toggle="modal" data-target="#updconfirm" hidden>@FormsResource.BTN_UPDATE</button>
+            <button id="btnUpdate" type="button" class="btn btn-dark btnsize _pm">@FormsResource.BTN_UPDATE</button>
+        </div>
+    }
+    @Html.Partial("_UpdateConfirmMessageDialog", @MessagesResource.QUE_UPDATE)
+}
+@** スクリプト *@
+@section LayoutScripts{
+    <script>
+        //WarehouseEdit
+        var WarehouseEdit = {
+            /**
+            * Constants
+            */
+            CONST: {
+                QUE_UPDATE_OVERWRITE: 'QUE_UPDATE_OVERWRITE',
+                ERR_EXCLUSIVE_UPDATE: 'ERR_EXCLUSIVE_UPDATE',
+                ATTR_ERROR_CODE: 'errorcode',
+                STR_TRUE: 'True',
+                FORM_METHOD: 'formmethod',
+                FORM_ACTION: 'formaction',
+                POST: 'post',
+                GET: 'get'
+            },
+
+            /**
+            * Global variables
+            */
+            GLOBAL: {
+                textChanged: false,
+                msgExclusiveUpdate: '@MessagesResource.ERR_EXCLUSIVE_UPDATE',
+                titleInformation: '@MessagesResource.TITLE_INFORMATION',
+                msgQueUpdateOverwrite: '@MessagesResource.QUE_UPDATE_OVERWRITE',
+            },
+
+            /**
+            * Jquery selector
+            */
+            SELECTORS: {
+                form: 'form',
+                frmUpdate: 'frmUpdate',
+                btnUpdate: '#btnUpdate',
+                btnReturn: '#btnReturn',
+                hdUpdateError: '#hdUpdateError',
+                hdAllowOverrideRecord: '#allowOverrideRecord',
+                AreaId: '#AreaId',
+                btnSubmitUpdateConfirmDialog: '#updateConfirmDialog button[type="submit"]',
+                btnSubmitExclusiveUpdateDialog: '#exclusiveUpdateDialog button[type="submit"]',
+                btnSubmitOverWriteDialog: '#overWriteRecordDialog button[type="submit"]',
+                updateConfirmDialog: 'updateConfirmDialog',
+                exclusiveUpdateDialog: 'exclusiveUpdateDialog',
+                overWriteRecordDialog: 'overWriteRecordDialog',
+            },
+
+            /**
+            * Init function
+            */
+            init: function () {
+                // Set up event
+                this.setUpEvent();
+                // check error when update
+                this.checkUpdateError();
+            },
+
+            /**
+            * Set up event
+            */
+            setUpEvent: function () {
+                /**
+                * Allow overwrite record
+                */
+                $(WarehouseEdit.SELECTORS.btnSubmitOverWriteDialog).click(function () {
+                    $(WarehouseEdit.SELECTORS.hdAllowOverrideRecord).val('true');
+                });
+            },
+
+            /**
+            * Check error when update record.
+            */
+            checkUpdateError: function () {
+                if ($(WarehouseEdit.SELECTORS.hdUpdateError).val() === WarehouseEdit.CONST.STR_TRUE) {
+                    if ($(WarehouseEdit.SELECTORS.hdUpdateError).attr(WarehouseEdit.CONST.ATTR_ERROR_CODE) === WarehouseEdit.CONST.ERR_EXCLUSIVE_UPDATE) {
+                        // show message box
+                        $(WarehouseEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).removeAttr('disabled');
+                        messageDialog.open(WarehouseEdit.SELECTORS.exclusiveUpdateDialog, WarehouseEdit.GLOBAL.titleInformation, WarehouseEdit.GLOBAL.msgExclusiveUpdate);
+                        $(WarehouseEdit.SELECTORS.btnSubmitExclusiveUpdateDialog).click(function () {
+                            window.location = "Index";
+                        });
+                    }
+                    // Renew record if it deleted
+                    if ($(WarehouseEdit.SELECTORS.hdUpdateError).attr(WarehouseEdit.CONST.ATTR_ERROR_CODE) === WarehouseEdit.CONST.QUE_UPDATE_OVERWRITE) {
+                        // show message box
+                        $(WarehouseEdit.SELECTORS.btnSubmitOverWriteDialog).removeAttr('disabled');
+                        messageDialog.open(WarehouseEdit.SELECTORS.overWriteRecordDialog, WarehouseEdit.GLOBAL.titleInformation, (WarehouseEdit.GLOBAL.msgQueUpdateOverwrite.replace(/\{0}/g, $(WarehouseEdit.SELECTORS.AreaId).val())));
+                        $(WarehouseEdit.SELECTORS.btnSubmitOverWriteDialog).attr(WarehouseEdit.SELECTORS.form, WarehouseEdit.SELECTORS.frmUpdate).attr(WarehouseEdit.CONST.FORM_METHOD, WarehouseEdit.CONST.POST).attr(WarehouseEdit.CONST.FORM_ACTION, '@Url.Action("Update", "Warehouses", new { area = "Master" })').attr(WarehouseEdit.SELECTORS.form, WarehouseEdit.SELECTORS.frmUpdate);
+                    }
+                }
+            }
+        }
+
+        /* 確認メッセージの確定ボタンのクリックイベント */
+        $('#btnUpdate').on("click", function () {
+            if (!validateForm($('#frmUpdate'))) {
+                return;
+            }
+            $('#btnUpdateHidden').click();
+        });
+
+        /**
+        * Register event click for buttons
+        */
+        $(document).ready(function () {
+            WarehouseEdit.init();
+        });
+
+        //Enterキーを押すと次のIndexへ移動(誤送信を防止するため)
+        $("input").on("keydown", function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var inputObj = $("input:visible");
+                var nextIndex = inputObj.index(this) + 1;
+                if (inputObj[nextIndex]) {
+                    $("input:visible")[nextIndex].focus();
+                }
+            }
+        });
+    </script>
+}
