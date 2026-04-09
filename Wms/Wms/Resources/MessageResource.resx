@@ -255,4 +255,7 @@
   <data name="ERR_LOC_TRANSPORTER_NANIWA" xml:space="preserve">
     <value>浪速仕分コードマスタに設定されていない店舗です。浪速運送に設定できません。</value>
   </data>
+  <data name="ERR_SAME_TEL" xml:space="preserve">
+    <value>他の倉庫と重複した電話番号です。</value>
+  </data>
 </root>

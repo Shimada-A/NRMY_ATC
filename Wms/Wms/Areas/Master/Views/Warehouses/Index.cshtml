@@ -25,9 +25,17 @@
                 <td></td>
             </tr>
             <tr>
+                <td>@WarehousesResource.CenterZip</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.CenterZip, new { htmlAttributes = new { @class = "w_14_long", @id = "txtCenterZip", tabindex = "3" } })
+                    @Html.LikeMark(CommonsResource.Like)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
                 <td>@WarehousesResource.CenterAddressSearch</td>
                 <td>
-                    @Html.EditorFor(model => model.SearchConditions.CenterAddress, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtCenterAddress", tabindex = "3" } })
+                    @Html.EditorFor(model => model.SearchConditions.CenterAddress, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtCenterAddress", tabindex = "4" } })
                     @Html.LikeMark(CommonsResource.Like)
                 </td>
                 <td></td>
@@ -35,7 +43,7 @@
             <tr>
                 <td>@WarehousesResource.CenterTelSearch</td>
                 <td>
-                    @Html.EditorFor(model => model.SearchConditions.CenterTel, new { htmlAttributes = new { @class = "w_14_long", @id = "txtCenterTel", tabindex = "4", @onblur = "hyphenCheck()" } })
+                    @Html.EditorFor(model => model.SearchConditions.CenterTel, new { htmlAttributes = new { @class = "w_14_long", @id = "txtCenterTel", tabindex = "5", @onblur = "hyphenCheck()" } })
                     @Html.LikeMark(CommonsResource.BeforeLike)
                     @Html.ValidationMessageFor(model => model.SearchConditions.CenterTel, "", new { id = "CenterTel-errormessage" })
                 </td>
@@ -46,7 +54,7 @@
                 <td></td>
                 <td>
                     @Html.ActionLink(FormsResource.BTN_CLEAR, "Index", "Warehouses", new { area = "Master" }, new { type = "button", @class = "btn btn-outline-dark" })
-                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="5" onclick="$('#frmSearch').submit()">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
+                    <button class="btn btn-outline-dark" id="btnSearch" tabindex="6" onclick="$('#frmSearch').submit()">@Share.Common.Resources.FormsResource.BTN_SEARCH</button>
                 </td>
             </tr>
         </table>
@@ -139,6 +147,9 @@
                                     @WarehousesResource.CenterShortName
                                 </th>
                                 <th class="bg-grey">
+                                    @WarehousesResource.CenterPrefName @WarehousesResource.CenterCityName
+                                </th>
+                                <th class="bg-grey">
                                     @WarehousesResource.WmsClass
                                 </th>
                                 <th class="bg-grey">
@@ -192,6 +203,9 @@
                                         </td>
                                         <td class="align-middle">
                                             @Html.DisplayFor(modelItem => cModel.v.CenterShortName)
+                                        </td>
+                                        <td class="align-middle">
+                                            @($"{cModel.v.CenterPrefName}{cModel.v.CenterCityName}")
                                         </td>
                                         <td class="align-middle">
                                             <label class="chklist">

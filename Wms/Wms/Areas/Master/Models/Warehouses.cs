@@ -235,6 +235,7 @@
         /// <remarks>
         /// 画面からメンテナンスする
         /// </remarks>
+        [Required(ErrorMessageResourceName = nameof(MessagesResource.Required), ErrorMessageResourceType = typeof(MessagesResource))]
         [Display(Name = nameof(WarehousesResource.CenterTel), ResourceType = typeof(WarehousesResource))]
         [MaxLength(50, ErrorMessageResourceName = nameof(MessagesResource.MaxLength), ErrorMessageResourceType = typeof(MessagesResource))]
         public string CenterTel { get; set; }

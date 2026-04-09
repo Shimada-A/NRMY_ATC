@@ -43,6 +43,11 @@
         public string CenterName { get; set; }
 
         /// <summary>
+        /// 郵便番号
+        /// </summary>
+        public string CenterZip { get; set; }
+
+        /// <summary>
         /// 住所
         /// </summary>
         public string CenterAddress { get; set; }

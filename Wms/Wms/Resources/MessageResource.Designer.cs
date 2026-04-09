@@ -286,6 +286,15 @@ namespace Wms.Resources {
         }
         
         /// <summary>
+        ///   他の倉庫と重複した電話番号です。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ERR_SAME_TEL {
+            get {
+                return ResourceManager.GetString("ERR_SAME_TEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   ロケーションコード：{0}が、在庫テーブルに登録されているので、変更できません。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ERR_STOCK_EXIST {

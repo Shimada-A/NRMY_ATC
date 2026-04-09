@@ -47,6 +47,8 @@
                       ,MW.CENTER_ID
                       ,MW.CENTER_NAME1 || MW.CENTER_NAME2 CENTER_NAME1
                       ,CENTER_SHORT_NAME
+                      ,MW.CENTER_PREF_NAME
+                      ,MW.CENTER_CITY_NAME
                       ,MW.WMS_CLASS
                       ,MW.BRAND_WORK_CLASS
                   FROM M_CENTERS MW
@@ -68,6 +70,12 @@
                 parameters.Add(":CENTER_NAME", condition.CenterName + "%");
             }
 
+            if (!string.IsNullOrEmpty(condition.CenterZip))
+            {
+                query.Append(" AND REPLACE(MW.CENTER_ZIP,'-') LIKE :CENTER_ZIP ");
+                parameters.Add(":CENTER_ZIP", "%" + condition.CenterZip.Replace("-", "") + "%");
+            }
+            
             if (!string.IsNullOrEmpty(condition.CenterAddress))
             {
                 query.Append(@" AND (MW.CENTER_PREF_NAME
@@ -215,6 +223,38 @@
 
             // Excute paging
             if (pref.Count == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+
+        }
+        
+        /// <summary>
+        /// 電話番号の重複をチェックする。
+        /// </summary>
+        /// <param name="warehouses"></param>
+        /// <returns></returns>
+        public bool CheckTel(Warehouses warehouses)
+        {
+            DynamicParameters parameters = new DynamicParameters();
+            StringBuilder query = new StringBuilder();
+            query.Append(@"
+                SELECT MC.CENTER_ID
+                      ,MC.CENTER_TEL
+                  FROM M_CENTERS MC
+                 WHERE MC.CENTER_ID <> :CENTER_ID
+                   AND MC.CENTER_TEL = :CENTER_TEL
+            ");
+            parameters.Add(":CENTER_ID", warehouses.CenterId);
+            parameters.Add(":CENTER_TEL", warehouses.CenterTel);
+
+            // Fill data to memory
+            var tel = MvcDbContext.Current.Database.Connection.Query<Pref>(query.ToString(), parameters).ToList();
+
+            // Excute paging
+            if (tel.Count == 0) {
                 return false;
             }
             else {

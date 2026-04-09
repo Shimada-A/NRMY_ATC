@@ -127,6 +127,12 @@
                 this.ModelState.AddModelError("CenterZip", MessageResource.ERR_ZIP_HYPHEN);
             }
 
+            // 電話番号重複チェック
+            if (_WarehousesQuery.CheckTel(warehouses))
+            {
+                this.ModelState.AddModelError("CenterTel", MessageResource.ERR_SAME_TEL);
+            }
+
             if (ModelState.IsValid)
             {
                 if (_WarehousesQuery.UpdateWarehouses(warehouses))
