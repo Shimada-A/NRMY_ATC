@@ -235,6 +235,7 @@
         /// <remarks>
         /// 画面からメンテナンスする
         /// </remarks>
+        [Required(ErrorMessageResourceName = nameof(MessagesResource.Required), ErrorMessageResourceType = typeof(MessagesResource))]
         [Display(Name = nameof(WarehousesResource.CenterTel), ResourceType = typeof(WarehousesResource))]
         [MaxLength(50, ErrorMessageResourceName = nameof(MessagesResource.MaxLength), ErrorMessageResourceType = typeof(MessagesResource))]
         public string CenterTel { get; set; }
@@ -320,6 +321,13 @@
         [Display(Name = nameof(WarehousesResource.BrandWorkClass), ResourceType = typeof(WarehousesResource))]
         [MaxLength(1, ErrorMessageResourceName = nameof(MessagesResource.MaxLength), ErrorMessageResourceType = typeof(MessagesResource))]
         public string BrandWorkClass { get; set; }
+
+        /// <summary>
+        /// 倉庫都道府県市区町村
+        /// </summary>
+        [Display(Name = nameof(WarehousesResource.CenterPrefCityName), ResourceType = typeof(WarehousesResource))]
+        [MaxLength(100, ErrorMessageResourceName = nameof(MessagesResource.MaxLength), ErrorMessageResourceType = typeof(MessagesResource))]
+        public string CenterPrefCityName => CenterPrefName + CenterCityName;
 
         /// <summary>
         /// 削除フラグ (DELETE_FLAG)

@@ -205,6 +205,15 @@ namespace Wms.Resources {
         }
         
         /// <summary>
+        ///   他の倉庫と重複した電話番号です。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ERR_NOT_TEL {
+            get {
+                return ResourceManager.GetString("ERR_NOT_TEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   パスワードが違います。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ERR_PASSWORD {

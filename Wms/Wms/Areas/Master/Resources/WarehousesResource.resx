@@ -201,6 +201,9 @@
   <data name="CenterNameSearch" xml:space="preserve">
     <value>センター名：</value>
   </data>
+  <data name="CenterPrefCityName" xml:space="preserve">
+    <value>倉庫都道府県市区町村</value>
+  </data>
   <data name="CenterPrefKanaName" xml:space="preserve">
     <value>都道府県(カナ)</value>
   </data>
@@ -218,6 +221,9 @@
   </data>
   <data name="CenterZip" xml:space="preserve">
     <value>郵便番号</value>
+  </data>
+  <data name="CenterZipSearch" xml:space="preserve">
+    <value>郵便番号：</value>
   </data>
   <data name="ChannelId" xml:space="preserve">
     <value>チャンネルID</value>

@@ -48,6 +48,11 @@
         public string CenterAddress { get; set; }
 
         /// <summary>
+        /// 郵便番号
+        /// </summary>
+        public string CenterZip {get; set; }
+
+        /// <summary>
         /// TEL
         /// </summary>
         [RegularExpression(@"[0-9]+", ErrorMessage = "TELはハイフンなしで入力してください。")]

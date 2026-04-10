@@ -25,6 +25,13 @@
                 <td></td>
             </tr>
             <tr>
+                <td>@WarehousesResource.CenterZipSearch</td>
+                <td>
+                    @Html.EditorFor(model => model.SearchConditions.CenterZip, new { htmlAttributes = new { @class = "w_22_verylong", @id = "CenterZip", tabindex = "3" } })
+                    @Html.LikeMark(CommonsResource.Like)
+                </td>
+            </tr>
+            <tr>
                 <td>@WarehousesResource.CenterAddressSearch</td>
                 <td>
                     @Html.EditorFor(model => model.SearchConditions.CenterAddress, new { htmlAttributes = new { @class = "w_22_verylong", @id = "txtCenterAddress", tabindex = "3" } })
@@ -144,6 +151,9 @@
                                 <th class="bg-grey">
                                     @WarehousesResource.BrandWorkClass
                                 </th>
+                                <th class="bg-grey">
+                                    @WarehousesResource.CenterPrefCityName
+                                </th>
                                 <th hidden>
                                 </th>
                             </tr>
@@ -206,6 +216,9 @@
                                                 <span class="chk_parts">
                                                 </span>
                                             </label>
+                                        </td>
+                                        <td class="align-middle">
+                                            @Html.DisplayFor(modelItem => cModel.v.CenterPrefCityName)
                                         </td>
                                         <td class="template" hidden>
                                             @Html.HiddenFor(modelItem => cModel.v.CenterId, new { Name = key + "CenterId" })

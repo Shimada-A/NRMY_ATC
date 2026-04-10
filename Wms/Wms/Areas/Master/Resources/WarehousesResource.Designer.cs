@@ -313,6 +313,15 @@ namespace Wms.Areas.Master.Resources {
         }
         
         /// <summary>
+        ///   倉庫都道府県市区町村 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CenterPrefCityName {
+            get {
+                return ResourceManager.GetString("CenterPrefCityName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   都道府県(カナ) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string CenterPrefKanaName {
@@ -363,6 +372,15 @@ namespace Wms.Areas.Master.Resources {
         public static string CenterZip {
             get {
                 return ResourceManager.GetString("CenterZip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   郵便番号： に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CenterZipSearch {
+            get {
+                return ResourceManager.GetString("CenterZipSearch", resourceCulture);
             }
         }
         

@@ -165,6 +165,9 @@
   <data name="ERR_NOT_PREFS" xml:space="preserve">
     <value>正しい都道府県を入力してください。</value>
   </data>
+  <data name="ERR_NOT_TEL" xml:space="preserve">
+    <value>他の倉庫と重複した電話番号です。</value>
+  </data>
   <data name="ErrMsg" xml:space="preserve">
     <value>エラー情報</value>
   </data>

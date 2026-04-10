@@ -49,6 +49,8 @@
                       ,CENTER_SHORT_NAME
                       ,MW.WMS_CLASS
                       ,MW.BRAND_WORK_CLASS
+                      ,MW.CENTER_PREF_NAME
+                      ,MW.CENTER_CITY_NAME
                   FROM M_CENTERS MW
                  WHERE MW.SHIPPER_ID = :SHIPPER_ID
                    AND MW.DELETE_FLAG = 0
@@ -82,6 +84,12 @@
             {
                 query.Append(" AND REPLACE(MW.CENTER_TEL,'-') LIKE :CENTER_TEL ");
                 parameters.Add(":CENTER_TEL", condition.CenterTel + "%");
+            }
+
+            if (!string.IsNullOrEmpty(condition.CenterZip))
+            {
+                query.Append(@" AND MW.CENTER_ZIP LIKE :CENTER_ZIP ");
+                parameters.Add(":CENTER_ZIP", "%" + condition.CenterZip + "%");
             }
 
             // 全レコード数を取得
@@ -219,6 +227,39 @@
             }
             else {
                 return true;
+            }
+
+        }
+        
+        /// <summary>
+        /// センターマスタから電話番号を取得する
+        /// </summary>
+        /// <param name="warehouses"></param>
+        /// <returns></returns>
+        public bool SelectTel(Warehouses warehouses)
+        {
+            DynamicParameters parameters = new DynamicParameters();
+            StringBuilder query = new StringBuilder();
+            query.Append(@"
+                SELECT MC.CENTER_ID
+                      ,MC.CENTER_TEL
+                  FROM M_CENTERS MC
+                 WHERE MC.SHIPPER_ID = :SHIPPER_ID
+                   AND MC.CENTER_TEL = :CENTER_TEL
+            ");
+            parameters.Add(":SHIPPER_ID", Profile.User.ShipperId);
+            parameters.Add(":CENTER_TEL", warehouses.CenterTel);
+
+            // Fill data to memory
+            var tel = MvcDbContext.Current.Database.Connection.Query<Centers>(query.ToString(), parameters).ToList();
+
+            // Excute paging
+            if ((tel.Count == 0) ||
+               (tel.Count == 1 && tel[0].CenterTel.ToString() == warehouses.CenterTel)) {
+                return true;
+            }
+            else {
+                return false;
             }
 
         }
