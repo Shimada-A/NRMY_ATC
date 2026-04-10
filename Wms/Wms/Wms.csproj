@@ -481,6 +481,7 @@
     <Compile Include="Areas\Master\Models\Objects.cs" />
     <Compile Include="Areas\Master\Models\ShippingHoldStore.cs" />
     <Compile Include="Areas\Master\Models\StockingPattern.cs" />
+    <Compile Include="Areas\Master\Models\Tel.cs" />
     <Compile Include="Areas\Master\Models\User.cs" />
     <Compile Include="Areas\Master\Query\ShippingHoldStores\ShippingHoldStoresQuery.cs" />
     <Compile Include="Areas\Master\Query\BrandStore\BrandStoreQuery.cs" />
@@ -531,6 +532,11 @@
     <Compile Include="Areas\Master\Reports\Export\UserReport.cs" />
     <Compile Include="Areas\Master\Resources\MasShippingHoldStoreResource.Designer.cs">
       <DependentUpon>MasShippingHoldStoreResource.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Areas\Master\Resources\CentersResource.Designer.cs">
+      <DependentUpon>CentersResource.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -2809,6 +2815,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>MasShippingHoldStoreResource.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\Master\Resources\CentersResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CentersResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Master\Resources\ShippingHoldStoreResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
