@@ -24,6 +24,11 @@
         /// </summary>
         public int StockQtySum { get; set; }
 
+        /// <summary>
+        /// バラ数
+        /// </summary>
+        public int TotalQtySum { get; set; }
+
         #endregion
     }
 }

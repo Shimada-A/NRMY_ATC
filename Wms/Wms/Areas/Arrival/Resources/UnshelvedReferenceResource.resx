@@ -292,4 +292,7 @@ ID→仕入先ID→入荷日→ケースNo</value>
   <data name="VendorIdDateSkuCaseNo" xml:space="preserve">
     <value>ブランドID→仕入先ID→入荷日→SKU→ケースNo</value>
   </data>
+  <data name="TotalQtySum" xml:space="preserve">
+    <value>バラ数：</value>
+  </data>
 </root>

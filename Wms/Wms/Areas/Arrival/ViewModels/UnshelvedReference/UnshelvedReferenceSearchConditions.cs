@@ -187,5 +187,10 @@
         [DisplayFormat(DataFormatString = "{0:N0}")]
         public int StockQtySum { get; set; }
 
+        /// <summary>
+        /// バラ数
+        /// </summary>
+        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public int TotalQtySum { get; set; }
     }
 }

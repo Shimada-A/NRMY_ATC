@@ -548,6 +548,15 @@ namespace Wms.Areas.Arrival.Resources {
         }
         
         /// <summary>
+        ///   バラ数： に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TotalQtySum {
+            get {
+                return ResourceManager.GetString("TotalQtySum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   仕入先 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Vendor {

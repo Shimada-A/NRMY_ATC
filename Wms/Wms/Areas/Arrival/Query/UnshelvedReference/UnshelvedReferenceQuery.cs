@@ -390,6 +390,7 @@
             condition.ItemSkuSum = GetItemSkuSum(condition);
             condition.CaseQtySum = GetCaseQtySum(condition);
             condition.StockQtySum = GetStockQtySum(condition);
+            condition.TotalQtySum = GetTotalQtySum(condition);
 
             // Excute paging
             return new StaticPagedList<UnshelvedReferenceResultRow>(UnshelvedReferences, condition.Page, condition.PageSize, totalCount);
@@ -978,6 +979,221 @@
             int StockQty = StockQtySum[0].StockQtySum;
 
             return StockQty;
+        }
+
+        public int GetTotalQtySum(UnshelvedReferenceSearchConditions condition)
+        {
+            DynamicParameters parameters = new DynamicParameters();
+            StringBuilder query = new StringBuilder();
+
+            query.Append(@"
+                    SELECT 
+                        SUM(TOTAL_QTY.TOTAL_QTY_SUM) TOTAL_QTY_SUM
+                    FROM (
+                            SELECT
+                                    DISTINCT TS.TOTAL_QTY TOTAL_QTY_SUM
+                            FROM
+                                    T_PACKAGE_STOCKS TPS
+                            LEFT JOIN
+                                    T_ARRIVE_RESULTS TAR
+                            ON
+                                    TAR.SHIPPER_ID = TPS.SHIPPER_ID
+                               AND TAR.CENTER_ID = TPS.CENTER_ID
+                               AND TAR.INVOICE_NO = TPS.INVOICE_NO
+                               AND TAR.ITEM_SKU_ID = TPS.ITEM_SKU_ID
+                            LEFT JOIN
+                                    M_VENDORS MV
+                            ON
+                                    MV.SHIPPER_ID = TAR.SHIPPER_ID
+                                AND MV.VENDOR_ID = TAR.VENDOR_ID
+                            LEFT JOIN
+                                    M_ITEM_SKU MIS
+                            ON
+                                    MIS.SHIPPER_ID = TPS.SHIPPER_ID
+                                AND MIS.ITEM_SKU_ID = TPS.ITEM_SKU_ID
+                            LEFT JOIN
+                                    M_ITEM_CATEGORIES4 MIC
+                            ON
+                                    MIC.SHIPPER_ID = MIS.SHIPPER_ID
+                                AND MIC.CATEGORY_ID1 = MIS.CATEGORY_ID1
+                                AND MIC.CATEGORY_ID2 = MIS.CATEGORY_ID2
+                                AND MIC.CATEGORY_ID3 = MIS.CATEGORY_ID3
+                                AND MIC.CATEGORY_ID4 = MIS.CATEGORY_ID4
+                            LEFT JOIN
+                                    M_COLORS MC
+                            ON
+                                    MC.SHIPPER_ID = TPS.SHIPPER_ID
+                                AND MC.ITEM_COLOR_ID = TPS.ITEM_COLOR_ID
+                            LEFT JOIN
+                                    M_SIZES MS
+                            ON
+                                    MS.SHIPPER_ID = TPS.SHIPPER_ID
+                                AND MS.ITEM_SIZE_ID = TPS.ITEM_SIZE_ID
+                            LEFT JOIN
+                                    M_DIVISIONS MD
+                            ON
+                                    MD.SHIPPER_ID = MIS.SHIPPER_ID
+                                AND MD.DIVISION_ID = MIS.DIVISION_ID
+                            LEFT JOIN
+                                    M_BRANDS MB
+                            ON
+                                    MB.SHIPPER_ID = MIS.SHIPPER_ID
+                                AND MB.BRAND_ID = MIS.BRAND_ID
+                            LEFT JOIN ( 
+                                    SELECT
+                                        SHIPPER_ID,
+                                        CENTER_ID,
+                                        ITEM_ID,
+                                        SUM(STOCK_QTY) AS TOTAL_QTY
+                                    FROM
+                                        T_STOCKS 
+                                    GROUP BY
+                                        SHIPPER_ID,CENTER_ID,ITEM_ID
+                            ) TS
+                            ON
+                                    TS.SHIPPER_ID = TPS.SHIPPER_ID
+                                AND TS.CENTER_ID = TPS.CENTER_ID                            
+                                AND ts.item_id = TPS.ITEM_ID
+                            WHERE
+                                    TPS.SHIPPER_ID = :SHIPPER_ID
+                                AND TPS.LOCATION_CD = SF_GET_FIXED_LOCATION(
+                                                            TPS.SHIPPER_ID
+                                                        ,   TPS.CENTER_ID
+                                                        ,   :USER_ID
+                                                        ,   'NYK-DC1'
+                                                    )
+                        ");
+
+            parameters.Add(":SHIPPER_ID", Common.Profile.User.ShipperId);
+            parameters.Add(":USER_ID", Common.Profile.User.UserId);
+
+            // Add search condition
+            // センター
+            if (!string.IsNullOrEmpty(condition.CenterId))
+            {
+                query.Append(" AND TPS.CENTER_ID = :CENTER_ID ");
+                parameters.Add(":CENTER_ID", condition.CenterId);
+            }
+
+            // 入荷開始日
+            if (condition.ArrivalDateFrom != null)
+            {
+                query.Append(" AND TO_DATE(TO_CHAR(TPS.MAKE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd') >= :MAKE_DATE_FROM ");
+                parameters.Add(":MAKE_DATE_FROM", condition.ArrivalDateFrom);
+            }
+
+            // 入荷終了日
+            if (condition.ArrivalDateTo != null)
+            {
+                query.Append(" AND TO_DATE(TO_CHAR(TPS.MAKE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd') <= :MAKE_DATE_TO ");
+                parameters.Add(":MAKE_DATE_TO", condition.ArrivalDateTo);
+            }
+
+            // 事業部
+            if (!string.IsNullOrEmpty(condition.DivisionCd))
+            {
+                query.Append(" AND MD.DIVISION_ID = :DIVISION_ID ");
+                parameters.Add(":DIVISION_ID", condition.DivisionCd);
+            }
+
+            // ブランド
+            if (!string.IsNullOrEmpty(condition.BrandId))
+            {
+                query.Append(" AND MIS.BRAND_ID LIKE :BRAND_ID ");
+                parameters.Add(":BRAND_ID", condition.BrandId + "%");
+            }
+
+            // ブランド名
+            if (string.IsNullOrEmpty(condition.BrandId) && !string.IsNullOrEmpty(condition.BrandName))
+            {
+                query.Append(" AND MB.BRAND_NAME LIKE :BRAND_NAME ");
+                parameters.Add(":BRAND_NAME", condition.BrandName + "%");
+            }
+
+            // 代表仕入先
+            if (!string.IsNullOrEmpty(condition.VendorId))
+            {
+                query.Append(" AND TAR.VENDOR_ID LIKE :VENDOR_ID ");
+                parameters.Add(":VENDOR_ID", condition.VendorId + "%");
+            }
+
+            // 代表仕入先名
+            if (string.IsNullOrEmpty(condition.VendorId) && !string.IsNullOrEmpty(condition.VendorName))
+            {
+                query.Append(" AND MV.VENDOR_NAME1 LIKE :VENDOR_NAME1 ");
+                parameters.Add(":VENDOR_NAME1", condition.VendorName + "%");
+            }
+
+            // 分類1
+            if (!string.IsNullOrEmpty(condition.CategoryId1))
+            {
+                query.Append(" AND MIS.CATEGORY_ID1 = :CATEGORY_ID1 ");
+                parameters.Add(":CATEGORY_ID1", condition.CategoryId1);
+            }
+
+            // 分類2
+            if (!string.IsNullOrEmpty(condition.CategoryId2))
+            {
+                query.Append(" AND MIS.CATEGORY_ID2 = :CATEGORY_ID2 ");
+                parameters.Add(":CATEGORY_ID2", condition.CategoryId2);
+            }
+
+            // 分類3
+            if (!string.IsNullOrEmpty(condition.CategoryId3))
+            {
+                query.Append(" AND MIS.CATEGORY_ID3 = :CATEGORY_ID3 ");
+                parameters.Add(":CATEGORY_ID3", condition.CategoryId3);
+            }
+
+            // 分類4
+            if (!string.IsNullOrEmpty(condition.CategoryId4))
+            {
+                query.Append(" AND MIS.CATEGORY_ID4 = :CATEGORY_ID4 ");
+                parameters.Add(":CATEGORY_ID4", condition.CategoryId4);
+            }
+
+            // アイテムコード
+            if (!string.IsNullOrEmpty(condition.ItemCode))
+            {
+                query.Append(" AND MIS.ITEM_CODE = :ITEM_CODE ");
+                parameters.Add(":ITEM_CODE", condition.ItemCode);
+            }
+
+            // 納品書番号
+            if (!string.IsNullOrEmpty(condition.InvoiceNo))
+            {
+                query.Append(" AND TPS.INVOICE_NO LIKE :INVOICE_NO ");
+                parameters.Add(":INVOICE_NO", condition.InvoiceNo + "%");
+            }
+
+            // ケースNo
+            if (!string.IsNullOrEmpty(condition.BoxNo))
+            {
+                query.Append(" AND TPS.BOX_NO LIKE :BOX_NO ");
+                parameters.Add(":BOX_NO", condition.BoxNo + "%");
+            }
+
+            // 品番
+            if (!string.IsNullOrEmpty(condition.ItemId))
+            {
+                query.Append(" AND TPS.ITEM_ID LIKE :ITEM_ID ");
+                parameters.Add(":ITEM_ID", condition.ItemId + "%");
+            }
+
+            // JAN
+            if (!string.IsNullOrEmpty(condition.Jan))
+            {
+                query.Append(" AND TPS.JAN LIKE :JAN ");
+                parameters.Add(":JAN", condition.Jan + "%");
+            }
+            
+            query.Append(" ) TOTAL_QTY" );
+
+            // Fill data to memory
+            var TotalQtySum = MvcDbContext.Current.Database.Connection.Query<UnshelvedReferenceSum>(query.ToString(), parameters).ToList();
+            int TotalQty = TotalQtySum[0].TotalQtySum;
+
+            return TotalQty;
         }
 
         /// <summary>
