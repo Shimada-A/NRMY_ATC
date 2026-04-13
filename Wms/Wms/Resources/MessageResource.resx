@@ -258,4 +258,7 @@
   <data name="ERR_SAME_TEL" xml:space="preserve">
     <value>他の倉庫と重複した電話番号です。</value>
   </data>
+  <data name="ERR_OVER_PLAN" xml:space="preserve">
+    <value>実績数は予定数以下にしてください。</value>
+  </data>
 </root>

@@ -158,6 +158,14 @@
         [DisplayFormat(DataFormatString = "{0:N0}")]
         public int StockQty { get; set; }
 
+        /// <summary>
+        /// バラ在庫数
+        /// </summary>
+        /// <remarks>
+        [Display(Name = "バラ在庫数")]
+        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public int BaraQty { get; set; }
+
         #endregion
     }
 }

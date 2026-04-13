@@ -46,6 +46,7 @@
                         ,   TPS.JAN
                         ,   COUNT(TPS.BOX_NO) CASE_QTY
                         ,   SUM(TPS.STOCK_QTY) STOCK_QTY
+                        ,   COUNT(TPS.BOX_NO) * MIS.CASE_IRISU + SUM(TPS.STOCK_QTY) BARA_QTY
                         ,   MIS.BRAND_ID
                         ,   MB.BRAND_SHORT_NAME 
                 ");
@@ -71,6 +72,7 @@
                         ,   TPS.JAN
                         ,   TPS.BOX_NO BOX_NO
                         ,   TPS.STOCK_QTY STOCK_QTY
+                        ,   COUNT(TPS.BOX_NO) * NVL(MIS.CASE_IRISU,0) + SUM(TPS.STOCK_QTY) BARA_QTY
                         ,   MIS.BRAND_ID
                         ,   MB.BRAND_SHORT_NAME  
                 ");
@@ -276,6 +278,7 @@
                             ,   TPS.JAN
                             ,   MIS.BRAND_ID
                             ,   MB.BRAND_SHORT_NAME
+                            ,   MIS.CASE_IRISU
                 ");
             }
 

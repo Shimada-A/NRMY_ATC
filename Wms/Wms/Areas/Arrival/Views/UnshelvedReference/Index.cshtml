@@ -311,6 +311,9 @@
                                 <th class="bg-grey align-middle">
                                     @UnshelvedReferenceResource.StockQtys
                                 </th>
+                                <th class="bg-grey align-middle">
+                                    バラ在庫数
+                                </th>
                             </tr>
 
                         </thead>
@@ -365,6 +368,9 @@
                                     }
                                     <td class="align-middle text-right">
                                         @Html.DisplayFor(modelItem => cModel.v.StockQty)
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        @Html.DisplayFor(modelItem => cModel.v.BaraQty)
                                     </td>
                                 </tr>
                             }

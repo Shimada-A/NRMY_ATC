@@ -222,6 +222,47 @@
             if ('@ViewBag.Status' == '@ProcedureStatus.ConfirmLoss') {
                 $("#btnConfirm").click();
             }
+
+            // フォーカスアウト時の予定数超過チェック
+            // フォームの validate インスタンスを取得（存在しない場合は無視）
+            var $form = $("#frmUpdate");
+            var validator = null;
+            if ($form.length && $form.data('validator')) {
+                validator = $form.validate();
+            }
+
+            // イベントは動的行にも対応できるように document 経由でバインド
+            $(document).on('blur', "input[id$='.InputResultQty']", function () {
+                var $this = $(this);
+                // 予定数取得
+                var id = $this.attr('id') || '';
+                var match = id.match(/InputPurchase02s\[(\d+)\]/);
+                var idx = match[1];
+                var planSelector = "#InputPurchase02s\\[" + idx + "\\]\\.PlanQty";
+                var planValStr = $(planSelector).val();
+                var planVal = parseInt((planValStr || "0").toString().replace(/,/g, ''), 10);
+                // 実績数取得
+                var inputValStr = $this.val() || "0";
+                var inputVal = parseInt(inputValStr.toString().replace(/,/g, ''), 10);
+
+                if (isNaN(planVal)) planVal = 0;
+                if (isNaN(inputVal)) inputVal = 0;
+
+                var fieldName = $this.attr('name');
+                if (inputVal > planVal) {
+                    // エラー表示
+                    var obj = {};
+                    var overPlanMsg = '@(typeof(MessagesResource) != typeof(object) ? MessageResource.ERR_OVER_PLAN : "ERR_OVER_PLAN")';
+                    obj[fieldName] = overPlanMsg;
+                    validator.showErrors(obj);
+                } else {
+                    // エラー解除
+                    var clearObj = {};
+                    clearObj[fieldName] = "";
+                    validator.showErrors(clearObj);
+                    $this.removeClass("input-validation-error").addClass("valid");
+                }
+            });
         });
 
         $('#Confirm').on("click", function () {

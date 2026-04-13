@@ -205,6 +205,15 @@ namespace Wms.Resources {
         }
         
         /// <summary>
+        ///   実績数は予定数以下にしてください。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ERR_OVER_PLAN {
+            get {
+                return ResourceManager.GetString("ERR_OVER_PLAN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   パスワードが違います。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ERR_PASSWORD {
